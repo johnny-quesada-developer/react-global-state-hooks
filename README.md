@@ -1,4 +1,4 @@
-# react-global-state-hook
+# react-global-state-hooks
 This is a package to easily handling global-state across your react components No-redux, No-context.
 
 This utility follows the same style as the default useState hook, this in order to be an intuitive tool to help you to quickly migrate from complex options as redux to the new react-hooks.
@@ -8,7 +8,7 @@ This utility follows the same style as the default useState hook, this in order 
 We are gonna create a global count example **count.ts**:
 
 ```
-import GlobalStore from 'react-global-state-hook';
+import GlobalStore from 'react-global-state-hooks';
 
 const countStore = new GlobalStore(0);
 
@@ -48,8 +48,8 @@ const countStore = new GlobalStore(0, null, 'GLOBAL_COUNT');
 Let's say you want to have a STATE with a specific set of actions that you could reuse. With this library is pretty easy to accomplish. Let's create **plus** and **decrease** actions to our COUNT-store. **count.ts**:
 
 ```
-import * as IGlobalState from 'react-global-state-hook/lib/GlobalStoreTypes';
-import GlobalStore from 'react-global-state-hook';
+import * as IGlobalState from 'react-global-state-hooks/lib/GlobalStoreTypes';
+import GlobalStore from 'react-global-state-hooks';
 
 const countStore = new GlobalStore(0, {
   plus: (increase: number) => async (setter: IGlobalStore.StateSetter<number>, currentState: number) => {
