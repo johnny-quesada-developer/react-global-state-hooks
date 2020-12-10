@@ -1,6 +1,6 @@
 {
-  "name": "@hook/react-global-state",
-  "version": "1.0.0",
+  "name": "react-global-state-hooks",
+  "version": "1.0.1",
   "description": "This is a package to easily handling global-state across your react components No-redux, No-context.",
   "main": "lib/GlobalStore.js",
   "files": [
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/johnny-quesada-developer/react-global-state-hook.git"
+    "url": "git+https://github.com/johnny-quesada-developerreact-global-state-hooks.git"
   },
   "keywords": [
     "react",
@@ -32,9 +32,9 @@
   "author": "johnny quesada",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/johnny-quesada-developer/react-global-state-hook/issues"
+    "url": "https://github.com/johnny-quesada-developer/react-global-state-hooks/issues"
   },
-  "homepage": "https://github.com/johnny-quesada-developer/react-global-state-hook#readme",
+  "homepage": "https://github.com/johnny-quesada-developer/react-global-state-hooks#readme",
   "devDependencies": {
     "@types/jest": "^26.0.17",
     "@types/lodash": "^4.14.165",
