@@ -24,7 +24,7 @@ beforeEach(() => {
     const GlobalStoreAny: any = GlobalStore;
 
     renderer.act(() => ReactDom.unstable_batchedUpdates(() => {
-      GlobalStoreAny.batchedUpdates.forEach(([execute]) => {
+      GlobalStoreAny.batchedUpdates.forEach(([execute]: [() => void]) => {
         execute();
       });
       GlobalStoreAny.batchedUpdates = [];
