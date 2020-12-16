@@ -1,6 +1,6 @@
 {
   "name": "react-global-state-hooks",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "This is a package to easily handling global-state across your react components No-redux, No-context.",
   "main": "lib/GlobalStore.js",
   "files": [
@@ -57,6 +57,7 @@
   "dependencies": {
     "lodash": "^4.17.20",
     "react": "workspace:*",
-    "react-dom": "workspace:*"
+    "react-dom": "workspace:*",
+    "tslib": "workspace:^2.0.3"
   }
 }
