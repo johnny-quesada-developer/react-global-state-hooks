@@ -20,7 +20,7 @@ beforeEach(() => {
   jest.spyOn(Stage2All, 'default');
   jest.spyOn(Stage3All, 'default');
 
-  const ExecutePendingBatches = debounce((callback: () => void = () => {}) => {
+  const ExecutePendingBatches = debounce(() => {
     const GlobalStoreAny: any = GlobalStore;
 
     renderer.act(() => ReactDom.unstable_batchedUpdates(() => {
@@ -28,7 +28,8 @@ beforeEach(() => {
         execute();
       });
       GlobalStoreAny.batchedUpdates = [];
-      callback();
+      GlobalStore.ExecutePendingBatchesCallbacks.forEach((callback) => callback());
+      GlobalStore.ExecutePendingBatchesCallbacks = [];
     }));
   }, 0);
 
