@@ -71,7 +71,7 @@ export class GlobalStore<
       const primitive = isPrimitive(value);
       const newState: IState = primitive ? value : this.formatItemFromStore(value);
 
-      this.state = primitive ? newState : { ...this.state, ...newState };
+      this.state = primitive || Array.isArray(value) ? newState : { ...this.state, ...newState };
     }
 
     return this.state;
@@ -183,7 +183,8 @@ export class GlobalStore<
 
   protected globalSetter = (setter: Partial<IState> | ((state: IState) => Partial<IState>), callback: () => void) => {
     const partialState = typeof setter === 'function' ? setter(this.getStateCopy()) : setter;
-    let newState = isPrimitive(partialState) ? partialState : { ...this.state, ...partialState };
+    let newState = isPrimitive(partialState) || Array.isArray(partialState)
+      ? partialState : { ...this.state, ...partialState };
 
     // avoid perform multiple update batches by accumulating state changes of the same hook
     GlobalStore.batchedUpdates = GlobalStore.batchedUpdates.filter(([, hook, previousState]) => {
@@ -192,7 +193,8 @@ export class GlobalStore<
       if (isSameHook) {
         // eslint-disable-next-line no-console
         console.warn('You should try avoid call the same state-setter multiple times at one execution line');
-        newState = isPrimitive(newState) ? newState : { ...previousState, ...newState };
+        newState = isPrimitive(newState) || Array.isArray(partialState)
+          ? newState : { ...previousState, ...newState };
       }
       return !isSameHook;
     });
