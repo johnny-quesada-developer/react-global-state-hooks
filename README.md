@@ -43,6 +43,31 @@ You could persist the state in the local-storage by just adding a name to the co
 const countStore = new GlobalStore(0, null, 'GLOBAL_COUNT');
 ```
 
+## Consuming Persisted Store
+```
+const [state, setter] = useCount();
+```
+
+## Customize persist storage
+
+Let suppose you don't like localStorage, or you also want to implement some kind of decode/encode. You could easily extends the GlobalStore Class, and customize your persist store implementation. 
+
+```
+import { decode, encode } from 'wherever';
+import GlobalState from 'react-global-state-hooks';
+import { IActionCollection } from 'react-global-state-hooks/lib/GlobalStoreTypes';
+
+export class SecureGlobalState<IState> extends GlobalState<IState> {
+
+  protected localStorageGetItem = () => decode(localStorage.getItem(this.persistStoreAs as string));
+
+  protected localStorageSetItem = (value: string) => localStorage.setItem(this.persistStoreAs as string, encode(value));
+  
+}
+
+export default SecureGlobalState;
+```
+
 ## Creating hooks with reusable actions
 
 Let's say you want to have a STATE with a specific set of actions that you could reuse. With this library is pretty easy to accomplish. Let's create **plus** and **decrease** actions to our COUNT-store. **count.ts**:
@@ -102,9 +127,11 @@ The above step is necessary to get the correct typing of the parameters of your 
 Finally, if you want to access the global state outside a component, or without subscribing the component to the state changes... 
 
 This is especially useful when you want to reuse an action into another one, or when you wrote components that have edition access to a certain store, but they actually don't need to be reactive to the state changes, like a search component that just need to get the current state every time is gonna search the data, but actually don't need to hear all changes over the collection he is gonna be filtering. 
+
 ```
-export const useCount = countStore.getHook<ICountActions>();
-export const useCountDecoupled = countStore.getHookDecoupled<ICountActions>();
+const countStore = new GlobalStore(0);
+
+export const [getCountValue, countActions] = countStore.getHookDecoupled<ICountActions>()();
 ```
 
 Let's see a trivial example: 

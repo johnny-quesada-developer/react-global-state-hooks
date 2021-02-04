@@ -68,7 +68,7 @@ export interface IGlobalState<
   * THIS IS NOT A REACT-HOOK, so you could use it everywhere example other hooks, and services.
   * @return [currentState, GlobalState.IHookResult<IState, IActions, IApi>]
   */
-  getHookDecoupled: <IApi extends IActions extends ActionCollectionResult<IActions> ? ActionCollectionResult<IActions> : null>() => () => [
+  getHookDecoupled: <IApi extends IActions extends ActionCollectionResult<IActions> ? ActionCollectionResult<IActions> : null> () => [
     () => IState,
     IHookResult<IState, IActions, IApi>,
   ];

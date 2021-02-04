@@ -32,6 +32,12 @@ export class GlobalStore<
   private storedStateItem: IState | undefined = undefined;
 
   protected formatItemFromStore<T>(obj: T): any {
+    const isArray = Array.isArray(obj);
+
+    if (isArray) {
+      return (obj as unknown as Array<any>).map((item) => this.formatItemFromStore(item));
+    }
+
     return Object.keys(obj).filter((key) => !key.includes('_type')).reduce((acumulator, key) => {
       const type: string = obj[`${key}_type` as keyof T] as unknown as string;
       const unformatedValue = obj[key as keyof T];
@@ -51,10 +57,14 @@ export class GlobalStore<
     }, {} as any);
   }
 
+  protected localStorageGetItem(): string | null {
+    return localStorage.getItem(this.persistStoreAs as string);
+  }
+
   protected getStoreItem(): IState {
     if (this.storedStateItem !== undefined) return this.storedStateItem;
 
-    const item = localStorage.getItem(this.persistStoreAs as string);
+    const item = this.localStorageGetItem();
 
     if (item) {
       const value = JSON.parse(item) as IState;
@@ -68,6 +78,12 @@ export class GlobalStore<
   }
 
   protected formatToStore<T>(obj: T): any {
+    const isArray = Array.isArray(obj);
+
+    if (isArray) {
+      return (obj as unknown as Array<any>).map((item) => this.formatToStore(item));
+    }
+
     return Object.keys(obj).reduce((acumulator, key) => {
       const value = obj[key as keyof T];
       const isDatetime = value instanceof Date;
@@ -80,6 +96,10 @@ export class GlobalStore<
     }, {});
   }
 
+  protected localStorageSetItem(valueToStore: string): void {
+    localStorage.setItem(this.persistStoreAs as string, valueToStore);
+  }
+
   protected setStoreItem(): void {
     if (this.storedStateItem === this.state) return;
 
@@ -87,7 +107,7 @@ export class GlobalStore<
 
     const valueToStore = isPrimitive(this.state) ? this.state : this.formatToStore(cloneDeep(this.state));
 
-    localStorage.setItem(this.persistStoreAs as string, JSON.stringify(valueToStore));
+    this.localStorageSetItem(JSON.stringify(valueToStore));
   }
 
   protected getPersistStoreValue = (): IState => this.getStoreItem();
@@ -128,7 +148,7 @@ export class GlobalStore<
    */
   public getHookDecoupled = <
     IApi extends IGlobalStore.ActionCollectionResult<IActions> | null = IActions extends null ? null : IGlobalStore.ActionCollectionResult<IActions>
-  >() => (): [
+  > (): [
     () => IState,
     IGlobalStore.IHookResult<IState, IActions, IApi>,
   ] => {

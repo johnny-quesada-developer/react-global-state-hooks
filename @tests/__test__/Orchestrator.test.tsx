@@ -1,4 +1,4 @@
-import * as Hooks from '../globalStates';
+import * as hooksDecoupled from '../hooksDecoupled';
 import Orchestrator from '../Orchestrator';
 import React from 'react';
 import ReactDom from 'react-dom';
@@ -36,18 +36,18 @@ describe('Orchestrator', () => {
   });
 
   describe('hooks', () => {
-    const testNumericHook = (hookName: keyof typeof Hooks) => {
+    const testNumericHook = (hookName: keyof typeof hooksDecoupled) => {
       let orchestratorWrapper: renderer.ReactTestRenderer;
       let getter: any;
       let setter: any;
       let increaseValue: () => Promise<unknown>;
       let decreaseValue: () => Promise<unknown>;
-      let checkCurrentValue: (newValue: number) => void;
+      let checkCurrentValue: (newValue: number) => Promise<void>;
       let unstableBatchedUpdatesSpy: jest.SpyInstance<any>;
 
       beforeEach(async () => {
         orchestratorWrapper = await createOrchestrator();
-        ([getter, setter] = Hooks[hookName]());
+        [getter, setter] = hooksDecoupled[hookName];
         increaseValue = () => Promise.resolve();
         decreaseValue = () => Promise.resolve();
 
@@ -60,10 +60,12 @@ describe('Orchestrator', () => {
         }
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        checkCurrentValue = (_newValue: number) => {};
+        checkCurrentValue = (_newValue: number) => Promise.resolve();
         if (typeof getter === 'function') {
-          checkCurrentValue = (newValue: number) => {
-            const currentValue = getter();
+          checkCurrentValue = async (newValue: number) => {
+            const result = getter();
+            const promise = Promise.resolve(result) === result ? result : Promise.resolve(result);
+            const currentValue = await promise;
 
             expect(currentValue).toBe(newValue);
           };
@@ -76,32 +78,28 @@ describe('Orchestrator', () => {
         orchestratorWrapper.unmount();
       });
 
-      const checkFirstRender = () => {
-        checkCurrentValue(0);
+      const checkFirstRender = async () => {
+        await checkCurrentValue(0);
         [Stage1, Stage2, Stage3].forEach((stage) => {
           expect(stage).toHaveBeenCalledTimes(1);
         });
       };
 
-      it('check initial state [1 render]', () => {
-        checkFirstRender();
+      it('check initial state [1 render]', async () => {
+        await checkFirstRender();
       });
 
       it('check all state updates should be batched [2 renders]', async () => {
-        checkFirstRender();
+        await checkFirstRender();
 
         await renderer.act(async () => {
+          // 0
           increaseValue();
-          checkCurrentValue(1);
-
           increaseValue();
-          checkCurrentValue(2);
-
-          // with-current-value-equal => 2
-          // await batches update
-          await decreaseValue();
-
-          checkCurrentValue(1);
+          decreaseValue();
+          increaseValue();
+          await increaseValue();
+          await checkCurrentValue(3);
         });
 
         // just one batch of changes
@@ -119,7 +117,7 @@ describe('Orchestrator', () => {
 
         await renderer.act(async () => {
           await increaseValue();
-          checkCurrentValue(2);
+          await checkCurrentValue(4);
         });
 
         expect(Stage3).toHaveBeenCalledTimes(1);
@@ -129,33 +127,24 @@ describe('Orchestrator', () => {
       });
     };
 
-    describe('useCountStoreDecoupled', () => {
-      testNumericHook('useCountStoreDecoupled');
+    describe('countStoreDecoupled', () => {
+      testNumericHook('countStoreDecoupled');
     });
 
-    describe('useCountPercistDecoupled', () => {
-      beforeEach(() => {
-        const persistStorage: {[key: string]: string} = {};
-
-        (global.localStorage.getItem as jest.Mock).mockImplementation((key) => persistStorage[key] || null);
-        (global.localStorage.setItem as jest.Mock).mockImplementation((key, value) => {
-          persistStorage[key] = value;
-        });
-      });
-
-      testNumericHook('useCountPercistDecoupled');
+    describe('countPercistDecoupled', () => {
+      testNumericHook('countPercistDecoupled');
     });
 
-    describe('useCountWithActionsDecoupled', () => {
-      testNumericHook('useCountWithActionsDecoupled');
+    describe('countWithActionsDecoupled', () => {
+      testNumericHook('countWithActionsDecoupled');
     });
 
-    describe('useCountWithActionsTypedDecoupled', () => {
-      testNumericHook('useCountWithActionsTypedDecoupled');
+    describe('countWithActionsTypedDecoupled', () => {
+      testNumericHook('countWithActionsTypedDecoupled');
     });
 
-    describe('useCountWithActionsDecoupledP', () => {
-      testNumericHook('useCountWithActionsDecoupledP');
+    describe('countWithActionsDecoupledP', () => {
+      testNumericHook('countWithActionsDecoupledP');
     });
   });
 });
