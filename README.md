@@ -1,5 +1,5 @@
 # react-global-state-hooks
-This is a package to easily handling global-state across your react-native-components **No-redux**, **No-context**
+This is a package to easily handling global-state across your react-components **No-redux**, **No-context**
 
 This utility follows the same style as the default **useState** hook, with a subscription pattern and **HOFs** to create a more intuitive, atomic and easy way of sharing state between components
 
