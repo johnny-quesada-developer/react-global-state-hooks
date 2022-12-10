@@ -18,7 +18,7 @@ export const isPrimitive = <T>(value: T) => isNil(value) || isNumber(value) || i
 * */
 export class GlobalStore<
   IState,
-  IActions extends IGlobalStore.IActionCollection<IState> | null = null
+  IActions extends IGlobalStore.IActionCollectionConfig<IState> | null = null
 > implements IGlobalStore.IGlobalState<IState, IActions> {
 
   protected subscribers: IGlobalStore.StateSetter<IState>[] = [];
@@ -38,7 +38,7 @@ export class GlobalStore<
       return (obj as unknown as Array<any>).map((item) => this.formatItemFromStore(item));
     }
 
-    return Object.keys(obj).filter((key) => !key.includes('_type')).reduce((acumulator, key) => {
+    return Object.keys(obj as Record<string, unknown>).filter((key) => !key.includes('_type')).reduce((acumulator, key) => {
       const type: string = obj[`${key}_type` as keyof T] as unknown as string;
       const unformatedValue = obj[key as keyof T];
       const isDateType = type === 'date';
@@ -84,7 +84,7 @@ export class GlobalStore<
       return (obj as unknown as Array<any>).map((item) => this.formatToStore(item));
     }
 
-    return Object.keys(obj).reduce((acumulator, key) => {
+    return Object.keys(obj as Record<string, unknown>).reduce((acumulator, key) => {
       const value = obj[key as keyof T];
       const isDatetime = value instanceof Date;
 
@@ -119,7 +119,7 @@ export class GlobalStore<
    * @return [currentState, GlobalState.IHookResult<IState, IActions, IApi>]
    */
   public getHook = <
-    IApi extends IGlobalStore.ActionCollectionResult<IActions> | null = IActions extends null ? null : IGlobalStore.ActionCollectionResult<IActions>
+    IApi extends IGlobalStore.IActionCollectionResult<IState, IActions> | null = IActions extends null ? null : IGlobalStore.IActionCollectionResult<IState, IActions>
   >() => (): [
     IState,
     IGlobalStore.IHookResult<IState, IActions, IApi>,
@@ -147,7 +147,7 @@ export class GlobalStore<
    * @return [currentState, GlobalState.IHookResult<IState, IActions, IApi>]
    */
   public getHookDecoupled = <
-    IApi extends IGlobalStore.ActionCollectionResult<IActions> | null = IActions extends null ? null : IGlobalStore.ActionCollectionResult<IActions>
+    IApi extends IGlobalStore.IActionCollectionResult<IState, IActions> | null = IActions extends null ? null : IGlobalStore.IActionCollectionResult<IState, IActions>
   > (): [
     () => IState,
     IGlobalStore.IHookResult<IState, IActions, IApi>,
@@ -160,20 +160,20 @@ export class GlobalStore<
     ];
   };
 
-  private _stateOrchestrator: IGlobalStore.StateSetter<IState> | IGlobalStore.ActionCollectionResult<IActions> | null = null;
+  private _stateOrchestrator: IGlobalStore.StateSetter<IState> | IGlobalStore.IActionCollectionResult<IState, IActions> | null = null;
 
-  protected get stateOrchestrator(): IGlobalStore.StateSetter<IState> | IGlobalStore.ActionCollectionResult<IActions> {
+  protected get stateOrchestrator(): IGlobalStore.StateSetter<IState> | IGlobalStore.IActionCollectionResult<IState, IActions> {
     if (this._stateOrchestrator) return this._stateOrchestrator;
 
     if (this.actions) {
-      this._stateOrchestrator = this.getActions() as IGlobalStore.ActionCollectionResult<IActions>;
+      this._stateOrchestrator = this.getActions() as IGlobalStore.IActionCollectionResult<IState, IActions>;
     } else if (this.persistStoreAs) {
       this._stateOrchestrator = this.globalSetterToPersistStoreAsync as IGlobalStore.StateSetter<IState>;
     } else {
       this._stateOrchestrator = this.globalSetterAsync as IGlobalStore.StateSetter<IState>;
     }
 
-    return this._stateOrchestrator as IGlobalStore.StateSetter<IState> | IGlobalStore.ActionCollectionResult<IActions>;
+    return this._stateOrchestrator as IGlobalStore.StateSetter<IState> | IGlobalStore.IActionCollectionResult<IState, IActions>;
   }
 
   /**
@@ -233,8 +233,8 @@ export class GlobalStore<
     });
   }, 0);
 
-  protected getActions = <IApi extends IGlobalStore.ActionCollectionResult<IGlobalStore.IActionCollection<IState>>>(): IApi => {
-    const actions = this.actions as IGlobalStore.IActionCollection<IState>;
+  protected getActions = <IApi extends IGlobalStore.IActionCollectionResult<IState, IGlobalStore.IActionCollectionConfig<IState>>>(): IApi => {
+    const actions = this.actions as IGlobalStore.IActionCollectionConfig<IState>;
     // Setter is allways async because of the render batch
     const setter = this.isPersistStore ? this.globalSetterToPersistStoreAsync : this.globalSetterAsync;
 

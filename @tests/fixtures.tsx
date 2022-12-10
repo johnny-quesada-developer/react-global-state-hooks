@@ -5,7 +5,7 @@ export const StageTitle = ({ title }: { title: string }) => <h1>{title}</h1>;
 
 export default StageTitle;
 
-export interface ICountActions extends IGlobalState.ActionCollectionResult<IGlobalState.IActionCollection<number>> {
+export interface ICountActions extends IGlobalState.IActionCollectionConfig<number> {
   decrease: (decrease: number) => (setter: IGlobalState.StateSetter<number>, state: number) => Promise<void>,
   increase: (increase: number) => (setter: IGlobalState.StateSetter<number>, state: number) => Promise<void>,
 }
