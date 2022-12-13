@@ -1,11 +1,16 @@
 import * as IGlobalStore from './GlobalStoreTypes';
 import ReactDOM from 'react-dom';
 import {
-  cloneDeep, debounce, isNil, isNumber, isBoolean, isString,
+  cloneDeep, debounce, isNil, isNumber, isBoolean, isString, isDate,
 } from 'lodash';
 import { useEffect, useState } from 'react';
 
 export const isPrimitive = <T>(value: T) => isNil(value) || isNumber(value) || isBoolean(value) || isString(value) || typeof value === 'symbol';
+
+export type IValueWithMedaData = {
+  _type_?: 'map' | 'set' | 'date';
+  value?: unknown;
+};
 
 /**
 * This is a class to create global-store objects
@@ -31,30 +36,54 @@ export class GlobalStore<
 
   private storedStateItem: IState | undefined = undefined;
 
-  protected formatItemFromStore<T>(obj: T): any {
+  protected formatItemFromStore<T>(_obj: T): unknown {
+    const obj = _obj as T & IValueWithMedaData;
+
+    if (isPrimitive(obj)) {
+      return obj;
+    }
+
+    const isMetaDate = obj?._type_ === 'date';
+
+    if (isMetaDate) {
+      return new Date(obj.value as string);
+    }
+
+    const isMetaMap = obj?._type_ === 'map';
+
+    if (isMetaMap) {
+      const mapData: [string, unknown][] = (((obj.value as []) ?? []) as [string, unknown][]).map(([key, item]) => [
+        key,
+        this.formatItemFromStore(item),
+      ]);
+
+      return new Map(mapData);
+    }
+
+    const isMetaSet = obj?._type_ === 'set';
+
+    if (isMetaSet) {
+      const setData: unknown[] = (obj.value as []) ?? [].map((item) => this.formatItemFromStore(item));
+
+      return new Set(setData);
+    }
+
     const isArray = Array.isArray(obj);
 
     if (isArray) {
-      return (obj as unknown as Array<any>).map((item) => this.formatItemFromStore(item));
+      return (obj as unknown as Array<unknown>).map((item) => this.formatItemFromStore(item));
     }
 
-    return Object.keys(obj as Record<string, unknown>).filter((key) => !key.includes('_type')).reduce((acumulator, key) => {
-      const type: string = obj[`${key}_type` as keyof T] as unknown as string;
-      const unformatedValue = obj[key as keyof T];
-      const isDateType = type === 'date';
+    const keys = Object.keys(obj as Record<string, unknown>);
 
-      if (isDateType) {
-        return {
-          ...acumulator,
-          [key]: new Date(unformatedValue as unknown as string),
-        };
-      }
+    return keys.reduce((acumulator, key) => {
+      const unformatedValue: unknown = obj[key as keyof T];
 
       return {
         ...acumulator,
-        [key]: isPrimitive(unformatedValue) ? unformatedValue : this.formatItemFromStore(unformatedValue),
+        [key]: this.formatItemFromStore(unformatedValue),
       };
-    }, {} as any);
+    }, {});
   }
 
   protected localStorageGetItem(): string | null {
@@ -69,7 +98,7 @@ export class GlobalStore<
     if (item) {
       const value = JSON.parse(item) as IState;
       const primitive = isPrimitive(value);
-      const newState: IState = primitive ? value : this.formatItemFromStore(value);
+      const newState = this.formatItemFromStore(value) as IState;
 
       this.state = primitive || Array.isArray(value) ? newState : { ...this.state, ...newState };
     }
@@ -77,21 +106,54 @@ export class GlobalStore<
     return this.state;
   }
 
-  protected formatToStore<T>(obj: T): any {
+  protected formatToStore<T>(obj: T): unknown {
+    if (isPrimitive(obj)) {
+      return obj;
+    }
+
     const isArray = Array.isArray(obj);
 
     if (isArray) {
-      return (obj as unknown as Array<any>).map((item) => this.formatToStore(item));
+      return (obj as unknown as Array<unknown>).map((item) => this.formatToStore(item));
     }
 
-    return Object.keys(obj as Record<string, unknown>).reduce((acumulator, key) => {
+    const isMap = obj instanceof Map;
+
+    if (isMap) {
+      const pairs = Array.from((obj as Map<unknown, unknown>).entries());
+
+      return {
+        _type_: 'map',
+        value: pairs.map((pair) => this.formatToStore(pair)),
+      };
+    }
+
+    const isSet = obj instanceof Set;
+
+    if (isSet) {
+      const values = Array.from((obj as Set<unknown>).values());
+
+      return {
+        _type_: 'set',
+        value: values.map((value) => this.formatToStore(value)),
+      };
+    }
+
+    if (isDate(obj)) {
+      return {
+        _type_: 'date',
+        value: obj.toISOString(),
+      };
+    }
+
+    const keys = Object.keys(obj as Record<string, unknown>);
+
+    return keys.reduce((acumulator, key) => {
       const value = obj[key as keyof T];
-      const isDatetime = value instanceof Date;
 
       return ({
         ...acumulator,
-        [key]: isPrimitive(value) || isDatetime ? value : this.formatToStore(value),
-        [`${key}_type`]: isDatetime ? 'date' : typeof value,
+        [key]: this.formatToStore(value),
       });
     }, {});
   }
@@ -105,7 +167,7 @@ export class GlobalStore<
 
     this.storedStateItem = this.state;
 
-    const valueToStore = isPrimitive(this.state) ? this.state : this.formatToStore(cloneDeep(this.state));
+    const valueToStore = this.formatToStore(cloneDeep(this.state));
 
     this.localStorageSetItem(JSON.stringify(valueToStore));
   }
