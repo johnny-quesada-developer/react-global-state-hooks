@@ -52,8 +52,10 @@ describe('Orchestrator', () => {
         decreaseValue = () => Promise.resolve();
 
         if (typeof setter === 'function') {
-          increaseValue = (): Promise<void> => setter((currentValue: number) => currentValue + 1);
-          decreaseValue = (): Promise<void> => setter((currentValue: number) => currentValue - 1);
+          increaseValue = (): Promise<void> =>
+            setter((currentValue: number) => currentValue + 1);
+          decreaseValue = (): Promise<void> =>
+            setter((currentValue: number) => currentValue - 1);
         } else {
           increaseValue = (): Promise<void> => setter.increase(1);
           decreaseValue = (): Promise<void> => setter.decrease(1);
@@ -64,14 +66,20 @@ describe('Orchestrator', () => {
         if (typeof getter === 'function') {
           checkCurrentValue = async (newValue: number) => {
             const result = getter();
-            const promise = Promise.resolve(result) === result ? result : Promise.resolve(result);
+            const promise =
+              Promise.resolve(result) === result
+                ? result
+                : Promise.resolve(result);
             const currentValue = await promise;
 
             expect(currentValue).toBe(newValue);
           };
         }
 
-        unstableBatchedUpdatesSpy = jest.spyOn(ReactDom, 'unstable_batchedUpdates');
+        unstableBatchedUpdatesSpy = jest.spyOn(
+          ReactDom,
+          'unstable_batchedUpdates'
+        );
       });
 
       afterAll(() => {

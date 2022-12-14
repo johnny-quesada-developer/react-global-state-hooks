@@ -1,15 +1,29 @@
 import * as IGlobalStore from './GlobalStoreTypes';
 import ReactDOM from 'react-dom';
 import {
-  cloneDeep, debounce, isNil, isNumber, isBoolean, isString, isDate,
-} from 'lodash';
-import { useEffect, useState } from 'react';
+  isPrimitive,
+  formatToStore,
+  formatFromStore,
+  clone,
+} from 'json-storage-formatter';
 
-export const isPrimitive = <T>(value: T) => isNil(value) || isNumber(value) || isBoolean(value) || isString(value) || typeof value === 'symbol';
+import { useEffect, useState } from 'react';
 
 export type IValueWithMedaData = {
   _type_?: 'map' | 'set' | 'date';
   value?: unknown;
+};
+
+export const debounce = <T extends Function>(callback: T, wait = 300): T => {
+  let timer: NodeJS.Timeout;
+
+  return ((...args: unknown[]) => {
+    clearTimeout(timer);
+
+    timer = setTimeout(() => {
+      callback(...args);
+    }, wait);
+  }) as unknown as T;
 };
 
 /**
@@ -36,56 +50,6 @@ export class GlobalStore<
 
   private storedStateItem: IState | undefined = undefined;
 
-  protected formatItemFromStore<T>(_obj: T): unknown {
-    const obj = _obj as T & IValueWithMedaData;
-
-    if (isPrimitive(obj)) {
-      return obj;
-    }
-
-    const isMetaDate = obj?._type_ === 'date';
-
-    if (isMetaDate) {
-      return new Date(obj.value as string);
-    }
-
-    const isMetaMap = obj?._type_ === 'map';
-
-    if (isMetaMap) {
-      const mapData: [string, unknown][] = (((obj.value as []) ?? []) as [string, unknown][]).map(([key, item]) => [
-        key,
-        this.formatItemFromStore(item),
-      ]);
-
-      return new Map(mapData);
-    }
-
-    const isMetaSet = obj?._type_ === 'set';
-
-    if (isMetaSet) {
-      const setData: unknown[] = (obj.value as []) ?? [].map((item) => this.formatItemFromStore(item));
-
-      return new Set(setData);
-    }
-
-    const isArray = Array.isArray(obj);
-
-    if (isArray) {
-      return (obj as unknown as Array<unknown>).map((item) => this.formatItemFromStore(item));
-    }
-
-    const keys = Object.keys(obj as Record<string, unknown>);
-
-    return keys.reduce((acumulator, key) => {
-      const unformatedValue: unknown = obj[key as keyof T];
-
-      return {
-        ...acumulator,
-        [key]: this.formatItemFromStore(unformatedValue),
-      };
-    }, {});
-  }
-
   protected localStorageGetItem(): string | null {
     return localStorage.getItem(this.persistStoreAs as string);
   }
@@ -97,65 +61,12 @@ export class GlobalStore<
 
     if (item) {
       const value = JSON.parse(item) as IState;
-      const primitive = isPrimitive(value);
-      const newState = this.formatItemFromStore(value) as IState;
+      const newState = formatFromStore(value) as IState;
 
-      this.state = primitive || Array.isArray(value) ? newState : { ...this.state, ...newState };
+      this.state = newState;
     }
 
     return this.state;
-  }
-
-  protected formatToStore<T>(obj: T): unknown {
-    if (isPrimitive(obj)) {
-      return obj;
-    }
-
-    const isArray = Array.isArray(obj);
-
-    if (isArray) {
-      return (obj as unknown as Array<unknown>).map((item) => this.formatToStore(item));
-    }
-
-    const isMap = obj instanceof Map;
-
-    if (isMap) {
-      const pairs = Array.from((obj as Map<unknown, unknown>).entries());
-
-      return {
-        _type_: 'map',
-        value: pairs.map((pair) => this.formatToStore(pair)),
-      };
-    }
-
-    const isSet = obj instanceof Set;
-
-    if (isSet) {
-      const values = Array.from((obj as Set<unknown>).values());
-
-      return {
-        _type_: 'set',
-        value: values.map((value) => this.formatToStore(value)),
-      };
-    }
-
-    if (isDate(obj)) {
-      return {
-        _type_: 'date',
-        value: obj.toISOString(),
-      };
-    }
-
-    const keys = Object.keys(obj as Record<string, unknown>);
-
-    return keys.reduce((acumulator, key) => {
-      const value = obj[key as keyof T];
-
-      return ({
-        ...acumulator,
-        [key]: this.formatToStore(value),
-      });
-    }, {});
   }
 
   protected localStorageSetItem(valueToStore: string): void {
@@ -167,21 +78,22 @@ export class GlobalStore<
 
     this.storedStateItem = this.state;
 
-    const valueToStore = this.formatToStore(cloneDeep(this.state));
+    const valueToStore = formatToStore(this.state);
 
     this.localStorageSetItem(JSON.stringify(valueToStore));
   }
 
   protected getPersistStoreValue = (): IState => this.getStoreItem();
 
-  protected getStateCopy = (): IState => Object.freeze(cloneDeep(this.state));
+  protected getStateCopy = (): IState => Object.freeze(clone(this.state));
 
   /**
    * Returns a global hook that will share information across components by subscribing them to a specific store.
    * @return [currentState, GlobalState.IHookResult<IState, IActions, IApi>]
    */
   public getHook = <
-    IApi extends IGlobalStore.IActionCollectionResult<IState, IActions> | null = IActions extends null ? null : IGlobalStore.IActionCollectionResult<IState, IActions>
+    IApi extends IGlobalStore.IActionCollectionResult<IState, IActions>
+    | null = IActions extends null ? null : IGlobalStore.IActionCollectionResult<IState, IActions>
   >() => (): [
     IState,
     IGlobalStore.IHookResult<IState, IActions, IApi>,
@@ -209,7 +121,8 @@ export class GlobalStore<
    * @return [currentState, GlobalState.IHookResult<IState, IActions, IApi>]
    */
   public getHookDecoupled = <
-    IApi extends IGlobalStore.IActionCollectionResult<IState, IActions> | null = IActions extends null ? null : IGlobalStore.IActionCollectionResult<IState, IActions>
+    IApi extends IGlobalStore.IActionCollectionResult<IState, IActions>
+    | null = IActions extends null ? null : IGlobalStore.IActionCollectionResult<IState, IActions>
   > (): [
     () => IState,
     IGlobalStore.IHookResult<IState, IActions, IApi>,
