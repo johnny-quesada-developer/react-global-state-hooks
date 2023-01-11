@@ -145,7 +145,7 @@ export class GlobalStore<
     } else if (this.persistStoreAs) {
       this._stateOrchestrator = this.globalSetterToPersistStoreAsync as IGlobalStore.StateSetter<IState>;
     } else {
-      this._stateOrchestrator = this.globalSetterAsync as IGlobalStore.StateSetter<IState>;
+      this._stateOrchestrator = this.globalSetter as IGlobalStore.StateSetter<IState>;
     }
 
     return this._stateOrchestrator as IGlobalStore.StateSetter<IState> | IGlobalStore.IActionCollectionResult<IState, IActions>;
@@ -156,7 +156,7 @@ export class GlobalStore<
    */
   protected static batchedUpdates: [() => void, object, object][] = [];
 
-  protected globalSetter = (setter: Partial<IState> | ((state: IState) => Partial<IState>), callback: () => void) => {
+  protected globalSetter = (setter: Partial<IState> | ((state: IState) => Partial<IState>)) => {
     const partialState = typeof setter === 'function' ? setter(this.getStateCopy()) : setter;
     let newState = isPrimitive(partialState) || Array.isArray(partialState)
       ? partialState : { ...this.state, ...partialState };
@@ -179,39 +179,31 @@ export class GlobalStore<
     // batch store updates
     GlobalStore.batchedUpdates.push([() => this.subscribers.forEach((updateChild) => updateChild(newState)), this, newState]);
 
-    GlobalStore.ExecutePendingBatchesCallbacks.push(callback);
     GlobalStore.ExecutePendingBatches();
   };
 
-  protected globalSetterAsync =
-    async (setter: Partial<IState> | ((state: IState) => Partial<IState>)):
-    Promise<void> => new Promise((resolve) => this.globalSetter(setter, () => resolve()));
-
   protected globalSetterToPersistStoreAsync = async (setter: Partial<IState> | ((state: IState) => Partial<IState>)): Promise<void> => {
-    await this.globalSetterAsync(setter);
+    this.globalSetter(setter);
     this.setStoreItem();
   };
 
-  static ExecutePendingBatchesCallbacks: (() => void)[] = [];
-
   // avoid multiples calls to batchedUpdates
-  static ExecutePendingBatches = debounce(() => {
+  static ExecutePendingBatches = () => {
     const reactBatchedUpdates = ReactDOM.unstable_batchedUpdates || ((mock: () => void) => mock());
 
     reactBatchedUpdates(() => {
       GlobalStore.batchedUpdates.forEach(([execute]) => {
         execute();
       });
+
       GlobalStore.batchedUpdates = [];
-      GlobalStore.ExecutePendingBatchesCallbacks.forEach((callback) => callback());
-      GlobalStore.ExecutePendingBatchesCallbacks = [];
     });
-  }, 0);
+  }
 
   protected getActions = <IApi extends IGlobalStore.IActionCollectionResult<IState, IGlobalStore.IActionCollectionConfig<IState>>>(): IApi => {
     const actions = this.actions as IGlobalStore.IActionCollectionConfig<IState>;
     // Setter is allways async because of the render batch
-    const setter = this.isPersistStore ? this.globalSetterToPersistStoreAsync : this.globalSetterAsync;
+    const setter = this.isPersistStore ? this.globalSetterToPersistStoreAsync : this.globalSetter;
 
     return Object.keys(actions).reduce(
       (accumulator, key) => ({

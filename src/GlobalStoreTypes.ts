@@ -4,7 +4,7 @@
 */
 export type StateSetter<IState> = (
   setter: Partial<IState> | ((state: IState) => Partial<IState>)
-) => Promise<void>;
+) => void;
 
 /**
 * This is the structure required by the API actions in order to be able to capture action parameters and inject state setter into actions.
