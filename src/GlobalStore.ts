@@ -1,231 +1,186 @@
-import * as IGlobalStore from './GlobalStoreTypes';
 import ReactDOM from 'react-dom';
+
+export * from 'react-native-global-state-hooks';
+
 import {
-  isPrimitive,
-  formatToStore,
   formatFromStore,
-  clone,
-} from 'json-storage-formatter';
+  formatToStore,
+  GlobalStore as GlobalStoreBase,
+} from 'react-native-global-state-hooks';
 
-import { useEffect, useState } from 'react';
+import {
+  ActionCollectionConfig,
+  GlobalStoreConfig,
+  StateConfigCallbackParam,
+  StateSetter,
+} from './GlobalStore.types';
 
-export type IValueWithMedaData = {
-  _type_?: 'map' | 'set' | 'date';
-  value?: unknown;
-};
-
-export const debounce = <T extends Function>(callback: T, wait = 300): T => {
-  let timer: NodeJS.Timeout;
-
-  return ((...args: unknown[]) => {
-    clearTimeout(timer);
-
-    timer = setTimeout(() => {
-      callback(...args);
-    }, wait);
-  }) as unknown as T;
-};
-
-/**
-* This is a class to create global-store objects
-* @template IState
-* @param {IState} state - Initial state,
-* @template IActions
-* @param {IActions} actions - An specific api to restrict the use of the state,
-* this will disable the default return of the state-setter of the hook, and instead will return the API
-* @param {string} persistStoreAs - A name if you want to persist the state of the store in localstorage
-* */
 export class GlobalStore<
-  IState,
-  IActions extends IGlobalStore.IActionCollectionConfig<IState> | null = null
-> implements IGlobalStore.IGlobalState<IState, IActions> {
-
-  protected subscribers: IGlobalStore.StateSetter<IState>[] = [];
-
-  public get isPersistStore() {
-    return !!this.persistStoreAs;
-  }
-
-  constructor(protected state: IState, protected actions: IActions = null as IActions, protected persistStoreAs: string | null = null) {}
-
-  private storedStateItem: IState | undefined = undefined;
-
-  protected localStorageGetItem(): string | null {
-    return localStorage.getItem(this.persistStoreAs as string);
-  }
-
-  protected getStoreItem(): IState {
-    if (this.storedStateItem !== undefined) return this.storedStateItem;
-
-    const item = this.localStorageGetItem();
-
-    if (item) {
-      const value = JSON.parse(item) as IState;
-      const newState = formatFromStore(value) as IState;
-
-      this.state = newState;
-    }
-
-    return this.state;
-  }
-
-  protected localStorageSetItem(valueToStore: string): void {
-    localStorage.setItem(this.persistStoreAs as string, valueToStore);
-  }
-
-  protected setStoreItem(): void {
-    if (this.storedStateItem === this.state) return;
-
-    this.storedStateItem = this.state;
-
-    const valueToStore = formatToStore(this.state);
-
-    this.localStorageSetItem(JSON.stringify(valueToStore));
-  }
-
-  protected getPersistStoreValue = (): IState => this.getStoreItem();
-
-  protected getStateCopy = (): IState => Object.freeze(clone(this.state));
+  TState,
+  TMetadata = null,
+  TStateSetter extends
+    | ActionCollectionConfig<TState, TMetadata>
+    | StateSetter<TState>
+    | null = StateSetter<TState>
+> extends GlobalStoreBase<TState, TMetadata, TStateSetter> {
+  /**
+   * additional configuration for the store
+   * @template {TState} TState - The type of the state object
+   * @template {TMetadata} TMetadata - The type of the metadata object (optional) (default: null) no reactive information set to share with the subscribers
+   * @template {TStateSetter} TStateSetter - The type of the setterConfig object (optional) (default: null) if a configuration is passed, the hook will return an object with the actions then all the store manipulation will be done through the actions
+   * @property {GlobalStoreConfig<TState, TMetadata, TStateSetter>} config.metadata - The metadata to pass to the callbacks (optional) (default: null)
+   * @property {GlobalStoreConfig<TState, TMetadata, TStateSetter>} config.onInit - The callback to execute when the store is initialized (optional) (default: null)
+   * @property {GlobalStoreConfig<TState, TMetadata, TStateSetter>} config.onStateChanged - The callback to execute when the state is changed (optional) (default: null)
+   * @property {GlobalStoreConfig<TState, TMetadata, TStateSetter>} config.onSubscribed - The callback to execute when a component is subscribed to the store (optional) (default: null)
+   * @property {GlobalStoreConfig<TState, TMetadata, TStateSetter>} config.computePreventStateChange - The callback to execute when the state is changed to compute if the state change should be prevented (optional) (default: null)
+   * @property {GlobalStoreConfig<TState, TMetadata, TStateSetter>} config.localStorageKey - The key to use to store the state in the localStorage (optional) (default: null) if not null the state will be stored in the localStorage
+   */
+  protected config: GlobalStoreConfig<TState, TMetadata, TStateSetter>;
 
   /**
-   * Returns a global hook that will share information across components by subscribing them to a specific store.
-   * @return [currentState, GlobalState.IHookResult<IState, IActions, IApi>]
-   */
-  public getHook = <
-    IApi extends IGlobalStore.IActionCollectionResult<IState, IActions>
-    | null = IActions extends null ? null : IGlobalStore.IActionCollectionResult<IState, IActions>
-  >() => (): [
-    IState,
-    IGlobalStore.IHookResult<IState, IActions, IApi>,
-  ] => {
-    const [value, setter] = useState(this.state);
-    const valueWrapper: IState = this.isPersistStore ? this.getPersistStoreValue() : value;
+   * Create a new instance of the GlobalStore
+   * @param {TState} state - The initial state
+   * @param {TStateSetter} setterConfig - The actions configuration object (optional) (default: null) if not null the store manipulation will be done through the actions
+   * @param {GlobalStoreConfig<TState, TMetadata>} config - The configuration object (optional) (default: { metadata: null })
+   * @param {StateConfigCallbackParam<TState, TMetadata>} config.metadata - The metadata to pass to the callbacks (optional) (default: null)
+   * @param {StateConfigCallbackParam<TState, TMetadata>} config.onInit - The callback to execute when the store is initialized (optional) (default: null)
+   * @param {StateConfigCallbackParam<TState, TMetadata>} config.onStateChanged - The callback to execute when the state is changed (optional) (default: null)
+   * @param {StateConfigCallbackParam<TState, TMetadata>} config.onSubscribed - The callback to execute when a subscriber is added (optional) (default: null)
+   * @param {StateConfigCallbackParam<TState, TMetadata>} config.computePreventStateChange - The callback to execute when the state is changed to compute if the state change should be prevented (optional) (default: null)
+   * @param {StateConfigCallbackParam<TState, TMetadata>} config.localStorageKey - The key to use to store the state in the localStorage (optional) (default: null) if not null the state will be stored in the localStorage
+   * */
+  constructor(
+    state: TState,
+    {
+      onInit: onInitConfig,
+      ...config
+    }: GlobalStoreConfig<TState, TMetadata, TStateSetter> = {},
+    setterConfig: TStateSetter | null = null
+  ) {
+    debugger;
 
-    useEffect(() => {
-      this.subscribers.push(setter as IGlobalStore.StateSetter<IState>);
+    const decrypt =
+      config?.decrypt === undefined ? config?.encrypt ?? true : config?.decrypt;
 
-      return () => {
-        this.subscribers = this.subscribers.filter((hook) => setter !== hook);
-      };
-    }, []);
-
-    return [
-      valueWrapper as IState,
-      this.stateOrchestrator as IGlobalStore.IHookResult<IState, IActions, IApi>,
-    ];
-  };
-
-  /**
-   * This is an access to the subscribers queue and to the current state of a specific store...
-   * THIS IS NOT A REACT-HOOK, so you could use it everywhere example other hooks, and services.
-   * @return [currentState, GlobalState.IHookResult<IState, IActions, IApi>]
-   */
-  public getHookDecoupled = <
-    IApi extends IGlobalStore.IActionCollectionResult<IState, IActions>
-    | null = IActions extends null ? null : IGlobalStore.IActionCollectionResult<IState, IActions>
-  > (): [
-    () => IState,
-    IGlobalStore.IHookResult<IState, IActions, IApi>,
-  ] => {
-    const valueWrapper: () => IState = this.isPersistStore ? () => this.getPersistStoreValue() : () => this.state;
-
-    return [
-      valueWrapper,
-      this.stateOrchestrator as IGlobalStore.IHookResult<IState, IActions, IApi>,
-    ];
-  };
-
-  private _stateOrchestrator: IGlobalStore.StateSetter<IState> | IGlobalStore.IActionCollectionResult<IState, IActions> | null = null;
-
-  protected get stateOrchestrator(): IGlobalStore.StateSetter<IState> | IGlobalStore.IActionCollectionResult<IState, IActions> {
-    if (this._stateOrchestrator) return this._stateOrchestrator;
-
-    if (this.actions) {
-      this._stateOrchestrator = this.getActions() as IGlobalStore.IActionCollectionResult<IState, IActions>;
-    } else if (this.persistStoreAs) {
-      this._stateOrchestrator = this.globalSetterToPersistStoreAsync as IGlobalStore.StateSetter<IState>;
-    } else {
-      this._stateOrchestrator = this.globalSetter as IGlobalStore.StateSetter<IState>;
-    }
-
-    return this._stateOrchestrator as IGlobalStore.StateSetter<IState> | IGlobalStore.IActionCollectionResult<IState, IActions>;
-  }
-
-  /**
-   **  [subscriber-update-callback, hook, newState]
-   */
-  protected static batchedUpdates: [() => void, object, object][] = [];
-
-  protected globalSetter = (setter: Partial<IState> | ((state: IState) => Partial<IState>)) => {
-    const partialState = typeof setter === 'function' ? setter(this.getStateCopy()) : setter;
-    let newState = isPrimitive(partialState) || Array.isArray(partialState)
-      ? partialState : { ...this.state, ...partialState };
-
-    // avoid perform multiple update batches by accumulating state changes of the same hook
-    GlobalStore.batchedUpdates = GlobalStore.batchedUpdates.filter(([, hook, previousState]) => {
-      const isSameHook = hook === this;
-
-      if (isSameHook) {
-        // eslint-disable-next-line no-console
-        console.warn('You should try avoid call the same state-setter multiple times at one execution line');
-        newState = isPrimitive(newState) || Array.isArray(partialState)
-          ? newState : { ...previousState, ...newState };
-      }
-      return !isSameHook;
-    });
-
-    this.state = newState as IState;
-
-    // batch store updates
-    GlobalStore.batchedUpdates.push([() => this.subscribers.forEach((updateChild) => updateChild(newState)), this, newState]);
-
-    GlobalStore.ExecutePendingBatches();
-  };
-
-  protected globalSetterToPersistStoreAsync = async (setter: Partial<IState> | ((state: IState) => Partial<IState>)): Promise<void> => {
-    this.globalSetter(setter);
-    this.setStoreItem();
-  };
-
-  // avoid multiples calls to batchedUpdates
-  static ExecutePendingBatches = () => {
-    const reactBatchedUpdates = ReactDOM.unstable_batchedUpdates || ((mock: () => void) => mock());
-
-    reactBatchedUpdates(() => {
-      GlobalStore.batchedUpdates.forEach(([execute]) => {
-        execute();
-      });
-
-      GlobalStore.batchedUpdates = [];
-    });
-  }
-
-  protected getActions = <IApi extends IGlobalStore.IActionCollectionResult<IState, IGlobalStore.IActionCollectionConfig<IState>>>(): IApi => {
-    const actions = this.actions as IGlobalStore.IActionCollectionConfig<IState>;
-    // Setter is allways async because of the render batch
-    const setter = this.isPersistStore ? this.globalSetterToPersistStoreAsync : this.globalSetter;
-
-    return Object.keys(actions).reduce(
-      (accumulator, key) => ({
-        ...accumulator,
-        [key]: async (...parameres: unknown[]) => {
-          let promise;
-          const setterWrapper: IGlobalStore.StateSetter<IState> = (value: Partial<IState> | ((state: IState) => Partial<IState>)) => {
-            promise = setter(value);
-            return promise;
-          };
-          const result = actions[key](...parameres)(setterWrapper, this.getStateCopy());
-          const resultPromise = Promise.resolve(result) === result ? result : Promise.resolve();
-
-          await Promise.all([promise, resultPromise]);
-
-          return result;
-        },
-      }),
-      {} as IApi,
+    super(
+      state,
+      {
+        metadata: null,
+        encrypt: true,
+        decrypt,
+        ...(config ?? {}),
+      },
+      setterConfig as TStateSetter
     );
+
+    const parameters = this.getConfigCallbackParam({});
+
+    this.onInit(parameters);
+    onInitConfig?.(parameters);
+  }
+
+  protected setLocalStorageValue = () => {
+    const { localStorageKey } = this.config;
+
+    debugger;
+    let stateToStore = formatToStore(this.getStateClone(), {
+      stringify: true,
+    });
+
+    const { encrypt } = this.config;
+
+    if (encrypt) {
+      const isEncryptCallback = typeof encrypt === 'function';
+
+      const encryptCallback = (
+        isEncryptCallback ? encrypt : (value: string) => btoa(value)
+      ) as (value: string) => string;
+
+      stateToStore = encryptCallback(stateToStore);
+    }
+
+    localStorage.setItem(localStorageKey, stateToStore);
   };
 
-}
+  protected getLocalStorageValue = () => {
+    const { localStorageKey } = this.config;
 
-export default GlobalStore;
+    debugger;
+    let storedState: string = localStorage.getItem(localStorageKey);
+
+    const { decrypt } = this.config;
+
+    if (decrypt) {
+      const isDecryptCallback = typeof decrypt === 'function';
+
+      const decryptCallback = (
+        isDecryptCallback ? decrypt : (value: string) => atob(value)
+      ) as (value: string) => string;
+
+      storedState = decryptCallback(storedState);
+    }
+
+    return storedState;
+  };
+
+  /**
+   * This method will be called once the store is created after the constructor,
+   * this method is different from the onInit of the confg property and it won't be overriden
+   */
+  protected onInit = async ({
+    setState,
+  }: StateConfigCallbackParam<TState, TMetadata, TStateSetter>) => {
+    const { localStorageKey } = this.config;
+    if (!localStorageKey) return;
+
+    const storedState: string = this.getLocalStorageValue();
+
+    if (storedState === null) {
+      this.setLocalStorageValue();
+
+      return;
+    }
+
+    const jsonParsed = JSON.parse(storedState);
+    const state = formatFromStore<TState>(jsonParsed);
+
+    setState(state);
+  };
+
+  protected onStateChanged = () => {
+    this.setLocalStorageValue();
+  };
+
+  /**
+   * set the state and update all the subscribers,
+   * In react web ReacDom allows to batch the state updates, this method will use the unstable_batchedUpdates method if it exists
+   * @param {StateSetter<TState>} setter - The setter function or the value to set
+   * @param {React.Dispatch<React.SetStateAction<TState>>} invokerSetState - The setState function of the component that invoked the state change (optional) (default: null) this is used to updated first the component that invoked the state change
+   * */
+  protected setState = ({
+    invokerSetState,
+    state,
+  }: {
+    state: TState;
+    invokerSetState?: React.Dispatch<React.SetStateAction<TState>>;
+  }) => {
+    // update the state
+    this.state = state;
+
+    const unstable_batchedUpdates =
+      ReactDOM.unstable_batchedUpdates ||
+      ((callback: () => void) => callback());
+
+    unstable_batchedUpdates(() => {
+      // execute first the callback of the component that invoked the state change
+      invokerSetState?.(state);
+
+      // update all the subscribers
+      this.subscribers.forEach((setState) => {
+        if (setState === invokerSetState) return;
+
+        setState(state);
+      });
+    });
+  };
+}

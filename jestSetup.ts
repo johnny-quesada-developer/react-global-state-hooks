@@ -1,43 +1,65 @@
-/* eslint-disable max-nested-callbacks */
-/* eslint-disable camelcase */
-import renderer from 'react-test-renderer';
-import ReactDom from 'react-dom';
-import GlobalStore, { debounce } from './src/GlobalStore';
-import * as Stage3All from './@tests/Stage3';
-import * as Stage2All from './@tests/Stage2';
-import * as Stage1All from './@tests/Stage1';
+import React from 'react';
 
 beforeEach(() => {
-  const globalAny = global as any;
+  spyOn(React, 'useState').and.callFake(((initialState) => {
+    const value =
+      typeof initialState === 'function' ? initialState() : initialState;
 
-  globalAny.localStorage = {
-    getItem: jest.fn(() => 0),
-    setItem: jest.fn(),
+    const setState = jest.fn(
+      (() => {
+        let state;
+
+        return jest.fn((setter) => {
+          const newState =
+            typeof setter === 'function' ? setter(state) : setter;
+
+          state = newState;
+        });
+      })()
+    );
+
+    return [value, setState];
+  }) as any);
+
+  const mockUseEffect = jest.fn((callback) => {
+    const value = callback();
+
+    return value;
+  });
+
+  spyOn(React, 'useEffect').and.callFake(mockUseEffect);
+
+  const dictionary = new Map<string, string>();
+
+  const localStorageMock = {
+    getItem: jest.fn((key) => {
+      return dictionary.get(key) ?? null;
+    }),
+    setItem: jest.fn((key, value) => {
+      const jsonValue = value.toString();
+
+      dictionary.set(key, jsonValue);
+    }),
   };
 
-  jest.spyOn(Stage1All, 'default');
-  jest.spyOn(Stage2All, 'default');
-  jest.spyOn(Stage3All, 'default');
+  (global as any).localStorage = localStorageMock;
 
-  const ExecutePendingBatches = debounce(() => {
-    const GlobalStoreAny: any = GlobalStore;
+  (global as any).atob = jest.fn((value) => {
+    if (value === null) return '\x9Eée';
 
-    renderer.act(() => ReactDom.unstable_batchedUpdates(() => {
-      GlobalStoreAny.batchedUpdates.forEach(([execute]: [() => void]) => {
-        execute();
-      });
-      GlobalStoreAny.batchedUpdates = [];
-      GlobalStore.ExecutePendingBatchesCallbacks.forEach((callback) => callback());
-      GlobalStore.ExecutePendingBatchesCallbacks = [];
-    }));
-  }, 0);
+    return Buffer.from(value, 'base64').toString('ascii');
+  });
 
-  jest.spyOn(GlobalStore, 'ExecutePendingBatches').mockImplementation(ExecutePendingBatches);
+  (global as any).btoa = jest.fn((value) => {
+    debugger;
+    return Buffer.from(value).toString('base64');
+  });
 });
 
 afterEach(() => {
   jest.restoreAllMocks();
   jest.clearAllMocks();
+  jest.clearAllTimers();
 });
 
 export {};
