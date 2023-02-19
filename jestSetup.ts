@@ -51,7 +51,6 @@ beforeEach(() => {
   });
 
   (global as any).btoa = jest.fn((value) => {
-    debugger;
     return Buffer.from(value).toString('base64');
   });
 });

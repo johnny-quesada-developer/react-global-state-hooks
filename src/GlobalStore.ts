@@ -1,6 +1,6 @@
-import ReactDOM from 'react-dom';
-
 export * from 'react-native-global-state-hooks';
+
+import ReactDOM from 'react-dom';
 
 import {
   formatFromStore,
@@ -57,8 +57,6 @@ export class GlobalStore<
     }: GlobalStoreConfig<TState, TMetadata, TStateSetter> = {},
     setterConfig: TStateSetter | null = null
   ) {
-    debugger;
-
     const decrypt =
       config?.decrypt === undefined ? config?.encrypt ?? true : config?.decrypt;
 
@@ -82,7 +80,6 @@ export class GlobalStore<
   protected setLocalStorageValue = () => {
     const { localStorageKey } = this.config;
 
-    debugger;
     let stateToStore = formatToStore(this.getStateClone(), {
       stringify: true,
     });
@@ -105,12 +102,11 @@ export class GlobalStore<
   protected getLocalStorageValue = () => {
     const { localStorageKey } = this.config;
 
-    debugger;
     let storedState: string = localStorage.getItem(localStorageKey);
 
     const { decrypt } = this.config;
 
-    if (decrypt) {
+    if (decrypt && storedState) {
       const isDecryptCallback = typeof decrypt === 'function';
 
       const decryptCallback = (
