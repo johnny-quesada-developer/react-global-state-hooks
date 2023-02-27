@@ -2,7 +2,7 @@
 
 This is a package to easily handling global-state across your react components
 
-This utility uses the **useState** hook within a subscription pattern and **HOFs** to create a more intuitive, atomic and easy way of sharing state between components
+This utility uses the **useState** hook within a subscription pattern and **HOFs** to create a more intuitive, atomic and easy way of sharing state between components... You can see an introduction video [here!](https://www.youtube.com/watch?v=WfoMhO1zZ04)
 
 ...
 
