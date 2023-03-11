@@ -1,5 +1,3 @@
-export * from 'react-native-global-state-hooks';
-
 import ReactDOM from 'react-dom';
 
 import {
