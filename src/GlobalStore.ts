@@ -8,6 +8,7 @@ import {
 
 import {
   ActionCollectionConfig,
+  ActionCollectionResult,
   GlobalStoreConfig,
   StateConfigCallbackParam,
   StateSetter,
@@ -21,6 +22,30 @@ export class GlobalStore<
     | StateSetter<TState>
     | null = StateSetter<TState>
 > extends GlobalStoreBase<TState, TMetadata, TStateSetter> {
+  /**
+   * Returns a custom hook that allows to handle a global state
+   * @returns {[TState, TStateSetter, TMetadata]} - The state, the state setter or the actions map, the metadata
+   * */
+  public getHook: () => () => [
+    TState,
+    TStateSetter extends StateSetter<TState>
+      ? StateSetter<TState>
+      : ActionCollectionResult<TState, TMetadata, TStateSetter>,
+    TMetadata
+  ];
+
+  /**
+   * Returns an array with the a function to get the state, the state setter or the actions map, and a function to get the metadata
+   * @returns {[() => TState, TStateSetter, () => TMetadata]} - The state getter, the state setter or the actions map, the metadata getter
+   * */
+  public getHookDecoupled: () => [
+    () => TState,
+    TStateSetter extends StateSetter<TState>
+      ? StateSetter<TState>
+      : ActionCollectionResult<TState, TMetadata, TStateSetter>,
+    () => TMetadata
+  ];
+
   /**
    * additional configuration for the store
    * @template {TState} TState - The type of the state object
