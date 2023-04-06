@@ -74,14 +74,15 @@ export class GlobalStore<
    * */
   constructor(
     state: TState,
-    {
-      onInit: onInitConfig,
-      ...config
-    }: GlobalStoreConfig<TState, TMetadata, TStateSetter> = {},
+    config: GlobalStoreConfig<TState, TMetadata, TStateSetter>,
     setterConfig: TStateSetter | null = null
   ) {
+    const { onInit: onInitConfig, ...$config } = config ?? {};
+
     const decrypt =
-      config?.decrypt === undefined ? config?.encrypt ?? true : config?.decrypt;
+      $config?.decrypt === undefined
+        ? $config?.encrypt ?? true
+        : $config?.decrypt;
 
     super(
       state,
@@ -89,7 +90,7 @@ export class GlobalStore<
         metadata: null,
         encrypt: true,
         decrypt,
-        ...(config ?? {}),
+        ...($config ?? {}),
       },
       setterConfig as TStateSetter
     );
