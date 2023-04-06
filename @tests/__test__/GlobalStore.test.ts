@@ -1,6 +1,6 @@
 import { GlobalStore } from '../../src/GlobalStore';
 import { useState, useEffect } from 'react';
-import { formatFromStore } from 'json-storage-formatter';
+import { formatFromStore } from 'react-native-global-state-hooks';
 
 describe('GlobalStore Basic', () => {
   it('should be able to create a new instance with state', () => {
