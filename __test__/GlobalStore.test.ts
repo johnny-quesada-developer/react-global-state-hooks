@@ -1,12 +1,13 @@
-import { GlobalStore } from '../../src/GlobalStore';
+import { GlobalStore, formatFromStore } from '../src';
 import { useState, useEffect } from 'react';
-import { formatFromStore } from 'react-native-global-state-hooks';
 
 describe('GlobalStore Basic', () => {
   it('should be able to create a new instance with state', () => {
     const stateValue = 'test';
     const store = new GlobalStore(stateValue, {
-      encrypt: false,
+      localStorage: {
+        encrypt: false,
+      },
     });
 
     expect(store).toBeInstanceOf(GlobalStore);
@@ -16,7 +17,9 @@ describe('GlobalStore Basic', () => {
   it('state setter should be a function', () => {
     const stateValue = 'test';
     const store = new GlobalStore(stateValue, {
-      encrypt: false,
+      localStorage: {
+        encrypt: false,
+      },
     });
 
     const [, setState] = store.getHookDecoupled();
@@ -27,8 +30,10 @@ describe('GlobalStore Basic', () => {
   it('should be able to get the state', () => {
     const stateValue = 1;
     const store = new GlobalStore(stateValue, {
-      // by default, the state is encrypted to base64, but you can disable it, or use a custom encryptor
-      encrypt: false,
+      localStorage: {
+        // by default, the state is encrypted to base64, but you can disable it, or use a custom encryptor
+        encrypt: false,
+      },
     });
 
     const [getState] = store.getHookDecoupled();
@@ -39,7 +44,9 @@ describe('GlobalStore Basic', () => {
   it('should be able to set the state', () => {
     const stateValue = 'test';
     const store = new GlobalStore(stateValue, {
-      encrypt: false,
+      localStorage: {
+        encrypt: false,
+      },
     });
 
     const [, setState] = store.getHookDecoupled();
@@ -49,12 +56,14 @@ describe('GlobalStore Basic', () => {
     expect((store as unknown as { state: unknown }).state).toBe('test2');
   });
 
-  it('should notifiy initialize all subscribers of the store', () => {
+  it('should notify initialize all subscribers of the store', () => {
     const stateValue = 'test';
     const stateValue2 = 'test2';
 
     const store = new GlobalStore(stateValue, {
-      encrypt: false,
+      localStorage: {
+        encrypt: false,
+      },
     });
 
     const useHook = store.getHook();
@@ -63,7 +72,7 @@ describe('GlobalStore Basic', () => {
     useHook();
     useHook();
 
-    const [setter1, setter2] = store.subscribers;
+    const [[setter1], [setter2]] = store.subscribers;
 
     setState(stateValue2);
 
@@ -81,8 +90,10 @@ describe('GlobalStore Persistence', () => {
     const stateValue = 'test';
 
     const store = new GlobalStore(stateValue, {
-      localStorageKey: 'key1',
-      encrypt: false,
+      localStorage: {
+        localStorageKey: 'key1',
+        encrypt: false,
+      },
     });
 
     const [getState] = store.getHookDecoupled();
@@ -100,8 +111,10 @@ describe('GlobalStore Persistence', () => {
     localStorage.setItem('key1', '"test"');
 
     const store = new GlobalStore('', {
-      localStorageKey: 'key1',
-      encrypt: false,
+      localStorage: {
+        localStorageKey: 'key1',
+        encrypt: false,
+      },
     });
 
     const [getState] = store.getHookDecoupled();
@@ -115,8 +128,10 @@ describe('GlobalStore Persistence', () => {
     const stateValue = new Set(['test', 'test2']);
 
     new GlobalStore(stateValue, {
-      localStorageKey: 'key1',
-      encrypt: false,
+      localStorage: {
+        localStorageKey: 'key1',
+        encrypt: false,
+      },
     });
 
     const storedItem = localStorage.getItem('key1');
@@ -135,8 +150,10 @@ describe('GlobalStore Persistence', () => {
     ]);
 
     new GlobalStore(stateValue, {
-      localStorageKey: 'key1',
-      encrypt: false,
+      localStorage: {
+        localStorageKey: 'key1',
+        encrypt: false,
+      },
     });
 
     const storedItem = localStorage.getItem('key1');
@@ -152,8 +169,10 @@ describe('GlobalStore Persistence', () => {
     const stateValue = new Date();
 
     new GlobalStore(stateValue, {
-      localStorageKey: 'key1',
-      encrypt: false,
+      localStorage: {
+        localStorageKey: 'key1',
+        encrypt: false,
+      },
     });
 
     const storedItem = localStorage.getItem('key1');

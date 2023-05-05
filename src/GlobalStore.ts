@@ -1,206 +1,143 @@
+import { GlobalStoreConfig } from './GlobalStore.types';
+import { getLocalStorageItem, setLocalStorageItem } from './GlobalStore.utils';
+
 import ReactDOM from 'react-dom';
 
 import {
-  formatFromStore,
-  formatToStore,
-  GlobalStore as GlobalStoreBase,
-} from 'react-native-global-state-hooks';
-
-import {
   ActionCollectionConfig,
-  ActionCollectionResult,
-  GlobalStoreConfig,
+  GlobalStoreAbstract,
+  SetStateCallback,
+  shallowCompare,
+  StateChangesParam,
   StateConfigCallbackParam,
   StateSetter,
-} from './GlobalStore.types';
+  SubscriberParameters,
+  SubscriptionCallback,
+} from 'react-native-global-state-hooks';
 
 export class GlobalStore<
   TState,
-  TMetadata = null,
+  TMetadata extends {
+    localStorageKey?: string;
+  } | null = null,
   TStateSetter extends
     | ActionCollectionConfig<TState, TMetadata>
-    | StateSetter<TState>
-    | null = StateSetter<TState>
-> extends GlobalStoreBase<TState, TMetadata, TStateSetter> {
-  /**
-   * Returns a custom hook that allows to handle a global state
-   * @returns {[TState, TStateSetter, TMetadata]} - The state, the state setter or the actions map, the metadata
-   * */
-  public getHook: () => () => [
-    TState,
-    TStateSetter extends StateSetter<TState>
-      ? StateSetter<TState>
-      : ActionCollectionResult<TState, TMetadata, TStateSetter>,
-    TMetadata
-  ];
-
-  /**
-   * Returns an array with the a function to get the state, the state setter or the actions map, and a function to get the metadata
-   * @returns {[() => TState, TStateSetter, () => TMetadata]} - The state getter, the state setter or the actions map, the metadata getter
-   * */
-  public getHookDecoupled: () => [
-    () => TState,
-    TStateSetter extends StateSetter<TState>
-      ? StateSetter<TState>
-      : ActionCollectionResult<TState, TMetadata, TStateSetter>,
-    () => TMetadata
-  ];
-
-  /**
-   * additional configuration for the store
-   * @template {TState} TState - The type of the state object
-   * @template {TMetadata} TMetadata - The type of the metadata object (optional) (default: null) no reactive information set to share with the subscribers
-   * @template {TStateSetter} TStateSetter - The type of the setterConfig object (optional) (default: null) if a configuration is passed, the hook will return an object with the actions then all the store manipulation will be done through the actions
-   * @property {GlobalStoreConfig<TState, TMetadata, TStateSetter>} config.metadata - The metadata to pass to the callbacks (optional) (default: null)
-   * @property {GlobalStoreConfig<TState, TMetadata, TStateSetter>} config.onInit - The callback to execute when the store is initialized (optional) (default: null)
-   * @property {GlobalStoreConfig<TState, TMetadata, TStateSetter>} config.onStateChanged - The callback to execute when the state is changed (optional) (default: null)
-   * @property {GlobalStoreConfig<TState, TMetadata, TStateSetter>} config.onSubscribed - The callback to execute when a component is subscribed to the store (optional) (default: null)
-   * @property {GlobalStoreConfig<TState, TMetadata, TStateSetter>} config.computePreventStateChange - The callback to execute when the state is changed to compute if the state change should be prevented (optional) (default: null)
-   * @property {GlobalStoreConfig<TState, TMetadata, TStateSetter>} config.localStorageKey - The key to use to store the state in the localStorage (optional) (default: null) if not null the state will be stored in the localStorage
-   */
+    | StateSetter<TState> = StateSetter<TState>
+> extends GlobalStoreAbstract<TState, TMetadata, NonNullable<TStateSetter>> {
   protected config: GlobalStoreConfig<TState, TMetadata, TStateSetter>;
 
-  /**
-   * Create a new instance of the GlobalStore
-   * @param {TState} state - The initial state
-   * @param {TStateSetter} setterConfig - The actions configuration object (optional) (default: null) if not null the store manipulation will be done through the actions
-   * @param {GlobalStoreConfig<TState, TMetadata>} config - The configuration object (optional) (default: { metadata: null })
-   * @param {StateConfigCallbackParam<TState, TMetadata>} config.metadata - The metadata to pass to the callbacks (optional) (default: null)
-   * @param {StateConfigCallbackParam<TState, TMetadata>} config.onInit - The callback to execute when the store is initialized (optional) (default: null)
-   * @param {StateConfigCallbackParam<TState, TMetadata>} config.onStateChanged - The callback to execute when the state is changed (optional) (default: null)
-   * @param {StateConfigCallbackParam<TState, TMetadata>} config.onSubscribed - The callback to execute when a subscriber is added (optional) (default: null)
-   * @param {StateConfigCallbackParam<TState, TMetadata>} config.computePreventStateChange - The callback to execute when the state is changed to compute if the state change should be prevented (optional) (default: null)
-   * @param {StateConfigCallbackParam<TState, TMetadata>} config.localStorageKey - The key to use to store the state in the localStorage (optional) (default: null) if not null the state will be stored in the localStorage
-   * */
   constructor(
     state: TState,
-    config: GlobalStoreConfig<TState, TMetadata, TStateSetter>,
-    setterConfig: TStateSetter | null = null
+    config: GlobalStoreConfig<TState, TMetadata, TStateSetter> = {},
+    actionsConfig: TStateSetter | null = null
   ) {
-    const { onInit: onInitConfig, ...$config } = config ?? {};
+    super(state, config, actionsConfig);
 
-    const decrypt =
-      $config?.decrypt === undefined
-        ? $config?.encrypt ?? true
-        : $config?.decrypt;
-
-    super(
-      state,
-      {
-        metadata: null,
-        encrypt: true,
-        decrypt,
-        ...($config ?? {}),
-      },
-      setterConfig as TStateSetter
-    );
-
-    const parameters = this.getConfigCallbackParam({});
-
-    this.onInit(parameters);
-    onInitConfig?.(parameters);
+    this.initialize();
   }
 
-  protected setLocalStorageValue = () => {
-    const { localStorageKey } = this.config;
-
-    let stateToStore = formatToStore(this.getStateClone(), {
-      stringify: true,
-    });
-
-    const { encrypt } = this.config;
-
-    if (encrypt) {
-      const isEncryptCallback = typeof encrypt === 'function';
-
-      const encryptCallback = (
-        isEncryptCallback ? encrypt : (value: string) => btoa(value)
-      ) as (value: string) => string;
-
-      stateToStore = encryptCallback(stateToStore);
-    }
-
-    localStorage.setItem(localStorageKey, stateToStore);
-  };
-
-  protected getLocalStorageValue = () => {
-    const { localStorageKey } = this.config;
-
-    let storedState: string = localStorage.getItem(localStorageKey);
-
-    const { decrypt } = this.config;
-
-    if (decrypt && storedState) {
-      const isDecryptCallback = typeof decrypt === 'function';
-
-      const decryptCallback = (
-        isDecryptCallback ? decrypt : (value: string) => atob(value)
-      ) as (value: string) => string;
-
-      storedState = decryptCallback(storedState);
-    }
-
-    return storedState;
-  };
-
-  /**
-   * This method will be called once the store is created after the constructor,
-   * this method is different from the onInit of the confg property and it won't be overriden
-   */
-  protected onInit = async ({
+  protected onInitialize = ({
     setState,
-  }: StateConfigCallbackParam<TState, TMetadata, TStateSetter>) => {
-    const { localStorageKey } = this.config;
+    getState,
+  }: StateConfigCallbackParam<TState, TMetadata>) => {
+    const localStorageKey = this.config?.localStorage?.localStorageKey;
+
     if (!localStorageKey) return;
 
-    const storedState: string = this.getLocalStorageValue();
+    const restored = getLocalStorageItem<TState>({
+      localStorageKey,
+      config: this.config,
+    });
 
-    if (storedState === null) {
-      this.setLocalStorageValue();
+    if (restored === null) {
+      const state = getState();
+
+      setLocalStorageItem({
+        item: state,
+        localStorageKey,
+        config: this.config,
+      });
 
       return;
     }
 
-    const jsonParsed = JSON.parse(storedState);
-    const state = formatFromStore<TState>(jsonParsed);
-
-    setState(state);
+    setState(restored);
   };
 
-  protected onStateChanged = () => {
-    this.setLocalStorageValue();
+  protected onChange = ({
+    getState,
+  }: StateChangesParam<TState, TMetadata, NonNullable<TStateSetter>>) => {
+    const localStorageKey = this.config?.localStorage?.localStorageKey;
+
+    setLocalStorageItem({
+      item: getState(),
+      localStorageKey,
+      config: this.config,
+    });
   };
 
   /**
-   * set the state and update all the subscribers,
-   * In react web ReacDom allows to batch the state updates, this method will use the unstable_batchedUpdates method if it exists
+   * set the state and update all the subscribers
    * @param {StateSetter<TState>} setter - The setter function or the value to set
-   * @param {React.Dispatch<React.SetStateAction<TState>>} invokerSetState - The setState function of the component that invoked the state change (optional) (default: null) this is used to updated first the component that invoked the state change
+   * @param {SetStateCallback} invokerSetState - The setState function of the component that invoked the state change (optional) (default: null) this is used to updated first the component that invoked the state change
    * */
   protected setState = ({
     invokerSetState,
     state,
+    forceUpdate,
   }: {
     state: TState;
-    invokerSetState?: React.Dispatch<React.SetStateAction<TState>>;
+    invokerSetState?: SetStateCallback;
+    forceUpdate: boolean;
   }) => {
-    // update the state
-    this.state = state;
+    // update the main state
+    this.stateWrapper = {
+      state,
+    };
 
     const unstable_batchedUpdates =
       ReactDOM.unstable_batchedUpdates ||
       ((callback: () => void) => callback());
 
     unstable_batchedUpdates(() => {
-      // execute first the callback of the component that invoked the state change
-      invokerSetState?.(state);
+      const executeSetState = (
+        setter: SubscriptionCallback,
+        parameters: SubscriberParameters<TState>
+      ) => {
+        const { selector, currentState, config } = parameters;
+
+        const compareCallback = (() => {
+          if (config?.isEqual || config?.isEqual === null) {
+            return config?.isEqual;
+          }
+
+          if (!selector) return null;
+
+          // shallow compare is added by default to the selectors unless the isEqual property is set
+          return shallowCompare;
+        })();
+
+        const newState = selector ? selector(state) : state;
+
+        if (!forceUpdate && compareCallback?.(currentState, newState)) return;
+
+        setter({ state: newState });
+      };
+
+      if (invokerSetState) {
+        const parameters = this.subscribers.get(invokerSetState);
+
+        executeSetState(invokerSetState, parameters);
+      }
 
       // update all the subscribers
-      this.subscribers.forEach((setState) => {
-        if (setState === invokerSetState) return;
+      Array.from(this.subscribers.entries()).forEach(
+        ([setState, parameters]) => {
+          if (setState === invokerSetState) return;
 
-        setState(state);
-      });
+          executeSetState(setState, parameters);
+        }
+      );
     });
   };
 }

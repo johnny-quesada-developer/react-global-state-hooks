@@ -21,17 +21,10 @@ beforeEach(() => {
     return [value, setState];
   }) as any);
 
-  const mockUseEffect = jest.fn((callback) => {
-    const value = callback();
-
-    return value;
-  });
-
-  spyOn(React, 'useEffect').and.callFake(mockUseEffect);
-
   const dictionary = new Map<string, string>();
 
   const localStorageMock = {
+    dictionary,
     getItem: jest.fn((key) => {
       return dictionary.get(key) ?? null;
     }),
@@ -53,6 +46,28 @@ beforeEach(() => {
   (global as any).btoa = jest.fn((value) => {
     return Buffer.from(value).toString('base64');
   });
+
+  let index = 0;
+  const map = new Map();
+
+  const mockMemo = jest.fn((callback) => {
+    index += 1;
+
+    const previous = map.get(index);
+    if (previous) return previous;
+
+    const value = callback();
+
+    map.set(index, value);
+
+    return value;
+  });
+
+  spyOn(React, 'useEffect').and.callFake(mockMemo);
+
+  spyOn(React, 'useLayoutEffect').and.callFake(mockMemo);
+
+  spyOn(React, 'useMemo').and.callFake(mockMemo);
 });
 
 afterEach(() => {

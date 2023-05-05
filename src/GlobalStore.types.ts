@@ -1,40 +1,29 @@
-import * as TGlobalStoreBase from 'react-native-global-state-hooks/lib/GlobalStore.types';
+import * as GlobalStoreBase from 'react-native-global-state-hooks';
 
-export type StateSetter<TState> = TGlobalStoreBase.StateSetter<TState>;
+/**
+ * Configuration of the local storage (optional)
+ */
+export type LocalStorageConfig = {
+  /**
+   * Local storage configuration
+   */
+  localStorage?: {
+    /**
+     * The key of the local storage
+     */
+    localStorageKey?: string;
 
-export type StateChanges<TState> = TGlobalStoreBase.StateChanges<TState>;
+    /**
+     * The function used to encrypt the local storage, it can be a custom function or a boolean value (true = atob)
+     */
+    encrypt?: boolean | ((value: string) => string);
 
-export type StoreTools<TState, TMetadata = null> = TGlobalStoreBase.StoreTools<
-  TState,
-  TMetadata
->;
-
-export interface ActionCollectionConfig<TState, TMetadata>
-  extends TGlobalStoreBase.ActionCollectionConfig<TState, TMetadata> {}
-
-export type ActionCollectionResult<
-  TState,
-  TMetadata,
-  TStateSetter extends
-    | ActionCollectionConfig<TState, TMetadata>
-    | StateSetter<TState> = StateSetter<TState>
-> = TGlobalStoreBase.ActionCollectionResult<TState, TMetadata, TStateSetter>;
-
-export type StateConfigCallbackParam<
-  TState,
-  TMetadata,
-  TStateSetter extends
-    | ActionCollectionConfig<TState, TMetadata>
-    | StateSetter<TState> = StateSetter<TState>
-> = TGlobalStoreBase.StateConfigCallbackParam<TState, TMetadata, TStateSetter>;
-
-export type StateChangesParam<
-  TState,
-  TMetadata,
-  TStateSetter extends
-    | ActionCollectionConfig<TState, TMetadata>
-    | StateSetter<TState> = StateSetter<TState>
-> = TGlobalStoreBase.StateChangesParam<TState, TMetadata, TStateSetter>;
+    /**
+     * The function used to decrypt the local storage, it can be a custom function or a boolean value (true = atob)
+     */
+    decrypt?: boolean | ((value: string) => string);
+  };
+};
 
 /**
  * Configuration of the store (optional) - if you don't need to use the store configuration you don't need to pass this parameter
@@ -50,10 +39,40 @@ export type GlobalStoreConfig<
   TState,
   TMetadata,
   TStateSetter extends
-    | TGlobalStoreBase.ActionCollectionConfig<TState, TMetadata>
-    | TGlobalStoreBase.StateSetter<TState> = TGlobalStoreBase.StateSetter<TState>
-> = TGlobalStoreBase.GlobalStoreConfig<TState, TMetadata, TStateSetter> & {
-  localStorageKey?: string;
-  encrypt?: boolean | ((value: string) => string);
-  decrypt?: boolean | ((value: string) => string);
-};
+    | GlobalStoreBase.ActionCollectionConfig<TState, TMetadata>
+    | GlobalStoreBase.StateSetter<TState> = GlobalStoreBase.StateSetter<TState>
+> = GlobalStoreBase.GlobalStoreConfig<TState, TMetadata, TStateSetter> &
+  LocalStorageConfig;
+
+/**
+ * Configuration of the state (optional) - if you don't need to use the state configuration you don't need to pass this parameter
+ */
+export type createStateConfig<
+  TState,
+  TMetadata,
+  TActions extends GlobalStoreBase.ActionCollectionConfig<
+    TState,
+    TMetadata
+  > | null = null
+> = GlobalStoreBase.createStateConfig<TState, TMetadata, TActions> &
+  LocalStorageConfig;
+
+/**
+ * @description
+ * Configuration of the custom global hook
+ */
+export type CustomGlobalHookParams<
+  TCustomConfig,
+  TState,
+  TMetadata,
+  TActions extends GlobalStoreBase.ActionCollectionConfig<
+    TState,
+    TMetadata
+  > | null
+> = GlobalStoreBase.CustomGlobalHookParams<
+  TCustomConfig,
+  TState,
+  TMetadata,
+  TActions
+> &
+  LocalStorageConfig;
