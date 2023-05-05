@@ -35,15 +35,15 @@ beforeEach(() => {
     }),
   };
 
-  (global as any).localStorage = localStorageMock;
+  (globalThis as any).localStorage = localStorageMock;
 
-  (global as any).atob = jest.fn((value) => {
+  (globalThis as any).atob = jest.fn((value) => {
     if (value === null) return '\x9Eée';
 
     return Buffer.from(value, 'base64').toString('ascii');
   });
 
-  (global as any).btoa = jest.fn((value) => {
+  (globalThis as any).btoa = jest.fn((value) => {
     return Buffer.from(value).toString('base64');
   });
 

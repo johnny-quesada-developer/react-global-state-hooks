@@ -1,17 +1,21 @@
-import { GlobalStoreConfig } from 'GlobalStore.types';
+import { GlobalStoreConfig } from './GlobalStore.types';
 
 import {
   formatFromStore,
   formatToStore,
 } from 'react-native-global-state-hooks';
 
-export const getLocalStorageItem = <T>({
+/**
+ * @description
+ * Get an item from local storage using the config provided.
+ */
+export const getLocalStorageItem = <T = any, TState = any, TMetadata = any>({
   config,
   localStorageKey,
 }: {
   localStorageKey: string;
-  config: GlobalStoreConfig<any, any>;
-}) => {
+  config: GlobalStoreConfig<TState, TMetadata>;
+}): T => {
   if (!localStorageKey) return null;
 
   const storedItem = localStorage.getItem(localStorageKey) as string;
@@ -36,15 +40,19 @@ export const getLocalStorageItem = <T>({
   return value;
 };
 
-export const setLocalStorageItem = <T>({
+/**
+ * @description
+ * Set an item to local storage using the config provided.
+ */
+export const setLocalStorageItem = <T, TState = any, TMetadata = any>({
   item,
   config,
   localStorageKey,
 }: {
   localStorageKey: string;
-  config: GlobalStoreConfig<any, any>;
+  config: GlobalStoreConfig<TState, TMetadata>;
   item: T;
-}) => {
+}): void => {
   if (!localStorageKey) return null;
 
   const json = formatToStore(item, {

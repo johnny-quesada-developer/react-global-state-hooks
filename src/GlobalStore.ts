@@ -17,9 +17,7 @@ import {
 
 export class GlobalStore<
   TState,
-  TMetadata extends {
-    localStorageKey?: string;
-  } | null = null,
+  TMetadata = null,
   TStateSetter extends
     | ActionCollectionConfig<TState, TMetadata>
     | StateSetter<TState> = StateSetter<TState>
@@ -40,7 +38,7 @@ export class GlobalStore<
     setState,
     getState,
   }: StateConfigCallbackParam<TState, TMetadata>) => {
-    const localStorageKey = this.config?.localStorage?.localStorageKey;
+    const localStorageKey = this.config?.localStorage?.key;
 
     if (!localStorageKey) return;
 
@@ -67,7 +65,7 @@ export class GlobalStore<
   protected onChange = ({
     getState,
   }: StateChangesParam<TState, TMetadata, NonNullable<TStateSetter>>) => {
-    const localStorageKey = this.config?.localStorage?.localStorageKey;
+    const localStorageKey = this.config?.localStorage?.key;
 
     setLocalStorageItem({
       item: getState(),

@@ -11,7 +11,7 @@ export type LocalStorageConfig = {
     /**
      * The key of the local storage
      */
-    localStorageKey?: string;
+    key?: string;
 
     /**
      * The function used to encrypt the local storage, it can be a custom function or a boolean value (true = atob)

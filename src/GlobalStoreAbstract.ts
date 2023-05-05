@@ -6,7 +6,7 @@ import {
 } from 'react-native-global-state-hooks';
 
 import { GlobalStore } from './GlobalStore';
-import { GlobalStoreConfig } from 'GlobalStore.types';
+import { GlobalStoreConfig } from './GlobalStore.types';
 
 /**
  * @description
