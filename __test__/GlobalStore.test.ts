@@ -80,13 +80,14 @@ describe('GlobalStore Basic', () => {
     useHook();
     useHook();
 
-    const [[setter1], [setter2]] = store.subscribers;
+    const [[_, { callback: setter1 }], [__, { callback: setter2 }]] =
+      store.subscribers;
 
     setState(stateValue2);
 
     expect(getState()).toBe(stateValue2);
     expect(useState).toHaveBeenCalledTimes(2);
-    expect(useEffect).toHaveBeenCalledTimes(4);
+    expect(useEffect).toHaveBeenCalledTimes(6);
 
     expect(setter1).toBeCalledTimes(1);
     expect(setter2).toBeCalledTimes(1);
@@ -309,13 +310,14 @@ describe('GlobalStore Basic', () => {
     useHook();
     useHook();
 
-    const [[setter1], [setter2]] = Array.from(store.subscribers.entries());
+    const [[_, { callback: setter1 }], [__, { callback: setter2 }]] =
+      store.subscribers;
 
     setState(stateValue2);
 
     expect(getState()).toBe(stateValue2);
     expect(useState).toHaveBeenCalledTimes(2);
-    expect(useEffect).toHaveBeenCalledTimes(4);
+    expect(useEffect).toHaveBeenCalledTimes(6);
 
     expect(setter1).toBeCalledTimes(1);
     expect(setter2).toBeCalledTimes(1);
@@ -363,11 +365,12 @@ describe('GlobalStore with actions', () => {
     useHook();
     useHook();
 
-    const [[setter1], [setter2]] = store.subscribers;
+    const [[_, { callback: setter1 }], [__, { callback: setter2 }]] =
+      store.subscribers;
 
     expect(getState()).toBe(countStoreInitialState);
     expect(useState).toHaveBeenCalledTimes(2);
-    expect(useEffect).toHaveBeenCalledTimes(4);
+    expect(useEffect).toHaveBeenCalledTimes(6);
 
     expect(setter1).toBeCalledTimes(0);
     expect(setter2).toBeCalledTimes(0);
@@ -382,13 +385,14 @@ describe('GlobalStore with actions', () => {
     useHook();
     useHook();
 
-    const [[setter1], [setter2]] = store.subscribers;
+    const [[_, { callback: setter1 }], [__, { callback: setter2 }]] =
+      store.subscribers;
 
     actions.increase();
 
     expect(getState()).toBe(2);
     expect(useState).toHaveBeenCalledTimes(2);
-    expect(useEffect).toHaveBeenCalledTimes(4);
+    expect(useEffect).toHaveBeenCalledTimes(6);
 
     expect(setter1).toBeCalledTimes(1);
     expect(setter2).toBeCalledTimes(1);

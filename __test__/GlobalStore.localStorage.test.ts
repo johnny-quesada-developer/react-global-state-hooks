@@ -38,13 +38,16 @@ describe('LocalStorage Basics', () => {
     // add a subscriber to the store
     storage.getHook()();
 
-    const [[setter]] = storage.subscribers;
-    const setState = jest.fn(setter);
+    const [[id, parameters]] = storage.subscribers;
+    const { callback } = parameters;
+    const callbackWrapper = jest.fn(callback);
 
-    storage.subscribers = new Map([[setState, {}]]);
+    parameters.callback = callbackWrapper;
+
+    storage.subscribers = new Map([[id, parameters]]);
 
     // local storage is synchronous so there are no extra calls to setState when initializing the store
-    expect(setState).toBeCalledTimes(0);
+    expect(callbackWrapper).toBeCalledTimes(0);
 
     expect(getState()).toBe(0);
 
