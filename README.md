@@ -10,6 +10,8 @@ To see how to create a custom hook connected to your favorite async storage, ple
 
 You can also see an introduction video [here!](https://www.youtube.com/watch?v=WfoMhO1zZ04&t=8s)
 
+Important: The library could have some compatibility issues with <React.StrictMode>
+
 # Creating a global state
 
 We are gonna create a global state hook **useCount** with one line of code.
