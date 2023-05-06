@@ -68,6 +68,26 @@ beforeEach(() => {
   spyOn(React, 'useLayoutEffect').and.callFake(mockMemo);
 
   spyOn(React, 'useMemo').and.callFake(mockMemo);
+
+  let indexRef = 0;
+  const mapRef = new Map();
+
+  const mockUseRef = jest.fn((initialValue) => {
+    indexRef += 1;
+
+    const previous = mapRef.get(indexRef);
+    if (previous) return previous;
+
+    const value = {
+      current: initialValue,
+    };
+
+    mapRef.set(indexRef, value);
+
+    return value;
+  });
+
+  spyOn(React, 'useRef').and.callFake(mockUseRef);
 });
 
 afterEach(() => {
