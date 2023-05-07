@@ -11,11 +11,10 @@ import {
  */
 export const getLocalStorageItem = <T = any, TState = any, TMetadata = any>({
   config,
-  localStorageKey,
 }: {
-  localStorageKey: string;
   config: GlobalStoreConfig<TState, TMetadata>;
 }): T => {
+  const localStorageKey = config?.localStorage?.key;
   if (!localStorageKey) return null;
 
   const storedItem = localStorage.getItem(localStorageKey) as string;
@@ -24,7 +23,8 @@ export const getLocalStorageItem = <T = any, TState = any, TMetadata = any>({
 
   const json = (() => {
     const { decrypt, encrypt } = config?.localStorage ?? {};
-    if (!decrypt || !encrypt) return storedItem;
+
+    if (!decrypt && !encrypt) return storedItem;
 
     if (typeof decrypt === 'function') {
       return decrypt(storedItem);
@@ -47,12 +47,11 @@ export const getLocalStorageItem = <T = any, TState = any, TMetadata = any>({
 export const setLocalStorageItem = <T, TState = any, TMetadata = any>({
   item,
   config,
-  localStorageKey,
 }: {
-  localStorageKey: string;
   config: GlobalStoreConfig<TState, TMetadata>;
   item: T;
 }): void => {
+  const localStorageKey = config?.localStorage?.key;
   if (!localStorageKey) return null;
 
   const json = formatToStore(item, {
@@ -61,9 +60,9 @@ export const setLocalStorageItem = <T, TState = any, TMetadata = any>({
   });
 
   const parsed = (() => {
-    const { decrypt, encrypt } = config?.localStorage ?? {};
+    const { encrypt } = config?.localStorage ?? {};
 
-    if (!decrypt || !encrypt) return json;
+    if (!encrypt) return json;
 
     if (typeof encrypt === 'function') {
       return encrypt(json);

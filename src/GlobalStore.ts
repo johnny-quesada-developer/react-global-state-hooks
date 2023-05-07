@@ -40,7 +40,6 @@ export class GlobalStore<
     if (!localStorageKey) return;
 
     const restored = getLocalStorageItem<TState>({
-      localStorageKey,
       config: this.config,
     });
 
@@ -49,7 +48,6 @@ export class GlobalStore<
 
       setLocalStorageItem({
         item: state,
-        localStorageKey,
         config: this.config,
       });
 
@@ -62,11 +60,8 @@ export class GlobalStore<
   protected onChange = ({
     getState,
   }: StateChangesParam<TState, TMetadata, NonNullable<TStateSetter>>) => {
-    const localStorageKey = this.config?.localStorage?.key;
-
     setLocalStorageItem({
       item: getState(),
-      localStorageKey,
       config: this.config,
     });
   };
