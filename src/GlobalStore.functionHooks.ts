@@ -12,7 +12,7 @@ import {
   StateGetter,
   StateHook,
   StateSetter,
-} from 'react-native-global-state-hooks';
+} from 'react-hooks-global-states';
 
 /**
  * Creates a global state with the given state and config.

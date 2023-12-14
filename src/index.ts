@@ -2,7 +2,6 @@
  * The commented exports are the ones that are overridden by this library.
  * The intention is to extend the capabilities to specially web development.
  * The original library is intended to be used just with react,
- * it does not include any react-native specific code or dependency.
  */
 export {
   clone,
@@ -54,7 +53,7 @@ export {
   SubscriberParameters,
   SubscriptionCallback,
   SetStateCallback,
-} from 'react-native-global-state-hooks';
+} from 'react-hooks-global-states';
 
 export {
   LocalStorageConfig,

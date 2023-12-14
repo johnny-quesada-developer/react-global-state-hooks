@@ -1,4 +1,4 @@
-import * as GlobalStoreBase from 'react-native-global-state-hooks';
+import * as GlobalStoreBase from 'react-hooks-global-states';
 
 /**
  * Configuration of the local storage (optional)

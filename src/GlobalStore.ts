@@ -7,7 +7,7 @@ import {
   StateChangesParam,
   StateConfigCallbackParam,
   StateSetter,
-} from 'react-native-global-state-hooks';
+} from 'react-hooks-global-states';
 
 export class GlobalStore<
   TState,

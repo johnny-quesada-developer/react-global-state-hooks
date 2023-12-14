@@ -3,7 +3,7 @@ import {
   StateSetter,
   StateConfigCallbackParam,
   StateChangesParam,
-} from 'react-native-global-state-hooks';
+} from 'react-hooks-global-states';
 
 import { GlobalStore } from './GlobalStore';
 import { GlobalStoreConfig } from './GlobalStore.types';

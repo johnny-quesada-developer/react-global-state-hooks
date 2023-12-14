@@ -1,9 +1,6 @@
 import { GlobalStoreConfig } from './GlobalStore.types';
 
-import {
-  formatFromStore,
-  formatToStore,
-} from 'react-native-global-state-hooks';
+import { formatFromStore, formatToStore } from 'react-hooks-global-states';
 
 /**
  * @description
