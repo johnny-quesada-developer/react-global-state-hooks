@@ -1,6 +1,6 @@
 {
   "name": "react-global-state-hooks",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "This is a package to easily handling global-state across your react components No-redux, No-context.",
   "main": "lib/bundle.js",
   "types": "lib/src/index.d.ts",
@@ -38,6 +38,8 @@
   "homepage": "https://github.com/johnny-quesada-developer/react-global-state-hooks#readme",
   "devDependencies": {
     "@babel/core": "^7.21.3",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
     "@babel/plugin-transform-modules-commonjs": "^7.21.2",
     "@babel/preset-env": "^7.20.2",
     "@babel/preset-react": "^7.18.6",
@@ -71,6 +73,6 @@
     "react": ">=17.0.0"
   },
   "dependencies": {
-    "react-hooks-global-states": "^1.0.0"
+    "react-hooks-global-states": "^1.0.1"
   }
 }
