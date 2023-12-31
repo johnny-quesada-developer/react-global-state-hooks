@@ -53,6 +53,8 @@ export {
   SubscriberParameters,
   SubscriptionCallback,
   SetStateCallback,
+  StateChangesParam,
+  StateConfigCallbackParam,
 } from 'react-hooks-global-states';
 
 export {
