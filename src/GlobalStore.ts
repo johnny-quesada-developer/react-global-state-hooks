@@ -28,7 +28,7 @@ export class GlobalStore<
     const isExtensionClass = this.constructor !== GlobalStore;
     if (isExtensionClass) return;
 
-    this.initialize();
+    (this as GlobalStore<TState, TMetadata, TStateSetter>).initialize();
   }
 
   protected onInitialize = ({

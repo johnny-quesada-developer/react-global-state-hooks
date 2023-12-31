@@ -488,7 +488,7 @@ describe('custom global hooks', () => {
               $actions.log('decrease');
             };
           },
-        },
+        } as const,
       }
     );
 
