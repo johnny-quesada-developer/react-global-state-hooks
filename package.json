@@ -76,6 +76,6 @@
     "react": ">=17.0.0"
   },
   "dependencies": {
-    "react-hooks-global-states": "^1.0.5"
+    "react-hooks-global-states": "^1.0.6"
   }
 }
