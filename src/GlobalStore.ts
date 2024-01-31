@@ -9,6 +9,10 @@ import {
   StateSetter,
 } from 'react-hooks-global-states';
 
+const isLocalStorageAvailable = () => {
+  return !!globalThis?.localStorage;
+};
+
 export class GlobalStore<
   TState,
   TMetadata = null,
@@ -35,6 +39,9 @@ export class GlobalStore<
     setState,
     getState,
   }: StateConfigCallbackParam<TState, TMetadata>) => {
+    // avoid compatibility issues with SSR
+    if (!isLocalStorageAvailable()) return;
+
     const localStorageKey = this.config?.localStorage?.key;
 
     if (!localStorageKey) return;
@@ -60,6 +67,9 @@ export class GlobalStore<
   protected onChange = ({
     getState,
   }: StateChangesParam<TState, TMetadata, NonNullable<TStateSetter>>) => {
+    // avoid compatibility issues with SSR
+    if (!isLocalStorageAvailable()) return;
+
     setLocalStorageItem({
       item: getState(),
       config: this.config,
