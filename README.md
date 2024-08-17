@@ -503,6 +503,8 @@ const useContacts = createGlobalState(
 
 That means your data will automatically be synchronized with the local storage, and you don't need to worry about losing the type of your Maps/Sets/Dates - the store takes care of it for you.
 
+# Stateful Context with Actions
+
 **The ultimate blend of flexibility and control in React state management!** You can now create an isolated global state within a React context, giving each consumer of the context provider a unique state instance. But that’s not all...
 
 **Stateful Context with Actions** extends the powerful features of global hooks into the realm of React Context. By integrating global hooks within a context, you bring all the benefits of global state management—such as modularity, selectors, derived states, and actions—into a context-specific environment. This means each consumer of the context not only gets a unique state instance but also inherits all the advanced capabilities of global hooks.
