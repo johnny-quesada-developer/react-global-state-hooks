@@ -16,7 +16,7 @@ import {
 
 /**
  * Creates a global state with the given state and config.
- * @returns {} [HOOK, DECOUPLED_GETTER, DECOUPLED_SETTER] this is an array with the hook, the decoupled getState function and the decoupled setter of the state
+ * @returns {} [HOOK, DECOUPLED_RETRIEVER, DECOUPLED_MUTATOR] this is an array with the hook, the decoupled getState function and the decoupled setter of the state
  */
 export const createGlobalStateWithDecoupledFuncs = <
   TState,
@@ -32,22 +32,22 @@ export const createGlobalStateWithDecoupledFuncs = <
     actions
   );
 
-  const [getState, setter] = store.getHookDecoupled();
+  const [stateRetriever, stateMutator] = store.getHookDecoupled();
 
-  type Setter = keyof TActions extends never
+  type StateMutator = keyof TActions extends never
     ? StateSetter<TState>
     : ActionCollectionResult<TState, TMetadata, TActions>;
 
-  return [store.getHook(), getState, setter] as [
-    hook: StateHook<TState, Setter, TMetadata>,
-    getter: StateGetter<TState>,
-    setter: Setter
+  return [store.getHook(), stateRetriever, stateMutator] as [
+    hook: StateHook<TState, StateMutator, TMetadata>,
+    stateRetriever: StateGetter<TState>,
+    stateMutator: StateMutator
   ];
 };
 
 /**
  * Creates a global hook that can be used to access the state and actions across the application
- * @returns {} - () => [TState, Setter, TMetadata] the hook that can be used to access the state and the setter of the state
+ * @returns {} - () => [TState, stateMutator, TMetadata] the hook that can be used to access the state and the stateMutator of the state
  */
 export const createGlobalState = <
   TState,
@@ -57,13 +57,25 @@ export const createGlobalState = <
   state: TState,
   config: createStateConfig<TState, TMetadata, TActions> = {}
 ) => {
-  const [useState] = createGlobalStateWithDecoupledFuncs<
-    TState,
-    TMetadata,
-    TActions
-  >(state, config);
+  const [useState, stateRetriever, stateMutator] =
+    createGlobalStateWithDecoupledFuncs<TState, TMetadata, TActions>(
+      state,
+      config
+    );
 
-  return useState;
+  type GlobalStateHook = typeof useState & {
+    stateControls: () => [
+      stateRetriever: typeof stateRetriever,
+      stateMutator: typeof stateMutator
+    ];
+  };
+
+  (useState as unknown as GlobalStateHook).stateControls = () => [
+    stateRetriever,
+    stateMutator,
+  ];
+
+  return useState as GlobalStateHook;
 };
 
 /**
@@ -84,7 +96,7 @@ export const createCustomGlobalStateWithDecoupledFuncs = <
    * You can use this function to create a store with async storage or any other custom logic.
    * @param state The initial state of the store.
    * @param config The configuration of the store.
-   * @returns [HOOK, DECOUPLED_GETTER, DECOUPLED_SETTER] - this is an array with the hook, the decoupled getState function and the decoupled setter of the state
+   * @returns [HOOK, DECOUPLED_RETRIEVER, DECOUPLED_MUTATOR] - this is an array with the hook, the decoupled stateRetriever function and the decoupled stateMutator of the state
    */
   return <
     TState,

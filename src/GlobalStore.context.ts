@@ -26,8 +26,8 @@ export const createStatefulContext = <
         : ActionCollectionResult<TState, TMetadata, TActions>,
       TMetadata
     >,
-    getter: StateGetter<TState>,
-    setter: keyof TActions extends never
+    stateRetriever: StateGetter<TState>,
+    stateRetriever: keyof TActions extends never
       ? StateSetter<TState>
       : ActionCollectionResult<TState, TMetadata, TActions>
   ];

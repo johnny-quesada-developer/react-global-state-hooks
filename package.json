@@ -1,6 +1,6 @@
 {
   "name": "react-global-state-hooks",
-  "version": "3.1.2",
+  "version": "3.2.0",
   "description": "This is a package to easily handling global-state across your react components No-redux, No-context.",
   "main": "lib/bundle.js",
   "types": "lib/src/index.d.ts",
@@ -76,6 +76,6 @@
     "react": ">=17.0.0"
   },
   "dependencies": {
-    "react-hooks-global-states": "^1.0.7"
+    "react-hooks-global-states": "^1.1.0"
   }
 }
