@@ -16,26 +16,26 @@ const isLocalStorageAvailable = () => {
 export class GlobalStore<
   TState,
   TMetadata = null,
-  TStateSetter extends
+  TStateMutator extends
     | ActionCollectionConfig<TState, TMetadata>
     | StateSetter<TState> = StateSetter<TState>
-> extends GlobalStoreAbstract<TState, TMetadata, NonNullable<TStateSetter>> {
-  protected config: GlobalStoreConfig<TState, TMetadata, TStateSetter>;
+> extends GlobalStoreAbstract<TState, TMetadata, NonNullable<TStateMutator>> {
+  protected config: GlobalStoreConfig<TState, TMetadata, TStateMutator>;
 
   constructor(
     state: TState,
-    config: GlobalStoreConfig<TState, TMetadata, TStateSetter> = {},
-    actionsConfig: TStateSetter | null = null
+    config: GlobalStoreConfig<TState, TMetadata, TStateMutator> = {},
+    actionsConfig: TStateMutator | null = null
   ) {
     super(state, config, actionsConfig);
 
     const isExtensionClass = this.constructor !== GlobalStore;
     if (isExtensionClass) return;
 
-    (this as GlobalStore<TState, TMetadata, TStateSetter>).initialize();
+    (this as GlobalStore<TState, TMetadata, TStateMutator>).initialize();
   }
 
-  protected onInitialize = ({
+  protected _onInitialize = ({
     setState,
     getState,
   }: StateConfigCallbackParam<TState, TMetadata>) => {
@@ -64,9 +64,9 @@ export class GlobalStore<
     setState(restored);
   };
 
-  protected onChange = ({
+  protected _onChange = ({
     getState,
-  }: StateChangesParam<TState, TMetadata, NonNullable<TStateSetter>>) => {
+  }: StateChangesParam<TState, TMetadata, NonNullable<TStateMutator>>) => {
     // avoid compatibility issues with SSR
     if (!isLocalStorageAvailable()) return;
 
@@ -74,5 +74,27 @@ export class GlobalStore<
       item: getState(),
       config: this.config,
     });
+  };
+
+  /**
+   * We set it to null so the instances of the GlobalStoreAbstract can override it.
+   */
+  protected onInitialize = null;
+  protected onChange = null;
+
+  /**
+   * Instead of calling onInitialize and onChange directly, we call the _onInitialize and _onChange
+   * This allows the concat the logic of the GlobalStore with the logic of the extension class.
+   */
+  protected onInit = (
+    parameters: StateConfigCallbackParam<TState, TMetadata, TStateMutator>
+  ) => {
+    this._onInitialize?.(parameters);
+  };
+
+  protected onStateChanged = (
+    parameters: StateChangesParam<TState, TMetadata, TStateMutator>
+  ) => {
+    this._onChange?.(parameters);
   };
 }

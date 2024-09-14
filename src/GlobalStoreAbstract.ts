@@ -17,28 +17,30 @@ import { GlobalStoreConfig } from './GlobalStore.types';
 export abstract class GlobalStoreAbstract<
   TState,
   TMetadata = null,
-  TStateSetter extends
+  TStateMutator extends
     | ActionCollectionConfig<TState, TMetadata>
     | StateSetter<TState> = StateSetter<TState>
-> extends GlobalStore<TState, TMetadata, TStateSetter> {
+> extends GlobalStore<TState, TMetadata, TStateMutator> {
   constructor(
     state: TState,
-    config: GlobalStoreConfig<TState, TMetadata, TStateSetter> = {},
-    actionsConfig: TStateSetter | null = null
+    config: GlobalStoreConfig<TState, TMetadata, TStateMutator> = {},
+    actionsConfig: TStateMutator | null = null
   ) {
     super(state, config, actionsConfig);
   }
 
   protected onInit = (
-    parameters: StateConfigCallbackParam<TState, TMetadata, TStateSetter>
+    parameters: StateConfigCallbackParam<TState, TMetadata, TStateMutator>
   ) => {
-    this.onInitialize(parameters);
+    this._onInitialize(parameters);
+    this.onInitialize?.(parameters);
   };
 
   protected onStateChanged = (
-    parameters: StateChangesParam<TState, TMetadata, TStateSetter>
+    parameters: StateChangesParam<TState, TMetadata, TStateMutator>
   ) => {
-    this.onChange(parameters);
+    this._onInitialize(parameters);
+    this.onChange?.(parameters);
   };
 
   protected abstract onInitialize: ({
@@ -47,7 +49,7 @@ export abstract class GlobalStoreAbstract<
     getMetadata,
     getState,
     actions,
-  }: StateConfigCallbackParam<TState, TMetadata, TStateSetter>) => void;
+  }: StateConfigCallbackParam<TState, TMetadata, TStateMutator>) => void;
 
   protected abstract onChange: ({
     setState,
@@ -55,5 +57,5 @@ export abstract class GlobalStoreAbstract<
     getMetadata,
     getState,
     actions,
-  }: StateChangesParam<TState, TMetadata, TStateSetter>) => void;
+  }: StateChangesParam<TState, TMetadata, TStateMutator>) => void;
 }
