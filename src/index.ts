@@ -33,7 +33,6 @@ export {
   // types
   StateSetter,
   StateHook,
-  AvoidNever,
   MetadataSetter,
   StateChanges,
   StoreTools,
@@ -55,15 +54,13 @@ export {
   SubscriberParameters,
   SubscriptionCallback,
   SetStateCallback,
-  StateChangesParam,
-  StateConfigCallbackParam,
   // createStatefulContext,
+  BaseMetadata,
 } from 'react-hooks-global-states';
 
 export {
   LocalStorageConfig,
   GlobalStoreConfig,
-  createStateConfig,
   CustomGlobalHookParams,
 } from './GlobalStore.types';
 
@@ -71,9 +68,8 @@ export { GlobalStore } from './GlobalStore';
 export { GlobalStoreAbstract } from './GlobalStoreAbstract';
 
 export {
-  createGlobalStateWithDecoupledFuncs,
   createGlobalState,
-  createCustomGlobalStateWithDecoupledFuncs,
+  createCustomGlobalState,
 } from './GlobalStore.functionHooks';
 
 export { getLocalStorageItem, setLocalStorageItem } from './GlobalStore.utils';

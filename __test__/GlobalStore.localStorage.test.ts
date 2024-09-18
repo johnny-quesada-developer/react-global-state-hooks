@@ -4,7 +4,6 @@ import {
   SubscriberCallback,
   GlobalStore,
   createGlobalState,
-  createGlobalStateWithDecoupledFuncs,
 } from '../src/';
 
 describe('LocalStorage Basics', () => {
@@ -22,7 +21,7 @@ describe('LocalStorage Basics', () => {
       },
     });
 
-    const [getState] = storage.getHookDecoupled();
+    const [getState] = storage.stateControls();
 
     const onStateChanged = (storage as any).onStateChanged;
     onStateChanged.bind(storage);
@@ -92,10 +91,10 @@ describe('createGlobalState', () => {
 
 describe('getter subscriptions custom global state', () => {
   it('should subscribe to changes from getter', () => {
-    const [_, getter, setter] = createGlobalStateWithDecoupledFuncs({
+    const [getter, setter] = createGlobalState({
       a: 3,
       b: 2,
-    });
+    }).stateControls();
 
     const state = getter();
 

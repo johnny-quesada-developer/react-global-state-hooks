@@ -5,8 +5,6 @@ import {
   Subscribe,
   SubscriberCallback,
   SubscribeToEmitter,
-  createCustomGlobalStateWithDecoupledFuncs,
-  createGlobalStateWithDecoupledFuncs,
   createGlobalState,
   createDerivate,
   createDerivateEmitter,
@@ -14,6 +12,7 @@ import {
 
 import { useState } from 'react';
 import { formatFromStore, formatToStore } from 'json-storage-formatter';
+import { createCustomGlobalStateWithDecoupledFuncs } from '../src/GlobalStore.functionHooks';
 
 describe('basic', () => {
   it('should be able to create a new instance with state', () => {
@@ -462,35 +461,37 @@ describe('custom global hooks', () => {
 
     const logSpy = jest.fn();
 
-    const [useCount, getCount, $actions] = createGlobalStateWithDecoupledFuncs(
+    const useCount = createGlobalState(
       1,
       {
         metadata: {
           test: true,
         },
-        actions: {
-          log: (message: string) => {
-            return () => {
-              logSpy(message);
-            };
-          },
-          increase: () => {
-            return ({ setState }) => {
-              setState((state) => state + 1);
+      },
+      {
+        log: (message: string) => {
+          return () => {
+            logSpy(message);
+          };
+        },
+        increase: () => {
+          return ({ setState }) => {
+            setState((state) => state + 1);
 
-              $actions.log('increase');
-            };
-          },
-          decrease: () => {
-            return ({ setState }) => {
-              setState((state) => state - 1);
+            $actions.log('increase');
+          };
+        },
+        decrease: () => {
+          return ({ setState }) => {
+            setState((state) => state - 1);
 
-              $actions.log('decrease');
-            };
-          },
-        } as const,
+            $actions.log('decrease');
+          };
+        },
       }
     );
+
+    const [getCount, $actions] = useCount.stateControls();
 
     let [state, actions] = useCount();
 
@@ -538,11 +539,13 @@ describe('custom global hooks', () => {
       count: 1,
     };
 
-    const [useCount, getCount, setCount] = createGlobal(initialState, {
+    const useCount = createGlobal(initialState, {
       config: {
         someExtraInfo: 'someExtraInfo',
       },
     });
+
+    const [getCount, setCount] = useCount.stateControls();
 
     expect(onInitSpy).toBeCalledTimes(1);
     expect(onChangeSpy).toBeCalledTimes(0);
@@ -670,10 +673,10 @@ describe('custom global hooks', () => {
 
 describe('getter subscriptions', () => {
   it('should subscribe to changes from getter', () => {
-    const [_, getter, setter] = createGlobalStateWithDecoupledFuncs({
+    const [getter, setter] = createGlobalState({
       a: 3,
       b: 2,
-    });
+    }).stateControls();
 
     const state = getter();
 
@@ -744,8 +747,8 @@ describe('create fragment', () => {
       c: 3,
     };
 
-    const [useData, getter, setter] =
-      createGlobalStateWithDecoupledFuncs(initialState);
+    const useData = createGlobalState(initialState);
+    const [getter, setter] = useData.stateControls();
 
     expect(useData).toBeInstanceOf(Function);
     expect(getter).toBeInstanceOf(Function);
@@ -803,8 +806,8 @@ describe('create fragment', () => {
       c: 3,
     };
 
-    const [useData, getter, setter] =
-      createGlobalStateWithDecoupledFuncs(initialState);
+    const useData = createGlobalState(initialState);
+    const [getter, setter] = useData.stateControls();
 
     expect(useData).toBeInstanceOf(Function);
     expect(getter).toBeInstanceOf(Function);

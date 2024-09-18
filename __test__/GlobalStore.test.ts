@@ -30,7 +30,7 @@ describe('GlobalStore Basic', () => {
       },
     });
 
-    const [, setState] = store.getHookDecoupled();
+    const [, setState] = store.stateControls();
 
     expect(setState).toBeInstanceOf(Function);
   });
@@ -44,7 +44,7 @@ describe('GlobalStore Basic', () => {
       },
     });
 
-    const [getState] = store.getHookDecoupled();
+    const [getState] = store.stateControls();
 
     expect(getState()).toBe(stateValue);
   });
@@ -57,7 +57,7 @@ describe('GlobalStore Basic', () => {
       },
     });
 
-    const [, setState] = store.getHookDecoupled();
+    const [, setState] = store.stateControls();
 
     setState('test2');
 
@@ -75,7 +75,7 @@ describe('GlobalStore Basic', () => {
     });
 
     const useHook = store.getHook();
-    const [getState, setState] = store.getHookDecoupled();
+    const [getState, setState] = store.stateControls();
 
     useHook();
     useHook();
@@ -87,7 +87,7 @@ describe('GlobalStore Basic', () => {
 
     expect(getState()).toBe(stateValue2);
     expect(useState).toHaveBeenCalledTimes(2);
-    expect(useEffect).toHaveBeenCalledTimes(4);
+    expect(useEffect).toHaveBeenCalledTimes(2);
 
     expect(setter1).toBeCalledTimes(1);
     expect(setter2).toBeCalledTimes(1);
@@ -105,7 +105,7 @@ describe('GlobalStore Persistence', () => {
       },
     });
 
-    const [getState] = store.getHookDecoupled();
+    const [getState] = store.stateControls();
 
     expect(localStorage.setItem).toBeCalledTimes(1);
     expect(localStorage.setItem).toBeCalledWith(
@@ -126,7 +126,7 @@ describe('GlobalStore Persistence', () => {
       },
     });
 
-    const [getState] = store.getHookDecoupled();
+    const [getState] = store.stateControls();
 
     expect(getState()).toBe('test');
 
@@ -237,7 +237,7 @@ const createCountStoreWithActions = (spy?: jest.Mock) => {
         null,
         ActionCollectionConfig<number, null>
       >;
-    } & GlobalStoreConfig<number, null, ActionCollectionConfig<number, null>>);
+    } & GlobalStoreConfig<number, null>);
 };
 
 describe('GlobalStore Basic', () => {
@@ -256,7 +256,7 @@ describe('GlobalStore Basic', () => {
     const stateValue = 'test';
     const store = new GlobalStore(stateValue);
 
-    const [, setState] = store.getHookDecoupled();
+    const [, setState] = store.stateControls();
 
     expect(setState).toBeInstanceOf(Function);
   });
@@ -265,7 +265,7 @@ describe('GlobalStore Basic', () => {
     const stateValue = 1;
     const store = new GlobalStore(stateValue);
 
-    const [getState] = store.getHookDecoupled();
+    const [getState] = store.stateControls();
 
     expect(getState()).toBe(stateValue);
   });
@@ -274,7 +274,7 @@ describe('GlobalStore Basic', () => {
     const stateValue = 'test';
     const store = new GlobalStore(stateValue);
 
-    const [, setState] = store.getHookDecoupled();
+    const [, setState] = store.stateControls();
 
     setState('test2');
 
@@ -288,7 +288,7 @@ describe('GlobalStore Basic', () => {
     const stateValue = 'test';
     const store = new GlobalStore(stateValue);
 
-    const [, setState] = store.getHookDecoupled();
+    const [, setState] = store.stateControls();
 
     setState((state) => `${state}2`);
 
@@ -305,7 +305,7 @@ describe('GlobalStore Basic', () => {
     const store = new GlobalStore(stateValue);
 
     const useHook = store.getHook();
-    const [getState, setState] = store.getHookDecoupled();
+    const [getState, setState] = store.stateControls();
 
     useHook();
     useHook();
@@ -317,7 +317,7 @@ describe('GlobalStore Basic', () => {
 
     expect(getState()).toBe(stateValue2);
     expect(useState).toHaveBeenCalledTimes(2);
-    expect(useEffect).toHaveBeenCalledTimes(4);
+    expect(useEffect).toHaveBeenCalledTimes(2);
 
     expect(setter1).toBeCalledTimes(1);
     expect(setter2).toBeCalledTimes(1);
@@ -341,7 +341,7 @@ describe('GlobalStore with actions', () => {
   it('should be able to get the state', () => {
     const store = createCountStoreWithActions();
 
-    const [getState] = store.getHookDecoupled();
+    const [getState] = store.stateControls();
 
     expect(getState()).toBe(countStoreInitialState);
   });
@@ -349,7 +349,7 @@ describe('GlobalStore with actions', () => {
   it('should be able to set the state', () => {
     const store = createCountStoreWithActions();
 
-    const [getState, actions] = store.getHookDecoupled();
+    const [getState, actions] = store.stateControls();
 
     actions.increase();
 
@@ -360,7 +360,7 @@ describe('GlobalStore with actions', () => {
     const store = createCountStoreWithActions();
 
     const useHook = store.getHook();
-    const [getState] = store.getHookDecoupled();
+    const [getState] = store.stateControls();
 
     useHook();
     useHook();
@@ -370,7 +370,7 @@ describe('GlobalStore with actions', () => {
 
     expect(getState()).toBe(countStoreInitialState);
     expect(useState).toHaveBeenCalledTimes(2);
-    expect(useEffect).toHaveBeenCalledTimes(4);
+    expect(useEffect).toHaveBeenCalledTimes(2);
 
     expect(setter1).toBeCalledTimes(0);
     expect(setter2).toBeCalledTimes(0);
@@ -380,7 +380,7 @@ describe('GlobalStore with actions', () => {
     const store = createCountStoreWithActions();
 
     const useHook = store.getHook();
-    const [getState, actions] = store.getHookDecoupled();
+    const [getState, actions] = store.stateControls();
 
     useHook();
     useHook();
@@ -392,7 +392,7 @@ describe('GlobalStore with actions', () => {
 
     expect(getState()).toBe(2);
     expect(useState).toHaveBeenCalledTimes(2);
-    expect(useEffect).toHaveBeenCalledTimes(4);
+    expect(useEffect).toHaveBeenCalledTimes(2);
 
     expect(setter1).toBeCalledTimes(1);
     expect(setter2).toBeCalledTimes(1);
@@ -500,7 +500,7 @@ describe('GlobalStore with configuration callbacks', () => {
 
     expect(onStateChangedSpy).toBeCalledTimes(0);
 
-    const [, setState] = store.getHookDecoupled();
+    const [, setState] = store.stateControls();
 
     setState((state) => ({ count: state.count + 1 }));
 
@@ -533,7 +533,7 @@ describe('GlobalStore with configuration callbacks', () => {
 
     expect(computePreventStateChangeSpy).toBeCalledTimes(0);
 
-    const [getState, setState] = store.getHookDecoupled();
+    const [getState, setState] = store.stateControls();
 
     setState((state) => ({ count: state.count + 1 }));
 
@@ -566,7 +566,7 @@ describe('GlobalStore with configuration callbacks', () => {
 
     expect(computePreventStateChangeSpy).toBeCalledTimes(0);
 
-    const [getState, setState] = store.getHookDecoupled();
+    const [getState, setState] = store.stateControls();
 
     setState((state) => ({ count: state.count + 1 }));
 
@@ -625,7 +625,7 @@ describe('Custom store by using config parameter', () => {
       },
     });
 
-    const [getState] = store.getHookDecoupled();
+    const [getState] = store.stateControls();
 
     expect(onInitSpy).toBeCalledTimes(1);
     expect(onStateChangedSpy).toBeCalledTimes(0);
@@ -682,7 +682,7 @@ describe('Custom store by using config parameter', () => {
       },
     });
 
-    const [getState] = store.getHookDecoupled();
+    const [getState] = store.stateControls();
 
     expect(onInitSpy).toBeCalledTimes(1);
     expect(onStateChangedSpy).toBeCalledTimes(1);
@@ -723,7 +723,7 @@ describe('Custom store by using config parameter', () => {
       },
     });
 
-    const [getState] = store.getHookDecoupled();
+    const [getState] = store.stateControls();
     const [, setState] = store.getHook()();
 
     const newState = new Map(getState());
@@ -753,7 +753,7 @@ describe('GlobalStore Accessing custom actions from other actions', () => {
 
     const store = createCountStoreWithActions(logSpy);
 
-    const [getState, actions] = store.getHookDecoupled();
+    const [getState, actions] = store.stateControls();
 
     expect(getState()).toEqual(1);
     expect(logSpy).toBeCalledTimes(0);

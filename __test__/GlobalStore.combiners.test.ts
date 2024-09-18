@@ -1,20 +1,16 @@
-import {
-  Subscribe,
-  combineAsyncGetters,
-  createGlobalStateWithDecoupledFuncs,
-} from '../src';
+import { Subscribe, combineAsyncGetters, createGlobalState } from '../src';
 
 import { createDecoupledPromise } from 'cancelable-promise-jq';
 
 describe('combiners', () => {
   it('should combine two global states', () => {
-    const [, getter1, setter1] = createGlobalStateWithDecoupledFuncs({
+    const [getter1, setter1] = createGlobalState({
       a: 1,
-    });
+    }).stateControls();
 
-    const [, getter2] = createGlobalStateWithDecoupledFuncs({
+    const [getter2] = createGlobalState({
       b: 2,
-    });
+    }).stateControls();
 
     const [useDerivate, getter] = combineAsyncGetters(
       {

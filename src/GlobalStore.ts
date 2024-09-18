@@ -3,10 +3,10 @@ import { getLocalStorageItem, setLocalStorageItem } from './GlobalStore.utils';
 
 import {
   ActionCollectionConfig,
+  BaseMetadata,
   GlobalStoreAbstract,
-  StateChangesParam,
-  StateConfigCallbackParam,
-  StateSetter,
+  StateChanges,
+  StoreTools,
 } from 'react-hooks-global-states';
 
 const isLocalStorageAvailable = () => {
@@ -14,31 +14,32 @@ const isLocalStorageAvailable = () => {
 };
 
 export class GlobalStore<
-  TState,
-  TMetadata = null,
-  TStateMutator extends
-    | ActionCollectionConfig<TState, TMetadata>
-    | StateSetter<TState> = StateSetter<TState>
-> extends GlobalStoreAbstract<TState, TMetadata, NonNullable<TStateMutator>> {
-  protected config: GlobalStoreConfig<TState, TMetadata, TStateMutator>;
+  State,
+  Metadata extends BaseMetadata,
+  ActionsConfig extends
+    | ActionCollectionConfig<State, Metadata>
+    | null
+    | {} = null
+> extends GlobalStoreAbstract<State, Metadata, ActionsConfig> {
+  protected config: GlobalStoreConfig<State, Metadata>;
 
   constructor(
-    state: TState,
-    config: GlobalStoreConfig<TState, TMetadata, TStateMutator> = {},
-    actionsConfig: TStateMutator | null = null
+    state: State,
+    config?: GlobalStoreConfig<State, Metadata>,
+    actionsConfig?: ActionsConfig
   ) {
     super(state, config, actionsConfig);
 
     const isExtensionClass = this.constructor !== GlobalStore;
     if (isExtensionClass) return;
 
-    (this as GlobalStore<TState, TMetadata, TStateMutator>).initialize();
+    (this as GlobalStore<State, Metadata, ActionsConfig>).initialize();
   }
 
   protected _onInitialize = ({
     setState,
     getState,
-  }: StateConfigCallbackParam<TState, TMetadata>) => {
+  }: StoreTools<State, Metadata>) => {
     // avoid compatibility issues with SSR
     if (!isLocalStorageAvailable()) return;
 
@@ -46,7 +47,7 @@ export class GlobalStore<
 
     if (!localStorageKey) return;
 
-    const restored = getLocalStorageItem<TState>({
+    const restored = getLocalStorageItem<State>({
       config: this.config,
     });
 
@@ -66,7 +67,7 @@ export class GlobalStore<
 
   protected _onChange = ({
     getState,
-  }: StateChangesParam<TState, TMetadata, NonNullable<TStateMutator>>) => {
+  }: StoreTools<State, Metadata> & StateChanges<State>) => {
     // avoid compatibility issues with SSR
     if (!isLocalStorageAvailable()) return;
 
@@ -86,15 +87,13 @@ export class GlobalStore<
    * Instead of calling onInitialize and onChange directly, we call the _onInitialize and _onChange
    * This allows the concat the logic of the GlobalStore with the logic of the extension class.
    */
-  protected onInit = (
-    parameters: StateConfigCallbackParam<TState, TMetadata, TStateMutator>
-  ) => {
+  protected onInit = ((parameters: StoreTools<State, Metadata>) => {
     this._onInitialize?.(parameters);
-  };
+  }) as typeof this.onInit;
 
-  protected onStateChanged = (
-    parameters: StateChangesParam<TState, TMetadata, TStateMutator>
+  protected onStateChanged = ((
+    args: StoreTools<State, Metadata> & StateChanges<State>
   ) => {
-    this._onChange?.(parameters);
-  };
+    this._onChange?.(args);
+  }) as typeof this.onChange;
 }
