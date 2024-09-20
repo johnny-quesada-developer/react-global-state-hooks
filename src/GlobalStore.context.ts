@@ -313,7 +313,7 @@ export const createContext = ((initialValue, ...args: any[]) => {
     useEffect(() => {
       return () => {
         (store as unknown as Store).config?.onUnMount?.();
-        (store as unknown as Store).__onUnMountContext(store, hook);
+        (store as unknown as Store).__onUnMountContext?.(store, hook);
       };
     }, []);
 
