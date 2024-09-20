@@ -12,7 +12,12 @@ import {
 
 import { GlobalStore } from './GlobalStore';
 
-import React, { PropsWithChildren, useMemo, useImperativeHandle } from 'react';
+import React, {
+  PropsWithChildren,
+  useMemo,
+  useImperativeHandle,
+  useEffect,
+} from 'react';
 import { LocalStorageConfig } from './GlobalStore.types';
 
 export type ProviderAPI<Value, Metadata> = {
@@ -103,6 +108,8 @@ export interface CreateContext {
         computePreventStateChange?: (
           args: StoreAPI & StateChanges<Value>
         ) => boolean;
+
+        onUnMount?: () => void;
       } & LocalStorageConfig
     >
   ): readonly [
@@ -159,6 +166,8 @@ export interface CreateContext {
         computePreventStateChange?: (
           args: StoreAPI & StateChanges<Value>
         ) => boolean;
+
+        onUnMount?: () => void;
       } & LocalStorageConfig
     >,
     actions: ActionsConfig
@@ -211,6 +220,8 @@ export interface CreateContext {
         computePreventStateChange?: (
           args: StoreAPI & StateChanges<Value>
         ) => boolean;
+
+        onUnMount?: () => void;
       } & LocalStorageConfig
     >
   ): readonly [
@@ -278,33 +289,33 @@ export const createContext = ((initialValue, ...args: any[]) => {
       return { store, hook: store.getHook() };
     }, []);
 
+    type Store = {
+      config: (typeof store)['config'] & {
+        onUnMount?: () => void;
+      };
+      getConfigCallbackParam: (typeof store)['getConfigCallbackParam'];
+      __onUnMountContext: (
+        store: GlobalStore<any, any, any>,
+        hook: StateHook<any, any, any>
+      ) => void;
+    };
+
     useImperativeHandle(
       ref,
       () => {
         if (!ref) return {} as ProviderAPI<any, any>;
 
-        const [getState, , getMetadata] = store.stateControls();
-
-        const {
-          setStateWrapper: setState,
-          setMetadata,
-          actions,
-        } = store as unknown as {
-          setStateWrapper;
-          actions;
-          setMetadata;
-        };
-
-        return {
-          setMetadata,
-          setState,
-          getState,
-          getMetadata,
-          actions,
-        };
+        return (store as unknown as Store).getConfigCallbackParam();
       },
       [store]
     );
+
+    useEffect(() => {
+      return () => {
+        (store as unknown as Store).config?.onUnMount?.();
+        (store as unknown as Store).__onUnMountContext(store, hook);
+      };
+    }, []);
 
     return React.createElement(context.Provider, { value: hook }, children);
   };
