@@ -11,8 +11,16 @@ export const getLocalStorageItem = <T = any, TState = any, TMetadata = any>({
 }: {
   config: GlobalStoreConfig<TState, TMetadata>;
 }): T => {
-  const localStorageKey = config?.localStorage?.key;
-  if (!localStorageKey) return null;
+  const localStorageKeySource = config?.localStorage?.key;
+  if (!localStorageKeySource) return null;
+
+  const localStorageKey = (() => {
+    if (typeof localStorageKeySource === 'function') {
+      return localStorageKeySource();
+    }
+
+    return localStorageKeySource;
+  })();
 
   const storedItem = localStorage.getItem(localStorageKey) as string;
 
@@ -48,8 +56,16 @@ export const setLocalStorageItem = <T, TState = any, TMetadata = any>({
   config: GlobalStoreConfig<TState, TMetadata>;
   item: T;
 }): void => {
-  const localStorageKey = config?.localStorage?.key;
-  if (!localStorageKey) return null;
+  const localStorageKeySource = config?.localStorage?.key;
+  if (!localStorageKeySource) return null;
+
+  const localStorageKey = (() => {
+    if (typeof localStorageKeySource === 'function') {
+      return localStorageKeySource();
+    }
+
+    return localStorageKeySource;
+  })();
 
   const json = formatToStore(item, {
     stringify: true,
