@@ -407,18 +407,16 @@ export const useCount = createGlobalState(0, () => ({{
 
 Notice that the **StoreTools** will contain a reference to the generated actions API. From there, you'll be able to access all actions from inside another one... the **StoreTools** is generic and allow your to set an interface for getting the typing on the actions.
 
-# Stateful Context with Actions
+# createContext
 
-**The ultimate blend of flexibility and control in React state management!** You can now create an isolated global state within a React context, giving each consumer of the context provider a unique state instance. But that’s not all...
+**createContext** extends the powerful features of global hooks into the realm of React Context. By integrating global hooks within a context, you bring all the benefits of global state management—such as modularity, selectors, derived states, and actions—into a context-specific environment.
 
-**Stateful Context with Actions** extends the powerful features of global hooks into the realm of React Context. By integrating global hooks within a context, you bring all the benefits of global state management—such as modularity, selectors, derived states, and actions—into a context-specific environment. This means each consumer of the context not only gets a unique state instance but also inherits all the advanced capabilities of global hooks.
+## Creating a reusable context
 
-## Creating a Stateful Context
-
-Forget about the boilerplate of creating a context... with **createStatefulContext** it's straightforward and powerful. You can create a context and provider with one line of code.
+Forget about the boilerplate of creating a context... with **createContext** it's straightforward and powerful. You can create a context and provider with one line of code.
 
 ```tsx
-export const [useCounterContext, CounterProvider] = createStatefulContext(2);
+export const [useCounterContext, CounterProvider] = createContext(2);
 ```
 
 Then just wrap the components you need with the provider:
@@ -429,56 +427,52 @@ Then just wrap the components you need with the provider:
 </CounterProvider>
 ```
 
-And finally, access the context value with the generated custom hook:
+And finally, access the context value with the **useCounterContext**, this function returns a **StateHook**.
+
+You can execute it immediately to subscribe to the state changes
 
 ```tsx
-const MyComponent = () => {
-  const [useCounter] = useCounterContext();
-
-  // If the component needs to react to state changes, simply use the hook
-  const [count, setCount] = useCounter();
+const MyComponentInsideTheProvider = () => {
+  const [count] = useCounterContext()();
 
   return <>{count}</>;
 };
 ```
 
-What’s the advantage of this, you might ask? Well, now you have all the capabilities of the global hooks within the isolated scope of the context. For example, you can choose whether or not to listen to changes in the state:
+Or you can retrieve the **useCounterContext.stateControls();** to gain access to the getter and mutator without been affected by the changes on the state
 
 ```tsx
 const MyComponent = () => {
-  const [, , setCount] = useCounterContext();
+  // won't re-render if the counter changes
+  const [getCount, setCount] = useCounterContext().stateControls();
 
-  // This component can access only the stateMutator of the state,
-  // and won't re-render if the counter changes
   return (
     <button onClick={() => setCount((count) => count + 1)}>Increase</button>
   );
 };
 ```
 
-Now you have selectors—if the state changes, the component will only re-render if the selected portion of the state changes.
+You'll still have selectors to extract just an specific portion of the state. If a selector is added the component only will change if that specific portion of the state changed.
 
 ```tsx
 const MyComponent = () => {
-  const [useCounter] = useCounterContext();
-
-  // Notice that we can select and derive values from the state
-  const [isEven, setCount] = useCounter((count) => count % 2 === 0);
+  const [isEven, setCount] = useCounterContext()((count) => count % 2 === 0);
 
   useEffect(() => {
-    // Since the counter initially was 2 and now is 4, it’s still an even number.
-    // Because of this, the component will not re-render.
+    // lets say that the initial state was *2* and we'll set it now to *4*
     setCount(4);
+
+    // the component will not re-render cause 4 is also even
   }, []);
 
   return <>{isEven ? 'is even' : 'is odd'}</>;
 };
 ```
 
-**createStatefulContext** also allows you to add custom actions to control the manipulation of the state.
+**createContext** also allows you to add custom actions to control the manipulation of the state inside the context
 
 ```tsx
-import { createStatefulContext, StoreTools } from 'react-global-state-hooks';
+import { createContext } from 'react-global-state-hooks';
 
 type CounterState = {
   count: number;
@@ -513,12 +507,12 @@ export const [useCounterContext, CounterProvider] = createStatefulContext(
 
 And just like with regular global hooks, now instead of a setState function, the hook will return the collection of actions
 
-```tsx
-const MyComponent = () => {
-  const [, , actions] = useCounterContext();
+Last but not least, you can still creating **selectorHooks** with the **createSelectorHook** function, this hooks will only work if the if they are contained in the scope of the provider.
 
-  return <button onClick={() => actions.increase(1)}>Increase</button>;
-};
+```tsx
+const useIsEven = useCounterContext.createSelectorHook(
+  (count) => count % 2 === 0
+);
 ```
 
 # Emitters
