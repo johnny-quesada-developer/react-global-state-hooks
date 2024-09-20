@@ -13,7 +13,7 @@ import {
 import { GlobalStore } from './GlobalStore';
 
 import React, { PropsWithChildren, useMemo, useImperativeHandle } from 'react';
-import { LocalStorageConfig } from 'GlobalStore.types';
+import { LocalStorageConfig } from './GlobalStore.types';
 
 export type ProviderAPI<Value, Metadata> = {
   setMetadata: MetadataSetter<Metadata>;
@@ -230,7 +230,7 @@ export interface CreateContext {
 }
 
 export const createContext = ((initialValue, ...args: any[]) => {
-  const context = React.createContext(initialValue);
+  const context = React.createContext(null);
 
   const useContext = () => {
     return React.useContext<StateHook<any, any, any>>(context);
