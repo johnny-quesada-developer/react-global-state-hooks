@@ -57,7 +57,10 @@ type Context<
     {
       isEqualRoot,
       isEqual,
-    }?: Omit<UseHookConfig<RootDerivate, Value>, 'dependencies'>
+      name,
+    }?: Omit<UseHookConfig<RootDerivate, Value>, 'dependencies'> & {
+      name?: string;
+    }
   ) => StateHook<RootDerivate, PublicStateMutator, Metadata>;
 };
 
