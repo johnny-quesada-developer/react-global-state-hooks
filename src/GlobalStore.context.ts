@@ -8,6 +8,7 @@ import {
   StateHook,
   StateSetter,
   UseHookConfig,
+  uniqueId,
 } from 'react-hooks-global-states';
 
 import { GlobalStore } from './GlobalStore';
@@ -45,9 +46,13 @@ type Context<
    * This hooks only works when contained in the scope of the provider
    */
   createSelectorHook: <
+    RootState,
     RootSelectorResult,
-    RootDerivate = RootSelectorResult extends never ? Value : RootSelectorResult
+    RootDerivate = RootSelectorResult extends never
+      ? RootState
+      : RootSelectorResult
   >(
+    this: Context<RootState, PublicStateMutator, Metadata>,
     mainSelector?: (state: Value) => RootSelectorResult,
     {
       isEqualRoot,
@@ -241,16 +246,36 @@ export interface CreateContext {
 }
 
 export const createContext = ((initialValue, ...args: any[]) => {
+  const selectorHooksByParentHook: Map<
+    StateHook<any, any, any>,
+    Map<string, StateHook<any, any, any>>
+  > = new Map();
+
   const context = React.createContext(null);
 
   const useContext = () => {
     return React.useContext<StateHook<any, any, any>>(context);
   };
 
-  useContext.createSelectorHook = (..._args: []) => {
-    const hook = useContext();
+  useContext.createSelectorHook = (...createSelectorHookArgs: []) => {
+    const selectorId = uniqueId();
 
-    return hook.createSelectorHook(..._args);
+    return (...hookArgs: []) => {
+      const currentParentHook = useContext();
+      const selectorsMap = selectorHooksByParentHook.get(currentParentHook);
+
+      // one hook per selector and parent hook
+      if (!selectorsMap.has(selectorId)) {
+        selectorsMap.set(
+          selectorId,
+          currentParentHook.createSelectorHook(...createSelectorHookArgs)
+        );
+      }
+
+      const useSelectedHook = selectorsMap.get(selectorId);
+
+      return useSelectedHook(...hookArgs);
+    };
   };
 
   const Provider: Provider<any> = ({ children, value, ref }) => {
@@ -310,7 +335,13 @@ export const createContext = ((initialValue, ...args: any[]) => {
       [store]
     );
 
+    if (!selectorHooksByParentHook.has(hook)) {
+      selectorHooksByParentHook.set(hook, new Map());
+    }
+
     useEffect(() => {
+      selectorHooksByParentHook.delete(hook);
+
       return () => {
         (store as unknown as Store).config?.onUnMount?.();
         (store as unknown as Store).__onUnMountContext?.(store, hook);
