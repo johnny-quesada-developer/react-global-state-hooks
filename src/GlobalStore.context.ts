@@ -343,9 +343,9 @@ export const createContext = ((initialValue, ...args: any[]) => {
     }
 
     useEffect(() => {
-      selectorHooksByParentHook.delete(hook);
-
       return () => {
+        selectorHooksByParentHook.delete(hook);
+
         (store as unknown as Store).config?.onUnMount?.();
         (store as unknown as Store).__onUnMountContext?.(store, hook);
       };
