@@ -30,6 +30,14 @@ export const useCount = createGlobalState(0);
 
 That's it! Welcome to global hooks. Now, you can use this state wherever you need it in your application.
 
+The library is builded in modules, you can import everything or only what you need.
+
+```ts
+import { createGlobalState } from 'react-global-state-hooks/createGlobalState';
+
+export const useCount = createGlobalState(0);
+```
+
 Let's see how to use it inside a simple **component**
 
 ```ts
@@ -115,8 +123,7 @@ Okay, everything works when the changes come from the state, but what happens if
 const [filter, setFilter] = useState('');
 
 const [contacts] = useContacts(
-  (state) =>
-    [...state.entities.values()].filter((item) => item.name.includes(filter)),
+  (state) => [...state.entities.values()].filter((item) => item.name.includes(filter)),
   {
     isEqualRoot: (a, b) => a.entities === b.entities,
     /**
@@ -137,12 +144,9 @@ export const useContacts = createGlobalState({
   selected: Set<number>,
 });
 
-const useContactsArray = useContacts.createSelectorHook(
-  (state) => [...state.entities.values()],
-  {
-    isEqualRoot: (a, b) => a.entities === b.entities,
-  }
-);
+const useContactsArray = useContacts.createSelectorHook((state) => [...state.entities.values()], {
+  isEqualRoot: (a, b) => a.entities === b.entities,
+});
 ```
 
 Now inside your component just call the new hook
@@ -152,39 +156,28 @@ Now inside your component just call the new hook
 ```tsx
 const [filter, setFilter] = useState('');
 
-const [contacts] = useContactsArray(
-  (entities) => entities.name.includes(filter),
-  {
-    dependencies: [filter],
-  }
-);
+const [contacts] = useContactsArray((entities) => entities.name.includes(filter), {
+  dependencies: [filter],
+});
 ```
 
 Or you can create another selectorHook from your **useContactsArray**
 
 ```ts
-const useContactsArray = useContacts.createSelectorHook(
-  (state) => [...state.entities.values()],
-  {
-    isEqualRoot: (a, b) => a.entities === b.entities,
-  }
-);
+const useContactsArray = useContacts.createSelectorHook((state) => [...state.entities.values()], {
+  isEqualRoot: (a, b) => a.entities === b.entities,
+});
 
-const useContactsLength = useContactsArray.createSelectorHook(
-  (entities) => entities.length
-);
+const useContactsLength = useContactsArray.createSelectorHook((entities) => entities.length);
 ```
 
 Or you can create a custom hook
 
 ```tsx
 const useFilteredContacts = (filter: string) => {
-  const [contacts] = useContactsArray(
-    (entities) => entities.name.includes(filter),
-    {
-      dependencies: [filter],
-    }
-  );
+  const [contacts] = useContactsArray((entities) => entities.name.includes(filter), {
+    dependencies: [filter],
+  });
 
   return contacts;
 };
@@ -195,31 +188,28 @@ To summarize
 ```tsx
 const [filter, setFilter] = useState('');
 
-const [contacts] = useContacts(
-  (state) => state.contacts.filter((contact) => contact.name.includes(filter)),
-  {
-    /**
-     * You can use the `isEqualRoot` to validate if the values before the selector are equal.
-     * This validation will run before `isEqual` and if the result is true the selector will not be recomputed.
-     * If the result is true the re-render of the component will be prevented.
-     */
-    isEqualRoot: (r1, r2) => r1.filter === r2.filter,
+const [contacts] = useContacts((state) => state.contacts.filter((contact) => contact.name.includes(filter)), {
+  /**
+   * You can use the `isEqualRoot` to validate if the values before the selector are equal.
+   * This validation will run before `isEqual` and if the result is true the selector will not be recomputed.
+   * If the result is true the re-render of the component will be prevented.
+   */
+  isEqualRoot: (r1, r2) => r1.filter === r2.filter,
 
-    /**
-     * You can use the `isEqual` to validate if the values after the selector are equal.
-     * This validation will run after the selector computed a new value...
-     * and if the result is true it will prevent the re-render of the component.
-     */
-    isEqual: (filter1, filter2) => filter1 === filter2,
+  /**
+   * You can use the `isEqual` to validate if the values after the selector are equal.
+   * This validation will run after the selector computed a new value...
+   * and if the result is true it will prevent the re-render of the component.
+   */
+  isEqual: (filter1, filter2) => filter1 === filter2,
 
-    /**
-     * You can use the `dependencies` array as with regular hooks to to force the recomputation of the selector.
-     * Is important ot mention that changes in the dependencies will not trigger a re-render of the component...
-     * Instead the recomputation of the selector will returned immediately.
-     */
-    dependencies: [filter],
-  }
-);
+  /**
+   * You can use the `dependencies` array as with regular hooks to to force the recomputation of the selector.
+   * Is important ot mention that changes in the dependencies will not trigger a re-render of the component...
+   * Instead the recomputation of the selector will returned immediately.
+   */
+  dependencies: [filter],
+});
 
 return (
   <ul>
@@ -250,13 +240,9 @@ const useFilter = useContacts.createSelectorHook(({ filter }) => filter);
 
 const useContactsArray = useContacts.createSelectorHook(({ items }) => items);
 
-const useContactsLength = useContactsArray.createSelectorHook(
-  (items) => items.length
-);
+const useContactsLength = useContactsArray.createSelectorHook((items) => items.length);
 
-const useIsContactsEmpty = useContactsLength.createSelectorHook(
-  (length) => !length
-);
+const useIsContactsEmpty = useContactsLength.createSelectorHook((length) => !length);
 ```
 
 It can't get any simpler, right? Everything is connected, everything is reactive. Plus, these hooks are strongly typed, so if you're working with **TypeScript**, you'll absolutely love it.
@@ -446,9 +432,7 @@ const MyComponent = () => {
   // won't re-render if the counter changes
   const [getCount, setCount] = useCounterContext().stateControls();
 
-  return (
-    <button onClick={() => setCount((count) => count + 1)}>Increase</button>
-  );
+  return <button onClick={() => setCount((count) => count + 1)}>Increase</button>;
 };
 ```
 
@@ -482,27 +466,24 @@ const initialState: CounterState = {
   count: 0,
 };
 
-export const [useCounterContext, CounterProvider] = createStatefulContext(
-  initialState,
-  () => ({
-    increase: (value: number = 1) => {
-      return ({ setState }: StoreTools<CounterState>) => {
-        setState((state) => ({
-          ...state,
-          count: state.count + value,
-        }));
-      };
-    },
-    decrease: (value: number = 1) => {
-      return ({ setState }: StoreTools<CounterState>) => {
-        setState((state) => ({
-          ...state,
-          count: state.count - value,
-        }));
-      };
-    },
-  })
-);
+export const [useCounterContext, CounterProvider] = createStatefulContext(initialState, () => ({
+  increase: (value: number = 1) => {
+    return ({ setState }: StoreTools<CounterState>) => {
+      setState((state) => ({
+        ...state,
+        count: state.count + value,
+      }));
+    };
+  },
+  decrease: (value: number = 1) => {
+    return ({ setState }: StoreTools<CounterState>) => {
+      setState((state) => ({
+        ...state,
+        count: state.count - value,
+      }));
+    };
+  },
+}));
 ```
 
 And just like with regular global hooks, now instead of a setState function, the hook will return the collection of actions
@@ -510,9 +491,7 @@ And just like with regular global hooks, now instead of a setState function, the
 Last but not least, you can still creating **selectorHooks** with the **createSelectorHook** function, this hooks will only work if the if they are contained in the scope of the provider.
 
 ```tsx
-const useIsEven = useCounterContext.createSelectorHook(
-  (count) => count % 2 === 0
-);
+const useIsEven = useCounterContext.createSelectorHook((count) => count % 2 === 0);
 ```
 
 # Emitters
@@ -520,12 +499,9 @@ const useIsEven = useCounterContext.createSelectorHook(
 So, we have seen that we can subscribe a callback to state changes, create **selector hooks** from our global states. Guess what? We can also create derived **emitters** and subscribe callbacks to specific portions of the state. Let's review it:
 
 ```ts
-const subscribeToFilter = createDerivateEmitter(
-  contactsRetriever,
-  ({ filter }) => ({
-    filter,
-  })
-);
+const subscribeToFilter = createDerivateEmitter(contactsRetriever, ({ filter }) => ({
+  filter,
+}));
 ```
 
 Cool, it's basically the same, but instead of using the **hook** as a parameter, we just have to use the **stateRetriever** as a parameter, and that will make the magic.
@@ -577,15 +553,9 @@ const removeFilterSubscription = subscribeToFilter<Subscribe>(
 And guess what again? You can also derive emitters from derived emitters without any trouble at all! It works basically the same. Let's see an example:
 
 ```ts
-const subscribeToItems = createDerivateEmitter(
-  contactsRetriever,
-  ({ items }) => items
-);
+const subscribeToItems = createDerivateEmitter(contactsRetriever, ({ items }) => items);
 
-const subscribeToItemsLength = createDerivateEmitter(
-  subscribeToItems,
-  (items) => items.length
-);
+const subscribeToItemsLength = createDerivateEmitter(subscribeToItems, (items) => items.length);
 ```
 
 The examples may seem a little silly, but they allow you to see the incredible things you can accomplish with these **derived states** and **emitters**. They open up a world of possibilities!
@@ -692,8 +662,7 @@ const [stateRetriever3, stateMutator3] = useHook3.stateControls();
 
 const useIsLoading = createGlobalState(false);
 
-const [isLoadingStateRetriever, isLoadingMutator] =
-  useIsLoading.stateControls();
+const [isLoadingStateRetriever, isLoadingMutator] = useIsLoading.stateControls();
 ```
 
 Once we created another peace of state, we can combine it with our other **global hooks** and **emitters**
@@ -905,9 +874,7 @@ export class GlobalStore<
     asyncStorageKey?: string;
     isAsyncStorageReady?: boolean;
   } | null = null,
-  TStateSetter extends
-    | ActionCollectionConfig<TState, TMetadata>
-    | StateSetter<TState> = StateSetter<TState>
+  TStateSetter extends ActionCollectionConfig<TState, TMetadata> | StateSetter<TState> = StateSetter<TState>
 > extends GlobalStoreAbstract<TState, TMetadata, TStateSetter> {
   constructor(
     state: TState,
