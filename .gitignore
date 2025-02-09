@@ -105,7 +105,7 @@ dist
 # TernJS port file
 .tern-port
 
-lib
+/lib
 *.js
 *.d.ts
 /coverage

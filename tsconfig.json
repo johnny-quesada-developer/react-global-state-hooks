@@ -3,18 +3,21 @@
     "jsx": "react",
     "target": "ES2016",
     "module": "commonjs",
-    "lib": ["dom", "es6"],
+    "lib": [
+      "dom",
+      "es6"
+    ],
     "declaration": true,
-    "outDir": "./lib",
+    "outDir": "./",
     "strict": true,
-    "noImplicitAny": false,
-    "strictNullChecks": false,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
     "strictFunctionTypes": true,
-    "strictPropertyInitialization": false,
+    "strictPropertyInitialization": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -23,15 +26,25 @@
     "downlevelIteration": true,
     "sourceMap": true,
     "allowJs": true,
-    "declarationDir": "./lib",
-    "typeRoots": ["node_modules/@types", "./types"],
+    "declarationDir": "./",
+    "typeRoots": [
+      "node_modules/@types",
+      "./types"
+    ],
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
-      "*": ["src/*"],
-      "__test__/*": ["src/__test__/*"]
+      "*": [
+        "src/*"
+      ],
     }
   },
-  "include": ["src/**/*", "types/**/*", "__test__/**/*"],
-  "exclude": ["node_modules", "lib"]
+  "include": [
+    "src/**/*",
+    "types/**/*",
+  ],
+  "exclude": [
+    "node_modules",
+    "lib"
+  ]
 }

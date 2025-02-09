@@ -1,17 +1,15 @@
 import React from 'react';
 
 beforeEach(() => {
-  spyOn(React, 'useState').and.callFake(((initialState) => {
-    const value =
-      typeof initialState === 'function' ? initialState() : initialState;
+  spyOn(React, 'useState').and.callFake(((initialState: unknown) => {
+    const value = typeof initialState === 'function' ? initialState() : initialState;
 
     const setState = jest.fn(
       (() => {
-        let state;
+        let state: unknown;
 
         return jest.fn((setter) => {
-          const newState =
-            typeof setter === 'function' ? setter(state) : setter;
+          const newState = typeof setter === 'function' ? setter(state) : setter;
 
           state = newState;
         });
@@ -21,30 +19,20 @@ beforeEach(() => {
     return [value, setState];
   }) as any);
 
-  const dictionary = new Map<string, string>();
+  Object.defineProperty(globalThis, 'atob', {
+    value: jest.fn((value) => {
+      if (value === null) return '\x9Eée';
 
-  const localStorageMock = {
-    dictionary,
-    getItem: jest.fn((key) => {
-      return dictionary.get(key) ?? null;
+      return Buffer.from(value, 'base64').toString('ascii');
     }),
-    setItem: jest.fn((key, value) => {
-      const jsonValue = value.toString();
-
-      dictionary.set(key, jsonValue);
-    }),
-  };
-
-  (globalThis as any).localStorage = localStorageMock;
-
-  (globalThis as any).atob = jest.fn((value) => {
-    if (value === null) return '\x9Eée';
-
-    return Buffer.from(value, 'base64').toString('ascii');
+    configurable: true,
   });
 
-  (globalThis as any).btoa = jest.fn((value) => {
-    return Buffer.from(value).toString('base64');
+  Object.defineProperty(globalThis, 'btoa', {
+    value: jest.fn((value) => {
+      return Buffer.from(value).toString('base64');
+    }),
+    configurable: true,
   });
 
   let index = 0;
@@ -94,6 +82,7 @@ afterEach(() => {
   jest.restoreAllMocks();
   jest.clearAllMocks();
   jest.clearAllTimers();
+  window.localStorage.clear();
 });
 
 export {};
