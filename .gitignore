@@ -107,3 +107,7 @@ dist
 
 /lib
 /coverage
+*.js
+*.d.ts
+/coverage
+.DS_Store

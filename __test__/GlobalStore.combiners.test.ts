@@ -1,26 +1,26 @@
-import { Subscribe, combineAsyncGetters, createGlobalState } from '../src';
+import { combineRetrieverAsynchronously, createGlobalState } from '../src';
 
 import { createDecoupledPromise } from 'cancelable-promise-jq';
 
 describe('combiners', () => {
   it('should combine two global states', () => {
-    const [getter1, setter1] = createGlobalState({
+    const [retriever1, setter1] = createGlobalState({
       a: 1,
     }).stateControls();
 
-    const [getter2] = createGlobalState({
+    const [retriever2] = createGlobalState({
       b: 2,
     }).stateControls();
 
-    const [useDerivate, getter] = combineAsyncGetters(
+    const [useDerivate, retriever3] = combineRetrieverAsynchronously(
       {
         selector: ([a, b]) => ({
           ...a,
           ...b,
         }),
       },
-      getter1,
-      getter2
+      retriever1,
+      retriever2
     );
 
     let [data] = useDerivate();
@@ -32,25 +32,23 @@ describe('combiners', () => {
       b: 2,
     });
 
-    let unsubscribe = getter<Subscribe>((subscribe) => {
-      subscribe(
-        (state) => {
-          return state.a;
-        },
-        (state) => {
-          expect(getter()).toEqual({
-            a: 1,
-            b: 2,
-          });
+    let unsubscribe = retriever3(
+      (state) => {
+        return state.a;
+      },
+      (state) => {
+        expect(retriever3()).toEqual({
+          a: 1,
+          b: 2,
+        });
 
-          expect(state).toEqual(1);
-        }
-      );
-    });
+        expect(state).toEqual(1);
+      }
+    );
 
     unsubscribe();
 
-    expect(getter()).toEqual({
+    expect(retriever3()).toEqual({
       a: 1,
       b: 2,
     });
@@ -66,24 +64,22 @@ describe('combiners', () => {
 
     const decouplePromise = createDecoupledPromise();
 
-    unsubscribe = getter<Subscribe>((subscribe) => {
-      subscribe(
-        (state) => {
-          expect(state).toBe(getter());
+    unsubscribe = retriever3(
+      (state) => {
+        expect(state).toBe(retriever3());
 
-          expect(getter()).toEqual({
-            a: 3,
-            b: 2,
-          });
+        expect(retriever3()).toEqual({
+          a: 3,
+          b: 2,
+        });
 
-          unsubscribe();
-          decouplePromise.resolve();
-        },
-        {
-          skipFirst: true,
-        }
-      );
-    });
+        unsubscribe();
+        decouplePromise.resolve();
+      },
+      {
+        skipFirst: true,
+      }
+    );
 
     return decouplePromise.promise;
   });

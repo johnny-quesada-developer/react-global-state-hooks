@@ -1,8 +1,3 @@
-/**
- * By handling the same structure as the original library,
- * We can add the specific overrides for web while keeping the modularity of the library.
- */
-// #region base library exports copy of the original library index
 export {
   StateSetter,
   HookExtensions,
@@ -28,12 +23,12 @@ export {
 } from './types';
 
 // classes
-// export { GlobalStore } from './GlobalStore'; // overridden
-// export { GlobalStoreAbstract } from './GlobalStoreAbstract';// overridden
+export { GlobalStore } from './GlobalStore';
+export { GlobalStoreAbstract } from './GlobalStoreAbstract';
 
 // functions
-// export { createGlobalState } from './createGlobalState'; // overridden
-// export { createCustomGlobalState } from './createCustomGlobalState'; // overridden
+export { createGlobalState } from './createGlobalState';
+export { createCustomGlobalState } from './createCustomGlobalState';
 
 // utils
 export { shallowCompare } from './shallowCompare';
@@ -56,13 +51,3 @@ export {
   CreateContext,
   createContext,
 } from './createContext';
-
-// #endregion base library exports
-
-export { LocalStorageConfig } from './types';
-export { GlobalStore } from './GlobalStore';
-export { GlobalStoreAbstract } from './GlobalStoreAbstract';
-export { CreateGlobalState, createGlobalState } from './createGlobalState';
-export { createCustomGlobalState, CustomCreateGlobalState } from './createCustomGlobalState';
-export { getLocalStorageItem } from './getLocalStorageItem';
-export { setLocalStorageItem } from './setLocalStorageItem';

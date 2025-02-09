@@ -1,10 +1,5 @@
-import {
-  formatToStore,
-  Subscribe,
-  SubscriberCallback,
-  GlobalStore,
-  createGlobalState,
-} from '../src/';
+import { formatToStore } from 'json-storage-formatter/formatToStore';
+import { GlobalStore, createGlobalState } from '../src/';
 
 describe('LocalStorage Basics', () => {
   it('should create a store with  storage', () => {
@@ -26,11 +21,9 @@ describe('LocalStorage Basics', () => {
     const onStateChanged = (storage as any).onStateChanged;
     onStateChanged.bind(storage);
 
-    jest
-      .spyOn(storage, 'onStateChanged' as any)
-      .mockImplementation((...parameters) => {
-        onStateChanged(...parameters);
-      });
+    jest.spyOn(storage, 'onStateChanged' as any).mockImplementation((...parameters) => {
+      onStateChanged(...parameters);
+    });
 
     expect(storage).toBeInstanceOf(GlobalStore);
 
@@ -107,22 +100,20 @@ describe('getter subscriptions custom global state', () => {
     const subscriptionSpy = jest.fn();
     const subscriptionDerivateSpy = jest.fn();
 
-    const callback = jest.fn(((subscribe) => {
-      subscribe((state) => {
+    const subscriptions = [
+      getter((state) => {
         subscriptionSpy(state);
-      });
+      }),
 
-      subscribe(
+      getter(
         (state) => {
           return state.a;
         },
         (derivate) => {
           subscriptionDerivateSpy(derivate);
         }
-      );
-    }) as SubscriberCallback<typeof state>);
-
-    const removeSubscription = getter<Subscribe>(callback);
+      ),
+    ];
 
     expect(subscriptionSpy).toBeCalledTimes(1);
     expect(subscriptionSpy).toBeCalledWith(state);
@@ -144,7 +135,7 @@ describe('getter subscriptions custom global state', () => {
     // the derivate should not be called since it didn't change
     expect(subscriptionDerivateSpy).toBeCalledTimes(1);
 
-    removeSubscription();
+    subscriptions.forEach((unsubscribe) => unsubscribe());
 
     setter((state) => ({
       ...state,

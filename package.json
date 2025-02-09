@@ -1,11 +1,95 @@
 {
   "name": "react-global-state-hooks",
-  "version": "6.0.8",
+  "version": "7.0.0",
   "description": "This is a package to easily handling global-state across your react components No-redux, No-context.",
-  "main": "lib/bundle.js",
-  "types": "lib/src/index.d.ts",
+  "main": "./bundle.js",
+  "types": "./src/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "import": "./bundle.js",
+      "require": "./bundle.js",
+      "types": "./index.d.ts"
+    },
+    "./createContext": {
+      "import": "./createContext.js",
+      "require": "./createContext.js",
+      "types": "./createContext.d.ts"
+    },
+    "./GlobalStore": {
+      "import": "./GlobalStore.js",
+      "require": "./GlobalStore.js",
+      "types": "./GlobalStore.d.ts"
+    },
+    "./GlobalStoreAbstract": {
+      "import": "./GlobalStoreAbstract.js",
+      "require": "./GlobalStoreAbstract.js",
+      "types": "./GlobalStoreAbstract.d.ts"
+    },
+    "./createCustomGlobalState": {
+      "import": "./createCustomGlobalState.js",
+      "require": "./createCustomGlobalState.js",
+      "types": "./createCustomGlobalState.d.ts"
+    },
+    "./createGlobalState": {
+      "import": "./createGlobalState.js",
+      "require": "./createGlobalState.js",
+      "types": "./createGlobalState.d.ts"
+    },
+    "./combineRetrieverAsynchronously": {
+      "import": "./combineRetrieverAsynchronously.js",
+      "require": "./combineRetrieverAsynchronously.js",
+      "types": "./combineRetrieverAsynchronously.d.ts"
+    },
+    "./combineRetrieverEmitterAsynchronously": {
+      "import": "./combineRetrieverEmitterAsynchronously.js",
+      "require": "./combineRetrieverEmitterAsynchronously.js",
+      "types": "./combineRetrieverEmitterAsynchronously.d.ts"
+    },
+    "./types": {
+      "import": "./types.js",
+      "require": "./types.js",
+      "types": "./types.d.ts"
+    },
+    "./debounce": {
+      "import": "./debounce.js",
+      "require": "./debounce.js",
+      "types": "./debounce.d.ts"
+    },
+    "./isRecord": {
+      "import": "./isRecord.js",
+      "require": "./isRecord.js",
+      "types": "./isRecord.d.ts"
+    },
+    "./shallowCompare": {
+      "import": "./shallowCompare.js",
+      "require": "./shallowCompare.js",
+      "types": "./shallowCompare.d.ts"
+    },
+    "./throwWrongKeyOnActionCollectionConfig": {
+      "import": "./throwWrongKeyOnActionCollectionConfig.js",
+      "require": "./throwWrongKeyOnActionCollectionConfig.js",
+      "types": "./throwWrongKeyOnActionCollectionConfig.d.ts"
+    },
+    "./uniqueId": {
+      "import": "./uniqueId.js",
+      "require": "./uniqueId.js",
+      "types": "./uniqueId.d.ts"
+    },
+    "./uniqueSymbol": {
+      "import": "./uniqueSymbol.js",
+      "require": "./uniqueSymbol.js",
+      "types": "./uniqueSymbol.d.ts"
+    },
+    "./useConstantValueRef": {
+      "import": "./useConstantValueRef.js",
+      "require": "./useConstantValueRef.js",
+      "types": "./useConstantValueRef.d.ts"
+    }
+  },
   "files": [
-    "lib"
+    "*.js",
+    "*.d.ts"
   ],
   "scripts": {
     "test:debug": "node --inspect-brk node_modules/.bin/jest --watch --runInBand",
@@ -14,7 +98,8 @@
     "build": "webpack --config webpack.config.js",
     "prepare": "npm run build",
     "version": "npm run format && git add -A src",
-    "postversion": "git push && git push --tags"
+    "postversion": "git push && git push --tags",
+    "clean": "find . -maxdepth 1 -type f \\( -name '*.js' -o -name '*.d.ts' \\) ! -name 'webpack.config.js' -exec rm {} +"
   },
   "repository": {
     "type": "git",
@@ -63,6 +148,7 @@
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^4.2.0",
     "jest": "^26.6.3",
+    "json-storage-formatter": "^2.0.5",
     "react": "^17.0.0",
     "react-dom": ">=17.0.0",
     "react-test-renderer": "^17.0.1",
@@ -73,9 +159,10 @@
     "webpack-cli": "^5.0.1"
   },
   "peerDependencies": {
+    "json-storage-formatter": "^2.0.5",
     "react": ">=17.0.0"
   },
   "dependencies": {
-    "react-hooks-global-states": "^4.0.7"
+    "react-hooks-global-states": "^6.0.6"
   }
 }
