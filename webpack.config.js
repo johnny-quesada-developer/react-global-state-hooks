@@ -22,6 +22,8 @@ module.exports = {
     uniqueSymbol: './src/uniqueSymbol.ts',
     useConstantValueRef: './src/useConstantValueRef.ts',
     // extras
+    getLocalStorageItem: './src/getLocalStorageItem.ts',
+    setLocalStorageItem: './src/setLocalStorageItem.ts',
   },
   externals: {
     react: 'react',

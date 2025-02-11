@@ -1,9 +1,9 @@
 {
   "name": "react-global-state-hooks",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "description": "This is a package to easily handling global-state across your react components No-redux, No-context.",
   "main": "./bundle.js",
-  "types": "./src/index.d.ts",
+  "types": "./index.d.ts",
   "sideEffects": false,
   "exports": {
     ".": {
@@ -55,6 +55,16 @@
       "import": "./debounce.js",
       "require": "./debounce.js",
       "types": "./debounce.d.ts"
+    },
+    "./getLocalStorageItem": {
+      "import": "./getLocalStorageItem.js",
+      "require": "./getLocalStorageItem.js",
+      "types": "./getLocalStorageItem.d.ts"
+    },
+    "./setLocalStorageItem": {
+      "import": "./setLocalStorageItem.js",
+      "require": "./setLocalStorageItem.js",
+      "types": "./setLocalStorageItem.d.ts"
     },
     "./isRecord": {
       "import": "./isRecord.js",
