@@ -20,7 +20,7 @@ module.exports = {
     throwWrongKeyOnActionCollectionConfig: './src/throwWrongKeyOnActionCollectionConfig.ts',
     uniqueId: './src/uniqueId.ts',
     uniqueSymbol: './src/uniqueSymbol.ts',
-    useConstantValueRef: './src/useConstantValueRef.ts',
+    useStableState: './src/useStableState.ts',
     // extras
     getLocalStorageItem: './src/getLocalStorageItem.ts',
     setLocalStorageItem: './src/setLocalStorageItem.ts',
