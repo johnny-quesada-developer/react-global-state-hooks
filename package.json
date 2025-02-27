@@ -169,10 +169,10 @@
     "webpack-cli": "^5.0.1"
   },
   "peerDependencies": {
-    "json-storage-formatter": "^2.0.5",
+    "json-storage-formatter": "^2.0.9",
     "react": ">=17.0.0"
   },
   "dependencies": {
-    "react-hooks-global-states": "^6.0.12"
+    "react-hooks-global-states": "^6.0.13"
   }
 }
