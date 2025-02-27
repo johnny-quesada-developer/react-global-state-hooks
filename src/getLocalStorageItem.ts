@@ -34,3 +34,5 @@ export const getLocalStorageItem = <T>(args: LocalStorageConfig): T | null => {
 
   return value;
 };
+
+export default getLocalStorageItem;

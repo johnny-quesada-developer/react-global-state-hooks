@@ -57,3 +57,5 @@ export const createGlobalState = ((
     localStorage?: LocalStorageConfig;
   }
 ) => new GlobalStore(state, args).getHook()) as CreateGlobalState;
+
+export default createGlobalState;

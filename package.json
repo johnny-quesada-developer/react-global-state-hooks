@@ -1,6 +1,6 @@
 {
   "name": "react-global-state-hooks",
-  "version": "7.0.6",
+  "version": "8.0.1",
   "description": "This is a package to easily handling global-state across your react components No-redux, No-context.",
   "main": "./bundle.js",
   "types": "./index.d.ts",
@@ -35,16 +35,6 @@
       "import": "./createGlobalState.js",
       "require": "./createGlobalState.js",
       "types": "./createGlobalState.d.ts"
-    },
-    "./combineRetrieverAsynchronously": {
-      "import": "./combineRetrieverAsynchronously.js",
-      "require": "./combineRetrieverAsynchronously.js",
-      "types": "./combineRetrieverAsynchronously.d.ts"
-    },
-    "./combineRetrieverEmitterAsynchronously": {
-      "import": "./combineRetrieverEmitterAsynchronously.js",
-      "require": "./combineRetrieverEmitterAsynchronously.js",
-      "types": "./combineRetrieverEmitterAsynchronously.d.ts"
     },
     "./types": {
       "import": "./types.js",
@@ -173,6 +163,6 @@
     "react": ">=17.0.0"
   },
   "dependencies": {
-    "react-hooks-global-states": "^6.0.13"
+    "react-hooks-global-states": "^7.0.0"
   }
 }

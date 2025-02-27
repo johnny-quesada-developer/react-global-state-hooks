@@ -94,3 +94,5 @@ export class GlobalStore<
     this._onChange?.(args);
   };
 }
+
+export default GlobalStore;

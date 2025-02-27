@@ -31,3 +31,5 @@ export const setLocalStorageItem = <T>(item: T, args: LocalStorageConfig): void 
 
   localStorage.setItem(localStorageKey, parsed);
 };
+
+export default setLocalStorageItem;
