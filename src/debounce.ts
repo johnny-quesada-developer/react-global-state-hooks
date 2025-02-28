@@ -1,1 +1,1 @@
-export * from 'react-hooks-global-states/debounce';
+export { debounce, default } from 'react-hooks-global-states/debounce';

@@ -3,7 +3,7 @@
  * We can add the specific overrides for web while keeping the modularity of the library.
  */
 // #region base library exports copy of the original library index
-export {
+export type {
   StateSetter,
   HookExtensions,
   ObservableFragment,
@@ -41,21 +41,21 @@ export { debounce } from './debounce';
 export { uniqueId } from './uniqueId';
 export { throwWrongKeyOnActionCollectionConfig } from './throwWrongKeyOnActionCollectionConfig';
 export { isRecord } from './isRecord';
-export { uniqueSymbol, UniqueSymbol } from './uniqueSymbol';
+export { uniqueSymbol, type UniqueSymbol } from './uniqueSymbol';
 export { useStableState, type UseStableState } from './useStableState';
 
 // context
 export {
-  ContextProviderAPI,
-  ContextProvider,
-  ContextHook,
-  CreateContext,
-  createContext,
+  type ContextProviderAPI,
+  type ContextProvider,
+  type ContextHook,
+  type CreateContext,
+  type createContext,
 } from './createContext';
 
 // #endregion base library exports
 
-export { LocalStorageConfig } from './types';
+export { type LocalStorageConfig } from './types';
 export { GlobalStore } from './GlobalStore';
 export { GlobalStoreAbstract } from './GlobalStoreAbstract';
 export { CreateGlobalState, createGlobalState } from './createGlobalState';
