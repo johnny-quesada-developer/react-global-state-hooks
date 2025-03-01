@@ -22,6 +22,7 @@ module.exports = {
     // extras
     getLocalStorageItem: './src/getLocalStorageItem.ts',
     setLocalStorageItem: './src/setLocalStorageItem.ts',
+    generateStackHash: './src/generateStackHash.ts',
   },
   externals: {
     react: 'react',

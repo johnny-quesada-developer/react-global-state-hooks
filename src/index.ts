@@ -62,3 +62,5 @@ export { CreateGlobalState, createGlobalState } from './createGlobalState';
 export { createCustomGlobalState, CustomCreateGlobalState } from './createCustomGlobalState';
 export { getLocalStorageItem } from './getLocalStorageItem';
 export { setLocalStorageItem } from './setLocalStorageItem';
+
+export { generateStackHash } from './generateStackHash';
