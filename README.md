@@ -1,4 +1,4 @@
-# react-hooks-global-states 🌟
+# react-global-state-hooks 🌟
 
 ![Image John Avatar](https://raw.githubusercontent.com/johnny-quesada-developer/global-hooks-example/main/public/avatar2.jpeg)
 
