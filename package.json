@@ -1,6 +1,6 @@
 {
   "name": "react-global-state-hooks",
-  "version": "8.0.17",
+  "version": "8.0.18",
   "description": "This is a package to easily handling global-state across your react components No-redux, No-context.",
   "main": "./bundle.js",
   "types": "./index.d.ts",
@@ -172,10 +172,10 @@
     "webpack-cli": "^5.0.1"
   },
   "peerDependencies": {
-    "json-storage-formatter": "^2.0.9",
-    "react": ">=17.0.0"
+    "react": ">=17.0.0",
+    "json-storage-formatter": "^2.0.9"
   },
   "dependencies": {
-    "react-hooks-global-states": "^7.0.14"
+    "react-hooks-global-states": "^7.0.17"
   }
 }
