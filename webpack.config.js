@@ -26,7 +26,42 @@ module.exports = {
   },
   externals: {
     react: 'react',
-    'react-dom': 'react-dom',
+    // avoid bundle the base package
+    'react-hooks-global-states/createContext': 'react-hooks-global-states/createContext',
+    'react-hooks-global-states/GlobalStore': 'react-hooks-global-states/GlobalStore',
+    'react-hooks-global-states/GlobalStoreAbstract': 'react-hooks-global-states/GlobalStoreAbstract',
+    'react-hooks-global-states/createCustomGlobalState': 'react-hooks-global-states/createCustomGlobalState',
+    'react-hooks-global-states/createGlobalState': 'react-hooks-global-states/createGlobalState',
+    'react-hooks-global-states/types': 'react-hooks-global-states/types',
+    'react-hooks-global-states/debounce': 'react-hooks-global-states/debounce',
+    'react-hooks-global-states/isRecord': 'react-hooks-global-states/isRecord',
+    'react-hooks-global-states/shallowCompare': 'react-hooks-global-states/shallowCompare',
+    'react-hooks-global-states/throwWrongKeyOnActionCollectionConfig':
+      'react-hooks-global-states/throwWrongKeyOnActionCollectionConfig',
+    'react-hooks-global-states/uniqueId': 'react-hooks-global-states/uniqueId',
+    'react-hooks-global-states/uniqueSymbol': 'react-hooks-global-states/uniqueSymbol',
+    'react-hooks-global-states/useStableState': 'react-hooks-global-states/useStableState',
+    'react-hooks-global-states/generateStackHash': 'react-hooks-global-states/generateStackHash',
+
+    // inherit from react-global-state-hooks
+    './bundle': './index.js',
+    './createContext': './createContext.js',
+    './GlobalStore': './GlobalStore.js',
+    './GlobalStoreAbstract': './GlobalStoreAbstract.js',
+    './createCustomGlobalState': './createCustomGlobalState.js',
+    './createGlobalState': './createGlobalState.js',
+    './types': './types.js',
+    './debounce': './debounce.js',
+    './isRecord': './isRecord.js',
+    './shallowCompare': './shallowCompare.js',
+    './throwWrongKeyOnActionCollectionConfig': './throwWrongKeyOnActionCollectionConfig.js',
+    './uniqueId': './uniqueId.js',
+    './uniqueSymbol': './uniqueSymbol.js',
+    './useStableState': './useStableState.js',
+    // extras
+    './getLocalStorageItem': './getLocalStorageItem.js',
+    './setLocalStorageItem': './setLocalStorageItem.js',
+    './generateStackHash': './generateStackHash.js',
   },
   output: {
     path: path.resolve(__dirname),

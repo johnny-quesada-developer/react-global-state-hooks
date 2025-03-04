@@ -1,5 +1,5 @@
 import { formatToStore } from 'json-storage-formatter/formatToStore';
-import { GlobalStore, createGlobalState } from '../src/';
+import { GlobalStore, createGlobalState } from '..';
 
 describe('LocalStorage Basics', () => {
   it('should create a store with  storage', () => {

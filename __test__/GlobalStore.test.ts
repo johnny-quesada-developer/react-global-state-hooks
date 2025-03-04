@@ -1,5 +1,6 @@
-import { formatFromStore, formatToStore } from 'json-storage-formatter';
-import { GlobalStore, ActionCollectionConfig, ActionCollectionResult, StoreTools } from '../src';
+import { formatFromStore } from 'json-storage-formatter/formatFromStore';
+import { formatToStore } from 'json-storage-formatter/formatToStore';
+import { GlobalStore, type ActionCollectionConfig, type ActionCollectionResult, type StoreTools } from '..';
 import { useState, useEffect } from 'react';
 
 describe('GlobalStore Basic', () => {
@@ -38,7 +39,7 @@ describe('GlobalStore Basic', () => {
     const store = new GlobalStore(stateValue, {
       localStorage: {
         key: 'key1',
-        // by default, the state is encrypted to base64, but you can disable it, or use a custom encryptor
+        // by default, the state is encrypted to base64, but you can disable it, or use a custom function for encrypting
         encrypt: false,
       },
     });

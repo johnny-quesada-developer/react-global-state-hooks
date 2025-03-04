@@ -1,7 +1,8 @@
 import { createDecoupledPromise } from 'cancelable-promise-jq';
-import { StateSetter, StoreTools, createCustomGlobalState, createGlobalState } from '../src';
 import { useState } from 'react';
-import { formatFromStore, formatToStore } from 'json-storage-formatter';
+import { formatFromStore } from 'json-storage-formatter/formatFromStore';
+import { formatToStore } from 'json-storage-formatter/formatToStore';
+import { type StateSetter, type StoreTools, createCustomGlobalState, createGlobalState } from '..';
 
 describe('basic', () => {
   it('should be able to create a new instance with state', () => {
