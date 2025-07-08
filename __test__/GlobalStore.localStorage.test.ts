@@ -1,5 +1,6 @@
 import { formatToStore } from 'json-storage-formatter/formatToStore';
 import { GlobalStore, createGlobalState } from '..';
+import { act, renderHook } from '@testing-library/react';
 
 describe('LocalStorage Basics', () => {
   it('should create a store with  storage', () => {
@@ -28,7 +29,7 @@ describe('LocalStorage Basics', () => {
     expect(storage).toBeInstanceOf(GlobalStore);
 
     // add a subscriber to the store
-    storage.getHook()();
+    renderHook(() => storage.getHook()());
 
     const [[id, parameters]] = storage.subscribers;
     const { callback } = parameters;
@@ -39,7 +40,7 @@ describe('LocalStorage Basics', () => {
     storage.subscribers = new Map([[id, parameters]]);
 
     // local storage is synchronous so there are no extra calls to setState when initializing the store
-    expect(callbackWrapper).toBeCalledTimes(0);
+    expect(callbackWrapper).toHaveBeenCalledTimes(0);
 
     expect(getState()).toBe(0);
 
@@ -64,21 +65,26 @@ describe('createGlobalState', () => {
       },
     });
 
-    let [data, setData] = useData();
+    const { result } = renderHook(() => useData());
+    const [, setData] = result.current;
 
-    [data, setData] = useData();
+    const { result: result2 } = renderHook(() => useData());
+    const [data2] = result2.current;
 
-    expect(data).toEqual(new Map([['prop', 0]]));
+    expect(data2).toEqual(new Map([['prop', 0]]));
 
-    setData((data) => {
-      data.set('prop', 1);
+    act(() => {
+      setData((data) => {
+        data.set('prop', 1);
 
-      return data;
+        return data;
+      });
     });
 
-    const [data2] = useData();
+    const { result: result3 } = renderHook(() => useData());
+    const [data3] = result3.current;
 
-    expect(data).toBe(data2);
+    expect(data2).toBe(data3);
   });
 });
 
@@ -115,25 +121,25 @@ describe('getter subscriptions custom global state', () => {
       ),
     ];
 
-    expect(subscriptionSpy).toBeCalledTimes(1);
-    expect(subscriptionSpy).toBeCalledWith(state);
+    expect(subscriptionSpy).toHaveBeenCalledTimes(1);
+    expect(subscriptionSpy).toHaveBeenCalledWith(state);
 
-    expect(subscriptionDerivateSpy).toBeCalledTimes(1);
-    expect(subscriptionDerivateSpy).toBeCalledWith(3);
+    expect(subscriptionDerivateSpy).toHaveBeenCalledTimes(1);
+    expect(subscriptionDerivateSpy).toHaveBeenCalledWith(3);
 
     setter((state) => ({
       ...state,
       b: 3,
     }));
 
-    expect(subscriptionSpy).toBeCalledTimes(2);
-    expect(subscriptionSpy).toBeCalledWith({
+    expect(subscriptionSpy).toHaveBeenCalledTimes(2);
+    expect(subscriptionSpy).toHaveBeenCalledWith({
       a: 3,
       b: 3,
     });
 
     // the derivate should not be called since it didn't change
-    expect(subscriptionDerivateSpy).toBeCalledTimes(1);
+    expect(subscriptionDerivateSpy).toHaveBeenCalledTimes(1);
 
     subscriptions.forEach((unsubscribe) => unsubscribe());
 
@@ -143,7 +149,7 @@ describe('getter subscriptions custom global state', () => {
     }));
 
     // the subscription should not be called since it was removed
-    expect(subscriptionSpy).toBeCalledTimes(2);
-    expect(subscriptionDerivateSpy).toBeCalledTimes(1);
+    expect(subscriptionSpy).toHaveBeenCalledTimes(2);
+    expect(subscriptionDerivateSpy).toHaveBeenCalledTimes(1);
   });
 });
