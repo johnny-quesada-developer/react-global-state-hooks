@@ -13,7 +13,6 @@ const individualEntries = {
   shallowCompare: './src/shallowCompare.ts',
   throwWrongKeyOnActionCollectionConfig: './src/throwWrongKeyOnActionCollectionConfig.ts',
   uniqueId: './src/uniqueId.ts',
-  uniqueSymbol: './src/uniqueSymbol.ts',
   useStableState: './src/useStableState.ts',
   generateStackHash: './src/generateStackHash.ts',
 
