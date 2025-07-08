@@ -1,4 +1,4 @@
-import { createDecoupledPromise } from 'cancelable-promise-jq';
+import { createDecoupledPromise } from 'easy-cancelable-promise';
 import { useState } from 'react';
 import { formatFromStore } from 'json-storage-formatter/formatFromStore';
 import { formatToStore } from 'json-storage-formatter/formatToStore';
