@@ -48,7 +48,7 @@ export {
   type ContextProvider,
   type ContextHook,
   type CreateContext,
-  type createContext,
+  createContext,
 } from './createContext';
 
 // #endregion base library exports
