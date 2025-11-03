@@ -13,7 +13,7 @@ import { setLocalStorageItem } from './setLocalStorageItem';
 
 export class GlobalStore<
   State,
-  Metadata extends BaseMetadata | unknown,
+  Metadata extends BaseMetadata,
   ActionsConfig extends ActionCollectionConfig<State, Metadata> | undefined | unknown
 > extends GlobalStoreAbstract<State, Metadata, ActionsConfig> {
   protected localStorage: LocalStorageConfig | null = null;

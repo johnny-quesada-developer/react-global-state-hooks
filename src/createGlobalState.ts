@@ -1,6 +1,7 @@
+import type React from 'react';
+
 import {
   StateHook,
-  StateSetter,
   BaseMetadata,
   ActionCollectionConfig,
   ActionCollectionResult,
@@ -13,15 +14,90 @@ import { LocalStorageConfig } from './types';
 import { GlobalStore } from './GlobalStore';
 
 export interface CreateGlobalState {
-  <State>(state: State): StateHook<State, StateSetter<State>, BaseMetadata>;
+  /**
+   * Creates a global state hook.
+   * @param state initial state value
+   * @returns a state hook for your components
+   * @example
+   * const useCounter = createGlobalState(0);
+   *
+   * function Counter() {
+   *   const [count, setCount] = useCounter();
+   *   return (
+   *     <div>
+   *       <p>Count: {count}</p>
+   *       <button onClick={() =>
+   *         setCount(prev => prev + 1)
+   *       }>Increment</button>
+   *     </div>
+   *   );
+   * }
+   */
+  <State>(state: State): StateHook<
+    State,
+    React.Dispatch<React.SetStateAction<State>>,
+    React.Dispatch<React.SetStateAction<State>>,
+    BaseMetadata
+  >;
 
+  /**
+   * Creates a global state hook that you can use across your application
+   * @param state initial state value
+   * @param args additional configuration for the global state
+   * @param args.name optional name for debugging purposes
+   * @param args.metadata optional non-reactive metadata associated with the state
+   * @param args.callbacks optional lifecycle callbacks for the global state
+   * @param args.actions optional actions to restrict state mutations [if provided `setState` will be nullified]
+   * @param args.localStorage optional configuration to persist the state in local storage
+   * @returns a state hook that you can use in your components
+   *
+   * @example
+   * ```tsx
+   * const useCounter = createGlobalState(0, {
+   *   actions: {
+   *     increase() {
+   *       return ({ setState }) => {
+   *         setState((c) => c + 1);
+   *       };
+   *     },
+   *     decrease(amount: number) {
+   *       return ({ setState }) => {
+   *         setState((c) => c - amount);
+   *       };
+   *     },
+   *   },
+   * });
+   *
+   * function Counter() {
+   *  const [count, {
+   *    increase,
+   *    decrease
+   *  }] = useCounter();
+   *
+   *  return (
+   *   <div>
+   *    <p>Count: {count}</p>
+   *    <button onClick={increase}>
+   *      Increment
+   *    </button>
+   *    <button onClick={() => {
+   *      decrease(1);
+   *    }}>
+   *      Decrement
+   *    </button>
+   *   </div>
+   *  );
+   * }
+   * ```
+   */
   <
     State,
-    Metadata extends BaseMetadata | unknown,
+    Metadata extends BaseMetadata,
     ActionsConfig extends ActionCollectionConfig<State, Metadata> | null | {},
     PublicStateMutator = keyof ActionsConfig extends never | undefined
-      ? StateSetter<State>
-      : ActionCollectionResult<State, Metadata, NonNullable<ActionsConfig>>
+      ? React.Dispatch<React.SetStateAction<State>>
+      : ActionCollectionResult<State, Metadata, NonNullable<ActionsConfig>>,
+    StateDispatch = React.Dispatch<React.SetStateAction<State>>
   >(
     state: State,
     args: {
@@ -31,12 +107,63 @@ export interface CreateGlobalState {
       actions?: ActionsConfig;
       localStorage?: LocalStorageConfig;
     }
-  ): StateHook<State, PublicStateMutator, Metadata>;
+  ): StateHook<State, StateDispatch, PublicStateMutator, Metadata>;
 
+  /**
+   * Creates a global state hook that you can use across your application
+   * @param state initial state value
+   * @param args additional configuration for the global state
+   * @param args.name optional name for debugging purposes
+   * @param args.metadata optional non-reactive metadata associated with the state
+   * @param args.callbacks optional lifecycle callbacks for the global state
+   * @param args.actions optional actions to restrict state mutations [if provided `setState` will be nullified]
+   * @param args.localStorage optional configuration to persist the state in local storage
+   * @returns a state hook that you can use in your components
+   *
+   * @example
+   * ```tsx
+   * const useCounter = createGlobalState(0, {
+   *   actions: {
+   *     increase() {
+   *       return ({ setState }) => {
+   *         setState((c) => c + 1);
+   *       };
+   *     },
+   *     decrease(amount: number) {
+   *       return ({ setState }) => {
+   *         setState((c) => c - amount);
+   *       };
+   *     },
+   *   },
+   * });
+   *
+   * function Counter() {
+   *  const [count, {
+   *    increase,
+   *    decrease
+   *  }] = useCounter();
+   *
+   *  return (
+   *   <div>
+   *    <p>Count: {count}</p>
+   *    <button onClick={increase}>
+   *      Increment
+   *    </button>
+   *    <button onClick={() => {
+   *      decrease(1);
+   *    }}>
+   *      Decrement
+   *    </button>
+   *   </div>
+   *  );
+   * }
+   * ```
+   */
   <
     State,
-    Metadata extends BaseMetadata | unknown,
-    ActionsConfig extends ActionCollectionConfig<State, Metadata>
+    Metadata extends BaseMetadata,
+    ActionsConfig extends ActionCollectionConfig<State, Metadata>,
+    StateDispatch = React.Dispatch<React.SetStateAction<State>>
   >(
     state: State,
     args: {
@@ -46,18 +173,17 @@ export interface CreateGlobalState {
       actions: ActionsConfig;
       localStorage?: LocalStorageConfig;
     }
-  ): StateHook<State, ActionCollectionResult<State, Metadata, ActionsConfig>, Metadata>;
+  ): StateHook<State, StateDispatch, ActionCollectionResult<State, Metadata, ActionsConfig>, Metadata>;
 }
 
-export const createGlobalState = ((
-  state: unknown,
-  args: {
-    name?: string;
-    metadata?: unknown;
-    callbacks?: GlobalStoreCallbacks<unknown, unknown>;
-    actions?: ActionCollectionConfig<unknown, unknown>;
-    localStorage?: LocalStorageConfig;
-  }
-) => new GlobalStore(state, args).getHook()) as CreateGlobalState;
+/**
+ * Creates a global state hook.
+ * @param state - The initial state value.
+ * @param args - Optional configuration arguments.
+ * @returns A state hook for managing the global state, the hook also embeds the state api methods.
+ */
+export const createGlobalState = ((...args: ConstructorParameters<typeof GlobalStore>) => {
+  return new GlobalStore(...args).use;
+}) as CreateGlobalState;
 
 export default createGlobalState;

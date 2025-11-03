@@ -26,11 +26,6 @@
       "require": "./GlobalStoreAbstract.js",
       "types": "./GlobalStoreAbstract.d.ts"
     },
-    "./createCustomGlobalState": {
-      "import": "./createCustomGlobalState.js",
-      "require": "./createCustomGlobalState.js",
-      "types": "./createCustomGlobalState.d.ts"
-    },
     "./createGlobalState": {
       "import": "./createGlobalState.js",
       "require": "./createGlobalState.js",
@@ -70,16 +65,6 @@
       "import": "./uniqueId.js",
       "require": "./uniqueId.js",
       "types": "./uniqueId.d.ts"
-    },
-    "./useStableState": {
-      "import": "./useStableState.js",
-      "require": "./useStableState.js",
-      "types": "./useStableState.d.ts"
-    },
-    "./generateStackHash": {
-      "import": "./generateStackHash.js",
-      "require": "./generateStackHash.js",
-      "types": "./generateStackHash.d.ts"
     }
   },
   "files": [
@@ -161,6 +146,6 @@
     "react": ">=18.0.0"
   },
   "dependencies": {
-    "react-hooks-global-states": "^10.2.0"
+    "react-hooks-global-states": "^11.0.0"
   }
 }

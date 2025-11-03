@@ -1,6 +1,5 @@
 export type {
-  StateSetter,
-  HookExtensions,
+  StateApi,
   ObservableFragment,
   MetadataSetter,
   StateChanges,
@@ -11,10 +10,8 @@ export type {
   UnsubscribeCallback,
   SubscribeCallbackConfig,
   SubscribeCallback,
-  StateGetter,
   BaseMetadata,
   MetadataGetter,
-  CustomGlobalHookBuilderParams,
   SelectorCallback,
   SubscriberParameters,
   SubscriptionCallback,

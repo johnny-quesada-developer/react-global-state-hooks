@@ -17,8 +17,6 @@ describe('LocalStorage Basics', () => {
       },
     });
 
-    const [getState] = storage.stateControls();
-
     const onStateChanged = (storage as any).onStateChanged;
     onStateChanged.bind(storage);
 
@@ -29,20 +27,20 @@ describe('LocalStorage Basics', () => {
     expect(storage).toBeInstanceOf(GlobalStore);
 
     // add a subscriber to the store
-    renderHook(() => storage.getHook()());
+    renderHook(() => storage.use());
 
-    const [[id, parameters]] = storage.subscribers;
+    const [parameters] = storage.subscribers;
     const { callback } = parameters;
     const callbackWrapper = jest.fn(callback);
 
     parameters.callback = callbackWrapper;
 
-    storage.subscribers = new Map([[id, parameters]]);
+    storage.subscribers = new Set([parameters]);
 
     // local storage is synchronous so there are no extra calls to setState when initializing the store
     expect(callbackWrapper).toHaveBeenCalledTimes(0);
 
-    expect(getState()).toBe(0);
+    expect(storage.getState()).toBe(0);
 
     const storedValue = localStorage.getItem('counter');
 
@@ -90,12 +88,12 @@ describe('createGlobalState', () => {
 
 describe('getter subscriptions custom global state', () => {
   it('should subscribe to changes from getter', () => {
-    const [getter, setter] = createGlobalState({
+    const useState = createGlobalState({
       a: 3,
       b: 2,
-    }).stateControls();
+    });
 
-    const state = getter();
+    const state = useState.getState();
 
     // without a callback, it should return the current state
     expect(state).toEqual({
@@ -107,11 +105,11 @@ describe('getter subscriptions custom global state', () => {
     const subscriptionDerivateSpy = jest.fn();
 
     const subscriptions = [
-      getter((state) => {
+      useState.subscribe((state) => {
         subscriptionSpy(state);
       }),
 
-      getter(
+      useState.subscribe(
         (state) => {
           return state.a;
         },
@@ -127,7 +125,7 @@ describe('getter subscriptions custom global state', () => {
     expect(subscriptionDerivateSpy).toHaveBeenCalledTimes(1);
     expect(subscriptionDerivateSpy).toHaveBeenCalledWith(3);
 
-    setter((state) => ({
+    useState.setState((state) => ({
       ...state,
       b: 3,
     }));
@@ -143,7 +141,7 @@ describe('getter subscriptions custom global state', () => {
 
     subscriptions.forEach((unsubscribe) => unsubscribe());
 
-    setter((state) => ({
+    useState.setState((state) => ({
       ...state,
       a: 4,
     }));

@@ -1,7 +1,7 @@
 import { createDecoupledPromise } from 'easy-cancelable-promise';
 import { formatFromStore } from 'json-storage-formatter/formatFromStore';
 import { formatToStore } from 'json-storage-formatter/formatToStore';
-import { type StateSetter, type StoreTools, createCustomGlobalState, createGlobalState } from '..';
+import { type StoreTools, createGlobalState } from '..';
 import { act, renderHook } from '@testing-library/react';
 
 describe('basic', () => {
@@ -323,19 +323,22 @@ describe('custom global hooks', () => {
       );
     });
 
-    const onInitSpy = jest.fn(({ setState }: { setState: StateSetter<Map<number, string>> }) => {
-      const stored = localStorage.getItem('items') ?? null;
+    const onInitSpy = jest.fn(
+      ({ setState }: { setState: React.Dispatch<React.SetStateAction<Map<number, string>>> }) => {
+        const stored = localStorage.getItem('items') ?? null;
 
-      if (stored) return;
+        if (stored) return;
 
-      setState((state) => state, {
-        forceUpdate: true,
-      });
+        // @ts-expect-error TS2345 - the function receives the forUpdate but we don't want that typed
+        setState((state) => state, {
+          forceUpdate: true,
+        });
 
-      tools.resolve();
+        tools.resolve();
 
-      return;
-    });
+        return;
+      }
+    );
 
     const initialState = new Map<number, string>();
 
@@ -463,6 +466,7 @@ describe('custom global hooks', () => {
 
       if (stored) return;
 
+      // @ts-expect-error TS2345 - the function receives the forUpdate but we don't want that typed
       setState((state) => state, {
         forceUpdate: true,
       });
@@ -518,20 +522,18 @@ describe('custom global hooks', () => {
           return ({ setState }) => {
             setState((state) => state + 1);
 
-            $actions.log('increase');
+            useCount.actions.log('increase');
           };
         },
         decrease: () => {
           return ({ setState }) => {
             setState((state) => state - 1);
 
-            $actions.log('decrease');
+            useCount.actions.log('decrease');
           };
         },
       },
     });
-
-    const [getCount, $actions] = useCount.stateControls();
 
     let { result } = renderHook(() => useCount());
     let [state, actions] = result.current;
@@ -543,7 +545,7 @@ describe('custom global hooks', () => {
       actions.increase();
     });
 
-    expect(getCount()).toEqual(2);
+    expect(useCount.getState()).toEqual(2);
     expect(logSpy).toHaveBeenCalledTimes(1);
     expect(logSpy).toHaveBeenCalledWith('increase');
 
@@ -551,92 +553,17 @@ describe('custom global hooks', () => {
       actions.decrease();
     });
 
-    expect(getCount()).toEqual(1);
+    expect(useCount.getState()).toEqual(1);
     expect(logSpy).toHaveBeenCalledTimes(2);
     expect(logSpy).toHaveBeenCalledWith('decrease');
 
     act(() => {
-      $actions.increase();
+      useCount.actions.increase();
     });
 
-    const count = getCount();
+    const count = useCount.getState();
 
     expect(count).toEqual(2);
-  });
-
-  it('should be able to create a custom global hook builder', () => {
-    let config;
-
-    const onInitSpy = jest.fn((_, _config) => {
-      config = _config;
-    });
-
-    const onChangeSpy = jest.fn();
-
-    const createGlobal = createCustomGlobalState({
-      onInitialize: onInitSpy,
-      onChange: onChangeSpy,
-    });
-
-    expect(createGlobal).toBeInstanceOf(Function);
-    expect(onInitSpy).toHaveBeenCalledTimes(0);
-    expect(onChangeSpy).toHaveBeenCalledTimes(0);
-
-    const initialState = {
-      count: 1,
-    };
-
-    const useCount = createGlobal(initialState, {
-      config: {
-        someExtraInfo: 'someExtraInfo',
-      },
-    });
-
-    const [getCount, setCount] = useCount.stateControls();
-
-    expect(onInitSpy).toHaveBeenCalledTimes(1);
-    expect(onChangeSpy).toHaveBeenCalledTimes(0);
-    expect(config).toEqual({
-      someExtraInfo: 'someExtraInfo',
-    });
-
-    let { result } = renderHook(() => useCount());
-    let [state, setState, metadata] = result.current;
-
-    expect(state).toEqual(initialState);
-    expect(setState).toBeInstanceOf(Function);
-    expect(metadata).toEqual({});
-
-    expect(onInitSpy).toHaveBeenCalledTimes(1);
-    expect(onChangeSpy).toHaveBeenCalledTimes(0);
-
-    expect(getCount()).toEqual(initialState);
-
-    act(() => {
-      setCount({
-        count: 2,
-      });
-    });
-
-    expect(getCount()).toEqual({
-      count: 2,
-    });
-
-    expect(onInitSpy).toHaveBeenCalledTimes(1);
-    expect(onChangeSpy).toHaveBeenCalledTimes(1);
-
-    result = renderHook(() => useCount()).result;
-    [state, setState, metadata] = result.current;
-
-    expect(state).toEqual({
-      count: 2,
-    });
-
-    expect(setState).toBeInstanceOf(Function);
-    expect(metadata).toEqual({});
-
-    expect(onInitSpy).toHaveBeenCalledTimes(1);
-    expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should derivate new state from global', () => {
@@ -733,12 +660,12 @@ describe('custom global hooks', () => {
 
 describe('getter subscriptions', () => {
   it('should subscribe to changes from getter', () => {
-    const [getter, setter] = createGlobalState({
+    const useState = createGlobalState({
       a: 3,
       b: 2,
-    }).stateControls();
+    });
 
-    const state = getter();
+    const state = useState.getState();
 
     // without a callback, it should return the current state
     expect(state).toEqual({
@@ -750,11 +677,11 @@ describe('getter subscriptions', () => {
     const subscriptionDerivateSpy = jest.fn();
 
     const subscriptions = [
-      getter((state) => {
+      useState.subscribe((state) => {
         subscriptionSpy(state);
       }),
 
-      getter(
+      useState.subscribe(
         (state) => {
           return state.a;
         },
@@ -771,7 +698,7 @@ describe('getter subscriptions', () => {
     expect(subscriptionDerivateSpy).toHaveBeenCalledWith(3);
 
     act(() => {
-      setter((state) => ({
+      useState.setState((state) => ({
         ...state,
         b: 3,
       }));
@@ -789,7 +716,7 @@ describe('getter subscriptions', () => {
     subscriptions.forEach((unsubscribe) => unsubscribe());
 
     act(() => {
-      setter((state) => ({
+      useState.setState((state) => ({
         ...state,
         a: 4,
       }));
@@ -810,13 +737,12 @@ describe('create fragment', () => {
     };
 
     const useData = createGlobalState(initialState);
-    const [getter, setter] = useData.stateControls();
 
     expect(useData).toBeInstanceOf(Function);
-    expect(getter).toBeInstanceOf(Function);
-    expect(setter).toBeInstanceOf(Function);
+    expect(useData.getState).toBeInstanceOf(Function);
+    expect(useData.setState).toBeInstanceOf(Function);
 
-    expect(getter()).toBe(initialState);
+    expect(useData.getState()).toBe(initialState);
 
     const useDerivate = useData.createSelectorHook(({ a, b }) => {
       return {
@@ -843,7 +769,7 @@ describe('create fragment', () => {
     expect(sub).toBe(1);
 
     act(() => {
-      setter((state) => ({
+      useData.setState((state) => ({
         ...state,
         c: null,
         a: 12,
@@ -875,13 +801,12 @@ describe('create fragment', () => {
     };
 
     const useData = createGlobalState(initialState);
-    const [getter, setter] = useData.stateControls();
 
     expect(useData).toBeInstanceOf(Function);
-    expect(getter).toBeInstanceOf(Function);
-    expect(setter).toBeInstanceOf(Function);
+    expect(useData.getState).toBeInstanceOf(Function);
+    expect(useData.setState).toBeInstanceOf(Function);
 
-    expect(getter()).toBe(initialState);
+    expect(useData.getState()).toBe(initialState);
 
     let subscribe = useData.createObservable(({ a, b, secondRound }) => {
       return {
@@ -931,7 +856,7 @@ describe('create fragment', () => {
     );
 
     act(() => {
-      setter((state) => ({
+      useData.setState((state) => ({
         ...state,
         secondRound: true,
       }));

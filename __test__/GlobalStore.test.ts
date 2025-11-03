@@ -27,9 +27,7 @@ describe('GlobalStore Basic', () => {
       },
     });
 
-    const [, setState] = store.stateControls();
-
-    expect(setState).toBeInstanceOf(Function);
+    expect(store.setState).toBeInstanceOf(Function);
   });
 
   it('should be able to get the state', () => {
@@ -44,9 +42,7 @@ describe('GlobalStore Basic', () => {
       },
     });
 
-    const [getState] = store.stateControls();
-
-    expect(getState()).toBe(stateValue);
+    expect(store.getState()).toBe(stateValue);
   });
 
   it('should be able to set the state', () => {
@@ -59,11 +55,9 @@ describe('GlobalStore Basic', () => {
       },
     });
 
-    const [getState, setState] = store.stateControls();
+    store.setState('test2');
 
-    setState('test2');
-
-    expect(getState()).toBe('test2');
+    expect(store.getState()).toBe('test2');
   });
 
   it('should notify initialize all subscribers of the store', () => {
@@ -77,21 +71,18 @@ describe('GlobalStore Basic', () => {
       },
     });
 
-    const useHook = store.getHook();
-    const [getState, setState] = store.stateControls();
+    renderHook(() => store.use());
+    renderHook(() => store.use());
 
-    renderHook(() => useHook());
-    renderHook(() => useHook());
-
-    const [[_, subscriber1], [__, subscriber2]] = store.subscribers;
+    const [subscriber1, subscriber2] = store.subscribers;
     jest.spyOn(subscriber1, 'callback');
     jest.spyOn(subscriber2, 'callback');
 
     act(() => {
-      setState(stateValue2);
+      store.setState(stateValue2);
     });
 
-    expect(getState()).toBe(stateValue2);
+    expect(store.getState()).toBe(stateValue2);
     expect(subscriber1.callback).toHaveBeenCalledTimes(1);
     expect(subscriber2.callback).toHaveBeenCalledTimes(1);
   });
@@ -108,9 +99,7 @@ describe('GlobalStore Persistence', () => {
       },
     });
 
-    const [getState] = store.stateControls();
-
-    expect(getState()).toBe(stateValue);
+    expect(store.getState()).toBe(stateValue);
     expect(localStorage.getItem('key1')).toBe(JSON.stringify(stateValue));
   });
 
@@ -125,9 +114,7 @@ describe('GlobalStore Persistence', () => {
       },
     });
 
-    const [getState] = store.stateControls();
-
-    expect(getState()).toBe('test');
+    expect(store.getState()).toBe('test');
 
     expect(localStorage.getItem('key1')).toEqual('"test"');
   });
@@ -227,10 +214,10 @@ const createCountStoreWithActions = (spy?: jest.Mock) => {
 
   return countStore as typeof countStore & {
     state: number;
-    actionsConfig: ActionCollectionConfig<number, unknown>;
+    actionsConfig: ActionCollectionConfig<number, any>;
     getStoreActionsMap: (param: {
       invokerSetState?: React.Dispatch<React.SetStateAction<number>>;
-    }) => ActionCollectionResult<number, null, ActionCollectionConfig<number, null>>;
+    }) => ActionCollectionResult<number, any, ActionCollectionConfig<number, any>>;
   };
 };
 
@@ -247,9 +234,7 @@ describe('GlobalStore Basic', () => {
     const stateValue = 'test';
     const store = new GlobalStore(stateValue);
 
-    const [, setState] = store.stateControls();
-
-    expect(setState).toBeInstanceOf(Function);
+    expect(store.setState).toBeInstanceOf(Function);
   });
 
   it('should be able to get the state', () => {
@@ -261,18 +246,14 @@ describe('GlobalStore Basic', () => {
       },
     });
 
-    const [getState] = store.stateControls();
-
-    expect(getState()).toBe(stateValue);
+    expect(store.getState()).toBe(stateValue);
   });
 
   it('should be able to set the state', () => {
     const stateValue = 'test';
     const store = new GlobalStore(stateValue);
 
-    const [, setState] = store.stateControls();
-
-    setState('test2');
+    store.setState('test2');
 
     expect(store.state).toBe('test2');
   });
@@ -281,9 +262,7 @@ describe('GlobalStore Basic', () => {
     const stateValue = 'test';
     const store = new GlobalStore(stateValue);
 
-    const [, setState] = store.stateControls();
-
-    setState((state) => `${state}2`);
+    store.setState((state) => `${state}2`);
 
     expect(store.state).toBe('test2');
   });
@@ -294,21 +273,18 @@ describe('GlobalStore Basic', () => {
 
     const store = new GlobalStore(stateValue);
 
-    const useHook = store.getHook();
-    const [getState, setState] = store.stateControls();
+    renderHook(() => store.use());
+    renderHook(() => store.use());
 
-    renderHook(() => useHook());
-    renderHook(() => useHook());
-
-    const [[_, subscriber1], [__, subscriber2]] = store.subscribers;
+    const [subscriber1, subscriber2] = store.subscribers;
     jest.spyOn(subscriber1, 'callback');
     jest.spyOn(subscriber2, 'callback');
 
     act(() => {
-      setState(stateValue2);
+      store.setState(stateValue2);
     });
 
-    expect(getState()).toBe(stateValue2);
+    expect(store.getState()).toBe(stateValue2);
     expect(subscriber1.callback).toHaveBeenCalledTimes(1);
     expect(subscriber2.callback).toHaveBeenCalledTimes(1);
   });
@@ -331,35 +307,28 @@ describe('GlobalStore with actions', () => {
   it('should be able to get the state', () => {
     const store = createCountStoreWithActions();
 
-    const [getState] = store.stateControls();
-
-    expect(getState()).toBe(countStoreInitialState);
+    expect(store.getState()).toBe(countStoreInitialState);
   });
 
   it('should be able to set the state', () => {
     const store = createCountStoreWithActions();
 
-    const [getState, actions] = store.stateControls();
+    store.actions.increase();
 
-    actions.increase();
-
-    expect(getState()).toBe(2);
+    expect(store.getState()).toBe(2);
   });
 
   it('should initialize all subscribers of the store', () => {
     const store = createCountStoreWithActions();
 
-    const useHook = store.getHook();
-    const [getState] = store.stateControls();
+    renderHook(() => store.use());
+    renderHook(() => store.use());
 
-    renderHook(() => useHook());
-    renderHook(() => useHook());
-
-    const [[_, subscriber1], [__, subscriber2]] = store.subscribers;
+    const [subscriber1, subscriber2] = store.subscribers;
     jest.spyOn(subscriber1, 'callback');
     jest.spyOn(subscriber2, 'callback');
 
-    expect(getState()).toBe(countStoreInitialState);
+    expect(store.getState()).toBe(countStoreInitialState);
     expect(subscriber1.callback).toHaveBeenCalledTimes(0);
     expect(subscriber2.callback).toHaveBeenCalledTimes(0);
   });
@@ -367,21 +336,18 @@ describe('GlobalStore with actions', () => {
   it('should update all subscribers of the store', () => {
     const store = createCountStoreWithActions();
 
-    const useHook = store.getHook();
-    const [getState, actions] = store.stateControls();
+    renderHook(() => store.use());
+    renderHook(() => store.use());
 
-    renderHook(() => useHook());
-    renderHook(() => useHook());
-
-    const [[_, subscriber1], [__, subscriber2]] = store.subscribers;
+    const [subscriber1, subscriber2] = store.subscribers;
     jest.spyOn(subscriber1, 'callback');
     jest.spyOn(subscriber2, 'callback');
 
     act(() => {
-      actions.increase();
+      store.actions.increase();
     });
 
-    expect(getState()).toBe(2);
+    expect(store.getState()).toBe(2);
     expect(subscriber1.callback).toHaveBeenCalledTimes(1);
     expect(subscriber2.callback).toHaveBeenCalledTimes(1);
   });
@@ -455,14 +421,12 @@ describe('GlobalStore with configuration callbacks', () => {
 
     expect(onSubscribedSpy).toHaveBeenCalledTimes(0);
 
-    const useStore = store.getHook();
-
-    renderHook(() => useStore());
+    renderHook(() => store.use());
 
     expect(onSubscribedSpy).toHaveBeenCalledTimes(1);
 
-    renderHook(() => useStore());
-    renderHook(() => useStore());
+    renderHook(() => store.use());
+    renderHook(() => store.use());
 
     expect(onSubscribedSpy).toHaveBeenCalledTimes(3);
   });
@@ -493,9 +457,7 @@ describe('GlobalStore with configuration callbacks', () => {
 
     expect(onStateChangedSpy).toHaveBeenCalledTimes(0);
 
-    const [, setState] = store.stateControls();
-
-    setState((state) => ({ count: state.count + 1 }));
+    store.setState((state) => ({ count: state.count + 1 }));
 
     expect(onStateChangedSpy).toHaveBeenCalledTimes(1);
   });
@@ -527,12 +489,10 @@ describe('GlobalStore with configuration callbacks', () => {
 
     expect(computePreventStateChangeSpy).toHaveBeenCalledTimes(0);
 
-    const [getState, setState] = store.stateControls();
-
-    setState((state) => ({ count: state.count + 1 }));
+    store.setState((state) => ({ count: state.count + 1 }));
 
     expect(computePreventStateChangeSpy).toHaveBeenCalledTimes(1);
-    expect(getState()).toEqual({ count: 1 });
+    expect(store.getState()).toEqual({ count: 1 });
   });
 
   it('should execute computePreventStateChange callback before state is changed and prevent state change if it returns true', () => {
@@ -562,12 +522,10 @@ describe('GlobalStore with configuration callbacks', () => {
 
     expect(computePreventStateChangeSpy).toHaveBeenCalledTimes(0);
 
-    const [getState, setState] = store.stateControls();
-
-    setState((state) => ({ count: state.count + 1 }));
+    store.setState((state) => ({ count: state.count + 1 }));
 
     expect(computePreventStateChangeSpy).toHaveBeenCalledTimes(1);
-    expect(getState()).toEqual({ count: 0 });
+    expect(store.getState()).toEqual({ count: 0 });
   });
 });
 
@@ -621,12 +579,10 @@ describe('Custom store by using config parameter', () => {
       },
     });
 
-    const [getState] = store.stateControls();
-
     expect(onInitSpy).toHaveBeenCalledTimes(1);
     expect(onStateChangedSpy).toHaveBeenCalledTimes(0);
     expect(localStorage.getItem('items')).toBe(null);
-    expect(getState()).toEqual(initialState);
+    expect(store.getState()).toEqual(initialState);
   });
 
   it('should initialize the store with the  storage data where there is storage data', () => {
@@ -678,15 +634,13 @@ describe('Custom store by using config parameter', () => {
       },
     });
 
-    const [getState] = store.stateControls();
-
     expect(onInitSpy).toHaveBeenCalledTimes(1);
     expect(onStateChangedSpy).toHaveBeenCalledTimes(1);
     expect(localStorage.getItem('items')).toEqual(
       '{"$t":"map","$v":[[1,{"name":"john"}],[2,{"name":"doe"}],[3,{"name":"jane"}]]}'
     );
 
-    expect(getState()).toEqual(storedMap);
+    expect(store.getState()).toEqual(storedMap);
   });
 
   it('should be able to update the store  storage', () => {
@@ -721,12 +675,10 @@ describe('Custom store by using config parameter', () => {
       },
     });
 
-    const [getState] = store.stateControls();
-
-    const { result } = renderHook(() => store.getHook()());
+    const { result } = renderHook(() => store.use());
     const [, setState] = result.current;
 
-    const newState = new Map(getState());
+    const newState = new Map(store.getState());
     newState.set(3, { name: 'jane' });
 
     act(() => {
@@ -737,7 +689,7 @@ describe('Custom store by using config parameter', () => {
       '{"$t":"map","$v":[[1,{"name":"john"}],[2,{"name":"doe"}],[3,{"name":"jane"}]]}'
     );
 
-    expect(getState()).toEqual(newState);
+    expect(store.getState()).toEqual(newState);
 
     const stored = localStorage.getItem('items');
 
@@ -753,24 +705,22 @@ describe('GlobalStore Accessing custom actions from other actions', () => {
 
     const store = createCountStoreWithActions(logSpy);
 
-    const [getState, actions] = store.stateControls();
-
-    expect(getState()).toEqual(1);
+    expect(store.getState()).toEqual(1);
     expect(logSpy).toHaveBeenCalledTimes(0);
 
     act(() => {
-      actions.increase();
+      store.actions.increase();
     });
 
-    expect(getState()).toEqual(2);
+    expect(store.getState()).toEqual(2);
     expect(logSpy).toHaveBeenCalledTimes(1);
     expect(logSpy).toHaveBeenCalledWith('increase');
 
     act(() => {
-      actions.decrease();
+      store.actions.decrease();
     });
 
-    expect(getState()).toEqual(1);
+    expect(store.getState()).toEqual(1);
     expect(logSpy).toHaveBeenCalledTimes(2);
     expect(logSpy).toHaveBeenCalledWith('decrease');
   });

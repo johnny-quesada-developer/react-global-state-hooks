@@ -4,8 +4,7 @@
  */
 // #region base library exports copy of the original library index
 export type {
-  StateSetter,
-  HookExtensions,
+  StateApi,
   ObservableFragment,
   MetadataSetter,
   StateChanges,
@@ -16,10 +15,8 @@ export type {
   UnsubscribeCallback,
   SubscribeCallbackConfig,
   SubscribeCallback,
-  StateGetter,
   BaseMetadata,
   MetadataGetter,
-  CustomGlobalHookBuilderParams,
   SelectorCallback,
   SubscriberParameters,
   SubscriptionCallback,
@@ -33,22 +30,19 @@ export type {
 
 // functions
 // export { createGlobalState } from './createGlobalState'; // overridden
-// export { createCustomGlobalState } from './createCustomGlobalState'; // overridden
 
 // utils
 export { shallowCompare } from './shallowCompare';
 export { uniqueId } from './uniqueId';
 export { throwWrongKeyOnActionCollectionConfig } from './throwWrongKeyOnActionCollectionConfig';
 export { isRecord } from './isRecord';
-export { useStableState } from './useStableState';
 
 // context
 export {
-  type Context,
+  type ContextApi,
   type ContextProvider,
   type ContextHook,
-  type CreateContext,
-  type InferContextType,
+  type InferContextApi,
   createContext,
 } from './createContext';
 
@@ -57,9 +51,6 @@ export {
 export { type LocalStorageConfig } from './types';
 export { GlobalStore } from './GlobalStore';
 export { GlobalStoreAbstract } from './GlobalStoreAbstract';
-export { CreateGlobalState, createGlobalState, type InferActionsType } from './createGlobalState';
-export { createCustomGlobalState, CustomCreateGlobalState } from './createCustomGlobalState';
+export { createGlobalState, type InferActionsType } from './createGlobalState';
 export { getLocalStorageItem } from './getLocalStorageItem';
 export { setLocalStorageItem } from './setLocalStorageItem';
-
-export { generateStackHash } from './generateStackHash';
