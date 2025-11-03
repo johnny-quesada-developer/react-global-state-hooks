@@ -8,7 +8,7 @@ describe('LocalStorage Basics', () => {
       'counter',
       formatToStore(0, {
         stringify: true,
-      })
+      }),
     );
 
     const storage = new GlobalStore(0, {
@@ -54,7 +54,7 @@ describe('createGlobalState', () => {
       'data',
       formatToStore(new Map([['prop', 0]]), {
         stringify: true,
-      })
+      }),
     );
 
     const useData = createGlobalState(new Map<string, number>(), {
@@ -115,7 +115,7 @@ describe('getter subscriptions custom global state', () => {
         },
         (derivate) => {
           subscriptionDerivateSpy(derivate);
-        }
+        },
       ),
     ];
 

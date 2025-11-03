@@ -10,7 +10,7 @@ import { GlobalStore } from './GlobalStore';
 export abstract class GlobalStoreAbstract<
   State,
   Metadata extends BaseMetadata,
-  ActionsConfig extends ActionCollectionConfig<State, Metadata> | unknown
+  ActionsConfig extends ActionCollectionConfig<State, Metadata> | unknown,
 > extends GlobalStore<State, Metadata, ActionsConfig> {
   protected onInit = (args: StoreTools<State, Metadata>) => {
     this._onInitialize(args);

@@ -79,7 +79,8 @@
     "prepare": "npm run build",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags",
-    "clean": "find . -maxdepth 1 -type f \\( -name '*.js' -o -name '*.d.ts' \\) ! -name 'webpack.config.js' -exec rm {} +"
+    "clean": "find . -maxdepth 1 -type f \\( -name '*.js' -o -name '*.d.ts' \\) ! -name 'webpack.config.js' -exec rm {} +",
+    "format": "prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -132,6 +133,7 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^30.0.4",
     "json-storage-formatter": "^2.0.9",
+    "prettier": "^3.6.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "ts-jest": "^29.1.1",

@@ -101,7 +101,7 @@ You can also add **dependencies** to a selector. This is useful when you want to
 ```tsx
 const [contacts] = useContacts(
   (state) => state.entities.filter((item) => item.name.includes(filter)),
-  [filter]
+  [filter],
 );
 ```
 
@@ -141,7 +141,7 @@ You can still **use dependencies** inside a selector hook:
 ```tsx
 const [filteredContacts] = useContactsArray(
   (contacts) => contacts.filter((c) => c.name.includes(filter)),
-  [filter]
+  [filter],
 );
 ```
 
@@ -179,7 +179,7 @@ export const useContacts = createGlobalState(
         };
       },
     },
-  }
+  },
 );
 ```
 
@@ -218,7 +218,7 @@ const useSelectedContact = createGlobalState(null, {
         (state) => state.contacts,
         (contacts) => {
           if (!contacts.has(getState())) setState(null);
-        }
+        },
       );
     },
   },
@@ -325,7 +325,7 @@ const useData = createGlobalState(
         return state.value === previousState.value;
       },
     },
-  }
+  },
 );
 ```
 

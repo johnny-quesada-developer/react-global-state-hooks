@@ -416,7 +416,7 @@ describe('GlobalStore with configuration callbacks', () => {
             expect(getState()).toEqual({ count: 0 });
           },
         },
-      }
+      },
     );
 
     expect(onSubscribedSpy).toHaveBeenCalledTimes(0);
@@ -452,7 +452,7 @@ describe('GlobalStore with configuration callbacks', () => {
             expect(getState()).toEqual({ count: 1 });
           },
         },
-      }
+      },
     );
 
     expect(onStateChangedSpy).toHaveBeenCalledTimes(0);
@@ -484,7 +484,7 @@ describe('GlobalStore with configuration callbacks', () => {
             return false;
           },
         },
-      }
+      },
     );
 
     expect(computePreventStateChangeSpy).toHaveBeenCalledTimes(0);
@@ -517,7 +517,7 @@ describe('GlobalStore with configuration callbacks', () => {
             return true;
           },
         },
-      }
+      },
     );
 
     expect(computePreventStateChangeSpy).toHaveBeenCalledTimes(0);
@@ -573,7 +573,7 @@ describe('Custom store by using config parameter', () => {
             'items',
             formatToStore(newState, {
               stringify: true,
-            })
+            }),
           );
         },
       },
@@ -599,7 +599,7 @@ describe('Custom store by using config parameter', () => {
       'items',
       formatToStore(storedMap, {
         stringify: true,
-      })
+      }),
     );
 
     const store = new GlobalStore(initialState, {
@@ -628,7 +628,7 @@ describe('Custom store by using config parameter', () => {
             'items',
             formatToStore(newState, {
               stringify: true,
-            })
+            }),
           );
         },
       },
@@ -637,7 +637,7 @@ describe('Custom store by using config parameter', () => {
     expect(onInitSpy).toHaveBeenCalledTimes(1);
     expect(onStateChangedSpy).toHaveBeenCalledTimes(1);
     expect(localStorage.getItem('items')).toEqual(
-      '{"$t":"map","$v":[[1,{"name":"john"}],[2,{"name":"doe"}],[3,{"name":"jane"}]]}'
+      '{"$t":"map","$v":[[1,{"name":"john"}],[2,{"name":"doe"}],[3,{"name":"jane"}]]}',
     );
 
     expect(store.getState()).toEqual(storedMap);
@@ -669,7 +669,7 @@ describe('Custom store by using config parameter', () => {
             'items',
             formatToStore(newState, {
               stringify: true,
-            })
+            }),
           );
         },
       },
@@ -686,7 +686,7 @@ describe('Custom store by using config parameter', () => {
     });
 
     expect(localStorage.getItem('items')).toEqual(
-      '{"$t":"map","$v":[[1,{"name":"john"}],[2,{"name":"doe"}],[3,{"name":"jane"}]]}'
+      '{"$t":"map","$v":[[1,{"name":"john"}],[2,{"name":"doe"}],[3,{"name":"jane"}]]}',
     );
 
     expect(store.getState()).toEqual(newState);

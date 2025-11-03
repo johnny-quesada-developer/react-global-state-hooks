@@ -188,7 +188,7 @@ describe('with configuration callbacks', () => {
         callbacks: {
           onSubscribed: onSubscribedSpy,
         },
-      }
+      },
     );
 
     expect(onSubscribedSpy).toHaveBeenCalledTimes(0);
@@ -215,7 +215,7 @@ describe('with configuration callbacks', () => {
         callbacks: {
           onStateChanged: onStateChangedSpy,
         },
-      }
+      },
     );
 
     expect(onStateChangedSpy).toHaveBeenCalledTimes(0);
@@ -319,7 +319,7 @@ describe('custom global hooks', () => {
         'items',
         formatToStore(newState, {
           stringify: true,
-        })
+        }),
       );
     });
 
@@ -337,7 +337,7 @@ describe('custom global hooks', () => {
         tools.resolve();
 
         return;
-      }
+      },
     );
 
     const initialState = new Map<number, string>();
@@ -374,7 +374,7 @@ describe('custom global hooks', () => {
       'items',
       formatToStore(initialState, {
         stringify: true,
-      })
+      }),
     );
 
     const { promise: mainPromise, ...tools } = createDecoupledPromise();
@@ -386,7 +386,7 @@ describe('custom global hooks', () => {
         'items',
         formatToStore(newState, {
           stringify: true,
-        })
+        }),
       );
     });
 
@@ -401,7 +401,7 @@ describe('custom global hooks', () => {
         }),
         {
           forceUpdate: true,
-        }
+        },
       );
 
       tools.resolve();
@@ -429,7 +429,7 @@ describe('custom global hooks', () => {
         new Map([
           [1, { name: 'john' }],
           [2, { name: 'doe' }],
-        ])
+        ]),
       );
 
       expect(onStateChangedSpy).toHaveBeenCalledTimes(1);
@@ -437,7 +437,7 @@ describe('custom global hooks', () => {
       expect(localStorage.getItem('items')).toEqual(
         formatToStore(initialState, {
           stringify: true,
-        })
+        }),
       );
     });
   });
@@ -455,7 +455,7 @@ describe('custom global hooks', () => {
         'items',
         formatToStore(newState, {
           stringify: true,
-        })
+        }),
       );
 
       tools.resolve();
@@ -498,7 +498,7 @@ describe('custom global hooks', () => {
       expect(localStorage.getItem('items')).toEqual(
         formatToStore(initialState, {
           stringify: true,
-        })
+        }),
       );
     });
   });
@@ -687,7 +687,7 @@ describe('getter subscriptions', () => {
         },
         (derivate) => {
           subscriptionDerivateSpy(derivate);
-        }
+        },
       ),
     ];
 
@@ -852,7 +852,7 @@ describe('create fragment', () => {
       },
       (derivate) => {
         expect(derivate).toEqual('1');
-      }
+      },
     );
 
     act(() => {

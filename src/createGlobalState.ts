@@ -33,7 +33,9 @@ export interface CreateGlobalState {
    *   );
    * }
    */
-  <State>(state: State): StateHook<
+  <State>(
+    state: State,
+  ): StateHook<
     State,
     React.Dispatch<React.SetStateAction<State>>,
     React.Dispatch<React.SetStateAction<State>>,
@@ -97,7 +99,7 @@ export interface CreateGlobalState {
     PublicStateMutator = keyof ActionsConfig extends never | undefined
       ? React.Dispatch<React.SetStateAction<State>>
       : ActionCollectionResult<State, Metadata, NonNullable<ActionsConfig>>,
-    StateDispatch = React.Dispatch<React.SetStateAction<State>>
+    StateDispatch = React.Dispatch<React.SetStateAction<State>>,
   >(
     state: State,
     args: {
@@ -106,7 +108,7 @@ export interface CreateGlobalState {
       callbacks?: GlobalStoreCallbacks<State, Metadata>;
       actions?: ActionsConfig;
       localStorage?: LocalStorageConfig;
-    }
+    },
   ): StateHook<State, StateDispatch, PublicStateMutator, Metadata>;
 
   /**
@@ -163,7 +165,7 @@ export interface CreateGlobalState {
     State,
     Metadata extends BaseMetadata,
     ActionsConfig extends ActionCollectionConfig<State, Metadata>,
-    StateDispatch = React.Dispatch<React.SetStateAction<State>>
+    StateDispatch = React.Dispatch<React.SetStateAction<State>>,
   >(
     state: State,
     args: {
@@ -172,7 +174,7 @@ export interface CreateGlobalState {
       callbacks?: GlobalStoreCallbacks<State, Metadata>;
       actions: ActionsConfig;
       localStorage?: LocalStorageConfig;
-    }
+    },
   ): StateHook<State, StateDispatch, ActionCollectionResult<State, Metadata, ActionsConfig>, Metadata>;
 }
 

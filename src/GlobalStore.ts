@@ -14,7 +14,7 @@ import { setLocalStorageItem } from './setLocalStorageItem';
 export class GlobalStore<
   State,
   Metadata extends BaseMetadata,
-  ActionsConfig extends ActionCollectionConfig<State, Metadata> | undefined | unknown
+  ActionsConfig extends ActionCollectionConfig<State, Metadata> | undefined | unknown,
 > extends GlobalStoreAbstract<State, Metadata, ActionsConfig> {
   protected localStorage: LocalStorageConfig | null = null;
 
@@ -28,7 +28,7 @@ export class GlobalStore<
       actions?: ActionsConfig;
       name?: string;
       localStorage?: LocalStorageConfig;
-    }
+    },
   );
 
   constructor(
@@ -39,7 +39,7 @@ export class GlobalStore<
       actions?: ActionsConfig;
       name?: string;
       localStorage?: LocalStorageConfig;
-    } = { metadata: {} as Metadata }
+    } = { metadata: {} as Metadata },
   ) {
     super(state, args);
 

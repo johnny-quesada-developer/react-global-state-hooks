@@ -13,7 +13,7 @@ beforeEach(() => {
 
           state = newState;
         });
-      })()
+      })(),
     );
 
     return [value, setState];
