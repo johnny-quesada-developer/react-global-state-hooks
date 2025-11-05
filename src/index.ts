@@ -11,7 +11,7 @@ export type {
   StoreTools,
   ActionCollectionResult,
   GlobalStoreCallbacks,
-  UseHookConfig,
+  UseHookOptions,
   UnsubscribeCallback,
   SubscribeCallbackConfig,
   SubscribeCallback,
@@ -38,13 +38,7 @@ export { throwWrongKeyOnActionCollectionConfig } from './throwWrongKeyOnActionCo
 export { isRecord } from './isRecord';
 
 // context
-export {
-  type ContextApi,
-  type ContextProvider,
-  type ContextHook,
-  type InferContextApi,
-  createContext,
-} from './createContext';
+export { type ContextProvider, type ContextHook, type InferContextApi, createContext } from './createContext';
 
 // #endregion base library exports
 

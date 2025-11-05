@@ -13,7 +13,7 @@ export type { InferActionsType } from 'react-hooks-global-states/createGlobalSta
 import { LocalStorageConfig } from './types';
 import { GlobalStore } from './GlobalStore';
 
-export interface CreateGlobalState {
+interface CreateGlobalState {
   /**
    * Creates a global state hook.
    * @param state initial state value
@@ -33,14 +33,7 @@ export interface CreateGlobalState {
    *   );
    * }
    */
-  <State>(
-    state: State,
-  ): StateHook<
-    State,
-    React.Dispatch<React.SetStateAction<State>>,
-    React.Dispatch<React.SetStateAction<State>>,
-    BaseMetadata
-  >;
+  <State>(state: State): StateHook<State, React.Dispatch<React.SetStateAction<State>>, BaseMetadata>;
 
   /**
    * Creates a global state hook that you can use across your application
@@ -99,17 +92,16 @@ export interface CreateGlobalState {
     PublicStateMutator = keyof ActionsConfig extends never | undefined
       ? React.Dispatch<React.SetStateAction<State>>
       : ActionCollectionResult<State, Metadata, NonNullable<ActionsConfig>>,
-    StateDispatch = React.Dispatch<React.SetStateAction<State>>,
   >(
     state: State,
     args: {
       name?: string;
       metadata?: Metadata;
-      callbacks?: GlobalStoreCallbacks<State, Metadata>;
+      callbacks?: GlobalStoreCallbacks<State, PublicStateMutator, Metadata>;
       actions?: ActionsConfig;
       localStorage?: LocalStorageConfig;
     },
-  ): StateHook<State, StateDispatch, PublicStateMutator, Metadata>;
+  ): StateHook<State, PublicStateMutator, Metadata>;
 
   /**
    * Creates a global state hook that you can use across your application
@@ -165,17 +157,17 @@ export interface CreateGlobalState {
     State,
     Metadata extends BaseMetadata,
     ActionsConfig extends ActionCollectionConfig<State, Metadata>,
-    StateDispatch = React.Dispatch<React.SetStateAction<State>>,
+    PublicStateMutator = ActionCollectionResult<State, Metadata, NonNullable<ActionsConfig>>,
   >(
     state: State,
     args: {
       name?: string;
       metadata?: Metadata;
-      callbacks?: GlobalStoreCallbacks<State, Metadata>;
+      callbacks?: GlobalStoreCallbacks<State, PublicStateMutator, Metadata>;
       actions: ActionsConfig;
       localStorage?: LocalStorageConfig;
     },
-  ): StateHook<State, StateDispatch, ActionCollectionResult<State, Metadata, ActionsConfig>, Metadata>;
+  ): StateHook<State, PublicStateMutator, Metadata>;
 }
 
 /**

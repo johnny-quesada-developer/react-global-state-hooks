@@ -121,11 +121,8 @@ module.exports = {
             toplevel: true,
             properties: false,
           },
-          output: {
-            // Keep only JSDoc-style comments (/** ... */)
-            comments: (_node, comment) => {
-              return comment.type === 'comment2' && comment.value.startsWith('*');
-            },
+          format: {
+            comments: false,
           },
         },
       }),

@@ -48,17 +48,13 @@ describe('basic', () => {
 
 describe('with actions', () => {
   it('should be able to create a new instance with state and actions, setter should be and object', () => {
-    type Metadata = {
-      modificationsCounter: number;
-    };
-
     const useCount = createGlobalState(1, {
       metadata: {
         modificationsCounter: 0,
       },
       actions: {
         logModification() {
-          return ({ setMetadata }: StoreTools<number, Metadata>) => {
+          return ({ setMetadata }) => {
             setMetadata(({ modificationsCounter, ...metadata }) => ({
               ...metadata,
               modificationsCounter: modificationsCounter + 1,
@@ -67,17 +63,7 @@ describe('with actions', () => {
         },
 
         increase(increase: number = 1) {
-          return ({
-            setState,
-            getState,
-            actions,
-          }: StoreTools<
-            number,
-            Metadata,
-            {
-              logModification: () => void;
-            }
-          >) => {
+          return ({ setState, getState, actions }) => {
             setState((state) => state + increase);
 
             actions.logModification();
@@ -87,17 +73,7 @@ describe('with actions', () => {
         },
 
         decrease(decrease: number = 1) {
-          return ({
-            setState,
-            getState,
-            actions,
-          }: StoreTools<
-            number,
-            Metadata,
-            {
-              logModification: () => void;
-            }
-          >) => {
+          return ({ setState, getState, actions }) => {
             setState((state) => state - decrease);
 
             actions.logModification();
@@ -105,7 +81,7 @@ describe('with actions', () => {
             return getState();
           };
         },
-      } as const,
+      },
     });
 
     const { result, rerender } = renderHook(() => useCount());
@@ -752,14 +728,14 @@ describe('create fragment', () => {
     });
 
     const { result } = renderHook(() => useDerivate());
-    const [derivate] = result.current;
+    const derivate = result.current;
 
     const useSub = useData.createSelectorHook(({ a }) => {
       return a;
     });
 
     const { result: result2 } = renderHook(() => useSub());
-    const [sub] = result2.current;
+    const sub = result2.current;
 
     expect(derivate).toEqual({
       a: 1,
@@ -777,7 +753,7 @@ describe('create fragment', () => {
     });
 
     const { result: result3 } = renderHook(() => useDerivate());
-    const [derivate2] = result3.current;
+    const derivate2 = result3.current;
 
     expect(derivate2).toEqual({
       a: 12,
@@ -785,7 +761,7 @@ describe('create fragment', () => {
     });
 
     const { result: result4 } = renderHook(() => useSub());
-    const [sub2] = result4.current;
+    const sub2 = result4.current;
 
     expect(sub2).toBe(12);
   });

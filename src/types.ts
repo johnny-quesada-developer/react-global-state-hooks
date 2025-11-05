@@ -6,7 +6,7 @@ export type {
   StoreTools,
   ActionCollectionResult,
   GlobalStoreCallbacks,
-  UseHookConfig,
+  UseHookOptions,
   UnsubscribeCallback,
   SubscribeCallbackConfig,
   SubscribeCallback,

@@ -1,5 +1,4 @@
 export {
-  type ContextApi,
   type ContextProvider,
   type ContextHook,
   type InferContextApi,

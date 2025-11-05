@@ -148,6 +148,6 @@
     "react": ">=18.0.0"
   },
   "dependencies": {
-    "react-hooks-global-states": "^11.0.0"
+    "react-hooks-global-states": "12.0.0-beta.0"
   }
 }
