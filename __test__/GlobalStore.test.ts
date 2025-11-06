@@ -215,9 +215,10 @@ const createCountStoreWithActions = (spy?: jest.Mock) => {
   return countStore as typeof countStore & {
     state: number;
     actionsConfig: ActionCollectionConfig<number, any>;
-    getStoreActionsMap: (param: {
-      invokerSetState?: React.Dispatch<React.SetStateAction<number>>;
-    }) => ActionCollectionResult<number, any, ActionCollectionConfig<number, any>>;
+    getStoreActionsMap: (param: { invokerSetState?: React.Dispatch<React.SetStateAction<number>> }) => {
+      actions: ActionCollectionResult<number, any, ActionCollectionConfig<number, any>>;
+      storeTools: StoreTools<number, any, any>;
+    };
   };
 };
 
@@ -298,10 +299,11 @@ describe('GlobalStore with actions', () => {
     expect(store.state).toBe(countStoreInitialState);
     expect(store.actionsConfig).toBeDefined();
 
-    const actions = store.getStoreActionsMap({});
+    const { actions, storeTools } = store.getStoreActionsMap({});
 
     expect(actions).not.toBeInstanceOf(Function);
     expect(actions.increase).toBeDefined();
+    expect(storeTools).toBeDefined();
   });
 
   it('should be able to get the state', () => {

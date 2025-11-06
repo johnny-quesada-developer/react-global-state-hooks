@@ -75,12 +75,13 @@
     "test:debug": "node --inspect-brk node_modules/.bin/jest --watch --runInBand",
     "test:quick": "jest --maxWorkers=4 -c --no-watchman -u",
     "test:coverage": "jest --maxWorkers=4 -c --colors --no-watchman --verbose --coverage",
-    "build": "yarn clean && webpack --config webpack.config.js",
-    "prepare": "npm run build",
+    "build": "yarn ts-check &&yarn clean && webpack --config webpack.config.js",
+    "prepare": "yarn ts-check && npm run build",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags",
     "clean": "find . -maxdepth 1 -type f \\( -name '*.js' -o -name '*.d.ts' \\) ! -name 'webpack.config.js' -exec rm {} +",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "ts-check": "tsc -p tsconfig.json --pretty true --noEmit true"
   },
   "repository": {
     "type": "git",
@@ -148,6 +149,6 @@
     "react": ">=18.0.0"
   },
   "dependencies": {
-    "react-hooks-global-states": "^12.0.6"
+    "react-hooks-global-states": "^14.0.0"
   }
 }
