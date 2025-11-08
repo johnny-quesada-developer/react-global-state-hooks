@@ -11,6 +11,7 @@ import { GlobalStore } from './GlobalStore';
 export abstract class GlobalStoreAbstract<
   State,
   Metadata extends BaseMetadata,
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   ActionsConfig extends ActionCollectionConfig<State, Metadata> | null | {},
   PublicStateMutator = keyof ActionsConfig extends never | undefined
     ? React.Dispatch<React.SetStateAction<State>>

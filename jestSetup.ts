@@ -1,7 +1,7 @@
 import React from 'react';
 
 beforeEach(() => {
-  jest.spyOn(React, 'useState').mockImplementation(((initialState: unknown) => {
+  jest.spyOn(React, 'useState').mockImplementation((...[initialState]: unknown[]) => {
     const value = typeof initialState === 'function' ? initialState() : initialState;
 
     const setState = jest.fn(
@@ -17,7 +17,7 @@ beforeEach(() => {
     );
 
     return [value, setState];
-  }) as any);
+  });
 
   Object.defineProperty(globalThis, 'atob', {
     value: jest.fn((value) => {

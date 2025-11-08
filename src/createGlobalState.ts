@@ -10,7 +10,7 @@ import {
 
 export type { InferActionsType } from 'react-hooks-global-states/createGlobalState';
 
-import { LocalStorageConfig } from './types';
+import type { LocalStorageConfig } from './types';
 import { GlobalStore } from './GlobalStore';
 
 interface CreateGlobalState {
@@ -88,6 +88,7 @@ interface CreateGlobalState {
   <
     State,
     Metadata extends BaseMetadata,
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     ActionsConfig extends ActionCollectionConfig<State, Metadata> | null | {},
     PublicStateMutator = keyof ActionsConfig extends never | undefined
       ? React.Dispatch<React.SetStateAction<State>>

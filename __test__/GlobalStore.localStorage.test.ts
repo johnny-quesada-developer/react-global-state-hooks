@@ -1,9 +1,10 @@
 import { formatToStore } from 'json-storage-formatter/formatToStore';
 import { GlobalStore, createGlobalState } from '..';
-import { act, renderHook } from '@testing-library/react';
+import { act } from '@testing-library/react';
+import it from './$it';
 
 describe('LocalStorage Basics', () => {
-  it('should create a store with  storage', () => {
+  it('should create a store with  storage', ({ renderHook }) => {
     localStorage.setItem(
       'counter',
       formatToStore(0, {
@@ -17,9 +18,11 @@ describe('LocalStorage Basics', () => {
       },
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const onStateChanged = (storage as any).onStateChanged;
     onStateChanged.bind(storage);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     jest.spyOn(storage, 'onStateChanged' as any).mockImplementation((...parameters) => {
       onStateChanged(...parameters);
     });
@@ -30,10 +33,10 @@ describe('LocalStorage Basics', () => {
     renderHook(() => storage.use());
 
     const [parameters] = storage.subscribers;
-    const { callback } = parameters;
-    const callbackWrapper = jest.fn(callback);
+    const { onStoreChange } = parameters;
+    const callbackWrapper = jest.fn(onStoreChange);
 
-    parameters.callback = callbackWrapper;
+    parameters.onStoreChange = callbackWrapper;
 
     storage.subscribers = new Set([parameters]);
 
@@ -49,7 +52,7 @@ describe('LocalStorage Basics', () => {
 });
 
 describe('createGlobalState', () => {
-  it('should create a store with  storage', () => {
+  it('should create a store with  storage', ({ renderHook }) => {
     localStorage.setItem(
       'data',
       formatToStore(new Map([['prop', 0]]), {

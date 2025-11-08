@@ -2,10 +2,11 @@ import { createDecoupledPromise } from 'easy-cancelable-promise';
 import { formatFromStore } from 'json-storage-formatter/formatFromStore';
 import { formatToStore } from 'json-storage-formatter/formatToStore';
 import { type StoreTools, createGlobalState } from '..';
-import { act, renderHook } from '@testing-library/react';
+import { act } from '@testing-library/react';
+import it from './$it';
 
 describe('basic', () => {
-  it('should be able to create a new instance with state', () => {
+  it('should be able to create a new instance with state', ({ renderHook }) => {
     const stateValue = 'test';
     const useValue = createGlobalState(stateValue, {
       metadata: {
@@ -47,7 +48,9 @@ describe('basic', () => {
 });
 
 describe('with actions', () => {
-  it('should be able to create a new instance with state and actions, setter should be and object', () => {
+  it('should be able to create a new instance with state and actions, setter should be and object', ({
+    renderHook,
+  }) => {
     const useCount = createGlobalState(1, {
       metadata: {
         modificationsCounter: 0,
@@ -128,7 +131,7 @@ describe('with actions', () => {
 });
 
 describe('with configuration callbacks', () => {
-  it('should execute onInit callback', () => {
+  it('should execute onInit callback', ({ renderHook }) => {
     const onInitSpy = jest.fn(({ setMetadata }) => {
       setMetadata({
         test: true,
@@ -153,7 +156,7 @@ describe('with configuration callbacks', () => {
     });
   });
 
-  it('should execute onSubscribed callback every time a subscriber is added', () => {
+  it('should execute onSubscribed callback every time a subscriber is added', ({ renderHook, strict }) => {
     const onSubscribedSpy = jest.fn();
 
     const useCount = createGlobalState(
@@ -172,17 +175,17 @@ describe('with configuration callbacks', () => {
     const { result } = renderHook(() => useCount());
     const [state] = result.current;
 
-    expect(onSubscribedSpy).toHaveBeenCalledTimes(1);
+    expect(onSubscribedSpy).toHaveBeenCalledTimes(strict ? 2 : 1);
 
     const { result: result2 } = renderHook(() => useCount());
     const [state2] = result2.current;
 
-    expect(onSubscribedSpy).toHaveBeenCalledTimes(2);
+    expect(onSubscribedSpy).toHaveBeenCalledTimes(strict ? 4 : 2);
 
     expect(state).toBe(state2);
   });
 
-  it('should execute onStateChanged callback every time the state is changed', () => {
+  it('should execute onStateChanged callback every time the state is changed', ({ renderHook }) => {
     const onStateChangedSpy = jest.fn();
 
     const useCount = createGlobalState(
@@ -212,7 +215,9 @@ describe('with configuration callbacks', () => {
     expect(onStateChangedSpy).toHaveBeenCalledTimes(2);
   });
 
-  it('should execute computePreventStateChange callback before state is changed and continue if it returns false', () => {
+  it('should execute computePreventStateChange callback before state is changed and continue if it returns false', ({
+    renderHook,
+  }) => {
     const computePreventStateChangeSpy = jest.fn();
 
     const useCount = createGlobalState(0, {
@@ -237,7 +242,9 @@ describe('with configuration callbacks', () => {
     expect(computePreventStateChangeSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('should execute computePreventStateChange callback before state is changed and prevent state change if it returns true', () => {
+  it('should execute computePreventStateChange callback before state is changed and prevent state change if it returns true', ({
+    renderHook,
+  }) => {
     const computePreventStateChangeSpy = jest.fn();
 
     const useCount = createGlobalState(0, {
@@ -283,7 +290,9 @@ describe('custom global hooks', () => {
     ]);
   };
 
-  it('should initialize the store with the initial state where there is no  storage data', () => {
+  it('should initialize the store with the initial state where there is no  storage data', ({
+    renderHook,
+  }) => {
     const { localStorage } = globalThis;
 
     const { promise: mainPromise, ...tools } = createDecoupledPromise();
@@ -342,7 +351,7 @@ describe('custom global hooks', () => {
     });
   });
 
-  it('should initialize the store with the  storage data where there is  storage data', () => {
+  it('should initialize the store with the  storage data where there is  storage data', ({ renderHook }) => {
     const initialState = getInitialState();
     const { localStorage } = globalThis;
 
@@ -418,7 +427,7 @@ describe('custom global hooks', () => {
     });
   });
 
-  it('should be able to update the store  storage', () => {
+  it('should be able to update the store  storage', ({ renderHook }) => {
     const initialState = getInitialState();
     const { localStorage } = globalThis;
 
@@ -479,7 +488,7 @@ describe('custom global hooks', () => {
     });
   });
 
-  it('should be able to access custom actions from other actions', () => {
+  it('should be able to access custom actions from other actions', ({ renderHook }) => {
     expect.assertions(9);
 
     const logSpy = jest.fn();
@@ -511,8 +520,8 @@ describe('custom global hooks', () => {
       },
     });
 
-    let { result } = renderHook(() => useCount());
-    let [state, actions] = result.current;
+    const { result } = renderHook(() => useCount());
+    const [state, actions] = result.current;
 
     expect(state).toEqual(1);
     expect(logSpy).toHaveBeenCalledTimes(0);
@@ -542,7 +551,7 @@ describe('custom global hooks', () => {
     expect(count).toEqual(2);
   });
 
-  it('should derivate new state from global', () => {
+  it('should derivate new state from global', ({ renderHook, strict }) => {
     const useCount = createGlobalState({
       a: 1,
       b: 2,
@@ -550,8 +559,8 @@ describe('custom global hooks', () => {
 
     const selector = jest.fn((state: { a: number; b: number }) => state.a + state.b);
 
-    let { result } = renderHook(() => useCount());
-    let [state, setState] = result.current;
+    const { result } = renderHook(() => useCount());
+    const [state, setState] = result.current;
 
     expect(state).toEqual({
       a: 1,
@@ -567,19 +576,19 @@ describe('custom global hooks', () => {
 
     const { result: result2 } = renderHook(() => useCount(selector));
     const [derivate2] = result2.current;
-    expect(selector).toHaveBeenCalledTimes(1);
+    expect(selector).toHaveBeenCalledTimes(strict ? 2 : 1);
 
     expect(derivate2).toEqual(4);
   });
 
-  it('should avoid derivate to re-render due to shallow equal', () => {
+  it('should avoid derivate to re-render due to shallow equal', ({ renderHook }) => {
     const useData = createGlobalState({
       a: 1,
       b: 2,
       c: [1, 2, { a: 1 }],
     });
 
-    const selector = jest.fn(({ a, c }: { a: number; c: any[] }) => ({
+    const selector = jest.fn(({ a, c }: { a: number; c: unknown[] }) => ({
       a,
       c,
     }));
@@ -705,7 +714,7 @@ describe('getter subscriptions', () => {
 });
 
 describe('create fragment', () => {
-  it('should create a fragment as a hook', () => {
+  it('should create a fragment as a hook', ({ renderHook }) => {
     const initialState = {
       a: 1,
       b: 2,
@@ -784,7 +793,7 @@ describe('create fragment', () => {
 
     expect(useData.getState()).toBe(initialState);
 
-    let subscribe = useData.createObservable(({ a, b, secondRound }) => {
+    const subscribe = useData.createObservable(({ a, b, secondRound }) => {
       return {
         secondRound,
         a,

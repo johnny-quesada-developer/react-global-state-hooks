@@ -72,16 +72,20 @@
     "*.d.ts"
   ],
   "scripts": {
+    "format": "prettier --write .  --log-level silent && yarn lint:fix",
+    "test": "yarn build && yarn jest",
+    "test:debug:no-watch": "node --inspect-brk node_modules/.bin/jest --no-watchman --runInBand",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --watch --runInBand",
-    "test:quick": "jest --maxWorkers=4 -c --no-watchman -u",
-    "test:coverage": "jest --maxWorkers=4 -c --colors --no-watchman --verbose --coverage",
-    "build": "yarn ts-check &&yarn clean && webpack --config webpack.config.js",
-    "prepare": "yarn ts-check && npm run build",
-    "version": "npm run format && git add -A src",
+    "test:quick": "yarn test --no-coverage --maxWorkers=4 -c --no-watchman -u",
+    "test:coverage": "yarn test --maxWorkers=4 -c --colors --no-watchman --verbose --coverage",
+    "build": "yarn ts-check && yarn clean && webpack --config webpack.config.js",
+    "prepare": "yarn format && npm run build && yarn test:quick",
+    "version": "npm run format && yarn build && yarn jest && git add -A",
     "postversion": "git push && git push --tags",
-    "clean": "find . -maxdepth 1 -type f \\( -name '*.js' -o -name '*.d.ts' \\) ! -name 'webpack.config.js' -exec rm {} +",
-    "format": "prettier --write .",
-    "ts-check": "tsc -p tsconfig.json --pretty true --noEmit true"
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --fix --max-warnings=0",
+    "clean": "find . -maxdepth 1 -type f \\( -name '*.js' -o -name '*.d.ts' \\) ! -name 'webpack.config.js' ! -name 'eslint.config.mts' -exec rm {} +",
+    "ts-check": "tsc -p tsconfig.json --noEmit"
   },
   "repository": {
     "type": "git",
@@ -142,13 +146,24 @@
     "tslib": "^2.6.2",
     "typescript": "^5.8.2",
     "webpack": "^5.76.3",
-    "webpack-cli": "^5.0.1"
+    "webpack-cli": "^5.0.1",
+    "jiti": "^2.6.1",
+    "@eslint/js": "^9.39.1",
+    "@typescript-eslint/eslint-plugin": "^4.9.1",
+    "@typescript-eslint/parser": "^4.9.1",
+    "eslint": "^9.39.1",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "typescript-eslint": "^8.46.3"
   },
   "peerDependencies": {
     "json-storage-formatter": "^2.0.9",
     "react": ">=18.0.0"
   },
   "dependencies": {
-    "react-hooks-global-states": "^14.0.2"
+    "react-hooks-global-states": "14.1.0-beta.1"
   }
 }
