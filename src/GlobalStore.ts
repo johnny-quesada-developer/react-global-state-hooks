@@ -48,7 +48,7 @@ export class GlobalStore<
       actions?: ActionsConfig;
       name?: string;
       localStorage?: LocalStorageConfig;
-      // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+       
     } = { metadata: {} as Metadata },
   ) {
     // @ts-expect-error TS2345
