@@ -127,6 +127,52 @@ describe('LocalStorage Basics', () => {
     });
   });
 
+  it('should correctly replace value with validator returning initial state', () => {
+    const value = new Map<unknown, unknown>([['prop', 42]]);
+
+    const envelope: ItemEnvelope<typeof value> = {
+      s: value,
+      v: 1,
+    };
+
+    localStorage.setItem('mapData', formatToStore(envelope));
+
+    const storage = new GlobalStore(new Map(), {
+      localStorage: {
+        key: 'mapData',
+        validator: () => {
+          return new Map([['prop', 'test']]);
+        },
+      },
+    });
+
+    expect(storage.getState()).toEqual(new Map([['prop', 'test']]));
+  });
+
+  it("should state be restored if validator doesn't return a value", () => {
+    const value = new Map<unknown, unknown>([['prop', 42]]);
+
+    const envelope: ItemEnvelope<typeof value> = {
+      s: value,
+      v: 1,
+    };
+
+    localStorage.setItem('mapData', formatToStore(envelope));
+
+    const storage = new GlobalStore(new Map([[42, 24]]), {
+      localStorage: {
+        key: 'mapData',
+        validator: ({ restored }) => {
+          if (!restored) {
+            throw new Error('No restored value');
+          }
+        },
+      },
+    });
+
+    expect(storage.getState()).toEqual(value);
+  });
+
   it('should correctly restore local storage using the provided config: validator', () => {
     const value = new Map<unknown, unknown>([['prop', 42]]);
 

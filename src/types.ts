@@ -30,7 +30,10 @@ export type LocalStorageConfig<State> = {
 
   /**
    * @description Validator function to ensure the integrity of the restored state.
-   * Receives the restored value and the initial state, must return a valid `State`.
+   * Receives the restored value and the initial state... If the function returns a value then
+   * that value is used as the new state. If it returns `void` (undefined) then the initial state is used
+   * and the localStorage is updated accordingly.
+   *
    * Executes after every initialization from localStorage, including after migration.
    *
    * @example
@@ -44,7 +47,7 @@ export type LocalStorageConfig<State> = {
    * }
    * ```
    */
-  validator: (args: { restored: unknown; initial: State }) => State;
+  validator: (args: { restored: unknown; initial: State }) => State | void;
 
   /**
    * @description Error callback invoked when an exception occurs during any persistence phase.
@@ -73,7 +76,7 @@ export type LocalStorageConfig<State> = {
      * If and error is thrown during migration, the `onError` callback is invoked
      * and the state falls back to the initial value.
      */
-     
+
     migrator: (args: { legacy: unknown; initial: State }) => State;
   };
 

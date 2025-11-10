@@ -161,12 +161,28 @@ export class GlobalStore<
       });
     });
 
+    // there was an error during validation
     if (validationError) {
       this.handleLocalStorageError(validationError);
       this.trySetLocalStorageItem(this.getState());
       return;
     }
 
+    // no value returned from the validator
+    if (sanitizedState === undefined) {
+      if (state === undefined) {
+        // no restored, no sanitized state, adds to the store the initial state
+        this.trySetLocalStorageItem(this.getState());
+        return;
+      }
+
+      // restored state counts like valid, add it to the state and to the storage
+      this.setState(state!);
+      this.trySetLocalStorageItem(state);
+      return;
+    }
+
+    // add the returned value from the validator
     this.setState(sanitizedState!);
     this.trySetLocalStorageItem(sanitizedState!);
   };
