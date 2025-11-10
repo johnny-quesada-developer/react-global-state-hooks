@@ -1,8 +1,16 @@
-import { formatFromStore } from 'json-storage-formatter/formatFromStore';
-import { formatToStore } from 'json-storage-formatter/formatToStore';
-import { GlobalStore, type ActionCollectionConfig, type ActionCollectionResult, type StoreTools } from '..';
+import formatFromStore from 'json-storage-formatter/formatFromStore';
+import formatToStore from 'json-storage-formatter/formatToStore';
+// import { GlobalStore, type ActionCollectionConfig, type ActionCollectionResult, type StoreTools } from '..';
+import {
+  GlobalStore,
+  type ActionCollectionConfig,
+  type ActionCollectionResult,
+  type StoreTools,
+} from '../src';
 import { act } from '@testing-library/react';
 import it from './$it';
+import { isMap, isSet } from 'react-hooks-global-states/shallowCompare';
+import { ItemEnvelope } from '../src/types';
 
 describe('GlobalStore Basic', () => {
   it('should be able to create a new instance with state', () => {
@@ -11,7 +19,13 @@ describe('GlobalStore Basic', () => {
     const store = new GlobalStore(stateValue, {
       localStorage: {
         key: 'key1',
-        encrypt: false,
+        validator: ({ restored, initial }) => {
+          if (typeof restored !== 'string') {
+            return initial;
+          }
+
+          return restored;
+        },
       },
     });
 
@@ -24,7 +38,13 @@ describe('GlobalStore Basic', () => {
     const store = new GlobalStore(stateValue, {
       localStorage: {
         key: 'key1',
-        encrypt: false,
+        validator: ({ restored, initial }) => {
+          if (typeof restored !== 'string') {
+            return initial;
+          }
+
+          return restored;
+        },
       },
     });
 
@@ -37,8 +57,13 @@ describe('GlobalStore Basic', () => {
     const store = new GlobalStore(stateValue, {
       localStorage: {
         key: 'key1',
-        // by default, the state is encrypted to base64, but you can disable it, or use a custom function for encrypting
-        encrypt: false,
+        validator: ({ restored, initial }) => {
+          if (typeof restored !== 'number') {
+            return initial;
+          }
+
+          return restored;
+        },
       },
     });
 
@@ -51,7 +76,13 @@ describe('GlobalStore Basic', () => {
     const store = new GlobalStore(stateValue, {
       localStorage: {
         key: 'key1',
-        encrypt: false,
+        validator: ({ restored, initial }) => {
+          if (typeof restored !== 'string') {
+            return initial;
+          }
+
+          return restored;
+        },
       },
     });
 
@@ -67,7 +98,13 @@ describe('GlobalStore Basic', () => {
     const store = new GlobalStore(stateValue, {
       localStorage: {
         key: 'key1',
-        encrypt: false,
+        validator: ({ restored, initial }) => {
+          if (typeof restored !== 'string') {
+            return initial;
+          }
+
+          return restored;
+        },
       },
     });
 
@@ -92,47 +129,82 @@ describe('GlobalStore Persistence', () => {
   it('should be able to persist the state', () => {
     const stateValue = 'test';
 
+    const envelope: ItemEnvelope<string> = {
+      s: stateValue,
+      v: -1,
+    };
+
     const store = new GlobalStore(stateValue, {
       localStorage: {
         key: 'key1',
-        encrypt: false,
+        validator: ({ restored, initial }) => {
+          if (typeof restored !== 'string') {
+            return initial;
+          }
+
+          return restored;
+        },
       },
     });
 
     expect(store.getState()).toBe(stateValue);
-    expect(localStorage.getItem('key1')).toBe(JSON.stringify(stateValue));
+    expect(localStorage.getItem('key1')).toBe(JSON.stringify(envelope));
   });
 
   it('should be able to restore the state', () => {
     jest.spyOn(localStorage, 'getItem');
-    localStorage.setItem('key1', '"test"');
+
+    const envelope: ItemEnvelope<string> = {
+      s: 'test',
+      v: 1,
+    };
+
+    localStorage.setItem('key1', formatToStore(envelope));
 
     const store = new GlobalStore('', {
       localStorage: {
         key: 'key1',
-        encrypt: false,
+        validator: ({ restored, initial }) => {
+          if (typeof restored !== 'string') {
+            return initial;
+          }
+
+          return restored;
+        },
       },
     });
 
     expect(store.getState()).toBe('test');
-
-    expect(localStorage.getItem('key1')).toEqual('"test"');
+    expect(JSON.parse(localStorage.getItem('key1')!).s).toEqual('test');
   });
 
   it('should be able to restore state type Set', () => {
     const stateValue = new Set(['test', 'test2']);
 
-    new GlobalStore(stateValue, {
+    const storedEnvelope: ItemEnvelope<Set<string>> = {
+      s: stateValue,
+      v: 1,
+    };
+
+    localStorage.setItem('key1', formatToStore(storedEnvelope));
+
+    new GlobalStore(null as unknown as Set<string>, {
       localStorage: {
         key: 'key1',
-        encrypt: false,
+        validator: ({ restored, initial }) => {
+          if (isSet(restored)) {
+            return restored as typeof initial;
+          }
+
+          return new Set(initial);
+        },
       },
     });
 
     const storedItem = localStorage.getItem('key1');
-    const jsonParsed = JSON.parse(storedItem as string);
+    const jsonParsed = storedItem as string;
 
-    const restoredState = formatFromStore(jsonParsed);
+    const restoredState = formatFromStoreWithEnvelope(jsonParsed);
 
     expect(restoredState).toBeInstanceOf(Set);
     expect(restoredState).toEqual(stateValue);
@@ -147,14 +219,20 @@ describe('GlobalStore Persistence', () => {
     new GlobalStore(stateValue, {
       localStorage: {
         key: 'key1',
-        encrypt: false,
+        validator: ({ restored, initial }) => {
+          if (isMap(restored)) {
+            return restored as typeof initial;
+          }
+
+          return initial;
+        },
       },
     });
 
     const storedItem = localStorage.getItem('key1');
-    const jsonParsed = JSON.parse(storedItem as string);
+    const jsonParsed = storedItem as string;
 
-    const restoredState = formatFromStore(jsonParsed);
+    const restoredState = formatFromStoreWithEnvelope(jsonParsed);
 
     expect(restoredState).toBeInstanceOf(Map);
     expect(restoredState).toEqual(stateValue);
@@ -163,17 +241,30 @@ describe('GlobalStore Persistence', () => {
   it('should be able to restore state type Date', () => {
     const stateValue = new Date();
 
-    new GlobalStore(stateValue, {
+    const storedEnvelope: ItemEnvelope<Date> = {
+      s: stateValue,
+      v: 1,
+    };
+
+    localStorage.setItem('key1', formatToStore(storedEnvelope));
+
+    new GlobalStore(null as unknown as Date, {
       localStorage: {
         key: 'key1',
-        encrypt: false,
+        validator: ({ restored, initial }) => {
+          if (!(restored instanceof Date)) {
+            return initial;
+          }
+
+          return restored;
+        },
       },
     });
 
     const storedItem = localStorage.getItem('key1');
-    const jsonParsed = JSON.parse(storedItem as string);
+    const jsonParsed = storedItem as string;
 
-    const restoredState = formatFromStore(jsonParsed);
+    const restoredState = formatFromStoreWithEnvelope(jsonParsed);
 
     expect(restoredState).toBeInstanceOf(Date);
     expect(restoredState).toEqual(stateValue);
@@ -246,6 +337,13 @@ describe('GlobalStore Basic', () => {
     const store = new GlobalStore(stateValue, {
       localStorage: {
         key: 'key',
+        validator: ({ restored, initial }) => {
+          if (typeof restored !== 'number') {
+            return initial;
+          }
+
+          return restored;
+        },
       },
     });
 
@@ -560,7 +658,7 @@ describe('Custom store by using config parameter', () => {
             return;
           }
 
-          const items = formatFromStore(JSON.parse(stored)) as Map<number, { name: string }>;
+          const items = formatFromStoreWithEnvelope(stored) as Map<number, { name: string }>;
 
           setState(items);
         },
@@ -569,12 +667,7 @@ describe('Custom store by using config parameter', () => {
 
           const newState = getState();
 
-          localStorage.setItem(
-            'items',
-            formatToStore(newState, {
-              stringify: true,
-            }),
-          );
+          localStorage.setItem('items', formatToStoreWithEnvelope(newState));
         },
       },
     });
@@ -595,12 +688,7 @@ describe('Custom store by using config parameter', () => {
     const storedMap = new Map(initialState);
     storedMap.set(3, { name: 'jane' });
 
-    localStorage.setItem(
-      'items',
-      formatToStore(storedMap, {
-        stringify: true,
-      }),
-    );
+    localStorage.setItem('items', formatToStoreWithEnvelope(storedMap));
 
     const store = new GlobalStore(initialState, {
       callbacks: {
@@ -615,7 +703,7 @@ describe('Custom store by using config parameter', () => {
             return;
           }
 
-          const items = formatFromStore(JSON.parse(stored)) as Map<number, { name: string }>;
+          const items = formatFromStoreWithEnvelope(stored) as Map<number, { name: string }>;
 
           setState(items);
         },
@@ -624,21 +712,21 @@ describe('Custom store by using config parameter', () => {
 
           const newState = getState();
 
-          localStorage.setItem(
-            'items',
-            formatToStore(newState, {
-              stringify: true,
-            }),
-          );
+          localStorage.setItem('items', formatToStoreWithEnvelope(newState));
         },
       },
     });
 
     expect(onInitSpy).toHaveBeenCalledTimes(1);
     expect(onStateChangedSpy).toHaveBeenCalledTimes(1);
-    expect(localStorage.getItem('items')).toEqual(
-      '{"$t":"map","$v":[[1,{"name":"john"}],[2,{"name":"doe"}],[3,{"name":"jane"}]]}',
-    );
+    expect(JSON.parse(localStorage.getItem('items')!).s).toEqual({
+      $t: 'map',
+      $v: [
+        [1, { name: 'john' }],
+        [2, { name: 'doe' }],
+        [3, { name: 'jane' }],
+      ],
+    });
 
     expect(store.getState()).toEqual(storedMap);
   });
@@ -658,19 +746,14 @@ describe('Custom store by using config parameter', () => {
             return;
           }
 
-          const items = formatFromStore(JSON.parse(stored)) as Map<number, { name: string }>;
+          const items = formatFromStoreWithEnvelope(stored) as Map<number, { name: string }>;
 
           setState(items);
         },
         onStateChanged: ({ getState }) => {
           const newState = getState();
 
-          localStorage.setItem(
-            'items',
-            formatToStore(newState, {
-              stringify: true,
-            }),
-          );
+          localStorage.setItem('items', formatToStoreWithEnvelope(newState));
         },
       },
     });
@@ -685,15 +768,55 @@ describe('Custom store by using config parameter', () => {
       setState(newState);
     });
 
-    expect(localStorage.getItem('items')).toEqual(
-      '{"$t":"map","$v":[[1,{"name":"john"}],[2,{"name":"doe"}],[3,{"name":"jane"}]]}',
-    );
+    expect(JSON.parse(localStorage.getItem('items')!).s).toEqual({
+      $t: 'map',
+      $v: [
+        [1, { name: 'john' }],
+        [2, { name: 'doe' }],
+        [3, { name: 'jane' }],
+      ],
+    });
 
     expect(store.getState()).toEqual(newState);
+  });
 
-    const stored = localStorage.getItem('items');
+  it('fallback to initial state when error occurs during restoration from local storage', () => {
+    localStorage.setItem('key', '{not json');
 
-    expect(stored).toEqual('{"$t":"map","$v":[[1,{"name":"john"}],[2,{"name":"doe"}],[3,{"name":"jane"}]]}');
+    const errorSpy = jest.fn();
+
+    const store = new GlobalStore('init', {
+      localStorage: {
+        key: 'key',
+        validator: ({ restored }) => restored as string,
+        onError: errorSpy,
+      },
+    });
+
+    expect(errorSpy).toHaveBeenCalledWith(expect.any(SyntaxError));
+    expect(store.getState()).toBe('init');
+  });
+
+  it('normalizes and persists initial state on init read error', () => {
+    const getItemSpy = jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('IO');
+    });
+
+    const store = new GlobalStore(
+      { a: 1 },
+      {
+        localStorage: {
+          key: 'k',
+          validator: ({ restored }) => ({ ...(restored as { a: number }), norm: true }),
+          onError: jest.fn(),
+        },
+      },
+    );
+
+    getItemSpy.mockRestore();
+
+    expect(store.getState()).toEqual({ a: 1, norm: true });
+    expect(JSON.parse(localStorage.getItem('k')!)).toEqual({ s: { a: 1, norm: true }, v: -1 });
   });
 });
 
@@ -725,3 +848,18 @@ describe('GlobalStore Accessing custom actions from other actions', () => {
     expect(logSpy).toHaveBeenCalledWith('decrease');
   });
 });
+
+function formatToStoreWithEnvelope<State>(state: State) {
+  const envelope: ItemEnvelope<State> = {
+    s: state,
+    v: 1,
+  };
+
+  return formatToStore(envelope);
+}
+
+function formatFromStoreWithEnvelope<State>(json: string): State {
+  const result = formatFromStore<ItemEnvelope<State>>(json);
+
+  return result.s;
+}

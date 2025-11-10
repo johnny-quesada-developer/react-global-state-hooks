@@ -19,16 +19,95 @@ export type {
   ActionCollectionConfig,
 } from 'react-hooks-global-states/types';
 
-export type LocalStorageConfig = {
-  key: string | (() => string);
+/**
+ * @description Configuration for persisting state in localStorage
+ */
+export type LocalStorageConfig<State> = {
+  /**
+   * @description The key used to store the item in localStorage.
+   */
+  key: string;
 
   /**
-   * The function used to encrypt the local storage, it can be a custom function or a boolean value (true = atob)
+   * @description Validator function to ensure the integrity of the restored state.
+   * Receives the restored value and the initial state, must return a valid `State`.
+   * Executes after every initialization from localStorage, including after migration.
+   *
+   * @example
+   * ```ts
+   * validator: ({ restored, initial }) => {
+   *   if (typeof restored !== 'number') {
+   *     return initial;
+   *   }
+   *
+   *   return restored;
+   * }
+   * ```
    */
-  encrypt?: boolean | ((value: string) => string);
+  validator: (args: { restored: unknown; initial: State }) => State;
 
   /**
-   * The function used to decrypt the local storage, it can be a custom function or a boolean value (true = atob)
+   * @description Error callback invoked when an exception occurs during any persistence phase.
+   * Use this to log or report issues without throwing.
    */
-  decrypt?: boolean | ((value: string) => string);
+  onError?: (error: unknown) => void;
+
+  versioning?: {
+    /**
+     * @description Current schema version for this item. When the stored version differs,
+     * the `migrator` function is invoked to upgrade the stored value.
+     * @default -1
+     * @example
+     * ```ts
+     * {
+     *   key: 'counter',
+     *   version: 1
+     * }
+     * ```
+     */
+    version: string | number;
+
+    /**
+     * @description Called when a stored value is found with a different version.
+     * Receives the raw stored value and must return the upgraded `State`.
+     * If and error is thrown during migration, the `onError` callback is invoked
+     * and the state falls back to the initial value.
+     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    migrator: (args: { legacy: unknown; initial: State }) => State;
+  };
+
+  /**
+   * @description High level overrides of the localstorage synchronization
+   * Use it if you want to have full control of how the state is stored/retrieved.
+   *
+   * This disables versioning, migration
+   */
+  adapter?: {
+    /**
+     * @description Custom setter for the stored value associated with `key`.
+     */
+    setItem: (key: string, value: State) => void;
+
+    /**
+     * @description Custom getter for the stored value associated with `key`.
+     * Should return the previously stored value (parsed/decoded to `State`) for that key.
+     */
+    getItem: (key: string) => State;
+  };
+};
+
+/**
+ * @description Structure of the item stored in localStorage
+ */
+export type ItemEnvelope<T> = {
+  /**
+   * @description Actual stored state
+   */
+  s: T;
+
+  /**
+   * @description Version of the stored state
+   */
+  v?: string | number;
 };

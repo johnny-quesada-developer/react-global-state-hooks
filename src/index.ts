@@ -46,5 +46,3 @@ export { type LocalStorageConfig } from './types';
 export { GlobalStore } from './GlobalStore';
 export { GlobalStoreAbstract } from './GlobalStoreAbstract';
 export { createGlobalState, type InferActionsType } from './createGlobalState';
-export { getLocalStorageItem } from './getLocalStorageItem';
-export { setLocalStorageItem } from './setLocalStorageItem';

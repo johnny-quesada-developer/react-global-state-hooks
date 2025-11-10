@@ -1,7 +1,8 @@
 import { createDecoupledPromise } from 'easy-cancelable-promise';
-import { formatFromStore } from 'json-storage-formatter/formatFromStore';
-import { formatToStore } from 'json-storage-formatter/formatToStore';
-import { type StoreTools, createGlobalState } from '..';
+import formatFromStore from 'json-storage-formatter/formatFromStore';
+import formatToStore from 'json-storage-formatter/formatToStore';
+import { type StoreTools, createGlobalState } from '../src';
+// import { type StoreTools, createGlobalState } from '..';
 import { act } from '@testing-library/react';
 import it from './$it';
 
@@ -300,12 +301,7 @@ describe('custom global hooks', () => {
     const onStateChangedSpy = jest.fn(({ getState }) => {
       const newState = getState();
 
-      localStorage.setItem(
-        'items',
-        formatToStore(newState, {
-          stringify: true,
-        }),
-      );
+      localStorage.setItem('items', formatToStore(newState));
     });
 
     const onInitSpy = jest.fn(
@@ -355,24 +351,14 @@ describe('custom global hooks', () => {
     const initialState = getInitialState();
     const { localStorage } = globalThis;
 
-    localStorage.setItem(
-      'items',
-      formatToStore(initialState, {
-        stringify: true,
-      }),
-    );
+    localStorage.setItem('items', formatToStore(initialState));
 
     const { promise: mainPromise, ...tools } = createDecoupledPromise();
 
     const onStateChangedSpy = jest.fn(({ getState }) => {
       const newState = getState();
 
-      localStorage.setItem(
-        'items',
-        formatToStore(newState, {
-          stringify: true,
-        }),
-      );
+      localStorage.setItem('items', formatToStore(newState));
     });
 
     const onInitSpy = jest.fn(({ setState }) => {
@@ -380,14 +366,9 @@ describe('custom global hooks', () => {
 
       if (!stored) return;
 
-      setState(
-        formatFromStore(stored, {
-          jsonParse: true,
-        }),
-        {
-          forceUpdate: true,
-        },
-      );
+      setState(formatFromStore(stored), {
+        forceUpdate: true,
+      });
 
       tools.resolve();
     });
@@ -419,11 +400,7 @@ describe('custom global hooks', () => {
 
       expect(onStateChangedSpy).toHaveBeenCalledTimes(1);
       expect(onInitSpy).toHaveBeenCalledTimes(1);
-      expect(localStorage.getItem('items')).toEqual(
-        formatToStore(initialState, {
-          stringify: true,
-        }),
-      );
+      expect(localStorage.getItem('items')).toEqual(formatToStore(initialState));
     });
   });
 
@@ -436,12 +413,7 @@ describe('custom global hooks', () => {
     const onStateChangedSpy = jest.fn(({ getState }) => {
       const newState = getState();
 
-      localStorage.setItem(
-        'items',
-        formatToStore(newState, {
-          stringify: true,
-        }),
-      );
+      localStorage.setItem('items', formatToStore(newState));
 
       tools.resolve();
     });
@@ -480,11 +452,7 @@ describe('custom global hooks', () => {
       expect(onStateChangedSpy).toHaveBeenCalledTimes(1);
       expect(onInitSpy).toHaveBeenCalledTimes(1);
 
-      expect(localStorage.getItem('items')).toEqual(
-        formatToStore(initialState, {
-          stringify: true,
-        }),
-      );
+      expect(localStorage.getItem('items')).toEqual(formatToStore(initialState));
     });
   });
 

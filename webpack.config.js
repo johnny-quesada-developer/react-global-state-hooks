@@ -7,15 +7,11 @@ const individualEntries = {
   GlobalStore: './src/GlobalStore.ts',
   GlobalStoreAbstract: './src/GlobalStoreAbstract.ts',
   createGlobalState: './src/createGlobalState.ts',
-  types: './src/types.ts',
   isRecord: './src/isRecord.ts',
   shallowCompare: './src/shallowCompare.ts',
   throwWrongKeyOnActionCollectionConfig: './src/throwWrongKeyOnActionCollectionConfig.ts',
+  types: './src/types.ts',
   uniqueId: './src/uniqueId.ts',
-
-  // extras
-  getLocalStorageItem: './src/getLocalStorageItem.ts',
-  setLocalStorageItem: './src/setLocalStorageItem.ts',
 };
 
 const getExternalsForEntries = () => {
