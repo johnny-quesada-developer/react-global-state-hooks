@@ -73,7 +73,7 @@ export type LocalStorageConfig<State> = {
      * If and error is thrown during migration, the `onError` callback is invoked
      * and the state falls back to the initial value.
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     migrator: (args: { legacy: unknown; initial: State }) => State;
   };
 
