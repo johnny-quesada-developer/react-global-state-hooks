@@ -31,7 +31,7 @@ export type LocalStorageConfig<State> = {
   /**
    * @description Validator function to ensure the integrity of the restored state.
    * Receives the restored value and the initial state... If the function returns a value then
-   * that value is used as the new state. If it returns `void` (undefined) then the initial state is used
+   * that value is used as the new state. If it returns `void` (undefined) then the restored state is used
    * and the localStorage is updated accordingly.
    *
    * Executes after every initialization from localStorage, including after migration.

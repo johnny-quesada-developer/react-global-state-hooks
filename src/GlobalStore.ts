@@ -67,14 +67,14 @@ export class GlobalStore<
     (this as GlobalStore<State, Metadata, ActionsConfig>).initialize();
   }
 
-  protected isGlobalLocalStorageAvailable = () => {
+  protected isPersistStorageAvailable = () => {
     // check globalThis.localStorage avoid compatibility issues with SSR
     return Boolean(this.localStorage?.key && globalThis?.localStorage);
   };
 
   protected _onInitialize = ({ getState }: StoreTools<State, PublicStateMutator, Metadata>): void => {
     const storageConfig = this.localStorage;
-    if (!storageConfig || !this.isGlobalLocalStorageAvailable()) return;
+    if (!storageConfig || !this.isPersistStorageAvailable()) return;
 
     // versioning parameters
     const versioning = storageConfig.versioning;
@@ -83,7 +83,7 @@ export class GlobalStore<
     const { result: restoredEnvelope, error: initializationError } = tryCatch(
       (): ItemEnvelope<State> | null => {
         const getFn = storageConfig.adapter?.getItem;
-        if (!getFn) return this.getLocalStorageItem();
+        if (!getFn) return this.getStorageItem();
 
         return {
           s: getFn(storageConfig.key),
@@ -94,7 +94,7 @@ export class GlobalStore<
 
     // error while retrieving the item from local storage
     if (initializationError) {
-      this.handleLocalStorageError(initializationError);
+      this.handleStorageError(initializationError);
       this.updateStateWithValidation(this.getState());
       return;
     }
@@ -129,24 +129,25 @@ export class GlobalStore<
       return;
     }
 
-    this.handleLocalStorageError(migrateError);
+    // error during migration
+    this.handleStorageError(migrateError);
     this.updateStateWithValidation(this.getState());
   };
 
-  private trySetLocalStorageItem = (state: State) => {
+  private trySetStorageItem = (state: State) => {
     const storageConfig = this.localStorage;
     if (!storageConfig) return;
 
     const { error } = tryCatch(() => {
       const setFn = storageConfig.adapter?.setItem;
-      if (!setFn) return this.setLocalStorageItem(state);
+      if (!setFn) return this.setStorageItem(state);
 
       setFn(storageConfig.key, state);
     });
 
     if (!error) return;
 
-    this.handleLocalStorageError(error);
+    this.handleStorageError(error);
   };
 
   // helper to validate and update the state
@@ -163,8 +164,8 @@ export class GlobalStore<
 
     // there was an error during validation
     if (validationError) {
-      this.handleLocalStorageError(validationError);
-      this.trySetLocalStorageItem(this.getState());
+      this.handleStorageError(validationError);
+      this.trySetStorageItem(this.getState());
       return;
     }
 
@@ -172,26 +173,26 @@ export class GlobalStore<
     if (sanitizedState === undefined) {
       if (state === undefined) {
         // no restored, no sanitized state, adds to the store the initial state
-        this.trySetLocalStorageItem(this.getState());
+        this.trySetStorageItem(this.getState());
         return;
       }
 
       // restored state counts like valid, add it to the state and to the storage
       this.setState(state!);
-      this.trySetLocalStorageItem(state);
+      this.trySetStorageItem(state);
       return;
     }
 
     // add the returned value from the validator
     this.setState(sanitizedState!);
-    this.trySetLocalStorageItem(sanitizedState!);
+    this.trySetStorageItem(sanitizedState!);
   };
 
   protected _onChange = ({
     state,
   }: StoreTools<State, PublicStateMutator, Metadata> & StateChanges<State>): void => {
     const storageConfig = this.localStorage;
-    if (!storageConfig || !this.isGlobalLocalStorageAvailable()) return;
+    if (!storageConfig || !this.isPersistStorageAvailable()) return;
 
     const { error } = tryCatch(() => {
       const setFn = storageConfig.adapter?.setItem;
@@ -199,11 +200,11 @@ export class GlobalStore<
         return setFn(storageConfig.key, state);
       }
 
-      this.setLocalStorageItem(state);
+      this.setStorageItem(state);
     });
 
     if (!error) return;
-    this.handleLocalStorageError(error);
+    this.handleStorageError(error);
   };
 
   /**
@@ -234,14 +235,18 @@ export class GlobalStore<
   };
 
   // retrieves a versioned item from the local storage
-  private getLocalStorageItem = (): ItemEnvelope<State> | null => {
+  private getStorageItem = (): ItemEnvelope<State> | null => {
     const json = globalThis.localStorage.getItem(this.localStorage!.key);
 
-    return isNil(json) ? null : formatFromStore<ItemEnvelope<State>>(json);
+    const restoredEnvelope = isNil(json) ? null : formatFromStore<unknown>(json);
+
+    assertEnvelopeFormat<State>(this.localStorage!.key, restoredEnvelope);
+
+    return restoredEnvelope;
   };
 
   // add a versioned item to the local storage
-  private setLocalStorageItem = (state: State) => {
+  private setStorageItem = (state: State) => {
     const envelope: ItemEnvelope<State> = {
       s: state,
       v: this.localStorage?.versioning?.version ?? defaultStorageVersion,
@@ -252,12 +257,12 @@ export class GlobalStore<
     globalThis.localStorage.setItem(this.localStorage!.key, formatted);
   };
 
-  private handleLocalStorageError = (error: unknown) => {
+  private handleStorageError = (error: unknown) => {
     if (this.localStorage?.onError) {
       return this.localStorage.onError(error);
     }
 
-    console.error(
+    globalThis.console.error(
       [
         '[react-global-state-hooks]\n',
         '  localStorage sync error:',
@@ -272,6 +277,15 @@ export class GlobalStore<
       (error as Error).stack,
     );
   };
+}
+
+function assertEnvelopeFormat<T>(key: string, value: unknown): asserts value is ItemEnvelope<T> | null {
+  if (isNil(value)) return;
+  if (typeof value === 'object' && 's' in value && 'v' in value) return;
+
+  throw new Error(
+    `[react-native-global-state-hooks] The value of the key "${key}" is not a valid storage envelope.`,
+  );
 }
 
 export default GlobalStore;

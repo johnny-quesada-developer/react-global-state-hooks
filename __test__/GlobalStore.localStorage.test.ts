@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import formatToStore from 'json-storage-formatter/formatToStore';
-// import { GlobalStore, createGlobalState } from '..';
-import { GlobalStore, createGlobalState } from '../src';
+
+import { createGlobalState, GlobalStore } from '..';
+// import { GlobalStore, createGlobalState } from '../src';
 import { act } from '@testing-library/react';
 import it from './$it';
 import { isMap } from 'react-hooks-global-states/shallowCompare';
@@ -371,6 +372,7 @@ describe('LocalStorage Basics', () => {
         validator: ({ restored, initial }) => {
           return restored as typeof initial;
         },
+
         versioning: {
           version: 2,
 

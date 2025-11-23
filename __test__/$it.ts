@@ -1,4 +1,4 @@
-import { renderHook as renderHookBase } from '@testing-library/react';
+import { renderHook as renderHookBase, render as renderBase } from '@testing-library/react';
 
 /**
  * Custom it function to run tests in both strict and non-strict mode.
@@ -8,17 +8,26 @@ import { renderHook as renderHookBase } from '@testing-library/react';
  */
 function $it(
   name: string,
-  fn: (param1: { renderHook: typeof renderHookBase; strict: boolean }) => void,
-  { only }: { only?: boolean } = { only: false },
+  fn: (param1: { render: typeof renderBase; renderHook: typeof renderHookBase; strict: boolean }) => void,
+  { only, ...options }: { only?: boolean; strict?: boolean } = { only: false },
 ) {
   const executeTest = (strict: boolean) => {
     (only ? it.only : it)(`${name} ${strict && '[STRICT-MODE]'}`, () =>
-      fn({ renderHook: strict ? strictRenderHook : renderHookBase, strict }),
+      fn({
+        renderHook: strict ? strictRenderHook : renderHookBase,
+        render: strict ? render : renderBase,
+        strict,
+      }),
     );
   };
 
-  executeTest(true);
-  executeTest(false);
+  if (options.strict !== false) {
+    executeTest(true);
+  }
+
+  if (options.strict !== true) {
+    executeTest(false);
+  }
 }
 
 const strictRenderHook = ((...[param1, param2]: Parameters<typeof renderHookBase>) => {
@@ -28,8 +37,19 @@ const strictRenderHook = ((...[param1, param2]: Parameters<typeof renderHookBase
   });
 }) as typeof renderHookBase;
 
-$it.only = (name: string, fn: (param1: { renderHook: typeof renderHookBase; strict: boolean }) => void) => {
-  $it(name, fn, { only: true });
+const render = ((...[param1, param2]: Parameters<typeof renderBase>) => {
+  return renderBase(param1, {
+    ...param2,
+    reactStrictMode: true,
+  });
+}) as typeof renderBase;
+
+$it.only = (
+  name: string,
+  fn: (param1: { render: typeof renderBase; renderHook: typeof renderHookBase; strict: boolean }) => void,
+  options?: { strict?: boolean },
+) => {
+  $it(name, fn, { only: true, ...options });
 };
 
 export default $it;

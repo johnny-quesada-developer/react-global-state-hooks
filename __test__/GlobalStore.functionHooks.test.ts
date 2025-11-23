@@ -1,8 +1,8 @@
 import { createDecoupledPromise } from 'easy-cancelable-promise';
 import formatFromStore from 'json-storage-formatter/formatFromStore';
 import formatToStore from 'json-storage-formatter/formatToStore';
-import { type StoreTools, createGlobalState } from '../src';
-// import { type StoreTools, createGlobalState } from '..';
+// import { type StoreTools, createGlobalState } from '../src';
+import { type StoreTools, createGlobalState } from '..';
 import { act } from '@testing-library/react';
 import it from './$it';
 

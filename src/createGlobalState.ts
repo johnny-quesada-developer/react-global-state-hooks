@@ -11,7 +11,7 @@ import {
 export type { InferActionsType } from 'react-hooks-global-states/createGlobalState';
 
 import type { LocalStorageConfig } from './types';
-import { GlobalStore } from './GlobalStore';
+import GlobalStore from './GlobalStore';
 
 interface CreateGlobalState {
   /**

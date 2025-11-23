@@ -6,7 +6,7 @@ import {
   StoreTools,
 } from 'react-hooks-global-states/types';
 
-import { GlobalStore } from './GlobalStore';
+import GlobalStore from './GlobalStore';
 
 export abstract class GlobalStoreAbstract<
   State,

@@ -43,6 +43,6 @@ export { type ContextProvider, type ContextHook, type InferContextApi, createCon
 // #endregion base library exports
 
 export { type LocalStorageConfig } from './types';
-export { GlobalStore } from './GlobalStore';
+export { default as GlobalStore } from './GlobalStore';
 export { GlobalStoreAbstract } from './GlobalStoreAbstract';
 export { createGlobalState, type InferActionsType } from './createGlobalState';

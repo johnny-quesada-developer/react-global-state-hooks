@@ -1,12 +1,12 @@
 import formatFromStore from 'json-storage-formatter/formatFromStore';
 import formatToStore from 'json-storage-formatter/formatToStore';
-// import { GlobalStore, type ActionCollectionConfig, type ActionCollectionResult, type StoreTools } from '..';
-import {
-  GlobalStore,
-  type ActionCollectionConfig,
-  type ActionCollectionResult,
-  type StoreTools,
-} from '../src';
+import { GlobalStore, type ActionCollectionConfig, type ActionCollectionResult, type StoreTools } from '..';
+// import {
+//   GlobalStore,
+//   type ActionCollectionConfig,
+//   type ActionCollectionResult,
+//   type StoreTools,
+// } from '../src';
 import { act } from '@testing-library/react';
 import it from './$it';
 import { isMap, isSet } from 'react-hooks-global-states/shallowCompare';
