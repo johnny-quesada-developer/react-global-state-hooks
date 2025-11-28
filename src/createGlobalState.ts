@@ -8,7 +8,7 @@ import {
   GlobalStoreCallbacks,
 } from 'react-hooks-global-states/types';
 
-export type { InferActionsType } from 'react-hooks-global-states/createGlobalState';
+export type { InferActionsType, InferStateApi } from 'react-hooks-global-states/createGlobalState';
 
 import type { LocalStorageConfig } from './types';
 import GlobalStore from './GlobalStore';
