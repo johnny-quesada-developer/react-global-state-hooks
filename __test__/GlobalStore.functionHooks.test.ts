@@ -1,7 +1,7 @@
 import { createDecoupledPromise } from 'easy-cancelable-promise';
 import formatFromStore from 'json-storage-formatter/formatFromStore';
 import formatToStore from 'json-storage-formatter/formatToStore';
-import { type StoreTools, createGlobalState } from '../src';
+import { InferStateApi, createGlobalState } from '../src';
 // import { type StoreTools, createGlobalState } from '..';
 import { act } from '@testing-library/react';
 import it from './$it';
@@ -410,6 +410,8 @@ describe('custom global hooks', () => {
 
     const { promise: mainPromise, ...tools } = createDecoupledPromise();
 
+    type CountApi = InferStateApi<typeof useCount>;
+
     const onStateChangedSpy = jest.fn(({ getState }) => {
       const newState = getState();
 
@@ -418,12 +420,13 @@ describe('custom global hooks', () => {
       tools.resolve();
     });
 
-    const onInitSpy = jest.fn(({ setState }: StoreTools<Map<number, { name: string }>>) => {
+    const onInitSpy = jest.fn((tools) => {
+      const storeTools = tools as CountApi;
       const stored = localStorage.getItem('items') ?? null;
 
       if (stored) return;
 
-      setState((state) => state, {
+      storeTools.setState((state) => state, {
         forceUpdate: true,
       });
     });
@@ -813,5 +816,45 @@ describe('create fragment', () => {
         secondRound: true,
       }));
     });
+  });
+
+  it('should types work correctly with localstorage and onInit', () => {
+    type CountApi = InferStateApi<typeof count$>;
+
+    const count$ = createGlobalState(0, {
+      name: 'count',
+      localStorage: {
+        key: 'count',
+        validator: ({ restored, initial }) => {
+          const isValid = !isNaN(Number(restored)) && (restored === 0 || restored === 1);
+          return isValid ? restored : initial;
+        },
+        versioning: {
+          version: 1,
+          migrator: ({ legacy, initial }) => {
+            if (typeof legacy === 'number') {
+              return legacy;
+            }
+
+            return initial;
+          },
+        },
+      },
+      callbacks: {
+        onInit: async (tools) => {
+          const storeTools = tools as CountApi;
+          storeTools.actions.increase();
+        },
+      },
+      actions: {
+        increase: () => {
+          return ({ getState, setState }) => {
+            setState(getState() + 1);
+          };
+        },
+      },
+    });
+
+    expect(count$.actions.increase).toBeInstanceOf(Function);
   });
 });

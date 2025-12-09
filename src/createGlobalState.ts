@@ -1,14 +1,19 @@
+export type {
+  InferActionsType,
+  InferStateApi,
+  AnyActions,
+} from 'react-hooks-global-states/createGlobalState';
+
 import type React from 'react';
 
-import {
+import type {
   StateHook,
   BaseMetadata,
   ActionCollectionConfig,
   ActionCollectionResult,
   GlobalStoreCallbacks,
-} from 'react-hooks-global-states/types';
-
-export type { InferActionsType, InferStateApi } from 'react-hooks-global-states/createGlobalState';
+  AnyActions,
+} from 'react-hooks-global-states';
 
 import type { LocalStorageConfig } from './types';
 import GlobalStore from './GlobalStore';
@@ -98,7 +103,7 @@ interface CreateGlobalState {
     args: {
       name?: string;
       metadata?: Metadata;
-      callbacks?: GlobalStoreCallbacks<State, PublicStateMutator, Metadata>;
+      callbacks?: GlobalStoreCallbacks<State, AnyActions, Metadata>;
       actions?: ActionsConfig;
       localStorage?: LocalStorageConfig<State>;
     },
@@ -164,7 +169,7 @@ interface CreateGlobalState {
     args: {
       name?: string;
       metadata?: Metadata;
-      callbacks?: GlobalStoreCallbacks<State, PublicStateMutator, Metadata>;
+      callbacks?: GlobalStoreCallbacks<State, AnyActions, Metadata>;
       actions: ActionsConfig;
       localStorage?: LocalStorageConfig<State>;
     },

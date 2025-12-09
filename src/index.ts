@@ -43,4 +43,9 @@ export { type ContextProvider, type ContextHook, type InferContextApi, createCon
 
 export { type LocalStorageConfig } from './types';
 export { default as GlobalStore } from './GlobalStore';
-export { createGlobalState, type InferActionsType, type InferStateApi } from './createGlobalState';
+export {
+  createGlobalState,
+  type InferActionsType,
+  type InferStateApi,
+  AnyActions,
+} from './createGlobalState';
