@@ -26,14 +26,13 @@ export type {
 
 // classes
 // export { GlobalStore } from './GlobalStore'; // overridden
-// export { GlobalStoreAbstract } from './GlobalStoreAbstract';// overridden
 
 // functions
 // export { createGlobalState } from './createGlobalState'; // overridden
 
 // utils
 export { shallowCompare } from './shallowCompare';
-export { uniqueId } from './uniqueId';
+export { uniqueId, type BrandedId } from './uniqueId';
 export { throwWrongKeyOnActionCollectionConfig } from './throwWrongKeyOnActionCollectionConfig';
 export { isRecord } from './isRecord';
 
@@ -44,5 +43,4 @@ export { type ContextProvider, type ContextHook, type InferContextApi, createCon
 
 export { type LocalStorageConfig } from './types';
 export { default as GlobalStore } from './GlobalStore';
-export { GlobalStoreAbstract } from './GlobalStoreAbstract';
 export { createGlobalState, type InferActionsType, type InferStateApi } from './createGlobalState';

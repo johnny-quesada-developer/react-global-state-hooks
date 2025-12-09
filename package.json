@@ -21,11 +21,6 @@
       "require": "./GlobalStore.js",
       "types": "./GlobalStore.d.ts"
     },
-    "./GlobalStoreAbstract": {
-      "import": "./GlobalStoreAbstract.js",
-      "require": "./GlobalStoreAbstract.js",
-      "types": "./GlobalStoreAbstract.d.ts"
-    },
     "./createGlobalState": {
       "import": "./createGlobalState.js",
       "require": "./createGlobalState.js",
@@ -150,7 +145,7 @@
   },
   "dependencies": {
     "json-storage-formatter": "^3.0.2",
-    "react-hooks-global-states": "^15.0.3"
+    "react-hooks-global-states": "^15.0.4"
   },
   "peerDependencies": {
     "json-storage-formatter": "^3.0.2",

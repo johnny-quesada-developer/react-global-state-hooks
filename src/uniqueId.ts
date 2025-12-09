@@ -1,1 +1,1 @@
-export { uniqueId, default } from 'react-hooks-global-states/uniqueId';
+export { uniqueId, default, type BrandedId } from 'react-hooks-global-states/uniqueId';
