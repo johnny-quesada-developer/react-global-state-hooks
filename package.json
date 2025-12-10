@@ -145,7 +145,7 @@
   },
   "dependencies": {
     "json-storage-formatter": "^3.0.2",
-    "react-hooks-global-states": "^15.0.6"
+    "react-hooks-global-states": "^15.0.7"
   },
   "peerDependencies": {
     "json-storage-formatter": "^3.0.2",
