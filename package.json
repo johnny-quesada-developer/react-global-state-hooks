@@ -1,6 +1,6 @@
 {
   "name": "react-global-state-hooks",
-  "version": "15.0.7",
+  "version": "15.0.8",
   "description": "This is a package to easily handling global-state across your react components",
   "main": "./bundle.js",
   "types": "./index.d.ts",
@@ -145,7 +145,7 @@
   },
   "dependencies": {
     "json-storage-formatter": "^3.0.2",
-    "react-hooks-global-states": "^15.0.8"
+    "react-hooks-global-states": "^15.0.9"
   },
   "peerDependencies": {
     "json-storage-formatter": "^3.0.2",

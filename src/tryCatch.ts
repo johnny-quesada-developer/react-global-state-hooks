@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type TryCatchResult<T extends (...args: any[]) => any> = {
+export type TryCatchResult<T extends (...args: any[]) => any> = {
   result: ReturnType<T> | null;
   error: unknown;
 };

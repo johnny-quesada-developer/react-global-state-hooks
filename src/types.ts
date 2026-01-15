@@ -1,5 +1,9 @@
 export type {
+  AnyFunction,
+  ReadonlyHook,
+  SelectHook,
   StateApi,
+  ReadonlyStateApi,
   ObservableFragment,
   MetadataSetter,
   StateChanges,
@@ -10,6 +14,7 @@ export type {
   UnsubscribeCallback,
   SubscribeCallbackConfig,
   SubscribeCallback,
+  SubscribeToState,
   BaseMetadata,
   MetadataGetter,
   SelectorCallback,

@@ -18,7 +18,7 @@ import type {
 import type { LocalStorageConfig } from './types';
 import GlobalStore from './GlobalStore';
 
-interface CreateGlobalState {
+export interface CreateGlobalState {
   /**
    * Creates a global state hook.
    * @param state initial state value

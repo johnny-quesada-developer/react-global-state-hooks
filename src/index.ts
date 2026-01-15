@@ -4,7 +4,11 @@
  */
 // #region base library exports copy of the original library index
 export type {
+  AnyFunction,
+  ReadonlyHook,
+  SelectHook,
   StateApi,
+  ReadonlyStateApi,
   ObservableFragment,
   MetadataSetter,
   StateChanges,
@@ -15,6 +19,7 @@ export type {
   UnsubscribeCallback,
   SubscribeCallbackConfig,
   SubscribeCallback,
+  SubscribeToState,
   BaseMetadata,
   MetadataGetter,
   SelectorCallback,
@@ -32,19 +37,37 @@ export type {
 
 // utils
 export { shallowCompare } from './shallowCompare';
-export { uniqueId, type BrandedId } from './uniqueId';
+export { uniqueId, type BrandedId, type UniqueId } from './uniqueId';
 export { throwWrongKeyOnActionCollectionConfig } from './throwWrongKeyOnActionCollectionConfig';
 export { isRecord } from './isRecord';
+export { default as tryCatch, type TryCatchResult } from './tryCatch';
 
 // context
-export { type ContextProvider, type ContextHook, type InferContextApi, createContext } from './createContext';
+export {
+  type ContextProvider,
+  type ContextHook,
+  type InferContextApi,
+  type ContextActionCollectionConfig,
+  type ContextActionCollectionResult,
+  type ContextStoreTools,
+  type ContextStoreToolsExtensions,
+  type ContextProviderExtensions,
+  type ContextPublicApi,
+  type ReadonlyContextPublicApi,
+  type ReadonlyContextHook,
+  type GlobalStoreContextCallbacks,
+  type GlobalStoreCallbacks as ContextGlobalStoreCallbacks,
+  type CreateContext,
+  createContext,
+} from './createContext';
 
 // #endregion base library exports
 
-export { type LocalStorageConfig } from './types';
+export { type LocalStorageConfig, type ItemEnvelope } from './types';
 export { default as GlobalStore } from './GlobalStore';
 export {
   createGlobalState,
+  type CreateGlobalState,
   type InferActionsType,
   type InferStateApi,
   AnyActions,
