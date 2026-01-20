@@ -15,6 +15,7 @@ import tryCatch from './tryCatch';
 import formatFromStore from 'json-storage-formatter/formatFromStore';
 import formatToStore from 'json-storage-formatter/formatToStore';
 import isNil from 'json-storage-formatter/isNil';
+import isPrimitive from 'json-storage-formatter/isPrimitive';
 
 const defaultStorageVersion = -1;
 
@@ -82,12 +83,23 @@ export class GlobalStore<
     // try to restore the state from local storage
     const { result: restoredEnvelope, error: initializationError } = tryCatch(
       (): ItemEnvelope<State> | null => {
-        const getFn = storageConfig.adapter?.getItem;
-        if (!getFn) return this.getStorageItem();
+        // custom adapted invalidates versioning and selector handling
+        if (storageConfig.adapter?.getItem) {
+          return {
+            s: storageConfig.adapter?.getItem(storageConfig.key),
+            v: versioning?.version ?? defaultStorageVersion,
+          };
+        }
 
+        const envelope = this.getStorageItem();
+        const shouldMergeStates = envelope && storageConfig.selector && !isPrimitive(envelope?.s);
+
+        if (!shouldMergeStates) return envelope as ItemEnvelope<State> | null;
+
+        // merges the selected stored state with the initial state
         return {
-          s: getFn(storageConfig.key),
-          v: versioning?.version ?? defaultStorageVersion,
+          ...envelope,
+          s: { ...this.getState(), ...envelope.s },
         };
       },
     );
@@ -207,7 +219,7 @@ export class GlobalStore<
   };
 
   // retrieves a versioned item from the local storage
-  public getStorageItem = (): ItemEnvelope<State> | null => {
+  public getStorageItem = (): ItemEnvelope<State> | ItemEnvelope<Partial<State>> | null => {
     const json = globalThis.localStorage.getItem(this.localStorage!.key);
 
     const restoredEnvelope = isNil(json) ? null : formatFromStore<unknown>(json);
@@ -219,8 +231,8 @@ export class GlobalStore<
 
   // add a versioned item to the local storage
   public setStorageItem = (state: State) => {
-    const envelope: ItemEnvelope<State> = {
-      s: state,
+    const envelope: ItemEnvelope<State | Partial<State>> = {
+      s: this.localStorage?.selector ? this.localStorage.selector(state) : state,
       v: this.localStorage?.versioning?.version ?? defaultStorageVersion,
     };
 

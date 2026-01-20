@@ -89,7 +89,7 @@ export type LocalStorageConfig<State> = {
    * @description High level overrides of the localstorage synchronization
    * Use it if you want to have full control of how the state is stored/retrieved.
    *
-   * This disables versioning, migration
+   * This disables versioning, migration, and selector
    */
   adapter?: {
     /**
@@ -103,6 +103,11 @@ export type LocalStorageConfig<State> = {
      */
     getItem: (key: string) => State;
   };
+
+  /**
+   * @description Optional selector to extract a subset of the state for storage.
+   */
+  selector?: <T extends Partial<State>>(state: State) => T;
 };
 
 /**
