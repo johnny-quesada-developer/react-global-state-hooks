@@ -494,6 +494,90 @@ describe('createGlobalState', () => {
   });
 });
 
+describe('localStorage selector', () => {
+  it('should selectively persist and restore state using selector', () => {
+    type AppState = {
+      user: { name: string; email: string };
+      settings: { theme: string };
+      sessionData: { temp: string };
+    };
+
+    const initialState: AppState = {
+      user: { name: 'John', email: 'john@example.com' },
+      settings: { theme: 'dark' },
+      sessionData: { temp: 'temp-data' },
+    };
+
+    // First: create a store that only persists user and settings
+    const storage = new GlobalStore(initialState, {
+      localStorage: {
+        key: 'appState',
+        selector: <T extends Partial<AppState>>(state: AppState) =>
+          ({
+            user: state.user,
+            settings: state.settings,
+          }) as T,
+        validator: ({ restored, initial }) => {
+          if (typeof restored === 'object' && restored !== null) {
+            return { ...initial, ...restored } as AppState;
+          }
+          return initial;
+        },
+      },
+    });
+
+    // Update all fields including non-persisted sessionData
+    storage.setState({
+      user: { name: 'Jane', email: 'jane@example.com' },
+      settings: { theme: 'light' },
+      sessionData: { temp: 'new-temp' },
+    });
+
+    // Verify only selected fields are in localStorage
+    const storedValue = localStorage.getItem('appState');
+    const parsed = formatFromStore<ItemEnvelope<Partial<AppState>>>(storedValue!);
+
+    expect(parsed.s).toEqual({
+      user: { name: 'Jane', email: 'jane@example.com' },
+      settings: { theme: 'light' },
+    });
+    expect(parsed.s).not.toHaveProperty('sessionData');
+
+    // Now create a new store instance to test restoration
+    const newInitialState: AppState = {
+      user: { name: 'Default', email: 'default@example.com' },
+      settings: { theme: 'system' },
+      sessionData: { temp: 'fresh-session' },
+    };
+
+    const restoredStorage = new GlobalStore(newInitialState, {
+      localStorage: {
+        key: 'appState',
+        selector: <T extends Partial<AppState>>(state: AppState) =>
+          ({
+            user: state.user,
+            settings: state.settings,
+          }) as T,
+        validator: ({ restored, initial }) => {
+          if (typeof restored === 'object' && restored !== null) {
+            return { ...initial, ...restored } as AppState;
+          }
+          return initial;
+        },
+      },
+    });
+
+    const restoredState = restoredStorage.getState();
+
+    // Selected fields should be restored from localStorage
+    expect(restoredState.user).toEqual({ name: 'Jane', email: 'jane@example.com' });
+    expect(restoredState.settings).toEqual({ theme: 'light' });
+
+    // Non-selected field should use initial value
+    expect(restoredState.sessionData).toEqual({ temp: 'fresh-session' });
+  });
+});
+
 describe('getter subscriptions custom global state', () => {
   it('should subscribe to changes from getter', () => {
     const useState = createGlobalState({
