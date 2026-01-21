@@ -24,10 +24,13 @@ export type {
   ActionCollectionConfig,
 } from 'react-hooks-global-states/types';
 
+import { AnyActions } from 'react-hooks-global-states';
+import type { StoreTools, BaseMetadata } from 'react-hooks-global-states/types';
+
 /**
  * @description Configuration for persisting state in localStorage
  */
-export type LocalStorageConfig<State> = {
+export type LocalStorageConfig<State, Metadata extends BaseMetadata> = {
   /**
    * @description The key used to store the item in localStorage.
    */
@@ -52,13 +55,16 @@ export type LocalStorageConfig<State> = {
    * }
    * ```
    */
-  validator: (args: { restored: unknown; initial: State }) => State | void;
+  validator: (
+    args: { restored: unknown; initial: State },
+    storeTools: StoreTools<State, AnyActions, Metadata>,
+  ) => State | void;
 
   /**
    * @description Error callback invoked when an exception occurs during any persistence phase.
    * Use this to log or report issues without throwing.
    */
-  onError?: (error: unknown) => void;
+  onError?: (error: unknown, storeTools: StoreTools<State, AnyActions, Metadata>) => void;
 
   versioning?: {
     /**
@@ -82,7 +88,10 @@ export type LocalStorageConfig<State> = {
      * and the state falls back to the initial value.
      */
 
-    migrator: (args: { legacy: unknown; initial: State }) => State;
+    migrator: (
+      args: { legacy: unknown; initial: State },
+      storeTools: StoreTools<State, AnyActions, Metadata>,
+    ) => State;
   };
 
   /**

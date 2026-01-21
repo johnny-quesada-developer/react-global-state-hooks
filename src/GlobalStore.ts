@@ -5,6 +5,7 @@ import type {
   BaseMetadata,
   GlobalStoreCallbacks,
   StateChanges,
+  StoreTools,
 } from 'react-hooks-global-states/types';
 
 import GlobalStoreBase from 'react-hooks-global-states/GlobalStore';
@@ -16,6 +17,7 @@ import formatFromStore from 'json-storage-formatter/formatFromStore';
 import formatToStore from 'json-storage-formatter/formatToStore';
 import isNil from 'json-storage-formatter/isNil';
 import isPrimitive from 'json-storage-formatter/isPrimitive';
+import { AnyActions } from 'createGlobalState';
 
 const defaultStorageVersion = -1;
 
@@ -27,7 +29,7 @@ export class GlobalStore<
     ? React.Dispatch<React.SetStateAction<State>>
     : ActionCollectionResult<State, Metadata, NonNullable<ActionsConfig>>,
 > extends GlobalStoreBase<State, Metadata, ActionsConfig> {
-  protected localStorage: LocalStorageConfig<State> | null = null;
+  protected localStorage: LocalStorageConfig<State, Metadata> | null = null;
 
   constructor(state: State);
 
@@ -42,7 +44,7 @@ export class GlobalStore<
       >;
       actions?: ActionsConfig;
       name?: string;
-      localStorage?: LocalStorageConfig<State>;
+      localStorage?: LocalStorageConfig<State, Metadata>;
     },
   );
 
@@ -53,7 +55,7 @@ export class GlobalStore<
       callbacks?: GlobalStoreCallbacks<State, PublicStateMutator, Metadata>;
       actions?: ActionsConfig;
       name?: string;
-      localStorage?: LocalStorageConfig<State>;
+      localStorage?: LocalStorageConfig<State, Metadata>;
     } = { metadata: {} as Metadata },
   ) {
     // @ts-expect-error TS2345
@@ -130,10 +132,13 @@ export class GlobalStore<
 
     // [VERSIONING] try to executed a migration
     const { result: migrated, error: migrateError } = tryCatch(() => {
-      return migratorFn({
-        legacy: restoredEnvelope.s,
-        initial: this.getState(),
-      });
+      return migratorFn(
+        {
+          legacy: restoredEnvelope.s,
+          initial: this.getState(),
+        },
+        this.storeTools as StoreTools<State, AnyActions, Metadata>,
+      );
     });
 
     if (!migrateError) {
@@ -168,10 +173,13 @@ export class GlobalStore<
     if (!storageConfig) return;
 
     const { result: sanitizedState, error: validationError } = tryCatch(() => {
-      return storageConfig.validator({
-        restored: state,
-        initial: this.getState(),
-      });
+      return storageConfig.validator(
+        {
+          restored: state,
+          initial: this.getState(),
+        },
+        this.storeTools as StoreTools<State, AnyActions, Metadata>,
+      );
     });
 
     // there was an error during validation
@@ -243,7 +251,7 @@ export class GlobalStore<
 
   public handleStorageError = (error: unknown) => {
     if (this.localStorage?.onError) {
-      return this.localStorage.onError(error);
+      return this.localStorage.onError(error, this.storeTools as StoreTools<State, AnyActions, Metadata>);
     }
 
     globalThis.console.error(

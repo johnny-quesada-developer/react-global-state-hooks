@@ -404,6 +404,7 @@ describe('GlobalStore with actions', () => {
     expect(actions).not.toBeInstanceOf(Function);
     expect(actions.increase).toBeDefined();
     expect(storeTools).toBeDefined();
+    expect(storeTools.setState).toBeInstanceOf(Function);
   });
 
   it('should be able to get the state', () => {
@@ -793,7 +794,18 @@ describe('Custom store by using config parameter', () => {
       },
     });
 
-    expect(errorSpy).toHaveBeenCalledWith(expect.any(SyntaxError));
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.any(SyntaxError),
+      expect.objectContaining({
+        getState: expect.any(Function),
+        setState: expect.any(Function),
+        subscribe: expect.any(Function),
+        getMetadata: expect.any(Function),
+        setMetadata: expect.any(Function),
+        actions: null,
+      }),
+    );
+
     expect(store.getState()).toBe('init');
   });
 

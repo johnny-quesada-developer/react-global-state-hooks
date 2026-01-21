@@ -105,7 +105,7 @@ export interface CreateGlobalState {
       metadata?: Metadata;
       callbacks?: GlobalStoreCallbacks<State, AnyActions, Metadata>;
       actions?: ActionsConfig;
-      localStorage?: LocalStorageConfig<State>;
+      localStorage?: LocalStorageConfig<State, Metadata>;
     },
   ): StateHook<State, PublicStateMutator, Metadata>;
 
@@ -171,7 +171,7 @@ export interface CreateGlobalState {
       metadata?: Metadata;
       callbacks?: GlobalStoreCallbacks<State, AnyActions, Metadata>;
       actions: ActionsConfig;
-      localStorage?: LocalStorageConfig<State>;
+      localStorage?: LocalStorageConfig<State, Metadata>;
     },
   ): StateHook<State, PublicStateMutator, Metadata>;
 }

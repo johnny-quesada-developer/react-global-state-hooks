@@ -94,6 +94,8 @@ describe('with actions', () => {
     expect(useCount).toBeInstanceOf(Function);
     expect(metadata.modificationsCounter).toBe(0);
 
+    expect(useCount.setState).toBeInstanceOf(Function);
+    expect(useCount.reset).toBeInstanceOf(Function);
     expect(actions).toBeInstanceOf(Object);
     expect(actions.decrease).toBeInstanceOf(Function);
     expect(actions.increase).toBeInstanceOf(Function);
