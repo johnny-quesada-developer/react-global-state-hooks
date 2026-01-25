@@ -116,7 +116,8 @@ export type LocalStorageConfig<State, Metadata extends BaseMetadata> = {
   /**
    * @description Optional selector to extract a subset of the state for storage.
    */
-  selector?: <T extends Partial<State>>(state: State) => T;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  selector?: (state: State) => any;
 };
 
 /**
