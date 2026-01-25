@@ -578,6 +578,147 @@ describe('localStorage selector', () => {
   });
 });
 
+describe('localStorage adapter', () => {
+  it('should use custom adapter for get and set operations', () => {
+    const customStorage: Record<string, number> = {};
+    const getItemSpy = jest.fn((key: string) => customStorage[key]);
+    const setItemSpy = jest.fn((key: string, value: number) => {
+      customStorage[key] = value;
+    });
+
+    const store = new GlobalStore(5, {
+      localStorage: {
+        key: 'custom',
+        adapter: {
+          getItem: getItemSpy,
+          setItem: setItemSpy,
+        },
+      },
+    });
+
+    expect(getItemSpy).toHaveBeenCalledWith('custom');
+    expect(setItemSpy).toHaveBeenCalledWith('custom', 5);
+
+    store.setState(10);
+
+    expect(setItemSpy).toHaveBeenCalledWith('custom', 10);
+    expect(customStorage.custom).toBe(10);
+  });
+
+  it('should ignore versioning and selector when adapter is provided', () => {
+    const customStorage: Record<string, { a: number; b: number }> = {};
+
+    new GlobalStore(
+      { a: 1, b: 2 },
+      {
+        localStorage: {
+          key: 'test',
+          adapter: {
+            getItem: (key) => customStorage[key],
+            setItem: (key, value) => {
+              customStorage[key] = value;
+            },
+          },
+          selector: (state) => ({ a: state.a }),
+          versioning: { version: 2, migrator: jest.fn() },
+        },
+      },
+    );
+
+    // Full state should be stored, not selected
+    expect(customStorage.test).toEqual({ a: 1, b: 2 });
+  });
+});
+
+describe('SSR compatibility', () => {
+  it('should handle missing localStorage gracefully', () => {
+    const originalLocalStorage = globalThis.localStorage;
+    // @ts-expect-error - simulating SSR
+    delete globalThis.localStorage;
+
+    const store = new GlobalStore(10, {
+      localStorage: {
+        key: 'ssr-test',
+        validator: ({ restored, initial }) => restored as typeof initial,
+      },
+    });
+
+    expect(store.getState()).toBe(10);
+
+    store.setState(20);
+    expect(store.getState()).toBe(20);
+
+    globalThis.localStorage = originalLocalStorage;
+  });
+});
+
+describe('localStorage selector edge cases', () => {
+  it('should handle selector returning null', () => {
+    new GlobalStore(
+      { data: 'test', temp: 'value' },
+      {
+        localStorage: {
+          key: 'nullable',
+          selector: () => null,
+          validator: ({ initial }) => initial,
+        },
+      },
+    );
+
+    const stored = localStorage.getItem('nullable');
+    const parsed = JSON.parse(stored!);
+    expect(parsed.s).toBe(null);
+  });
+});
+
+describe('public storage methods', () => {
+  it('should allow direct getStorageItem and setStorageItem calls', () => {
+    const store = new GlobalStore(100, {
+      localStorage: {
+        key: 'direct',
+        validator: ({ restored, initial }) => (typeof restored === 'number' ? restored : initial),
+      },
+    });
+
+    const envelope = store.getStorageItem();
+    expect(envelope).toEqual({ s: 100, v: -1 });
+
+    store.setStorageItem(200);
+    const updated = store.getStorageItem();
+    expect(updated?.s).toBe(200);
+  });
+});
+
+describe('error handling during state changes', () => {
+  it('should handle errors when setItem fails during state update', () => {
+    const errorSpy = jest.fn();
+
+    const store = new GlobalStore(1, {
+      localStorage: {
+        key: 'fail-write',
+        validator: ({ restored, initial }) => (typeof restored === 'number' ? restored : initial),
+        onError: errorSpy,
+        adapter: {
+          getItem: () => 1,
+          setItem: () => {
+            throw new Error('Write failed');
+          },
+        },
+      },
+    });
+
+    expect(errorSpy).toHaveBeenCalledTimes(1);
+
+    store.setState(2);
+
+    expect(errorSpy).toHaveBeenCalledTimes(2);
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ message: 'Write failed' }),
+      expect.any(Object),
+    );
+  });
+});
+
 describe('getter subscriptions custom global state', () => {
   it('should subscribe to changes from getter', () => {
     const useState = createGlobalState({
@@ -641,5 +782,92 @@ describe('getter subscriptions custom global state', () => {
     // the subscription should not be called since it was removed
     expect(subscriptionSpy).toHaveBeenCalledTimes(2);
     expect(subscriptionDerivateSpy).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('untested use cases - minimal coverage', () => {
+  describe('localStorage adapter', () => {
+    it('should use custom adapter for storage operations', () => {
+      const customStorage: Record<string, number> = {};
+
+      new GlobalStore(5, {
+        localStorage: {
+          key: 'custom',
+          adapter: {
+            getItem: (key: string) => customStorage[key],
+            setItem: (key: string, value: number) => {
+              customStorage[key] = value;
+            },
+          },
+        },
+      });
+
+      expect(customStorage.custom).toBe(5);
+    });
+  });
+
+  describe('SSR compatibility', () => {
+    it('should handle missing localStorage gracefully', () => {
+      const originalLocalStorage = globalThis.localStorage;
+      // @ts-expect-error - simulating SSR
+      delete globalThis.localStorage;
+
+      const store = new GlobalStore(10, {
+        localStorage: {
+          key: 'ssr-test',
+          validator: ({ restored, initial }) => restored as typeof initial,
+        },
+      });
+
+      expect(store.getState()).toBe(10);
+      store.setState(20);
+      expect(store.getState()).toBe(20);
+
+      globalThis.localStorage = originalLocalStorage;
+    });
+  });
+
+  describe('error handling during state changes', () => {
+    it('should handle setItem errors during state update', () => {
+      const errorSpy = jest.fn();
+
+      const store = new GlobalStore(1, {
+        localStorage: {
+          key: 'fail-write',
+          validator: ({ restored, initial }) => (typeof restored === 'number' ? restored : initial),
+          onError: errorSpy,
+          adapter: {
+            getItem: () => 1,
+            setItem: () => {
+              throw new Error('Write failed');
+            },
+          },
+        },
+      });
+
+      expect(errorSpy).toHaveBeenCalledTimes(1);
+
+      store.setState(2);
+
+      expect(errorSpy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('public storage methods', () => {
+    it('should allow direct getStorageItem and setStorageItem calls', () => {
+      const store = new GlobalStore(100, {
+        localStorage: {
+          key: 'direct',
+          validator: ({ restored, initial }) => (typeof restored === 'number' ? restored : initial),
+        },
+      });
+
+      const envelope = store.getStorageItem();
+      expect(envelope).toEqual({ s: 100, v: -1 });
+
+      store.setStorageItem(200);
+      const updated = store.getStorageItem();
+      expect(updated?.s).toBe(200);
+    });
   });
 });

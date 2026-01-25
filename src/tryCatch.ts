@@ -1,13 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export type TryCatchResult<T extends (...args: any[]) => any> = {
-  result: ReturnType<T> | null;
-  error: unknown;
-};
+import type { Any, TryCatchResult } from './types';
 
 /**
  * Simple linear try catch utility to avoid repetitive try catch blocks
  */
-function tryCatch<T extends () => any>(callback: T): TryCatchResult<T> {
+function tryCatch<T extends () => Any>(callback: T): TryCatchResult<T> {
   try {
     return { result: callback(), error: null };
   } catch (error) {

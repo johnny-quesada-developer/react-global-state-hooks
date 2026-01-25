@@ -1,31 +1,66 @@
 export type {
-  AnyFunction,
-  ReadonlyHook,
-  SelectHook,
-  StateApi,
-  ReadonlyStateApi,
-  ObservableFragment,
-  MetadataSetter,
-  StateChanges,
-  StoreTools,
+  ActionCollectionConfig,
   ActionCollectionResult,
-  GlobalStoreCallbacks,
-  UseHookOptions,
-  UnsubscribeCallback,
-  SubscribeCallbackConfig,
-  SubscribeCallback,
-  SubscribeToState,
+  AnyActions,
+  AnyFunction,
   BaseMetadata,
+  BrandedId,
+  CleanupFunction,
+  ContextActionCollectionConfig,
+  ContextActionCollectionResult,
+  ContextHook,
+  ContextProvider,
+  ContextProviderExtensions,
+  ContextPublicApi,
+  ContextStoreTools,
+  ContextStoreToolsExtensions,
+  CreateContext,
+  // CreateGlobalState, // overridden below
+  GlobalStoreCallbacks,
+  GlobalStoreContextCallbacks,
+  InferAPI,
+  InferActionsType,
+  InferContextApi,
+  InferStateApi,
   MetadataGetter,
+  MetadataSetter,
+  ObservableFragment,
+  ReadonlyContextHook,
+  ReadonlyContextPublicApi,
+  ReadonlyHook,
+  ReadonlyStateApi,
+  SelectHook,
   SelectorCallback,
+  StateApi,
+  StateChanges,
+  StateHook,
+  StoreTools,
+  SubscribeCallback,
+  SubscribeCallbackConfig,
+  SubscribeToState,
   SubscriberParameters,
   SubscriptionCallback,
-  StateHook,
-  ActionCollectionConfig,
+  UniqueId,
+  UnsubscribeCallback,
+  UseHookOptions,
+  Any,
 } from 'react-hooks-global-states/types';
 
-import { AnyActions } from 'react-hooks-global-states';
-import type { StoreTools, BaseMetadata } from 'react-hooks-global-states/types';
+import type {
+  StateHook,
+  BaseMetadata,
+  ActionCollectionConfig,
+  ActionCollectionResult,
+  GlobalStoreCallbacks,
+  AnyActions,
+  Any,
+  StoreTools,
+} from 'react-hooks-global-states';
+
+export type TryCatchResult<T extends (...args: Any[]) => Any> = {
+  result: ReturnType<T> | null;
+  error: unknown;
+};
 
 /**
  * @description Configuration for persisting state in localStorage
@@ -55,7 +90,7 @@ export type LocalStorageConfig<State, Metadata extends BaseMetadata> = {
    * }
    * ```
    */
-  validator: (
+  validator?: (
     args: { restored: unknown; initial: State },
     storeTools: StoreTools<State, AnyActions, Metadata>,
   ) => State | void;
@@ -116,7 +151,8 @@ export type LocalStorageConfig<State, Metadata extends BaseMetadata> = {
   /**
    * @description Optional selector to extract a subset of the state for storage.
    */
-  selector?: <T extends Partial<State>>(state: State) => T;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  selector?: (state: State) => any;
 };
 
 /**
@@ -133,3 +169,163 @@ export type ItemEnvelope<T> = {
    */
   v?: string | number;
 };
+
+export interface CreateGlobalState {
+  /**
+   * Creates a global state hook.
+   * @param state initial state value
+   * @returns a state hook for your components
+   * @example
+   * const useCounter = createGlobalState(0);
+   *
+   * function Counter() {
+   *   const [count, setCount] = useCounter();
+   *   return (
+   *     <div>
+   *       <p>Count: {count}</p>
+   *       <button onClick={() =>
+   *         setCount(prev => prev + 1)
+   *       }>Increment</button>
+   *     </div>
+   *   );
+   * }
+   */
+  <State>(
+    state: State | (() => State),
+  ): StateHook<State, React.Dispatch<React.SetStateAction<State>>, BaseMetadata>;
+
+  /**
+   * Creates a global state hook that you can use across your application
+   * @param state initial state value
+   * @param args additional configuration for the global state
+   * @param args.name optional name for debugging purposes
+   * @param args.metadata optional non-reactive metadata associated with the state
+   * @param args.callbacks optional lifecycle callbacks for the global state
+   * @param args.actions optional actions to restrict state mutations [if provided `setState` will be nullified]
+   * @param args.localStorage optional configuration to persist the state in local storage
+   * @returns a state hook that you can use in your components
+   *
+   * @example
+   * ```tsx
+   * const useCounter = createGlobalState(0, {
+   *   actions: {
+   *     increase() {
+   *       return ({ setState }) => {
+   *         setState((c) => c + 1);
+   *       };
+   *     },
+   *     decrease(amount: number) {
+   *       return ({ setState }) => {
+   *         setState((c) => c - amount);
+   *       };
+   *     },
+   *   },
+   * });
+   *
+   * function Counter() {
+   *  const [count, {
+   *    increase,
+   *    decrease
+   *  }] = useCounter();
+   *
+   *  return (
+   *   <div>
+   *    <p>Count: {count}</p>
+   *    <button onClick={increase}>
+   *      Increment
+   *    </button>
+   *    <button onClick={() => {
+   *      decrease(1);
+   *    }}>
+   *      Decrement
+   *    </button>
+   *   </div>
+   *  );
+   * }
+   * ```
+   */
+  <
+    State,
+    Metadata extends BaseMetadata,
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+    ActionsConfig extends ActionCollectionConfig<State, Metadata> | null | {},
+    PublicStateMutator = keyof ActionsConfig extends never | undefined
+      ? React.Dispatch<React.SetStateAction<State>>
+      : ActionCollectionResult<State, Metadata, NonNullable<ActionsConfig>>,
+  >(
+    state: State | (() => State),
+    args: {
+      name?: string;
+      metadata?: Metadata | (() => Metadata);
+      callbacks?: GlobalStoreCallbacks<Any, AnyActions, Any>;
+      actions?: ActionsConfig;
+      localStorage?: LocalStorageConfig<Any, Any>;
+    },
+  ): StateHook<State, PublicStateMutator, Metadata>;
+
+  /**
+   * Creates a global state hook that you can use across your application
+   * @param state initial state value
+   * @param args additional configuration for the global state
+   * @param args.name optional name for debugging purposes
+   * @param args.metadata optional non-reactive metadata associated with the state
+   * @param args.callbacks optional lifecycle callbacks for the global state
+   * @param args.actions optional actions to restrict state mutations [if provided `setState` will be nullified]
+   * @param args.localStorage optional configuration to persist the state in local storage
+   * @returns a state hook that you can use in your components
+   *
+   * @example
+   * ```tsx
+   * const useCounter = createGlobalState(0, {
+   *   actions: {
+   *     increase() {
+   *       return ({ setState }) => {
+   *         setState((c) => c + 1);
+   *       };
+   *     },
+   *     decrease(amount: number) {
+   *       return ({ setState }) => {
+   *         setState((c) => c - amount);
+   *       };
+   *     },
+   *   },
+   * });
+   *
+   * function Counter() {
+   *  const [count, {
+   *    increase,
+   *    decrease
+   *  }] = useCounter();
+   *
+   *  return (
+   *   <div>
+   *    <p>Count: {count}</p>
+   *    <button onClick={increase}>
+   *      Increment
+   *    </button>
+   *    <button onClick={() => {
+   *      decrease(1);
+   *    }}>
+   *      Decrement
+   *    </button>
+   *   </div>
+   *  );
+   * }
+   * ```
+   */
+  <
+    State,
+    Metadata extends BaseMetadata,
+    ActionsConfig extends ActionCollectionConfig<State, Metadata>,
+    PublicStateMutator = ActionCollectionResult<State, Metadata, NonNullable<ActionsConfig>>,
+  >(
+    state: State | (() => State),
+    args: {
+      name?: string;
+      metadata?: Metadata | (() => Metadata);
+      callbacks?: GlobalStoreCallbacks<Any, AnyActions, Any>;
+      actions: ActionsConfig;
+      localStorage?: LocalStorageConfig<Any, Any>;
+    },
+  ): StateHook<State, PublicStateMutator, Metadata>;
+}

@@ -1,6 +1,7 @@
 import type {
   ActionCollectionConfig,
   ActionCollectionResult,
+  Any,
   AnyFunction,
   BaseMetadata,
   GlobalStoreCallbacks,
@@ -17,7 +18,7 @@ import formatFromStore from 'json-storage-formatter/formatFromStore';
 import formatToStore from 'json-storage-formatter/formatToStore';
 import isNil from 'json-storage-formatter/isNil';
 import isPrimitive from 'json-storage-formatter/isPrimitive';
-import { AnyActions } from 'createGlobalState';
+import { AnyActions } from './createGlobalState';
 
 const defaultStorageVersion = -1;
 
@@ -31,35 +32,34 @@ export class GlobalStore<
 > extends GlobalStoreBase<State, Metadata, ActionsConfig> {
   protected localStorage: LocalStorageConfig<State, Metadata> | null = null;
 
-  constructor(state: State);
+  constructor(state: State | (() => State));
 
   constructor(
-    state: State,
+    state: State | (() => State),
     args: {
-      metadata?: Metadata;
+      metadata?: Metadata | (() => Metadata);
       callbacks?: GlobalStoreCallbacks<
-        State,
+        Any,
         PublicStateMutator extends AnyFunction ? null : PublicStateMutator,
-        Metadata
+        Any
       >;
       actions?: ActionsConfig;
       name?: string;
-      localStorage?: LocalStorageConfig<State, Metadata>;
+      localStorage?: LocalStorageConfig<Any, Any>;
     },
   );
 
   constructor(
-    state: State,
+    state: State | (() => State),
     args: {
-      metadata?: Metadata;
-      callbacks?: GlobalStoreCallbacks<State, PublicStateMutator, Metadata>;
+      metadata?: Metadata | (() => Metadata);
+      callbacks?: GlobalStoreCallbacks<Any, PublicStateMutator, Any>;
       actions?: ActionsConfig;
       name?: string;
-      localStorage?: LocalStorageConfig<State, Metadata>;
+      localStorage?: LocalStorageConfig<Any, Any>;
     } = { metadata: {} as Metadata },
   ) {
-    // @ts-expect-error TS2345
-    super(state, args);
+    super(state, args as ConstructorParameters<typeof GlobalStoreBase<State, Metadata, ActionsConfig>>[1]);
 
     this.localStorage = args.localStorage ?? null;
 
@@ -69,10 +69,10 @@ export class GlobalStore<
     (this as GlobalStore<State, Metadata, ActionsConfig>).initialize();
   }
 
-  protected isPersistStorageAvailable = () => {
+  public isPersistStorageAvailable(): boolean {
     // check globalThis.localStorage avoid compatibility issues with SSR
     return Boolean(this.localStorage?.key && globalThis?.localStorage);
-  };
+  }
 
   // we are overriding the onInit to add local storage restoration logic
   protected onInit = (): void => {
@@ -151,7 +151,7 @@ export class GlobalStore<
     this.updateStateWithValidation(this.getState());
   };
 
-  public trySetStorageItem = (state: State) => {
+  public trySetStorageItem(state: State): void {
     const storageConfig = this.localStorage;
     if (!storageConfig) return;
 
@@ -165,15 +165,15 @@ export class GlobalStore<
     if (!error) return;
 
     this.handleStorageError(error);
-  };
+  }
 
   // helper to validate and update the state
-  public updateStateWithValidation = (state: State) => {
+  public updateStateWithValidation(state: State): void {
     const storageConfig = this.localStorage;
     if (!storageConfig) return;
 
     const { result: sanitizedState, error: validationError } = tryCatch(() => {
-      return storageConfig.validator(
+      return storageConfig.validator?.(
         {
           restored: state,
           initial: this.getState(),
@@ -206,7 +206,7 @@ export class GlobalStore<
     // add the returned value from the validator
     this.setState(sanitizedState!);
     this.trySetStorageItem(sanitizedState!);
-  };
+  }
 
   // we are overriding the onStateChanged to add local storage sync logic
   protected onStateChanged = ({ state }: StateChanges<State>): void => {
@@ -227,7 +227,7 @@ export class GlobalStore<
   };
 
   // retrieves a versioned item from the local storage
-  public getStorageItem = (): ItemEnvelope<State> | ItemEnvelope<Partial<State>> | null => {
+  public getStorageItem(): ItemEnvelope<State> | ItemEnvelope<Partial<State>> | null {
     const json = globalThis.localStorage.getItem(this.localStorage!.key);
 
     const restoredEnvelope = isNil(json) ? null : formatFromStore<unknown>(json);
@@ -235,10 +235,10 @@ export class GlobalStore<
     assertEnvelopeFormat<State>(this.localStorage!.key, restoredEnvelope);
 
     return restoredEnvelope;
-  };
+  }
 
   // add a versioned item to the local storage
-  public setStorageItem = (state: State) => {
+  public setStorageItem(state: State): void {
     const envelope: ItemEnvelope<State | Partial<State>> = {
       s: this.localStorage?.selector ? this.localStorage.selector(state) : state,
       v: this.localStorage?.versioning?.version ?? defaultStorageVersion,
@@ -247,9 +247,24 @@ export class GlobalStore<
     const formatted = formatToStore(envelope);
 
     globalThis.localStorage.setItem(this.localStorage!.key, formatted);
-  };
+  }
 
-  public handleStorageError = (error: unknown) => {
+  // Override reset to also reset localStorage
+  public reset(): void;
+
+  public reset(state: State, metadata: Metadata): void;
+
+  public reset(...args: [State?, Metadata?]): void {
+    // Clear localStorage before reset to prevent onInit from restoring old value
+    if (this.isPersistStorageAvailable() && args.length === 0) {
+      globalThis.localStorage.removeItem(this.localStorage!.key);
+    }
+
+    // Call parent reset
+    (super.reset as AnyFunction)(...args);
+  }
+
+  public handleStorageError(error: unknown): void {
     if (this.localStorage?.onError) {
       return this.localStorage.onError(error, this.storeTools as StoreTools<State, AnyActions, Metadata>);
     }
@@ -268,7 +283,7 @@ export class GlobalStore<
       ].join('\n'),
       (error as Error).stack,
     );
-  };
+  }
 }
 
 function assertEnvelopeFormat<T>(key: string, value: unknown): asserts value is ItemEnvelope<T> | null {

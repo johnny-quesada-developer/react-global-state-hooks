@@ -860,3 +860,69 @@ describe('create fragment', () => {
     expect(count$.actions.increase).toBeInstanceOf(Function);
   });
 });
+
+describe('reset functionality', () => {
+  it('should reset state to initial value with function initializer', ({ renderHook }) => {
+    const useState = createGlobalState(() => ({ count: 0, name: 'test' }));
+
+    const { result, rerender } = renderHook(() => useState());
+    let state = result.current[0];
+    const setState = result.current[1];
+
+    act(() => {
+      setState({ count: 5, name: 'updated' });
+    });
+
+    rerender();
+    [state] = result.current;
+    expect(state).toEqual({ count: 5, name: 'updated' });
+
+    act(() => {
+      useState.reset();
+    });
+
+    rerender();
+    [state] = result.current;
+    expect(state).toEqual({ count: 0, name: 'test' });
+  });
+
+  it('should reset state with localStorage using function initializer', () => {
+    const useState = createGlobalState(() => 10, {
+      localStorage: {
+        key: 'reset-test',
+        validator: ({ restored, initial }) => (typeof restored === 'number' ? restored : initial),
+      },
+    });
+
+    useState.setState(50);
+    expect(useState.getState()).toBe(50);
+
+    useState.reset();
+    expect(useState.getState()).toBe(10);
+
+    const stored = localStorage.getItem('reset-test');
+    const parsed = JSON.parse(stored!);
+    expect(parsed.s).toBe(10);
+  });
+
+  it('should reset metadata and state correctly', () => {
+    const useState = createGlobalState(() => 0, {
+      metadata: () => ({ counter: 0 }),
+    });
+
+    useState.setState(10);
+    useState.getMetadata().counter = 5;
+
+    expect(useState.getMetadata().counter).toBe(5);
+    expect(useState.getState()).toBe(10);
+
+    // set metadata
+    useState.setMetadata({ counter: 3 });
+    expect(useState.getMetadata().counter).toBe(3);
+
+    useState.reset();
+
+    expect(useState.getState()).toBe(0);
+    expect(useState.getMetadata().counter).toBe(0);
+  });
+});
