@@ -3,8 +3,9 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 const individualEntries = {
   // inherit from react-global-state-hooks
-  createContext: './src/createContext.ts',
   GlobalStore: './src/GlobalStore.ts',
+  actions: './src/actions.ts',
+  createContext: './src/createContext.ts',
   createGlobalState: './src/createGlobalState.ts',
   isRecord: './src/isRecord.ts',
   shallowCompare: './src/shallowCompare.ts',
