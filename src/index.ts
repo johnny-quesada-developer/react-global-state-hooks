@@ -51,6 +51,7 @@ export type {
   Any,
   TryCatchResult,
   LocalStorageConfig,
+  ItemEnvelope,
 } from './types';
 
 // classes

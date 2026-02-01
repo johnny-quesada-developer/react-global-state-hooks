@@ -1,4 +1,4 @@
-import { type StoreTools, GlobalStore } from '..';
+import { type StoreTools, Any, GlobalStore } from '..';
 // import { type StoreTools, GlobalStore } from '../src';
 
 import $it from './$it';
@@ -531,8 +531,8 @@ describe('Custom store by using config parameter', () => {
     const { promise: onStateChangedPromise, ...toolsOnStateChangedPromise } = createDecoupledPromise();
 
     setTimeout(async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let store!: GlobalStore<any, any, {}>;
+      // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+      let store!: GlobalStore<Any, Any, {}>;
 
       await new CancelablePromise<void>((resolve) => {
         store = new GlobalStore(initialState, {

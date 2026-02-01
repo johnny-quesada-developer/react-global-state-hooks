@@ -40,10 +40,6 @@ function Counter() {
 
 ## 🚀 Why Developers Love This Library
 
-<table>
-<tr>
-<td width="50%">
-
 ### 🎓 **Zero Learning Curve**
 
 ```tsx
@@ -54,9 +50,6 @@ const [state, setState] = useState(0);
 const [state, setState] = useGlobalState();
 ```
 
-</td>
-<td width="50%">
-
 ### ⚡ **Blazing Fast**
 
 Only components that care about a slice re-render. Surgical precision, maximum performance.
@@ -66,21 +59,12 @@ Only components that care about a slice re-render. Surgical precision, maximum p
 const [name] = useStore((s) => s.user.name);
 ```
 
-</td>
-</tr>
-
-<tr>
-<td width="50%">
-
 ### 🔗 **Chainable Selectors**
 
 ```tsx
 const useUsers = store.createSelectorHook((s) => s.users);
 const useAdmins = useUsers.createSelectorHook((users) => users.filter((u) => u.isAdmin));
 ```
-
-</td>
-<td width="50%">
 
 ### 🎭 **Actions (Optional)**
 
@@ -97,12 +81,6 @@ const useAuth = createGlobalState(null, {
 });
 ```
 
-</td>
-</tr>
-
-<tr>
-<td width="50%">
-
 ### 🎪 **Context Mode**
 
 ```tsx
@@ -113,9 +91,6 @@ const Form = createContext({ name: '', email: '' });
 </Form.Provider>;
 ```
 
-</td>
-<td width="50%">
-
 ### 📦 **Non-Reactive API**
 
 Use state anywhere - even outside React components!
@@ -125,10 +100,6 @@ Use state anywhere - even outside React components!
 const token = useAuth.getState().token;
 useAuth.setState({ user: newUser });
 ```
-
-</td>
-</tr>
-</table>
 
 ---
 

@@ -1,7 +1,7 @@
-import GlobalStore from '../src/GlobalStore';
+import { GlobalStore, ItemEnvelope } from '..';
+// import GlobalStore from '../src/GlobalStore';
 import formatToStore from 'json-storage-formatter/formatToStore';
 import formatFromStore from 'json-storage-formatter/formatFromStore';
-import type { ItemEnvelope } from '../src/types';
 
 describe('GlobalStore - localStorage specific methods', () => {
   beforeEach(() => {

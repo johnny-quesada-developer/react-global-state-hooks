@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import formatToStore from 'json-storage-formatter/formatToStore';
 
-import { createGlobalState, GlobalStore } from '..';
+import { createGlobalState, GlobalStore, ItemEnvelope } from '..';
 // import { GlobalStore, createGlobalState } from '../src';
 import { act } from '@testing-library/react';
 import it from './$it';
 import { isMap } from 'react-hooks-global-states/shallowCompare';
-import { ItemEnvelope } from '../src/types';
 import { formatFromStore } from 'json-storage-formatter';
 
 describe('LocalStorage Basics', () => {
