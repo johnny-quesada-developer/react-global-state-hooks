@@ -1,6 +1,10 @@
 # react-global-state-hooks 🌟
 
+<div align="center">
+
 ![Image John Avatar](https://raw.githubusercontent.com/johnny-quesada-developer/global-hooks-example/main/public/avatar2.jpeg)
+
+</div>
 
 <div align="center">
 
