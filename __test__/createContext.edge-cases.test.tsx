@@ -188,7 +188,7 @@ describe('createContext - Value Initialization', () => {
     const store = createContext(10);
 
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
-      <store.Provider value={undefined}>{children}</store.Provider>
+      <store.Provider>{children}</store.Provider>
     );
 
     const { result } = renderHook(() => store.use(), { wrapper: Wrapper });
