@@ -1,0 +1,16 @@
+package.json
+  h_6029769cf9ac60 3,151-152,155
+scripts/test-interop.ts
+  h_6029769cf9ac60 105-106
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "c207e4d8a2bfba5c58822b83d370ec46e411461f",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
