@@ -102,8 +102,8 @@ try {
     fail('react-hooks-global-states did not resolve transitively.');
   }
   const baseVersion = (JSON.parse(fs.readFileSync(basePkgPath, 'utf8')) as { version: string }).version;
-  if (baseVersion !== '16.0.0-beta') {
-    fail(`react-hooks-global-states resolved to ${baseVersion}, expected 16.0.0-beta.`);
+  if (baseVersion !== '16.0.0') {
+    fail(`react-hooks-global-states resolved to ${baseVersion}, expected 16.0.0.`);
   }
   console.log(`[interop] transitive react-hooks-global-states version: ${baseVersion}`);
 
