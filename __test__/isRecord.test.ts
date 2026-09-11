@@ -1,5 +1,4 @@
-import { isRecord } from '..';
-// import { isRecord } from '../src';
+import { isRecord } from '../src';
 
 describe('isRecord', () => {
   it('should return true for plain objects', () => {

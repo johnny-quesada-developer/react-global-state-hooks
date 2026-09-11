@@ -1,6 +1,5 @@
 import { act } from '@testing-library/react';
-import { createGlobalState, actions, InferAPI, createContext } from '..';
-// import { createGlobalState, createActions, InferAPI, createContext } from '../';
+import { createGlobalState, actions, InferAPI, createContext } from '../src';
 import it from './$it';
 
 describe('actions', () => {

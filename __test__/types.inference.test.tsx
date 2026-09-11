@@ -1,5 +1,5 @@
-import { createContext, createGlobalState } from '..';
-import type { InferActionsType, InferStateApi, InferContextApi } from '..';
+import { createContext, createGlobalState } from '../src';
+import type { InferActionsType, InferStateApi, InferContextApi } from '../src';
 
 type AssertType<TExpected, TActual extends TExpected> = TExpected extends TActual ? true : never;
 

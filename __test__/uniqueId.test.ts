@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { uniqueId } from '..';
-// import { uniqueId } from '../src';
+import { uniqueId } from '../src';
 
 declare const ItemBrand1: unique symbol;
 declare const ItemBrand2: unique symbol;

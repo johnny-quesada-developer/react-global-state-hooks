@@ -1,5 +1,4 @@
-import { type StoreTools, Any, GlobalStore } from '..';
-// import { type StoreTools, GlobalStore } from '../src';
+import { type StoreTools, Any, GlobalStore } from '../src';
 
 import $it from './$it';
 // import { type StoreTools, GlobalStore } from '../src/GlobalStore';

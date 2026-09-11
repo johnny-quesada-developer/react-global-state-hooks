@@ -1,4 +1,4 @@
-import { type Any, createGlobalState, actions, InferAPI } from '..';
+import { type Any, createGlobalState, actions, InferAPI } from '../src';
 import it from './$it';
 
 describe('actions - Error Handling', () => {
