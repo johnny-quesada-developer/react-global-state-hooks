@@ -1,0 +1,64 @@
+libs/mobile/LICENSE
+  h_6029769cf9ac60 1-21
+libs/mobile/README.md
+  h_6029769cf9ac60 1-1407
+libs/mobile/__test__/$it.ts
+  h_6029769cf9ac60 1-55
+libs/mobile/__test__/GlobalStore.functionHooks.test.ts
+  h_6029769cf9ac60 1-876
+libs/mobile/__test__/GlobalStore.test.ts
+  h_6029769cf9ac60 1-623
+libs/mobile/__test__/GlobalStore.utils.test.ts
+  h_6029769cf9ac60 1-62
+libs/mobile/__test__/GlobalStoreAsyc.test.ts
+  h_6029769cf9ac60 1-540
+libs/mobile/__test__/InBuiltGlobalStoreAsyc.test.ts
+  h_6029769cf9ac60 1-236
+libs/mobile/__test__/getFakeAsyncStorage.ts
+  h_6029769cf9ac60 1-27
+libs/mobile/eslint.config.mts
+  h_6029769cf9ac60 1-43
+libs/mobile/jest.config.json
+  h_6029769cf9ac60 1-10
+libs/mobile/jestSetup.ts
+  h_6029769cf9ac60 1-23
+libs/mobile/package.json
+  h_6029769cf9ac60 1-161
+libs/mobile/src/GlobalStore.ts
+  h_6029769cf9ac60 1-303
+libs/mobile/src/asyncStorageWrapper.ts
+  h_6029769cf9ac60 1-122
+libs/mobile/src/createContext.ts
+  h_6029769cf9ac60 1-7
+libs/mobile/src/createGlobalState.ts
+  h_6029769cf9ac60 1-186
+libs/mobile/src/index.ts
+  h_6029769cf9ac60 1-53
+libs/mobile/src/isPromise.ts
+  h_6029769cf9ac60 1-5
+libs/mobile/src/isRecord.ts
+  h_6029769cf9ac60 1
+libs/mobile/src/shallowCompare.ts
+  h_6029769cf9ac60 1
+libs/mobile/src/throwWrongKeyOnActionCollectionConfig.ts
+  h_6029769cf9ac60 1-4
+libs/mobile/src/tryCatch.ts
+  h_6029769cf9ac60 1-49
+libs/mobile/src/types.ts
+  h_6029769cf9ac60 1-300
+libs/mobile/src/uniqueId.ts
+  h_6029769cf9ac60 1
+libs/mobile/tsconfig.json
+  h_6029769cf9ac60 1-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "ea06003fad5e2477859ffd8d8bb95b826cbddd86",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
