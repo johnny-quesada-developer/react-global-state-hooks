@@ -1,0 +1,26 @@
+ARCHITECTURE.md
+  h_6029769cf9ac60 112-128
+libs/mobile/__test__/tsconfig.json
+  h_6029769cf9ac60 14-16
+libs/mobile/package.json
+  h_6029769cf9ac60 108,127
+libs/mobile/project.json
+  h_6029769cf9ac60 10
+libs/mobile/src/GlobalStore.ts
+  h_6029769cf9ac60 176,251-254,258,272-273
+libs/mobile/src/asyncStorageWrapper.ts
+  h_6029769cf9ac60 29,62,92-95,98,104,106,110,112
+libs/mobile/tsconfig.json
+  h_6029769cf9ac60 4-5,7,17-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "2bf7cd3d36dc6a77861cce55ec7ac60705fe20bb",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
