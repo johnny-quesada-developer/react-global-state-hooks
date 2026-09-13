@@ -1,0 +1,88 @@
+libs/universal/DEVTOOLS.md
+  h_6029769cf9ac60 1-52
+libs/universal/LICENSE
+  h_6029769cf9ac60 1-21
+libs/universal/README.md
+  h_6029769cf9ac60 1-1623
+libs/universal/__test__/$it.ts
+  h_6029769cf9ac60 1-55
+libs/universal/__test__/GlobalStore.functionHooks.test.ts
+  h_6029769cf9ac60 1-1489
+libs/universal/__test__/GlobalStore.test.ts
+  h_6029769cf9ac60 1-634
+libs/universal/__test__/GlobalStore.utils.test.ts
+  h_6029769cf9ac60 1-147
+libs/universal/__test__/actions.edge-cases.test.tsx
+  h_6029769cf9ac60 1-526
+libs/universal/__test__/actions.test.tsx
+  h_6029769cf9ac60 1-1184
+libs/universal/__test__/createContext.edge-cases.test.tsx
+  h_6029769cf9ac60 1-758
+libs/universal/__test__/createContext.test.tsx
+  h_6029769cf9ac60 1-620
+libs/universal/__test__/createGlobalState.edge-cases.test.tsx
+  h_6029769cf9ac60 1-308
+libs/universal/__test__/getFakeAsyncStorage.ts
+  h_6029769cf9ac60 1-27
+libs/universal/__test__/isRecord.test.ts
+  h_6029769cf9ac60 1-64
+libs/universal/__test__/throwWrongKeyOnActionCollectionConfig.test.ts
+  h_6029769cf9ac60 1-9
+libs/universal/__test__/tsconfig.json
+  h_6029769cf9ac60 1-17
+libs/universal/__test__/types.inference.test.tsx
+  h_6029769cf9ac60 1-828
+libs/universal/__test__/uniqueId.interop.test.ts
+  h_6029769cf9ac60 1-36
+libs/universal/__test__/uniqueId.test.ts
+  h_6029769cf9ac60 1-93
+libs/universal/esbuild.config.ts
+  h_6029769cf9ac60 1-119
+libs/universal/eslint.config.mts
+  h_6029769cf9ac60 1-57
+libs/universal/jestSetup.ts
+  h_6029769cf9ac60 1-7
+libs/universal/package.json
+  h_6029769cf9ac60 1-152
+libs/universal/scripts/prepare-dist.ts
+  h_6029769cf9ac60 1-45
+libs/universal/scripts/test-interop.ts
+  h_6029769cf9ac60 1-147
+libs/universal/src/GlobalStore.debugProps.ts
+  h_6029769cf9ac60 1-8
+libs/universal/src/GlobalStore.ts
+  h_6029769cf9ac60 1-844
+libs/universal/src/actions.ts
+  h_6029769cf9ac60 1-91
+libs/universal/src/createContext.ts
+  h_6029769cf9ac60 1-339
+libs/universal/src/createGlobalState.ts
+  h_6029769cf9ac60 1-11
+libs/universal/src/index.ts
+  h_6029769cf9ac60 1-67
+libs/universal/src/isRecord.ts
+  h_6029769cf9ac60 1-14
+libs/universal/src/shallowCompare.ts
+  h_6029769cf9ac60 1-150
+libs/universal/src/throwWrongKeyOnActionCollectionConfig.ts
+  h_6029769cf9ac60 1-9
+libs/universal/src/types.ts
+  h_6029769cf9ac60 1-1563
+libs/universal/src/uniqueId.ts
+  h_6029769cf9ac60 1-121
+libs/universal/tsconfig.build.json
+  h_6029769cf9ac60 1-13
+libs/universal/tsconfig.json
+  h_6029769cf9ac60 1-33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "af4f3b3e51be8048803302c2a71c2cb8decac1e5",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
