@@ -1,5 +1,9 @@
 {
   "extends": "./tsconfig.base.json",
   "files": [],
-  "references": [{ "path": "./libs/web" }, { "path": "./libs/universal" }]
+  "references": [
+    { "path": "./libs/web" },
+    { "path": "./libs/universal" },
+    { "path": "./libs/mobile" }
+  ]
 }

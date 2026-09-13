@@ -54,17 +54,14 @@
   "scripts": {
     "format": "prettier --write .  --log-level silent && yarn lint:fix",
     "test": "yarn build && yarn jest",
-    "test:debug:no-watch": "node --inspect-brk node_modules/.bin/jest --no-watchman --runInBand",
-    "test:debug": "node --inspect-brk node_modules/.bin/jest --watch --runInBand",
+    "test:debug:no-watch": "node --inspect-brk ../../node_modules/jest/bin/jest.js --no-watchman --runInBand",
+    "test:debug": "node --inspect-brk ../../node_modules/jest/bin/jest.js --watch --runInBand",
     "test:quick": "yarn test --no-coverage --maxWorkers=4 -c --no-watchman -u",
     "test:coverage": "yarn test --maxWorkers=4 -c --colors --no-watchman --verbose --coverage",
     "build": "yarn ts-check && yarn clean && webpack --config webpack.config.js",
-    "prepare": "yarn format && npm run build && yarn test:quick",
-    "version": "npm run format && yarn build && yarn jest && git add -A",
-    "postversion": "git push && git push --tags",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix --max-warnings=0",
-    "clean": "find . -maxdepth 1 -type f \\( -name '*.js' -o -name '*.d.ts' \\) ! -name 'webpack.config.js' ! -name 'eslint.config.mts' -exec rm {} + && rm -rf coverage",
+    "clean": "find . -maxdepth 1 -type f \\( -name '*.js' -o -name '*.d.ts' \\) ! -name 'webpack.config.js' ! -name 'jest.config.js' ! -name 'eslint.config.mts' -exec rm {} + && rm -rf coverage",
     "ts-check": "tsc -p tsconfig.json --noEmit"
   },
   "repository": {

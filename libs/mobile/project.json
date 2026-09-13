@@ -1,0 +1,57 @@
+{
+  "name": "mobile",
+  "sourceRoot": "libs/mobile/src",
+  "projectType": "library",
+  "tags": ["scope:mobile", "type:lib"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": [
+        "{projectRoot}/*.js",
+        "{projectRoot}/*.d.ts"
+      ],
+      "options": { "command": "yarn build", "cwd": "libs/mobile" }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn test", "cwd": "libs/mobile" }
+    },
+    "test:debug": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn test:debug", "cwd": "libs/mobile" }
+    },
+    "test:debug:no-watch": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn test:debug:no-watch", "cwd": "libs/mobile" }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn test:quick", "cwd": "libs/mobile" }
+    },
+    "test:coverage": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/coverage"],
+      "options": { "command": "yarn test:coverage", "cwd": "libs/mobile" }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn lint", "cwd": "libs/mobile" }
+    },
+    "lint:fix": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn lint:fix", "cwd": "libs/mobile" }
+    },
+    "format": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn format", "cwd": "libs/mobile" }
+    },
+    "clean": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn clean", "cwd": "libs/mobile" }
+    },
+    "ts-check": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn ts-check", "cwd": "libs/mobile" }
+    }
+  }
+}

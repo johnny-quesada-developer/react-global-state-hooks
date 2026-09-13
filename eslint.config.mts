@@ -18,7 +18,16 @@ export default defineConfig([
     // no-unused-expressions, etc.). '**.js' does not reliably match nested paths in flat config.
     // Globs are prefixed with '**/' so they match build output in every workspace project
     // (libs/web/dist, libs/universal/dist, ...) now that eslint runs per-project from libs/*.
-    ignores: ['**/dist/**', '**/*.d.ts', '**/coverage/**', '**/node_modules/**'],
+    ignores: [
+      '**/dist/**',
+      '**/*.d.ts',
+      '**/coverage/**',
+      '**/node_modules/**',
+      // The mobile project builds its webpack output flat into the package root (no dist/),
+      // so ignore the emitted/minified root-level bundles there (this also covers its
+      // webpack.config.js / jest.config.js, which were not linted in the standalone repo either).
+      'libs/mobile/*.js',
+    ],
   },
   {
     files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
