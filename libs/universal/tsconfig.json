@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "target": "ES2017",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "lib": ["ES2017", "DOM"],
+    "declaration": true,
+    "outDir": "./",
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "pretty": true,
+    "downlevelIteration": true,
+    "sourceMap": true,
+    "allowJs": true,
+    "declarationDir": "./",
+    "typeRoots": ["node_modules/@types", "./types"],
+    "baseUrl": "."
+  },
+  "include": ["src/**/*", "types/**/*"],
+  "exclude": ["node_modules", "lib", "__test__"]
+}

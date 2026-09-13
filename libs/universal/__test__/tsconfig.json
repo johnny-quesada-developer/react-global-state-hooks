@@ -1,0 +1,17 @@
+{
+  // Editors resolve language features from the nearest `tsconfig.json`. The root config
+  // excludes `__test__`, so without this file the editor wouldn't apply the `@react-hooks-global-states`
+  // alias to test files (TS2307). This project owns the tests and declares the alias.
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "..",
+    "paths": {
+      // Type-checks against `src` (identical types to `dist`).
+      // Jest maps the alias to `src` or `dist` at runtime (see jest.config.js / TEST_TARGET).
+      "@react-hooks-global-states": ["./src"],
+      "@react-hooks-global-states/*": ["./src/*"]
+    }
+  },
+  "include": ["**/*"],
+  "exclude": []
+}
