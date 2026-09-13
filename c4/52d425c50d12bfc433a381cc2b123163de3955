@@ -1,0 +1,18 @@
+package.json
+  h_6029769cf9ac60 3,151-152,155
+src/GlobalStore.ts
+  h_6029769cf9ac60 294
+yarn.lock
+  h_6029769cf9ac60 3720,4249-4252,4254
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "c452d425c50d12bfc433a381cc2b123163de3955",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
