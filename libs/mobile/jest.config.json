@@ -1,0 +1,10 @@
+{
+  "testEnvironment": "jsdom",
+  "collectCoverageFrom": ["./src/*.ts", "./@tests/*.tsx", "./@tests/*.ts"],
+  "coverageDirectory": "./coverage",
+  "coverageReporters": ["text", "html"],
+  "setupFilesAfterEnv": ["./jestSetup.ts"],
+  "transform": {
+    "^.+\\.tsx?$": "ts-jest"
+  }
+}
