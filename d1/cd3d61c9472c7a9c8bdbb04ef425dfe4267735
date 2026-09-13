@@ -1,0 +1,42 @@
+ARCHITECTURE.md
+  h_6029769cf9ac60 14-19,42-48,110-117
+eslint.config.mts
+  h_6029769cf9ac60 21
+libs/mobile/__test__/GlobalStore.functionHooks.test.ts
+  h_6029769cf9ac60 5
+libs/mobile/__test__/GlobalStore.test.ts
+  h_6029769cf9ac60 3
+libs/mobile/__test__/GlobalStore.utils.test.ts
+  h_6029769cf9ac60 1
+libs/mobile/__test__/GlobalStoreAsyc.test.ts
+  h_6029769cf9ac60 1-7,13-15,29,37,46,65,78,81,95,109,117,126,151,153,167,180,189,198,225-226,235,240,249,268,279-280,282,284,296,309,326,330,347,349,363,373,382,407,409,423,437,446,472-473
+libs/mobile/__test__/InBuiltGlobalStoreAsyc.test.ts
+  h_6029769cf9ac60 3,8
+libs/mobile/__test__/tsconfig.json
+  h_6029769cf9ac60 1-19
+libs/mobile/esbuild.config.ts
+  h_6029769cf9ac60 1-135
+libs/mobile/package.json
+  h_6029769cf9ac60 5-6,11-13,16-18,21-23,26-28,31-33,36-38,41-43,46-55,59-60,66,71,74,104
+libs/mobile/project.json
+  h_6029769cf9ac60 9,16-19
+libs/mobile/scripts/prepare-dist.ts
+  h_6029769cf9ac60 1-45
+libs/mobile/src/index.ts
+  h_6029769cf9ac60 25,34-37,40,44-45,51,53
+libs/mobile/tsconfig.build.json
+  h_6029769cf9ac60 1-13
+yarn.lock
+  h_6029769cf9ac60 25,30,62,95,158,179,242,263,276,1069,1346,1404,1430,1442,1631-1636,1663,2020,2356,3012,3221,3260,3393,3435,4451,4998,5151,5350,5397,5486,5681,5978,6180,6299,6407,6631
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "d1cd3d61c9472c7a9c8bdbb04ef425dfe4267735",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
