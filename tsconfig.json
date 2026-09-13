@@ -1,37 +1,5 @@
 {
-  "compilerOptions": {
-    "jsx": "react",
-    "target": "ES2017",
-    "module": "commonjs",
-    "lib": ["dom", "es6"],
-    "declaration": true,
-    "outDir": "./",
-    "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "strictPropertyInitialization": true,
-    "noImplicitThis": true,
-    "alwaysStrict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "pretty": true,
-    "downlevelIteration": true,
-    "sourceMap": true,
-    "allowJs": true,
-    "declarationDir": "./",
-    "types": ["jest", "node", "react"],
-    "typeRoots": ["node_modules/@types", "./types"],
-    "moduleResolution": "node",
-    "baseUrl": ".",
-    "paths": {
-      "*": ["src/*"]
-    }
-  },
-  "include": ["src/**/*", "types/**/*"],
-  "exclude": ["node_modules", "lib"]
+  "extends": "./tsconfig.base.json",
+  "files": [],
+  "references": [{ "path": "./libs/web" }]
 }

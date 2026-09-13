@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./",
+    "declarationDir": "./",
+    "types": ["jest", "node", "react"],
+    "typeRoots": ["../../node_modules/@types", "./types"],
+    "baseUrl": ".",
+    "paths": {
+      "*": ["src/*"]
+    }
+  },
+  "include": ["src/**/*", "types/**/*"],
+  "exclude": ["node_modules", "lib"]
+}

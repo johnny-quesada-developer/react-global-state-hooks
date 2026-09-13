@@ -1,89 +1,29 @@
 {
   "name": "react-global-state-hooks",
   "version": "16.0.2",
-  "description": "This is a package to easily handling global-state across your react components",
-  "main": "./bundle.cjs",
-  "module": "./bundle.mjs",
-  "types": "./index.d.ts",
-  "sideEffects": false,
-  "exports": {
-    ".": {
-      "types": "./index.d.ts",
-      "import": "./bundle.mjs",
-      "require": "./bundle.cjs"
-    },
-    "./createContext": {
-      "types": "./createContext.d.ts",
-      "import": "./createContext.mjs",
-      "require": "./createContext.cjs"
-    },
-    "./GlobalStore": {
-      "types": "./GlobalStore.d.ts",
-      "import": "./GlobalStore.mjs",
-      "require": "./GlobalStore.cjs"
-    },
-    "./createGlobalState": {
-      "types": "./createGlobalState.d.ts",
-      "import": "./createGlobalState.mjs",
-      "require": "./createGlobalState.cjs"
-    },
-    "./types": {
-      "types": "./types.d.ts",
-      "import": "./types.mjs",
-      "require": "./types.cjs"
-    },
-    "./isRecord": {
-      "types": "./isRecord.d.ts",
-      "import": "./isRecord.mjs",
-      "require": "./isRecord.cjs"
-    },
-    "./shallowCompare": {
-      "types": "./shallowCompare.d.ts",
-      "import": "./shallowCompare.mjs",
-      "require": "./shallowCompare.cjs"
-    },
-    "./throwWrongKeyOnActionCollectionConfig": {
-      "types": "./throwWrongKeyOnActionCollectionConfig.d.ts",
-      "import": "./throwWrongKeyOnActionCollectionConfig.mjs",
-      "require": "./throwWrongKeyOnActionCollectionConfig.cjs"
-    },
-    "./uniqueId": {
-      "types": "./uniqueId.d.ts",
-      "import": "./uniqueId.mjs",
-      "require": "./uniqueId.cjs"
-    },
-    "./actions": {
-      "types": "./actions.d.ts",
-      "import": "./actions.mjs",
-      "require": "./actions.cjs"
-    },
-    "./package.json": "./package.json"
-  },
-  "files": [
-    "*.js",
-    "*.cjs",
-    "*.mjs",
-    "*.d.ts"
+  "private": true,
+  "description": "Monorepo for the react-global-state-hooks family of packages (universal, web, react-native).",
+  "workspaces": [
+    "libs/*"
   ],
   "scripts": {
-    "format": "prettier --write .  --log-level silent && yarn lint:fix",
-    "test": "yarn build && yarn ts-check:tests && yarn jest",
-    "test:debug:no-watch": "node --inspect-brk node_modules/.bin/jest --no-watchman --runInBand",
-    "test:debug": "node --inspect-brk node_modules/.bin/jest --watch --runInBand",
-    "test:quick": "yarn ts-check:tests && yarn jest --no-coverage --maxWorkers=4 -c --no-watchman -u",
-    "test:coverage": "yarn jest --maxWorkers=4 -c --colors --no-watchman --verbose --coverage",
-    "test:interop": "yarn build && tsx scripts/test-interop.ts",
-    "build": "yarn ts-check && yarn clean && tsc -p tsconfig.build.json && tsx esbuild.config.ts && tsx scripts/prepare-dist.ts",
-    "prepare": "yarn format && npm run build && yarn test:quick",
-    "version": "npm run format && yarn build && yarn jest && git add -A",
-    "postversion": "git push && git push --tags",
-    "publish:pkg": "yarn build && cd dist && npm publish --tag latest --registry https://registry.npmjs.org/",
-    "publish:beta": "yarn build && cd dist && npm publish --tag beta --registry https://registry.npmjs.org/",
-    "lint": "eslint . --max-warnings=0",
-    "lint:fix": "eslint . --fix --max-warnings=0",
-    "clean": "rm -rf dist coverage",
-    "ts-check": "tsc -p tsconfig.json --noEmit",
-    "ts-check:tests": "tsc -p __test__/tsconfig.json --noEmit"
+    "format": "node scripts/run.mjs format",
+    "test": "node scripts/run.mjs test",
+    "test:src": "node scripts/run.mjs test:src",
+    "test:debug": "node scripts/run.mjs test:debug",
+    "test:debug:no-watch": "node scripts/run.mjs test:debug:no-watch",
+    "test:quick": "node scripts/run.mjs test:quick",
+    "test:coverage": "node scripts/run.mjs test:coverage",
+    "test:interop": "node scripts/run.mjs test:interop",
+    "build": "node scripts/run.mjs build",
+    "lint": "node scripts/run.mjs lint",
+    "lint:fix": "node scripts/run.mjs lint:fix",
+    "clean": "node scripts/run.mjs clean",
+    "ts-check": "node scripts/run.mjs ts-check",
+    "ts-check:tests": "node scripts/run.mjs ts-check:tests",
+    "publish:pkg": "node scripts/run.mjs publish:pkg",
+    "publish:beta": "node scripts/run.mjs publish:beta",
+    "graph": "nx graph"
   },
   "repository": {
     "type": "git",
@@ -135,9 +75,11 @@
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^4.2.0",
+    "globals": "^14.0.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^30.0.4",
     "jiti": "^2.6.1",
+    "nx": "^23.0.0",
     "prettier": "^3.6.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -146,21 +88,5 @@
     "tsx": "^4.19.0",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.46.3"
-  },
-  "dependencies": {
-    "json-storage-formatter": "^4.0.0",
-    "react-hooks-global-states": "^16.0.2"
-  },
-  "peerDependencies": {
-    "json-storage-formatter": "^4.0.0",
-    "react": ">=18.0.0"
-  },
-  "peerDependenciesMeta": {
-    "react": {
-      "optional": false
-    },
-    "json-storage-formatter": {
-      "optional": false
-    }
   }
 }

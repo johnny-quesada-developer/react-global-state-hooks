@@ -1,0 +1,74 @@
+{
+  "name": "web",
+  "sourceRoot": "libs/web/src",
+  "projectType": "library",
+  "tags": ["scope:web", "type:lib"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/dist"],
+      "options": { "command": "yarn build", "cwd": "libs/web" }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn test", "cwd": "libs/web" }
+    },
+    "test:src": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn test:src", "cwd": "libs/web" }
+    },
+    "test:debug": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn test:debug", "cwd": "libs/web" }
+    },
+    "test:debug:no-watch": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn test:debug:no-watch", "cwd": "libs/web" }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn test:quick", "cwd": "libs/web" }
+    },
+    "test:coverage": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/coverage"],
+      "options": { "command": "yarn test:coverage", "cwd": "libs/web" }
+    },
+    "test:interop": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn test:interop", "cwd": "libs/web" }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn lint", "cwd": "libs/web" }
+    },
+    "lint:fix": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn lint:fix", "cwd": "libs/web" }
+    },
+    "format": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn format", "cwd": "libs/web" }
+    },
+    "clean": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn clean", "cwd": "libs/web" }
+    },
+    "ts-check": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn ts-check", "cwd": "libs/web" }
+    },
+    "ts-check:tests": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn ts-check:tests", "cwd": "libs/web" }
+    },
+    "publish:pkg": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn publish:pkg", "cwd": "libs/web" }
+    },
+    "publish:beta": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn publish:beta", "cwd": "libs/web" }
+    }
+  }
+}

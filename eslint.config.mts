@@ -16,7 +16,9 @@ export default defineConfig([
   {
     // Use a directory glob for dist (minified CJS output trips no-undef on module/require,
     // no-unused-expressions, etc.). '**.js' does not reliably match nested paths in flat config.
-    ignores: ['dist/**', '**/*.d.ts', 'coverage/**', 'node_modules/**'],
+    // Globs are prefixed with '**/' so they match build output in every workspace project
+    // (libs/web/dist, libs/universal/dist, ...) now that eslint runs per-project from libs/*.
+    ignores: ['**/dist/**', '**/*.d.ts', '**/coverage/**', '**/node_modules/**'],
   },
   {
     files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
@@ -42,8 +44,10 @@ export default defineConfig([
   },
   {
     // Node-run config files and build/test scripts: give them Node globals (process, module,
-    // require, __dirname, ...). Needed now that we no longer broadly ignore *.js.
-    files: ['*.js', '*.cjs', '*.config.{js,cjs,mjs,ts,mts}', 'scripts/**'],
+    // require, __dirname, ...). Needed now that we no longer broadly ignore *.js. Globs are
+    // '**/'-prefixed so they also match per-project files (libs/web/esbuild.config.ts,
+    // libs/web/scripts/**, ...) now that eslint runs from within each project.
+    files: ['**/*.js', '**/*.cjs', '**/*.config.{js,cjs,mjs,ts,mts}', '**/scripts/**'],
     languageOptions: { globals: { ...globals.node } },
   },
   tseslint.configs.recommended,

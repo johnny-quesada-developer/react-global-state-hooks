@@ -1,0 +1,59 @@
+{
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "production": [
+      "default",
+      "!{projectRoot}/__test__/**/*",
+      "!{projectRoot}/**/*.test.{ts,tsx}",
+      "!{projectRoot}/jest.config.js",
+      "!{projectRoot}/jestSetup.ts"
+    ],
+    "sharedGlobals": [
+      "{workspaceRoot}/tsconfig.base.json",
+      "{workspaceRoot}/eslint.config.mts",
+      "{workspaceRoot}/.prettierrc"
+    ]
+  },
+  "targetDefaults": {
+    "build": {
+      "cache": true,
+      "inputs": ["production", "^production"],
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "test": {
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "dependsOn": ["build"]
+    },
+    "test:src": {
+      "cache": true,
+      "inputs": ["default", "^production"]
+    },
+    "test:quick": {
+      "cache": true,
+      "inputs": ["default", "^production"]
+    },
+    "test:coverage": {
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "outputs": ["{projectRoot}/coverage"]
+    },
+    "lint": {
+      "cache": true,
+      "inputs": ["default", "{workspaceRoot}/eslint.config.mts"]
+    },
+    "lint:fix": {
+      "cache": false,
+      "inputs": ["default", "{workspaceRoot}/eslint.config.mts"]
+    },
+    "ts-check": {
+      "cache": true,
+      "inputs": ["production", "^production"]
+    },
+    "ts-check:tests": {
+      "cache": true,
+      "inputs": ["default", "^production"]
+    }
+  },
+  "analytics": false
+}
