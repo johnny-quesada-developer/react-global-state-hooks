@@ -291,7 +291,7 @@ function assertEnvelopeFormat<T>(key: string, value: unknown): asserts value is 
   if (typeof value === 'object' && 's' in value && 'v' in value) return;
 
   throw new Error(
-    `[react-native-global-state-hooks] The value of the key "${key}" is not a valid storage envelope.`,
+    `[react-global-state-hooks] The value of the key "${key}" is not a valid storage envelope.`,
   );
 }
 
