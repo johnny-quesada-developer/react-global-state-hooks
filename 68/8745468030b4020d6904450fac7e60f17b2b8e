@@ -1,0 +1,58 @@
+__test__/GlobalStore.functionHooks.test.ts
+  h_6029769cf9ac60 8
+__test__/GlobalStore.localStorage.test.ts
+  h_6029769cf9ac60 4
+__test__/GlobalStore.methods.test.ts
+  h_6029769cf9ac60 1
+__test__/GlobalStore.test.ts
+  h_6029769cf9ac60 1
+__test__/GlobalStore.utils.test.ts
+  h_6029769cf9ac60 1
+__test__/actions.edge-cases.test.tsx
+  h_6029769cf9ac60 1
+__test__/actions.test.tsx
+  h_6029769cf9ac60 2
+__test__/createContext.edge-cases.test.tsx
+  h_6029769cf9ac60 2
+__test__/createContext.test.tsx
+  h_6029769cf9ac60 2
+__test__/createGlobalState.edge-cases.test.tsx
+  h_6029769cf9ac60 1
+__test__/createGlobalState.test.ts
+  h_6029769cf9ac60 1
+__test__/isRecord.test.ts
+  h_6029769cf9ac60 1
+__test__/throwWrongKeyOnActionCollectionConfig.test.ts
+  h_6029769cf9ac60 1
+__test__/tryCatch.test.ts
+  h_6029769cf9ac60 1
+__test__/tsconfig.json
+  h_6029769cf9ac60 2,4,7-11,13-14
+__test__/types.inference.test.tsx
+  h_6029769cf9ac60 1-2
+__test__/uniqueId.default.test.ts
+  h_6029769cf9ac60 1-2
+__test__/uniqueId.test.ts
+  h_6029769cf9ac60 2
+esbuild.config.ts
+  h_6029769cf9ac60 96-100
+eslint.config.mts
+  h_6029769cf9ac60 17-19,43-48
+package.json
+  h_6029769cf9ac60 3,86,152
+scripts/test-interop.ts
+  h_6029769cf9ac60 56-57,105-115
+yarn.lock
+  h_6029769cf9ac60 1-5114
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "688745468030b4020d6904450fac7e60f17b2b8e",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
