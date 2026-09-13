@@ -1,7 +1,6 @@
 import { createDecoupledPromise } from "easy-cancelable-promise/createDecoupledPromise";
 import { CancelablePromise } from "easy-cancelable-promise/CancelablePromise";
-// import { GlobalStore } from "../src";
-import { GlobalStore } from "..";
+import { GlobalStore } from "react-native-global-state-hooks";
 
 import { formatFromStore, formatToStore } from "json-storage-formatter";
 import { getFakeAsyncStorage } from "./getFakeAsyncStorage";

@@ -22,7 +22,7 @@ export type {
   SubscriptionCallback,
   StateHook,
   ActionCollectionConfig,
-} from "./types";
+} from './types';
 
 // classes
 // export { GlobalStore } from './GlobalStore'; // overridden
@@ -31,23 +31,23 @@ export type {
 // export { createGlobalState } from './createGlobalState'; // overridden
 
 // utils
-export { shallowCompare } from "./shallowCompare";
-export { uniqueId, type BrandedId } from "./uniqueId";
-export { throwWrongKeyOnActionCollectionConfig } from "./throwWrongKeyOnActionCollectionConfig";
-export { isRecord } from "./isRecord";
+export { shallowCompare } from './shallowCompare';
+export { uniqueId, type BrandedId } from './uniqueId';
+export { throwWrongKeyOnActionCollectionConfig } from './throwWrongKeyOnActionCollectionConfig';
+export { isRecord } from './isRecord';
 
 // context
-export { type ContextProvider, type ContextHook, type InferContextApi, createContext } from "./createContext";
+export { type ContextProvider, type ContextHook, type InferContextApi, createContext } from './createContext';
 
 // #endregion base library exports
 
-export type { AsyncStorageConfig } from "./types";
-export { default as GlobalStore } from "./GlobalStore";
+export type { AsyncStorageConfig } from './types';
+export { default as GlobalStore } from './GlobalStore';
 export {
   createGlobalState,
   type InferActionsType,
   type InferStateApi,
   type AnyActions,
-} from "./createGlobalState";
+} from './createGlobalState';
 
-export { default as asyncStorageWrapper, type AsyncStorageManager } from "./asyncStorageWrapper";
+export { default as asyncStorageWrapper, type AsyncStorageManager } from './asyncStorageWrapper';

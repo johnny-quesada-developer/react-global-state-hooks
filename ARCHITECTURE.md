@@ -11,8 +11,12 @@ family of packages. All packages share a single root `node_modules`, one set of 
 
 | Project     | Path             | Published name              | Role                                               |
 | ----------- | ---------------- | --------------------------- | -------------------------------------------------- |
-| `universal` | `libs/universal` | `react-hooks-global-states` | Base library. Framework-agnostic core.             |
-| `web`       | `libs/web`       | `react-global-state-hooks`  | Web bindings. Re-exports/extends the base library. |
+| `universal` | `libs/universal` | `react-hooks-global-states`        | Base library. Framework-agnostic core.                       |
+| `web`       | `libs/web`       | `react-global-state-hooks`         | Web bindings. Re-exports/extends the base library.           |
+| `mobile`    | `libs/mobile`    | `react-native-global-state-hooks`  | React Native bindings (async-storage). Extends the base lib. |
+
+All three packages build with **esbuild** into `dist/` as a clean dual ESM/CJS + `.d.ts` bundle
+(no UMD), via each package's `esbuild.config.ts` + `tsconfig.build.json` + `scripts/prepare-dist.ts`.
 
 Each package keeps its own `package.json`, `README.md`, and build/test configuration. The
 per-package README is what gets published to npm (copied into `dist/` by
@@ -34,6 +38,13 @@ Per project, under `libs/<project>/`:
 - `tsconfig.json` / `tsconfig.build.json` / `__test__/tsconfig.json`.
 - `jest.config.js`, `jestSetup.ts`, `esbuild.config.ts`, `scripts/`.
 - `project.json` — Nx targets (delegate to the package's own `yarn` scripts).
+
+### Tooling note: jest core 29 + jest-environment-jsdom 30 (intentional)
+
+The root pins `jest@^29.7.0` with `jest-environment-jsdom@^30.0.4`. This version pairing looks
+like a mismatch but is **intentional and required** — do NOT "align" the jsdom environment down
+to `^29`. Under jest core 29, `jest-environment-jsdom@29` fails to run the `web` and `universal`
+suites, while `30` works for all three packages. Downgrading it reintroduces those failures.
 
 ## Running tasks
 
@@ -95,6 +106,14 @@ base package without relying on its built root-level `exports`:
   `react-hooks-global-states` → `../universal/src` (type-checking).
 - `libs/web/jest.config.js` maps it → `../universal/dist/*.cjs` (dist mode) or
   `../universal/src` (src mode), matching the selected `TEST_TARGET`.
+
+### mobile and the base package
+
+`mobile` still depends on the base library at `react-hooks-global-states@^15.0.17`, which is NOT
+satisfied by the workspace `universal` (v16). So Yarn does not link it locally — `mobile` resolves
+its own `react-hooks-global-states@15.x` (and `json-storage-formatter@3`) from npm, nested under
+`libs/mobile/node_modules`. Aligning `mobile` to the v16 base (and linking it to `universal` like
+`web`) is a deliberate future step; until then `mobile` builds/tests against the published v15 base.
 
 ## Adding a new library
 

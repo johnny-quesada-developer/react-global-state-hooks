@@ -6,15 +6,16 @@
   "targets": {
     "build": {
       "executor": "nx:run-commands",
-      "outputs": [
-        "{projectRoot}/*.js",
-        "{projectRoot}/*.d.ts"
-      ],
+      "outputs": ["{projectRoot}/dist"],
       "options": { "command": "yarn build", "cwd": "libs/mobile" }
     },
     "test": {
       "executor": "nx:run-commands",
       "options": { "command": "yarn test", "cwd": "libs/mobile" }
+    },
+    "test:src": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn test:src", "cwd": "libs/mobile" }
     },
     "test:debug": {
       "executor": "nx:run-commands",

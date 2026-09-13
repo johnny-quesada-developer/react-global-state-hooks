@@ -1,4 +1,4 @@
-import { shallowCompare } from "..";
+import { shallowCompare } from "react-native-global-state-hooks";
 
 describe("shallowCompare", () => {
   it("should return true if the objects are the same", () => {

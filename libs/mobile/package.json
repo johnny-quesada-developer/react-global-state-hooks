@@ -2,66 +2,76 @@
   "name": "react-native-global-state-hooks",
   "version": "15.0.3",
   "description": "This is a package to easily handling global-state across your react-native-components No-redux... The library now includes @react-native-async-storage/async-storage to persist your state across sessions... if you want to keep using the old version without async-storage or react-native dependencies just use version 5.0.15 or user react-hooks-global-states instead",
-  "main": "./bundle.js",
+  "main": "./bundle.cjs",
+  "module": "./bundle.mjs",
   "types": "./index.d.ts",
   "sideEffects": false,
   "exports": {
     ".": {
-      "import": "./bundle.js",
-      "require": "./bundle.js",
-      "types": "./index.d.ts"
+      "types": "./index.d.ts",
+      "import": "./bundle.mjs",
+      "require": "./bundle.cjs"
     },
     "./asyncStorageWrapper": {
-      "import": "./asyncStorageWrapper.js",
-      "require": "./asyncStorageWrapper.js",
-      "types": "./asyncStorageWrapper.d.ts"
+      "types": "./asyncStorageWrapper.d.ts",
+      "import": "./asyncStorageWrapper.mjs",
+      "require": "./asyncStorageWrapper.cjs"
     },
     "./createContext": {
-      "import": "./createContext.js",
-      "require": "./createContext.js",
-      "types": "./createContext.d.ts"
+      "types": "./createContext.d.ts",
+      "import": "./createContext.mjs",
+      "require": "./createContext.cjs"
     },
     "./createGlobalState": {
-      "import": "./createGlobalState.js",
-      "require": "./createGlobalState.js",
-      "types": "./createGlobalState.d.ts"
+      "types": "./createGlobalState.d.ts",
+      "import": "./createGlobalState.mjs",
+      "require": "./createGlobalState.cjs"
     },
     "./GlobalStore": {
-      "import": "./GlobalStore.js",
-      "require": "./GlobalStore.js",
-      "types": "./GlobalStore.d.ts"
+      "types": "./GlobalStore.d.ts",
+      "import": "./GlobalStore.mjs",
+      "require": "./GlobalStore.cjs"
     },
     "./isRecord": {
-      "import": "./isRecord.js",
-      "require": "./isRecord.js",
-      "types": "./isRecord.d.ts"
+      "types": "./isRecord.d.ts",
+      "import": "./isRecord.mjs",
+      "require": "./isRecord.cjs"
     },
     "./shallowCompare": {
-      "import": "./shallowCompare.js",
-      "require": "./shallowCompare.js",
-      "types": "./shallowCompare.d.ts"
+      "types": "./shallowCompare.d.ts",
+      "import": "./shallowCompare.mjs",
+      "require": "./shallowCompare.cjs"
     },
     "./throwWrongKeyOnActionCollectionConfig": {
-      "import": "./throwWrongKeyOnActionCollectionConfig.js",
-      "require": "./throwWrongKeyOnActionCollectionConfig.js",
-      "types": "./throwWrongKeyOnActionCollectionConfig.d.ts"
-    }
+      "types": "./throwWrongKeyOnActionCollectionConfig.d.ts",
+      "import": "./throwWrongKeyOnActionCollectionConfig.mjs",
+      "require": "./throwWrongKeyOnActionCollectionConfig.cjs"
+    },
+    "./uniqueId": {
+      "types": "./uniqueId.d.ts",
+      "import": "./uniqueId.mjs",
+      "require": "./uniqueId.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "*.js",
+    "*.cjs",
+    "*.mjs",
     "*.d.ts"
   ],
   "scripts": {
     "format": "prettier --write .  --log-level silent && yarn lint:fix",
     "test": "yarn build && yarn jest",
+    "test:src": "TEST_TARGET=src jest",
     "test:debug:no-watch": "node --inspect-brk ../../node_modules/jest/bin/jest.js --no-watchman --runInBand",
     "test:debug": "node --inspect-brk ../../node_modules/jest/bin/jest.js --watch --runInBand",
     "test:quick": "yarn test --no-coverage --maxWorkers=4 -c --no-watchman -u",
     "test:coverage": "yarn test --maxWorkers=4 -c --colors --no-watchman --verbose --coverage",
-    "build": "yarn ts-check && yarn clean && webpack --config webpack.config.js",
+    "build": "yarn ts-check && yarn clean && tsc -p tsconfig.build.json && tsx esbuild.config.ts && tsx scripts/prepare-dist.ts",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix --max-warnings=0",
-    "clean": "find . -maxdepth 1 -type f \\( -name '*.js' -o -name '*.d.ts' \\) ! -name 'webpack.config.js' ! -name 'jest.config.js' ! -name 'eslint.config.mts' -exec rm {} + && rm -rf coverage",
+    "clean": "rm -rf dist coverage",
     "ts-check": "tsc -p tsconfig.json --noEmit"
   },
   "repository": {
@@ -87,50 +97,11 @@
   },
   "homepage": "https://github.com/johnny-quesada-developer/react-native-global-state-hooks#readme",
   "devDependencies": {
-    "@babel/core": "^7.21.3",
-    "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
-    "@babel/plugin-transform-modules-commonjs": "^7.21.2",
-    "@babel/preset-env": "^7.20.2",
-    "@babel/preset-react": "^7.18.6",
-    "@babel/preset-typescript": "^7.21.0",
-    "@eslint/js": "^9.39.1",
     "@react-native-async-storage/async-storage": ">=1.17.11",
-    "@testing-library/dom": "^10.4.0",
-    "@testing-library/react": "^16.3.0",
-    "@types/jest": "^29.5.11",
-    "@types/lodash": "^4.14.165",
-    "@types/react": "^18.0.38",
-    "@types/react-dom": "^18.0.11",
     "@types/react-test-renderer": "^18.0.0",
-    "@typescript-eslint/eslint-plugin": "^4.9.1",
-    "@typescript-eslint/parser": "^4.9.1",
-    "babel-loader": "^9.1.2",
-    "clean-webpack-plugin": "^4.0.0",
     "easy-cancelable-promise": "^1.0.2",
-    "eslint": "^9.39.1",
-    "eslint-config-airbnb": "^18.2.1",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jsx-a11y": "^6.4.1",
-    "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^4.2.0",
-    "globals": "^16.5.0",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0",
-    "jiti": "^2.6.1",
-    "json-storage-formatter": "^3.0.2",
-    "prettier": "^3.6.2",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "react-native": ">=0.71.6",
-    "react-test-renderer": "^18.2.0",
-    "terser-webpack-plugin": "^5.6.1",
-    "ts-jest": "^29.1.1",
-    "ts-loader": "^9.4.2",
-    "tslib": "^2.5.0",
-    "typescript": "^5.3.3",
-    "typescript-eslint": "^8.46.3",
-    "webpack": "^5.76.3",
-    "webpack-cli": "^5.0.1"
+    "react-test-renderer": "^18.2.0"
   },
   "peerDependencies": {
     "@react-native-async-storage/async-storage": ">=1.17.11",

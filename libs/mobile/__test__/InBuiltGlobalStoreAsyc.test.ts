@@ -1,12 +1,11 @@
 import { createDecoupledPromise } from "easy-cancelable-promise/createDecoupledPromise";
 
-import { GlobalStore, createGlobalState, asyncStorageWrapper } from "..";
-// import { GlobalStore, createGlobalState, asyncStorageWrapper } from "../src";
+import { GlobalStore, createGlobalState, asyncStorageWrapper } from "react-native-global-state-hooks";
 import formatToStore from "json-storage-formatter/formatToStore";
 import { getFakeAsyncStorage } from "./getFakeAsyncStorage";
 import { act } from "@testing-library/react";
 import it from "./$it";
-import tryCatch from "../src/tryCatch";
+import tryCatch from "react-native-global-state-hooks/tryCatch";
 
 export const { fakeAsyncStorage: asyncStorage } = getFakeAsyncStorage();
 asyncStorageWrapper.addAsyncStorageManager(() => Promise.resolve(asyncStorage));

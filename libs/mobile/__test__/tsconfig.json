@@ -1,0 +1,19 @@
+{
+  // ts-jest uses this config to type-check the test files. It adds the `react` lib types (the
+  // main tsconfig only pulls jest/node), turns off unused checks for tests, and maps the package
+  // self-alias to src (jest resolves the alias to src or dist at runtime via TEST_TARGET).
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "..",
+    "noEmit": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "types": ["jest", "node", "react"],
+    "paths": {
+      "react-native-global-state-hooks": ["./src"],
+      "react-native-global-state-hooks/*": ["./src/*"]
+    }
+  },
+  "include": ["**/*", "../src/**/*", "../types/**/*"],
+  "exclude": []
+}
