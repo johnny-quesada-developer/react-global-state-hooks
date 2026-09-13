@@ -1,0 +1,32 @@
+ARCHITECTURE.md
+  h_6029769cf9ac60 1-108
+eslint.config.mts
+  h_6029769cf9ac60 55-64
+libs/universal/package.json
+  h_6029769cf9ac60 69,71,73-74
+libs/universal/project.json
+  h_6029769cf9ac60 1-78
+libs/universal/tsconfig.json
+  h_6029769cf9ac60 2,6,9-10
+libs/web/__test__/tsconfig.json
+  h_6029769cf9ac60 10-12
+libs/web/project.json
+  h_6029769cf9ac60 10
+libs/web/tsconfig.json
+  h_6029769cf9ac60 10-11
+nx.json
+  h_6029769cf9ac60 32-35
+tsconfig.json
+  h_6029769cf9ac60 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "6ba36bd417af006c8f562dfc5dd0938b9fccc84b",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
