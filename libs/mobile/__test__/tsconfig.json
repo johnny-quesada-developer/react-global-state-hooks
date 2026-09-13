@@ -11,7 +11,9 @@
     "types": ["jest", "node", "react"],
     "paths": {
       "react-native-global-state-hooks": ["./src"],
-      "react-native-global-state-hooks/*": ["./src/*"]
+      "react-native-global-state-hooks/*": ["./src/*"],
+      "react-hooks-global-states": ["../universal/src/index.ts"],
+      "react-hooks-global-states/*": ["../universal/src/*"]
     }
   },
   "include": ["**/*", "../src/**/*", "../types/**/*"],

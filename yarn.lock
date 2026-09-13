@@ -4473,11 +4473,6 @@ json-stable-stringify-without-jsonify@^1.0.1:
   resolved "https://registry.yarnpkg.com/json-stable-stringify-without-jsonify/-/json-stable-stringify-without-jsonify-1.0.1.tgz#9db7b59496ad3f3cfef30a75142d2d930ad72651"
   integrity sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==
 
-json-storage-formatter@^3.0.2:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/json-storage-formatter/-/json-storage-formatter-3.0.3.tgz#aa235596cd5e06c892a8cb7d89820380d764d24e"
-  integrity sha512-7cCphK2ItssUk7AJDH1y2ThgPceqWBu2Ghn30jwslB9ocLZF8RuFwbnK343a1epbDF/hiKMR/XppWms3uYu6Jg==
-
 json-storage-formatter@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/json-storage-formatter/-/json-storage-formatter-4.0.0.tgz#f864648305ef902bf6169fd33f33f3806d46d214"
@@ -5518,13 +5513,6 @@ react-dom@^18.2.0:
   dependencies:
     loose-envify "^1.1.0"
     scheduler "^0.23.2"
-
-react-hooks-global-states@^15.0.17:
-  version "15.0.18"
-  resolved "https://registry.yarnpkg.com/react-hooks-global-states/-/react-hooks-global-states-15.0.18.tgz#24b1ffa2da9d347d6817d967076b99ad11a99dd6"
-  integrity sha512-ZEWUO+8ZhZFcnctlw9gmsm8BMru4NX0/UtxIORpaUq5X6n1UcEA7rWF/PLRylN9Vq5ZOYrwP/Ctlxj5vuLhWlA==
-  dependencies:
-    json-storage-formatter "^3.0.2"
 
 "react-is@^16.12.0 || ^17.0.0 || ^18.0.0", react-is@^18.0.0, react-is@^18.3.1:
   version "18.3.1"

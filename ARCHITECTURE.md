@@ -109,11 +109,23 @@ base package without relying on its built root-level `exports`:
 
 ### mobile and the base package
 
-`mobile` still depends on the base library at `react-hooks-global-states@^15.0.17`, which is NOT
-satisfied by the workspace `universal` (v16). So Yarn does not link it locally — `mobile` resolves
-its own `react-hooks-global-states@15.x` (and `json-storage-formatter@3`) from npm, nested under
-`libs/mobile/node_modules`. Aligning `mobile` to the v16 base (and linking it to `universal` like
-`web`) is a deliberate future step; until then `mobile` builds/tests against the published v15 base.
+`mobile` depends on the base library at `react-hooks-global-states@^16.0.0`, which the workspace
+`universal` (v16.0.2) satisfies, so Yarn links it locally exactly like `web` — a change in
+`universal` is picked up immediately, and Nx builds `universal` first
+(`universal:build → mobile:build → mobile:test`).
+
+The tsconfig/jest bridges are identical in spirit to `web`'s:
+
+- `libs/mobile/tsconfig.json` and `libs/mobile/__test__/tsconfig.json` map
+  `react-hooks-global-states` → `../universal/src` (type-checking).
+- `libs/mobile/jest.config.js` maps it → `../universal/dist/*.cjs` (dist mode) or
+  `../universal/src` (src mode), matching the selected `TEST_TARGET`.
+
+Making this work required aligning `mobile` to strict null checking: `mobile`'s tsconfig now uses
+`strictNullChecks: true` with `lib: ["ES2017", "DOM"]` (previously `false` / `es2016`), because
+`universal`'s source is authored under strict null checks and cannot be type-checked under looser
+settings. A few small, behavior-preserving null-safety edits in `libs/mobile/src`
+(`asyncStorageWrapper.ts`, `GlobalStore.ts`) were needed to satisfy the stricter check.
 
 ## Adding a new library
 

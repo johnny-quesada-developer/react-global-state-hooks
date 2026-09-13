@@ -173,7 +173,7 @@ export class GlobalStore<
         if (!getFn) return this.getStorageItem();
 
         return {
-          s: await getFn(storageConfig.key),
+          s: (await getFn(storageConfig.key)) as State,
           v: versioning?.version ?? defaultStorageVersion,
         };
       },
@@ -248,11 +248,14 @@ export class GlobalStore<
 
   // retrieves a versioned item from the local storage
   private getStorageItem = async (): Promise<ItemEnvelope<State> | null> => {
-    const json = await asyncStorageWrapper.getItem(this.asyncStorage.key);
+    // only reached from onInit after isPersistStorageAvailable() guarantees asyncStorage.key
+    const storageKey = this.asyncStorage!.key;
+
+    const json = await asyncStorageWrapper.getItem(storageKey);
 
     const restoredEnvelope = isNil(json) ? null : formatFromStore<unknown>(json);
 
-    assertEnvelopeFormat<State>(this.asyncStorage.key, restoredEnvelope);
+    assertEnvelopeFormat<State>(storageKey, restoredEnvelope);
 
     return restoredEnvelope;
   };
@@ -266,7 +269,8 @@ export class GlobalStore<
 
     const formatted = formatToStore(envelope);
 
-    return asyncStorageWrapper.setItem(this.asyncStorage.key, formatted);
+    // only reached from persistence paths after asyncStorage.key is confirmed present
+    return asyncStorageWrapper.setItem(this.asyncStorage!.key, formatted);
   };
 
   private handleStorageError = (error: unknown) => {

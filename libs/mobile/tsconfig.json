@@ -1,10 +1,10 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2016",
-    "lib": ["es2016"],
+    "target": "ES2017",
+    "lib": ["ES2017", "DOM"],
     "noImplicitAny": false,
-    "strictNullChecks": false,
+    "strictNullChecks": true,
     "strictPropertyInitialization": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
@@ -14,6 +14,8 @@
     "typeRoots": ["../../node_modules/@types", "./types"],
     "baseUrl": ".",
     "paths": {
+      "react-hooks-global-states": ["../universal/src/index.ts"],
+      "react-hooks-global-states/*": ["../universal/src/*"],
       "*": ["src/*"]
     }
   },

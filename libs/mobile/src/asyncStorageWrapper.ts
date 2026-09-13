@@ -26,7 +26,7 @@ const asyncStorageWrapper: AsyncStorageManager & {
   addAsyncStorageManager: (callback: () => Promise<AsyncStorageManager>) => Promise<void>;
 } = (() => {
   let managerStatus: "pending" | "resolved" | "rejected" = "pending";
-  let managerPromise: Promise<unknown>;
+  let managerPromise: Promise<unknown> | null = null;
   let manager: null | AsyncStorageManager = null;
 
   // try to get default async storage manager
@@ -59,7 +59,7 @@ const asyncStorageWrapper: AsyncStorageManager & {
     }
   })();
 
-  const throwNoAsyncStorageManagerError = () => {
+  const throwNoAsyncStorageManagerError = (): never => {
     throw new Error(
       `[AsyncStorageManager Not Found] 
 
@@ -89,27 +89,27 @@ const asyncStorageWrapper: AsyncStorageManager & {
     }
   };
 
-  const waitUntilReady = async () => {
-    if (managerStatus === "pending" && managerPromise) return managerPromise;
-    if (managerStatus === "rejected")
-      return managerPromise.catch((err) => {
+  const waitUntilReady = async (): Promise<AsyncStorageManager> => {
+    if (managerStatus === "pending" && managerPromise) await managerPromise;
+    if (managerStatus === "rejected" && managerPromise)
+      await managerPromise.catch((err) => {
         throw err;
       });
-    if (!manager) throwNoAsyncStorageManagerError();
+    if (!manager) return throwNoAsyncStorageManagerError();
 
     return manager;
   };
 
   const getItem = async (key: string): Promise<string | null> => {
-    await waitUntilReady();
+    const readyManager = await waitUntilReady();
 
-    return manager.getItem(key);
+    return readyManager.getItem(key);
   };
 
   const setItem = async (key: string, value: string) => {
-    await waitUntilReady();
+    const readyManager = await waitUntilReady();
 
-    return manager.setItem(key, value);
+    return readyManager.setItem(key, value);
   };
 
   return {

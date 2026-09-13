@@ -105,7 +105,7 @@
   },
   "peerDependencies": {
     "@react-native-async-storage/async-storage": ">=1.17.11",
-    "json-storage-formatter": "^3.0.2",
+    "json-storage-formatter": "^4.0.0",
     "react": ">=18.0.0",
     "react-native": ">=0.69.0"
   },
@@ -124,6 +124,6 @@
     }
   },
   "dependencies": {
-    "react-hooks-global-states": "^15.0.17"
+    "react-hooks-global-states": "^16.0.0"
   }
 }
