@@ -5,7 +5,7 @@ import { getFakeAsyncStorage } from './getFakeAsyncStorage';
 import { act } from '@testing-library/react';
 import it from './$it';
 
-import { createGlobalState, GlobalStore, StoreTools, InferAPI } from '../src';
+import { createGlobalState, GlobalStore, StoreTools, InferAPI } from 'react-global-state-hooks';
 
 describe('createGlobalState', () => {
   it('should not recompute selection when deps are stable or shallow-equal, but recompute when deps change', ({

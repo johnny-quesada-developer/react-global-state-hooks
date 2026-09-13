@@ -53,8 +53,8 @@ try {
   const tarballPath = path.join(dist, tarballName);
 
   // 2) Install it into a throwaway consumer project (no --legacy-peer-deps; consumers don't use it).
-  //    Installing the tarball transitively pulls react-hooks-global-states@16.0.0-beta and
-  //    json-storage-formatter@4.0.0-beta from the registry.
+  //    Installing the tarball transitively pulls react-hooks-global-states and
+  //    json-storage-formatter (at the versions this package declares) from the registry.
   fs.writeFileSync(
     path.join(work, 'package.json'),
     JSON.stringify(
@@ -102,8 +102,17 @@ try {
     fail('react-hooks-global-states did not resolve transitively.');
   }
   const baseVersion = (JSON.parse(fs.readFileSync(basePkgPath, 'utf8')) as { version: string }).version;
-  if (baseVersion !== '16.0.0') {
-    fail(`react-hooks-global-states resolved to ${baseVersion}, expected 16.0.0.`);
+  // Expect the transitive base package to match the version this repo declares as a dependency
+  // (derived from the root package.json rather than hardcoded, so it tracks version bumps).
+  const rootPkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')) as {
+    dependencies?: Record<string, string>;
+  };
+  const expectedBaseVersion = rootPkg.dependencies?.['react-hooks-global-states'];
+  if (!expectedBaseVersion) {
+    fail('react-hooks-global-states is not declared in the root package.json dependencies.');
+  }
+  if (baseVersion !== expectedBaseVersion) {
+    fail(`react-hooks-global-states resolved to ${baseVersion}, expected ${expectedBaseVersion}.`);
   }
   console.log(`[interop] transitive react-hooks-global-states version: ${baseVersion}`);
 
@@ -186,7 +195,7 @@ try {
 
   const depCjsProbe = [
     "const m = require('react-global-state-hooks/createGlobalState');",
-    "const createGlobalState = m.default;",
+    'const createGlobalState = m.default;',
     "if (typeof createGlobalState !== 'function') { console.error('cjs createGlobalState not callable'); process.exit(25); }",
     'const useCount = createGlobalState(1);',
     "if (useCount.getState() !== 1) { console.error('cjs unexpected state: ' + useCount.getState()); process.exit(26); }",

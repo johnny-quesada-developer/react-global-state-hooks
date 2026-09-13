@@ -1,5 +1,5 @@
-import uniqueId from '../src/uniqueId';
-import * as uniqueIdNs from '../src/uniqueId';
+import uniqueId from 'react-global-state-hooks/uniqueId';
+import * as uniqueIdNs from 'react-global-state-hooks/uniqueId';
 
 describe('uniqueId default export (packaging regression)', () => {
   it('exposes a callable default export', () => {
@@ -14,9 +14,7 @@ describe('uniqueId default export (packaging regression)', () => {
     expect(typeof uniqueIdNs.uniqueId).toBe('function');
     expect(typeof uniqueIdNs.default).toBe('function');
 
-    const phantom = Object.keys(uniqueIdNs).filter(
-      (k) => k === 'module.exports' || k.includes('react-'),
-    );
+    const phantom = Object.keys(uniqueIdNs).filter((k) => k === 'module.exports' || k.includes('react-'));
     expect(phantom).toEqual([]);
   });
 });

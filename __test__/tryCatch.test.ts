@@ -1,4 +1,4 @@
-import tryCatch from '../src/tryCatch';
+import tryCatch from 'react-global-state-hooks/tryCatch';
 
 describe('tryCatch', () => {
   it('should return result and null error when callback succeeds', () => {

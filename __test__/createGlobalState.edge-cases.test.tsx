@@ -1,4 +1,4 @@
-import { createGlobalState, InferAPI } from '../src';
+import { createGlobalState, InferAPI } from 'react-global-state-hooks';
 import it from './$it';
 import { act } from '@testing-library/react';
 

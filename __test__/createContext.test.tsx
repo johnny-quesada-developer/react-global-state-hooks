@@ -1,5 +1,5 @@
 import React from 'react';
-import { type ContextStoreTools, createContext, InferAPI } from '../src';
+import { type ContextStoreTools, createContext, InferAPI } from 'react-global-state-hooks';
 import { act, render } from '@testing-library/react';
 import it from './$it';
 

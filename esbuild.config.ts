@@ -93,8 +93,11 @@ const shared: esbuild.BuildOptions = {
   // No sourcemaps in the published output: they would reference ../src which is not shipped.
   sourcemap: false,
   logLevel: 'info',
-  // Preserve original names; do not mangle. Keeps stack traces / debugging friendly.
-  minify: false,
+  // Minify the published output (restores parity with the pre-dual-output build).
+  // Safe here: the only class-identity check uses reference equality
+  // (this.constructor !== GlobalStore in GlobalStore.ts), not name comparison, and the
+  // CJS interop shape (__esModule + named/default exports) is guarded by scripts/test-interop.ts.
+  minify: true,
   external: bareExternals,
 };
 
@@ -127,7 +130,6 @@ async function build(): Promise<void> {
 }
 
 build().catch((err) => {
-  // eslint-disable-next-line no-console
   console.error(err);
   process.exit(1);
 });

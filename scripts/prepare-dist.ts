@@ -42,5 +42,4 @@ for (const file of ['README.md', 'LICENSE']) {
   }
 }
 
-// eslint-disable-next-line no-console
 console.log('Prepared dist/ for publishing.');

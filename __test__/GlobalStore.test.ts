@@ -1,7 +1,6 @@
-import { type StoreTools, Any, GlobalStore } from '../src';
+import { type StoreTools, Any, GlobalStore } from 'react-global-state-hooks';
 
 import $it from './$it';
-// import { type StoreTools, GlobalStore } from '../src/GlobalStore';
 
 import { CancelablePromise, createDecoupledPromise } from 'easy-cancelable-promise';
 import { formatFromStore, formatToStore, isNil } from 'json-storage-formatter';

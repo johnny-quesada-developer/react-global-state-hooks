@@ -956,12 +956,8 @@ Yes, chainable selectors work here too!
 
 ```tsx
 const DataContext = createContext({
-  users: [
-    /* ... */
-  ],
-  posts: [
-    /* ... */
-  ],
+  users: [/* ... */],
+  posts: [/* ... */],
   filter: 'all',
 });
 

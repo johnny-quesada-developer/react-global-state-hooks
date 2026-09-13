@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "..",
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noEmit": true,
+    "paths": {
+      "react-global-state-hooks": ["./src"],
+      "react-global-state-hooks/*": ["./src/*"]
+    }
+  },
+  "include": ["**/*", "../src/**/*", "../types/**/*"],
+  "exclude": []
+}

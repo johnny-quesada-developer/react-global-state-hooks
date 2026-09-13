@@ -1,4 +1,4 @@
-import { type Any, createGlobalState, actions, InferAPI } from '../src';
+import { type Any, createGlobalState, actions, InferAPI } from 'react-global-state-hooks';
 import it from './$it';
 
 describe('actions - Error Handling', () => {

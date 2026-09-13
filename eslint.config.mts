@@ -14,7 +14,9 @@ delete $globals['AudioWorkletGlobalScope '];
 
 export default defineConfig([
   {
-    ignores: ['**.js', '**.d.ts', 'coverage/**', 'node_modules/**'],
+    // Use a directory glob for dist (minified CJS output trips no-undef on module/require,
+    // no-unused-expressions, etc.). '**.js' does not reliably match nested paths in flat config.
+    ignores: ['dist/**', '**/*.d.ts', 'coverage/**', 'node_modules/**'],
   },
   {
     files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
@@ -37,6 +39,12 @@ export default defineConfig([
         },
       ],
     },
+  },
+  {
+    // Node-run config files and build/test scripts: give them Node globals (process, module,
+    // require, __dirname, ...). Needed now that we no longer broadly ignore *.js.
+    files: ['*.js', '*.cjs', '*.config.{js,cjs,mjs,ts,mts}', 'scripts/**'],
+    languageOptions: { globals: { ...globals.node } },
   },
   tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,

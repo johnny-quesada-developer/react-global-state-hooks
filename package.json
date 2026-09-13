@@ -1,6 +1,6 @@
 {
   "name": "react-global-state-hooks",
-  "version": "16.0.0",
+  "version": "16.0.1-beta",
   "description": "This is a package to easily handling global-state across your react components",
   "main": "./bundle.cjs",
   "module": "./bundle.mjs",
@@ -83,7 +83,7 @@
     "lint:fix": "eslint . --fix --max-warnings=0",
     "clean": "rm -rf dist coverage",
     "ts-check": "tsc -p tsconfig.json --noEmit",
-    "ts-check:tests": "tsc -p tsconfig.test.json --noEmit"
+    "ts-check:tests": "tsc -p __test__/tsconfig.json --noEmit"
   },
   "repository": {
     "type": "git",
@@ -149,7 +149,7 @@
   },
   "dependencies": {
     "json-storage-formatter": "4.0.0",
-    "react-hooks-global-states": "16.0.0"
+    "react-hooks-global-states": "16.0.1-beta"
   },
   "peerDependencies": {
     "json-storage-formatter": "4.0.0",
