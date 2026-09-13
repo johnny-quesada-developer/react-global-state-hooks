@@ -29,6 +29,10 @@
       "cache": true,
       "inputs": ["default", "^production"]
     },
+    "test:logs": {
+      "cache": true,
+      "inputs": ["default", "^production"]
+    },
     "test:quick": {
       "cache": true,
       "inputs": ["default", "^production"]

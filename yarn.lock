@@ -4881,13 +4881,6 @@ react-dom@^18.2.0:
     loose-envify "^1.1.0"
     scheduler "^0.23.2"
 
-react-hooks-global-states@^16.0.2:
-  version "16.0.2"
-  resolved "https://registry.yarnpkg.com/react-hooks-global-states/-/react-hooks-global-states-16.0.2.tgz#4daeed1749f4171a8fe861d96cd418bfac2f9217"
-  integrity sha512-w5YzHJXOIyArBI+NChTK+zFlx+JeqVi6RTji7esjtxaYDR2Vo3wchGZoRrmHYFIuZY4yTSHGjPjxN5qR/K9DiQ==
-  dependencies:
-    json-storage-formatter "^4.0.0"
-
 react-is@^16.13.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"

@@ -1,5 +1,5 @@
 {
   "extends": "./tsconfig.base.json",
   "files": [],
-  "references": [{ "path": "./libs/web" }]
+  "references": [{ "path": "./libs/web" }, { "path": "./libs/universal" }]
 }

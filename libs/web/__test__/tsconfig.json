@@ -7,7 +7,9 @@
     "noEmit": true,
     "paths": {
       "react-global-state-hooks": ["./src"],
-      "react-global-state-hooks/*": ["./src/*"]
+      "react-global-state-hooks/*": ["./src/*"],
+      "react-hooks-global-states": ["../universal/src/index.ts"],
+      "react-hooks-global-states/*": ["../universal/src/*"]
     }
   },
   "include": ["**/*", "../src/**/*", "../types/**/*"],

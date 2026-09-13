@@ -52,4 +52,14 @@ export default defineConfig([
   },
   tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
+  {
+    // The base library (universal) intentionally uses `{}` in a few generic/utility type
+    // positions and disabled this rule globally in its pre-monorepo config. Scope the
+    // override to universal so web keeps flagging `{}` (web disables it inline per-line, and
+    // a workspace-wide off would turn those inline directives into "unused" warnings).
+    files: ['libs/universal/**/*.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/no-empty-object-type': 'off',
+    },
+  },
 ]);
