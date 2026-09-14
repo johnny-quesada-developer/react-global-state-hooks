@@ -1,0 +1,716 @@
+_tempDevTools/COVERAGE_ACHIEVEMENT_REPORT.md
+  h_6029769cf9ac60 1-342
+_tempDevTools/COVERAGE_SETUP_SUMMARY.md
+  h_6029769cf9ac60 1-230
+_tempDevTools/FIXES_SUMMARY.md
+  h_6029769cf9ac60 1-79
+_tempDevTools/PROJECT_HEALTH_REPORT.md
+  h_6029769cf9ac60 1-208
+_tempDevTools/README.md
+  h_6029769cf9ac60 1-266
+_tempDevTools/TESTING_GUIDE.md
+  h_6029769cf9ac60 1-490
+_tempDevTools/TEST_QUALITY_EVALUATION.md
+  h_6029769cf9ac60 1-307
+_tempDevTools/TEST_QUALITY_REPORT.md
+  h_6029769cf9ac60 1-275
+_tempDevTools/dist.pem
+  h_6029769cf9ac60 1-28
+_tempDevTools/index.html
+  h_6029769cf9ac60 1-13
+_tempDevTools/index.local.html
+  h_6029769cf9ac60 1-13
+_tempDevTools/main_tab.html
+  h_6029769cf9ac60 1-15
+_tempDevTools/package.json
+  h_6029769cf9ac60 1-144
+_tempDevTools/playground/index.html
+  h_6029769cf9ac60 1-12
+_tempDevTools/playground/package.json
+  h_6029769cf9ac60 1-34
+_tempDevTools/playground/src/App.tsx
+  h_6029769cf9ac60 1-46
+_tempDevTools/playground/src/__tests__/react-global-state-hooks/$it.ts
+  h_6029769cf9ac60 1-60
+_tempDevTools/playground/src/__tests__/react-global-state-hooks/GlobalStore.functionHooks.test.ts
+  h_6029769cf9ac60 1-1488
+_tempDevTools/playground/src/__tests__/react-global-state-hooks/GlobalStore.localStorage.test.ts
+  h_6029769cf9ac60 1-871
+_tempDevTools/playground/src/__tests__/react-global-state-hooks/GlobalStore.methods.test.ts
+  h_6029769cf9ac60 1-736
+_tempDevTools/playground/src/__tests__/react-global-state-hooks/GlobalStore.test.ts
+  h_6029769cf9ac60 1-619
+_tempDevTools/playground/src/__tests__/react-global-state-hooks/GlobalStore.utils.test.ts
+  h_6029769cf9ac60 1-147
+_tempDevTools/playground/src/__tests__/react-global-state-hooks/actions.edge-cases.test.tsx
+  h_6029769cf9ac60 1-522
+_tempDevTools/playground/src/__tests__/react-global-state-hooks/actions.test.tsx
+  h_6029769cf9ac60 1-1177
+_tempDevTools/playground/src/__tests__/react-global-state-hooks/createContext.edge-cases.test.tsx
+  h_6029769cf9ac60 1-676
+_tempDevTools/playground/src/__tests__/react-global-state-hooks/createContext.test.tsx
+  h_6029769cf9ac60 1-624
+_tempDevTools/playground/src/__tests__/react-global-state-hooks/createGlobalState.edge-cases.test.tsx
+  h_6029769cf9ac60 1-299
+_tempDevTools/playground/src/__tests__/react-global-state-hooks/createGlobalState.test.ts
+  h_6029769cf9ac60 1-521
+_tempDevTools/playground/src/__tests__/react-global-state-hooks/getFakeAsyncStorage.ts
+  h_6029769cf9ac60 1-27
+_tempDevTools/playground/src/__tests__/react-global-state-hooks/isRecord.test.ts
+  h_6029769cf9ac60 1-64
+_tempDevTools/playground/src/__tests__/react-global-state-hooks/throwWrongKeyOnActionCollectionConfig.test.ts
+  h_6029769cf9ac60 1-9
+_tempDevTools/playground/src/__tests__/react-global-state-hooks/tryCatch.test.ts
+  h_6029769cf9ac60 1-34
+_tempDevTools/playground/src/__tests__/react-global-state-hooks/types.inference.test.tsx
+  h_6029769cf9ac60 1-775
+_tempDevTools/playground/src/__tests__/react-global-state-hooks/uniqueId.default.test.ts
+  h_6029769cf9ac60 1-22
+_tempDevTools/playground/src/__tests__/react-global-state-hooks/uniqueId.test.ts
+  h_6029769cf9ac60 1-93
+_tempDevTools/playground/src/__tests__/react-hooks-global-states/$it.ts
+  h_6029769cf9ac60 1-60
+_tempDevTools/playground/src/__tests__/react-hooks-global-states/GlobalStore.functionHooks.test.ts
+  h_6029769cf9ac60 1-1489
+_tempDevTools/playground/src/__tests__/react-hooks-global-states/GlobalStore.test.ts
+  h_6029769cf9ac60 1-625
+_tempDevTools/playground/src/__tests__/react-hooks-global-states/GlobalStore.utils.test.ts
+  h_6029769cf9ac60 1-148
+_tempDevTools/playground/src/__tests__/react-hooks-global-states/actions.edge-cases.test.tsx
+  h_6029769cf9ac60 1-522
+_tempDevTools/playground/src/__tests__/react-hooks-global-states/actions.test.tsx
+  h_6029769cf9ac60 1-1177
+_tempDevTools/playground/src/__tests__/react-hooks-global-states/createContext.edge-cases.test.tsx
+  h_6029769cf9ac60 1-758
+_tempDevTools/playground/src/__tests__/react-hooks-global-states/createContext.test.tsx
+  h_6029769cf9ac60 1-624
+_tempDevTools/playground/src/__tests__/react-hooks-global-states/createGlobalState.edge-cases.test.tsx
+  h_6029769cf9ac60 1-299
+_tempDevTools/playground/src/__tests__/react-hooks-global-states/getFakeAsyncStorage.ts
+  h_6029769cf9ac60 1-27
+_tempDevTools/playground/src/__tests__/react-hooks-global-states/isRecord.test.ts
+  h_6029769cf9ac60 1-65
+_tempDevTools/playground/src/__tests__/react-hooks-global-states/throwWrongKeyOnActionCollectionConfig.test.ts
+  h_6029769cf9ac60 1-10
+_tempDevTools/playground/src/__tests__/react-hooks-global-states/types.inference.test.tsx
+  h_6029769cf9ac60 1-775
+_tempDevTools/playground/src/__tests__/react-hooks-global-states/uniqueId.interop.test.ts
+  h_6029769cf9ac60 1-36
+_tempDevTools/playground/src/__tests__/react-hooks-global-states/uniqueId.test.ts
+  h_6029769cf9ac60 1-93
+_tempDevTools/playground/src/components/AuthPanel.tsx
+  h_6029769cf9ac60 1-57
+_tempDevTools/playground/src/components/CounterPanel.tsx
+  h_6029769cf9ac60 1-24
+_tempDevTools/playground/src/components/FormContextPanel.tsx
+  h_6029769cf9ac60 1-51
+_tempDevTools/playground/src/components/Panel.tsx
+  h_6029769cf9ac60 1-41
+_tempDevTools/playground/src/components/PipelinePanel.tsx
+  h_6029769cf9ac60 1-88
+_tempDevTools/playground/src/components/ProgressPanel.tsx
+  h_6029769cf9ac60 1-64
+_tempDevTools/playground/src/components/TodosPanel.tsx
+  h_6029769cf9ac60 1-58
+_tempDevTools/playground/src/main.tsx
+  h_6029769cf9ac60 1-19
+_tempDevTools/playground/src/stores/auth.ts
+  h_6029769cf9ac60 1-58
+_tempDevTools/playground/src/stores/counter.ts
+  h_6029769cf9ac60 1-7
+_tempDevTools/playground/src/stores/formContext.ts
+  h_6029769cf9ac60 1-31
+_tempDevTools/playground/src/stores/pipeline.ts
+  h_6029769cf9ac60 1-168
+_tempDevTools/playground/src/stores/progress.ts
+  h_6029769cf9ac60 1-44
+_tempDevTools/playground/src/stores/todos.ts
+  h_6029769cf9ac60 1-61
+_tempDevTools/playground/tsconfig.json
+  h_6029769cf9ac60 1-21
+_tempDevTools/playground/vite.config.ts
+  h_6029769cf9ac60 1-11
+_tempDevTools/playground/vitest.config.ts
+  h_6029769cf9ac60 1-14
+_tempDevTools/playground/vitest.setup.ts
+  h_6029769cf9ac60 1-38
+_tempDevTools/playground/yarn.lock
+  h_6029769cf9ac60 1-1534
+_tempDevTools/public/vite.svg
+  h_6029769cf9ac60 1
+_tempDevTools/scripts/preview-dev.mjs
+  h_6029769cf9ac60 1-35
+_tempDevTools/src/__tests__/end-to-end-workflows.test.ts
+  h_6029769cf9ac60 1-486
+_tempDevTools/src/__tests__/error-recovery-edge-cases.test.ts
+  h_6029769cf9ac60 1-563
+_tempDevTools/src/__tests__/message-flow-integration.test.ts
+  h_6029769cf9ac60 1-638
+_tempDevTools/src/__tests__/monkey_patch/contracts.ts
+  h_6029769cf9ac60 1-41
+_tempDevTools/src/__tests__/monkey_patch/maybeCleanupPreviousStateMetadata.test.ts
+  h_6029769cf9ac60 1-328
+_tempDevTools/src/__tests__/monkey_patch/mergeState.test.ts
+  h_6029769cf9ac60 1-312
+_tempDevTools/src/__tests__/monkey_patch/monkey_patch.integration.test.ts
+  h_6029769cf9ac60 1-1860
+_tempDevTools/src/__tests__/monkey_patch/monkey_patch.logger.test.ts
+  h_6029769cf9ac60 1-599
+_tempDevTools/src/__tests__/monkey_patch/monkey_patch.real-world.test.ts
+  h_6029769cf9ac60 1-606
+_tempDevTools/src/__tests__/monkey_patch/monkey_patch.test.ts
+  h_6029769cf9ac60 1-502
+_tempDevTools/src/__tests__/monkey_patch/monkey_patch.utils.test.ts
+  h_6029769cf9ac60 1-655
+_tempDevTools/src/__tests__/monkey_patch/sendMessageFromMonkeyPath.test.ts
+  h_6029769cf9ac60 1-523
+_tempDevTools/src/assets/react.svg
+  h_6029769cf9ac60 1
+_tempDevTools/src/base.css
+  h_6029769cf9ac60 1-34
+_tempDevTools/src/devtools_page.html
+  h_6029769cf9ac60 1-11
+_tempDevTools/src/helpers/generateMockState.ts
+  h_6029769cf9ac60 1-29
+_tempDevTools/src/helpers/useGlobalStates.mocks.tools.ts
+  h_6029769cf9ac60 1-82
+_tempDevTools/src/helpers/useGlobalStates.mocks.ts
+  h_6029769cf9ac60 1-2285
+_tempDevTools/src/index.dev.tsx
+  h_6029769cf9ac60 1-25
+_tempDevTools/src/index.tsx
+  h_6029769cf9ac60 1-15
+_tempDevTools/src/lib/content_script.ts
+  h_6029769cf9ac60 1-100
+_tempDevTools/src/lib/devtools_page.ts
+  h_6029769cf9ac60 1-8
+_tempDevTools/src/lib/service_worker.ts
+  h_6029769cf9ac60 1-98
+_tempDevTools/src/manifest.dev.json
+  h_6029769cf9ac60 1-20
+_tempDevTools/src/manifest.json
+  h_6029769cf9ac60 1-21
+_tempDevTools/src/monkey_patch/asserts/asserts.ts
+  h_6029769cf9ac60 1-47
+_tempDevTools/src/monkey_patch/debug.ts
+  h_6029769cf9ac60 1-10
+_tempDevTools/src/monkey_patch/dev-tools.ts
+  h_6029769cf9ac60 1-28
+_tempDevTools/src/monkey_patch/maybeCleanupPreviousStateMetadata.ts
+  h_6029769cf9ac60 1-49
+_tempDevTools/src/monkey_patch/mergeState.ts
+  h_6029769cf9ac60 1-33
+_tempDevTools/src/monkey_patch/monkey_patch.logger.ts
+  h_6029769cf9ac60 1-123
+_tempDevTools/src/monkey_patch/monkey_patch.ts
+  h_6029769cf9ac60 1-534
+_tempDevTools/src/monkey_patch/monkey_patch.utils.ts
+  h_6029769cf9ac60 1-85
+_tempDevTools/src/monkey_patch/package.json
+  h_6029769cf9ac60 1-38
+_tempDevTools/src/monkey_patch/schema/ActionCallbackJson.ts
+  h_6029769cf9ac60 1-19
+_tempDevTools/src/monkey_patch/schema/ActionJson.ts
+  h_6029769cf9ac60 1-51
+_tempDevTools/src/monkey_patch/schema/ActionLogJson.ts
+  h_6029769cf9ac60 1-57
+_tempDevTools/src/monkey_patch/schema/ActionTypeJson.ts
+  h_6029769cf9ac60 1-33
+_tempDevTools/src/monkey_patch/schema/ActionsCallbackJson.ts
+  h_6029769cf9ac60 1-18
+_tempDevTools/src/monkey_patch/schema/BuildTypeJson.ts
+  h_6029769cf9ac60 1-29
+_tempDevTools/src/monkey_patch/schema/CallbacksJson.ts
+  h_6029769cf9ac60 1-25
+_tempDevTools/src/monkey_patch/schema/GlobalStateJson.ts
+  h_6029769cf9ac60 1-31
+_tempDevTools/src/monkey_patch/schema/LocalStorageJson.ts
+  h_6029769cf9ac60 1-21
+_tempDevTools/src/monkey_patch/schema/MetadataJson.ts
+  h_6029769cf9ac60 1-17
+_tempDevTools/src/monkey_patch/schema/MonkeyPathMessageJson/AddActionLogMessage.ts
+  h_6029769cf9ac60 1-15
+_tempDevTools/src/monkey_patch/schema/MonkeyPathMessageJson/AddGlobalStateMessage.ts
+  h_6029769cf9ac60 1-15
+_tempDevTools/src/monkey_patch/schema/MonkeyPathMessageJson/ClearGlobalStatesMessage.ts
+  h_6029769cf9ac60 1-19
+_tempDevTools/src/monkey_patch/schema/MonkeyPathMessageJson/DeleteGlobalStateMessage.ts
+  h_6029769cf9ac60 1-18
+_tempDevTools/src/monkey_patch/schema/MonkeyPathMessageJson/MessageJson.ts
+  h_6029769cf9ac60 1-17
+_tempDevTools/src/monkey_patch/schema/MonkeyPathMessageJson/MonkeyPathMessageJson.ts
+  h_6029769cf9ac60 1-33
+_tempDevTools/src/monkey_patch/schema/MonkeyPathMessageJson/SetBuildTypeMessage.ts
+  h_6029769cf9ac60 1-19
+_tempDevTools/src/monkey_patch/schema/MonkeyPathMessageJson/StartActionMessage.ts
+  h_6029769cf9ac60 1-15
+_tempDevTools/src/monkey_patch/schema/MonkeyPathMessageJson/UpdateActionMessage.ts
+  h_6029769cf9ac60 1-15
+_tempDevTools/src/monkey_patch/schema/MonkeyPathMessageJson/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/monkey_patch/schema/SetStateConfigJson.ts
+  h_6029769cf9ac60 1-20
+_tempDevTools/src/monkey_patch/schema/SubActionJson.ts
+  h_6029769cf9ac60 1-28
+_tempDevTools/src/monkey_patch/sendMessageFromMonkeyPath.ts
+  h_6029769cf9ac60 1-28
+_tempDevTools/src/monkey_patch/tools/EntityAdapter.ts
+  h_6029769cf9ac60 1-167
+_tempDevTools/src/monkey_patch/tools/react.ts
+  h_6029769cf9ac60 1-241
+_tempDevTools/src/monkey_patch/tools/softClone.ts
+  h_6029769cf9ac60 1-110
+_tempDevTools/src/pages/main_tab/MainTab.module.scss
+  h_6029769cf9ac60 1-4
+_tempDevTools/src/pages/main_tab/MainTab.tsx
+  h_6029769cf9ac60 1-34
+_tempDevTools/src/pages/main_tab/components/GlobalStateList/GlobalStateItem/GlobalStateItem.tsx
+  h_6029769cf9ac60 1-77
+_tempDevTools/src/pages/main_tab/components/GlobalStateList/GlobalStateItem/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/GlobalStateList/GlobalStateList.tsx
+  h_6029769cf9ac60 1-83
+_tempDevTools/src/pages/main_tab/components/GlobalStateList/GlobalStateListFilter/GlobalStoreListFilter.tsx
+  h_6029769cf9ac60 1-49
+_tempDevTools/src/pages/main_tab/components/GlobalStateList/GlobalStateListFilter/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/GlobalStateList/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/LogsVisualizationTypeSelector/LogsVisualizationTypeSelector.tsx
+  h_6029769cf9ac60 1-114
+_tempDevTools/src/pages/main_tab/components/LogsVisualizationTypeSelector/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/NavBar/NavBar.tsx
+  h_6029769cf9ac60 1-74
+_tempDevTools/src/pages/main_tab/components/NavBar/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/SelectedStateLabel/SelectedStateLabel.tsx
+  h_6029769cf9ac60 1-24
+_tempDevTools/src/pages/main_tab/components/SelectedStateLabel/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/TabsContainer/TabsContainer.tsx
+  h_6029769cf9ac60 1-26
+_tempDevTools/src/pages/main_tab/components/TabsContainer/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/ActionsTab/ActionsTab.tsx
+  h_6029769cf9ac60 1-50
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/ActionsTab/components/ActionsList/ActionsList.tsx
+  h_6029769cf9ac60 1-78
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/ActionsTab/components/ActionsList/components/ActionsFilter/ActionsFilter.tsx
+  h_6029769cf9ac60 1-26
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/ActionsTab/components/ActionsList/components/ActionsFilter/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/ActionsTab/components/ActionsList/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/ActionsTab/components/CodeEditor/CodeEditor.tsx
+  h_6029769cf9ac60 1-305
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/ActionsTab/components/CodeEditor/components/ErrorBanner.tsx
+  h_6029769cf9ac60 1-24
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/ActionsTab/context/actionsContext.ts
+  h_6029769cf9ac60 1-102
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/ActionsTab/hooks/useGlobalStateActions.ts
+  h_6029769cf9ac60 1-42
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/ActionsTab/hooks/useSelectedActionJson.ts
+  h_6029769cf9ac60 1-8
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/ActionsTab/index.tsx
+  h_6029769cf9ac60 1-10
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/ActionLogListItem/ActionLogListItem.tsx
+  h_6029769cf9ac60 1-73
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/ActionLogListItem/components/DropdownMenuLog.tsx
+  h_6029769cf9ac60 1-59
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/ActionLogListItem/components/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/ActionLogListItem/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogDetails/ActionStepsDetails/ActionStepsDetails.tsx
+  h_6029769cf9ac60 1-94
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogDetails/ActionStepsDetails/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogDetails/LogDetails.tsx
+  h_6029769cf9ac60 1-88
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogDetails/PayloadDisplay/PayloadDisplay.tsx
+  h_6029769cf9ac60 1-37
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogDetails/PayloadDisplay/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogDetails/ShowChangesSummary/ShowChangesSummary.module.scss
+  h_6029769cf9ac60 1-12
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogDetails/ShowChangesSummary/ShowChangesSummary.tsx
+  h_6029769cf9ac60 1-59
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogDetails/ShowChangesSummary/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogDetails/StateDiff/StateDiff.tsx
+  h_6029769cf9ac60 1-46
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogDetails/StateDiff/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogDetails/StateDiffPerAction/StateDiffPerAction.tsx
+  h_6029769cf9ac60 1-83
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogDetails/StateDiffPerAction/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogDetails/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogListItem/LogListItem.tsx
+  h_6029769cf9ac60 1-76
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogListItem/components/DropdownMenuLog.tsx
+  h_6029769cf9ac60 1-51
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogListItem/components/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogListItem/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogsFilter/LogsFilter.tsx
+  h_6029769cf9ac60 1-25
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogsFilter/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogsList/LogsList.tsx
+  h_6029769cf9ac60 1-79
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogsList/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogsPerActionList/LogsPerActionList.tsx
+  h_6029769cf9ac60 1-71
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogsPerActionList/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogsTab.tsx
+  h_6029769cf9ac60 1-30
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/RecordsCount/RecordsCount.tsx
+  h_6029769cf9ac60 1-21
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/RecordsCount/index.ts
+  h_6029769cf9ac60 1-2
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/_hooks/index.ts
+  h_6029769cf9ac60 1-4
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/_hooks/logsFilter.ts
+  h_6029769cf9ac60 1-7
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/_hooks/selectedActionHeader.ts
+  h_6029769cf9ac60 1-35
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/_hooks/selectedLogs/index.ts
+  h_6029769cf9ac60 1-2
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/_hooks/selectedLogs/selectedLogs.ts
+  h_6029769cf9ac60 1-33
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/_hooks/selectedLogs/useSelectedLogs.hook.ts
+  h_6029769cf9ac60 1-18
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/_hooks/useLogsDiff.ts
+  h_6029769cf9ac60 1-44
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/_utils/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/_utils/utils.ts
+  h_6029769cf9ac60 1-16
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/logs.ts
+  h_6029769cf9ac60 1-14
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/MessagesTab/MessagesTab.tsx
+  h_6029769cf9ac60 1-128
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/MessagesTab/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/StateTab/StateTab.tsx
+  h_6029769cf9ac60 1-19
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/StateTab/components/CodeEditorForState/CodeEditorForState.tsx
+  h_6029769cf9ac60 1-205
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/StateTab/components/CodeEditorForState/components/ErrorBanner.tsx
+  h_6029769cf9ac60 1-24
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/StateTab/components/StateViewer/StateViewer.tsx
+  h_6029769cf9ac60 1-79
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/StateTab/components/StateViewer/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/StateTab/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/components/TabsContainer/tabs/index.ts
+  h_6029769cf9ac60 1-2
+_tempDevTools/src/pages/main_tab/components/index.ts
+  h_6029769cf9ac60 1-5
+_tempDevTools/src/pages/main_tab/context/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/pages/main_tab/context/mainTabContext.ts
+  h_6029769cf9ac60 1-17
+_tempDevTools/src/pages/main_tab/hooks/globalStates/__tests__/loadMockState.test.ts
+  h_6029769cf9ac60 1-116
+_tempDevTools/src/pages/main_tab/hooks/globalStates/globalStates.ts
+  h_6029769cf9ac60 1-315
+_tempDevTools/src/pages/main_tab/hooks/globalStates/helpers/buildActionPerActionKey.ts
+  h_6029769cf9ac60 1-22
+_tempDevTools/src/pages/main_tab/hooks/globalStates/helpers/buildGroupedActionLogs.ts
+  h_6029769cf9ac60 1-23
+_tempDevTools/src/pages/main_tab/hooks/globalStates/helpers/getOrderedGlobalStates.ts
+  h_6029769cf9ac60 1-22
+_tempDevTools/src/pages/main_tab/hooks/globalStates/helpers/globalStatesIdsByPath.ts
+  h_6029769cf9ac60 1-33
+_tempDevTools/src/pages/main_tab/hooks/globalStates/helpers/index.ts
+  h_6029769cf9ac60 1-4
+_tempDevTools/src/pages/main_tab/hooks/globalStates/helpers/loadMockState.ts
+  h_6029769cf9ac60 1-97
+_tempDevTools/src/pages/main_tab/hooks/globalStates/helpers/useGlobalStates.types.ts
+  h_6029769cf9ac60 1-14
+_tempDevTools/src/pages/main_tab/hooks/globalStates/hooks/index.ts
+  h_6029769cf9ac60 1-4
+_tempDevTools/src/pages/main_tab/hooks/globalStates/hooks/useActionJson.ts
+  h_6029769cf9ac60 1-26
+_tempDevTools/src/pages/main_tab/hooks/globalStates/hooks/useActionPerActionKey.ts
+  h_6029769cf9ac60 1-22
+_tempDevTools/src/pages/main_tab/hooks/globalStates/hooks/useActionsHeaders.ts
+  h_6029769cf9ac60 1-64
+_tempDevTools/src/pages/main_tab/hooks/globalStates/hooks/useGroupedActionLogs.ts
+  h_6029769cf9ac60 1-36
+_tempDevTools/src/pages/main_tab/hooks/globalStates/hooks/useStateMeta.ts
+  h_6029769cf9ac60 1-43
+_tempDevTools/src/pages/main_tab/hooks/globalStates/index.ts
+  h_6029769cf9ac60 1-4
+_tempDevTools/src/pages/main_tab/hooks/logsArray/getLogArray.ts
+  h_6029769cf9ac60 1-53
+_tempDevTools/src/pages/main_tab/hooks/logsArray/index.ts
+  h_6029769cf9ac60 1-2
+_tempDevTools/src/pages/main_tab/hooks/logsArray/updateLogArray.ts
+  h_6029769cf9ac60 1-53
+_tempDevTools/src/pages/main_tab/hooks/logsArray/useLogsArray.ts
+  h_6029769cf9ac60 1-82
+_tempDevTools/src/pages/main_tab/hooks/logsVisualizationType.ts
+  h_6029769cf9ac60 1-9
+_tempDevTools/src/pages/main_tab/hooks/messagesLog.ts
+  h_6029769cf9ac60 1-37
+_tempDevTools/src/pages/main_tab/hooks/selectedGlobalStateId.ts
+  h_6029769cf9ac60 1-44
+_tempDevTools/src/pages/main_tab/hooks/selectedTab.ts
+  h_6029769cf9ac60 1-10
+_tempDevTools/src/pages/main_tab/hooks/theme.ts
+  h_6029769cf9ac60 1-43
+_tempDevTools/src/pages/main_tab/hooks/useForceRerender.ts
+  h_6029769cf9ac60 1-9
+_tempDevTools/src/pages/main_tab/hooks/useIsConnecting.ts
+  h_6029769cf9ac60 1-5
+_tempDevTools/src/pages/main_tab/hooks/useMountEffect.ts
+  h_6029769cf9ac60 1-13
+_tempDevTools/src/pages/main_tab/hooks/useMountRerender.ts
+  h_6029769cf9ac60 1-8
+_tempDevTools/src/pages/main_tab/hooks/useSendMessagesToContentScript.ts
+  h_6029769cf9ac60 1-42
+_tempDevTools/src/pages/main_tab/hooks/useStableCallback.ts
+  h_6029769cf9ac60 1-17
+_tempDevTools/src/pages/main_tab/hooks/useStableRef.ts
+  h_6029769cf9ac60 1-41
+_tempDevTools/src/pages/main_tab/index.tsx
+  h_6029769cf9ac60 1-14
+_tempDevTools/src/pages/main_tab/util/__tests__/generateStackHash.test.ts
+  h_6029769cf9ac60 1-281
+_tempDevTools/src/pages/main_tab/util/__tests__/stringifyPayload.test.ts
+  h_6029769cf9ac60 1-383
+_tempDevTools/src/pages/main_tab/util/generateStackHash.ts
+  h_6029769cf9ac60 1-27
+_tempDevTools/src/pages/main_tab/util/getContentScriptPort.ts
+  h_6029769cf9ac60 1-90
+_tempDevTools/src/pages/main_tab/util/stringifyPayload.ts
+  h_6029769cf9ac60 1-60
+_tempDevTools/src/shared/asserts/asserts.ts
+  h_6029769cf9ac60 1-47
+_tempDevTools/src/shared/asserts/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/shared/components/Badge/Badge.tsx
+  h_6029769cf9ac60 1-33
+_tempDevTools/src/shared/components/Badge/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/shared/components/CodeEditorElement/CodeEditorElement.tsx
+  h_6029769cf9ac60 1-21
+_tempDevTools/src/shared/components/CodeEditorElement/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/shared/components/Collapsible/Collapsible.module.scss
+  h_6029769cf9ac60 1-8
+_tempDevTools/src/shared/components/Collapsible/Collapsible.tsx
+  h_6029769cf9ac60 1-137
+_tempDevTools/src/shared/components/Collapsible/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/shared/components/CompareJsonValues/CompareJsonValues.tsx
+  h_6029769cf9ac60 1-41
+_tempDevTools/src/shared/components/CompareJsonValues/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/shared/components/JsonCodeViewer/JsonCodeViewer.module.scss
+  h_6029769cf9ac60 1-19
+_tempDevTools/src/shared/components/JsonCodeViewer/JsonCodeViewer.tsx
+  h_6029769cf9ac60 1-128
+_tempDevTools/src/shared/components/JsonCodeViewer/components/CodeViewer/CodeViewer.tsx
+  h_6029769cf9ac60 1-162
+_tempDevTools/src/shared/components/JsonCodeViewer/components/CodeViewer/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/shared/components/JsonCodeViewer/components/JsonViewer/JsonViewer.tsx
+  h_6029769cf9ac60 1-54
+_tempDevTools/src/shared/components/JsonCodeViewer/components/JsonViewer/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/shared/components/JsonCodeViewer/components/index.ts
+  h_6029769cf9ac60 1-2
+_tempDevTools/src/shared/components/JsonCodeViewer/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/shared/components/JsonCodeViewer/stores/codeViewer$.ts
+  h_6029769cf9ac60 1-18
+_tempDevTools/src/shared/components/JsonCodeViewer/stores/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/shared/components/JsonViewer/JsonViewer.module.scss
+  h_6029769cf9ac60 1-7
+_tempDevTools/src/shared/components/JsonViewer/JsonViewer.tsx
+  h_6029769cf9ac60 1-76
+_tempDevTools/src/shared/components/JsonViewer/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/shared/components/Resizable/Resizable.module.css
+  h_6029769cf9ac60 1-3
+_tempDevTools/src/shared/components/Resizable/Resizable.tsx
+  h_6029769cf9ac60 1-140
+_tempDevTools/src/shared/components/Resizable/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/shared/components/SimpleFilter/SimpleFilter.tsx
+  h_6029769cf9ac60 1-35
+_tempDevTools/src/shared/components/SimpleFilter/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/shared/components/Tooltip/Tooltip.tsx
+  h_6029769cf9ac60 1-171
+_tempDevTools/src/shared/components/Tooltip/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/shared/components/index.ts
+  h_6029769cf9ac60 1-9
+_tempDevTools/src/shared/facelessComponents/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/shared/facelessComponents/useListNavigation/index.ts
+  h_6029769cf9ac60 1-2
+_tempDevTools/src/shared/facelessComponents/useListNavigation/useListNavigation.ts
+  h_6029769cf9ac60 1-147
+_tempDevTools/src/shared/facelessComponents/useListNavigation/useListNavigation.types.ts
+  h_6029769cf9ac60 1-15
+_tempDevTools/src/shared/facelessComponents/useListNavigation/useListNavigation.utils.ts
+  h_6029769cf9ac60 1-48
+_tempDevTools/src/shared/hooks/index.ts
+  h_6029769cf9ac60 1-5
+_tempDevTools/src/shared/hooks/useDebounce.ts
+  h_6029769cf9ac60 1-42
+_tempDevTools/src/shared/hooks/useDebounceEffect.ts
+  h_6029769cf9ac60 1-8
+_tempDevTools/src/shared/hooks/useDebounceValue.ts
+  h_6029769cf9ac60 1-20
+_tempDevTools/src/shared/hooks/useImmediateEffect.ts
+  h_6029769cf9ac60 1-15
+_tempDevTools/src/shared/hooks/useInitialEffect.ts
+  h_6029769cf9ac60 1-6
+_tempDevTools/src/shared/schema/ActionCallbackJson.ts
+  h_6029769cf9ac60 1-19
+_tempDevTools/src/shared/schema/ActionJson.ts
+  h_6029769cf9ac60 1-52
+_tempDevTools/src/shared/schema/ActionLogJson.ts
+  h_6029769cf9ac60 1-58
+_tempDevTools/src/shared/schema/ActionTypeJson.ts
+  h_6029769cf9ac60 1-33
+_tempDevTools/src/shared/schema/ActionsCallbackJson.ts
+  h_6029769cf9ac60 1-18
+_tempDevTools/src/shared/schema/BuildTypeJson.ts
+  h_6029769cf9ac60 1-29
+_tempDevTools/src/shared/schema/CallbacksJson.ts
+  h_6029769cf9ac60 1-25
+_tempDevTools/src/shared/schema/GlobalStateJson.ts
+  h_6029769cf9ac60 1-36
+_tempDevTools/src/shared/schema/LocalStorageJson.ts
+  h_6029769cf9ac60 1-21
+_tempDevTools/src/shared/schema/MetadataJson.ts
+  h_6029769cf9ac60 1-17
+_tempDevTools/src/shared/schema/MonkeyPatchActionJson.ts
+  h_6029769cf9ac60 1-27
+_tempDevTools/src/shared/schema/MonkeyPathMessageJson/AddActionLogMessage.ts
+  h_6029769cf9ac60 1-15
+_tempDevTools/src/shared/schema/MonkeyPathMessageJson/AddGlobalStateMessage.ts
+  h_6029769cf9ac60 1-15
+_tempDevTools/src/shared/schema/MonkeyPathMessageJson/ClearGlobalStatesMessage.ts
+  h_6029769cf9ac60 1-19
+_tempDevTools/src/shared/schema/MonkeyPathMessageJson/DeleteGlobalStateMessage.ts
+  h_6029769cf9ac60 1-18
+_tempDevTools/src/shared/schema/MonkeyPathMessageJson/MessageJson.ts
+  h_6029769cf9ac60 1-17
+_tempDevTools/src/shared/schema/MonkeyPathMessageJson/MonkeyPathMessageJson.ts
+  h_6029769cf9ac60 1-33
+_tempDevTools/src/shared/schema/MonkeyPathMessageJson/SetBuildTypeMessage.ts
+  h_6029769cf9ac60 1-19
+_tempDevTools/src/shared/schema/MonkeyPathMessageJson/StartActionMessage.ts
+  h_6029769cf9ac60 1-15
+_tempDevTools/src/shared/schema/MonkeyPathMessageJson/UpdateActionMessage.ts
+  h_6029769cf9ac60 1-18
+_tempDevTools/src/shared/schema/MonkeyPathMessageJson/index.ts
+  h_6029769cf9ac60 1
+_tempDevTools/src/shared/schema/SetStateConfigJson.ts
+  h_6029769cf9ac60 1-20
+_tempDevTools/src/shared/schema/SubActionJson.ts
+  h_6029769cf9ac60 1-28
+_tempDevTools/src/shared/schema/__tests__/ActionLogJson.real-world.test.ts
+  h_6029769cf9ac60 1-269
+_tempDevTools/src/shared/schema/__tests__/ActionLogJson.test.ts
+  h_6029769cf9ac60 1-74
+_tempDevTools/src/shared/schema/__tests__/schema-validators.test.ts
+  h_6029769cf9ac60 1-161
+_tempDevTools/src/shared/schema/index.ts
+  h_6029769cf9ac60 1-14
+_tempDevTools/src/shared/theme.ts
+  h_6029769cf9ac60 1-65
+_tempDevTools/src/shared/tools/AdaptiveEntityAdapter.ts
+  h_6029769cf9ac60 1-67
+_tempDevTools/src/shared/tools/EntityAdapter.ts
+  h_6029769cf9ac60 1-167
+_tempDevTools/src/shared/tools/__tests__/AdaptiveEntityAdapter.test.ts
+  h_6029769cf9ac60 1-65
+_tempDevTools/src/shared/tools/__tests__/EntityAdapter.test.ts
+  h_6029769cf9ac60 1-66
+_tempDevTools/src/shared/tools/__tests__/debounce.test.ts
+  h_6029769cf9ac60 1-374
+_tempDevTools/src/shared/tools/__tests__/softClone.real-world.test.ts
+  h_6029769cf9ac60 1-230
+_tempDevTools/src/shared/tools/__tests__/softClone.test.ts
+  h_6029769cf9ac60 1-56
+_tempDevTools/src/shared/tools/__tests__/throttle.test.ts
+  h_6029769cf9ac60 1-464
+_tempDevTools/src/shared/tools/cn.ts
+  h_6029769cf9ac60 1-15
+_tempDevTools/src/shared/tools/date.ts
+  h_6029769cf9ac60 1-11
+_tempDevTools/src/shared/tools/debounce.ts
+  h_6029769cf9ac60 1-11
+_tempDevTools/src/shared/tools/error.ts
+  h_6029769cf9ac60 1-7
+_tempDevTools/src/shared/tools/index.ts
+  h_6029769cf9ac60 1-20
+_tempDevTools/src/shared/tools/isSetStateSubAction.ts
+  h_6029769cf9ac60 1-8
+_tempDevTools/src/shared/tools/localStorage.ts
+  h_6029769cf9ac60 1-3
+_tempDevTools/src/shared/tools/promises.ts
+  h_6029769cf9ac60 1-10
+_tempDevTools/src/shared/tools/react.ts
+  h_6029769cf9ac60 1-225
+_tempDevTools/src/shared/tools/softClone.ts
+  h_6029769cf9ac60 1-110
+_tempDevTools/src/shared/tools/startSecondsTimer.ts
+  h_6029769cf9ac60 1-10
+_tempDevTools/src/shared/tools/throttle.ts
+  h_6029769cf9ac60 1-11
+_tempDevTools/src/shared/tools/twMerge.ts
+  h_6029769cf9ac60 1-35
+_tempDevTools/stats.html
+  h_6029769cf9ac60 1-4949
+_tempDevTools/tailwind.config.ts
+  h_6029769cf9ac60 1-11
+_tempDevTools/tsconfig.app.json
+  h_6029769cf9ac60 1-45
+_tempDevTools/tsconfig.json
+  h_6029769cf9ac60 1-16
+_tempDevTools/tsconfig.node.json
+  h_6029769cf9ac60 1-21
+_tempDevTools/vite.config.ts
+  h_6029769cf9ac60 1-90
+_tempDevTools/vitest.config.ts
+  h_6029769cf9ac60 1-50
+_tempDevTools/vitest.setup.ts
+  h_6029769cf9ac60 1-22
+_tempDevTools/webpack.config.cjs
+  h_6029769cf9ac60 1-80
+_tempDevTools/webpack.config.monkey_patch.cjs
+  h_6029769cf9ac60 1-87
+_tempDevTools/yarn.lock
+  h_6029769cf9ac60 1-4728
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "b1cbae7fa7e00ed878cb96407ab39ee3179821e7",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
