@@ -114,3 +114,6 @@ dist
 # Nx cache and workspace data
 .nx/cache
 .nx/workspace-data
+
+# Package tarballs from `yarn tarball`
+/artifacts

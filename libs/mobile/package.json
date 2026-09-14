@@ -1,6 +1,6 @@
 {
   "name": "react-native-global-state-hooks",
-  "version": "15.0.3",
+  "version": "16.0.3-beta.0",
   "description": "This is a package to easily handling global-state across your react-native-components No-redux... The library now includes @react-native-async-storage/async-storage to persist your state across sessions... if you want to keep using the old version without async-storage or react-native dependencies just use version 5.0.15 or user react-hooks-global-states instead",
   "main": "./bundle.cjs",
   "module": "./bundle.mjs",
@@ -79,6 +79,8 @@
     "test:quick": "yarn test --no-coverage --maxWorkers=4 -c --no-watchman -u",
     "test:coverage": "yarn test --maxWorkers=4 -c --colors --no-watchman --verbose --coverage",
     "build": "yarn ts-check && yarn clean && tsc -p tsconfig.build.json && tsx esbuild.config.ts && tsx scripts/prepare-dist.ts",
+    "publish:pkg": "yarn build && cd dist && npm publish --tag latest --registry https://registry.npmjs.org/",
+    "publish:beta": "yarn build && cd dist && npm publish --tag beta --registry https://registry.npmjs.org/",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix --max-warnings=0",
     "clean": "rm -rf dist coverage",
@@ -134,6 +136,6 @@
     }
   },
   "dependencies": {
-    "react-hooks-global-states": "^16.0.0"
+    "react-hooks-global-states": "^16.0.3"
   }
 }

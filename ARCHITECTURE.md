@@ -66,6 +66,28 @@ prints one combined table plus a weighted total. It measures the TypeScript sour
 (coverage on the minified `dist` bundle is not meaningful); pass `--dist` to measure the built
 artifact.
 
+## Producing and inspecting publishable packages
+
+```bash
+yarn prepare-packages     # build every lib -> publish-ready libs/<lib>/dist
+yarn tarball              # build + `npm pack` each lib into artifacts/, with a contents report
+yarn tarball web          # a single lib
+```
+
+- **`yarn prepare-packages`** runs `build` across all libs (via the dispatcher, so `universal`
+  builds first). Each lib's `dist/` ends up publish-ready: a flattened `package.json` (dev-only
+  fields stripped, paths pointing next to the emitted files) plus the dual `.mjs`/`.cjs`/`.js`
+  bundles and `.d.ts` declarations. `scripts/prepare-dist.ts` per lib does the flattening.
+- **`yarn tarball`** (see `scripts/tarball.mjs`) builds each lib, runs `npm pack` from its
+  `dist/`, writes the `.tgz` into `artifacts/` (gitignored), and prints, per package: the npm
+  `name@version`, tarball path, file count, unpacked size, and the full file list — i.e. the exact
+  set of files npm would upload. Use it to review a package before `yarn publish:pkg <lib>`.
+
+> Naming note: the script is `prepare-packages`, not `prepare`. `prepare` is a reserved
+> npm/yarn lifecycle name that auto-runs on every `yarn install` (and before publish); using it
+> for a full monorepo build would fire on every install. Publish scripts (`publish:pkg`) already
+> run `yarn build` themselves, so the build still happens before an actual publish.
+
 Each wrapper dispatches to `nx run <project>:<task>` (see `scripts/run.mjs`). New libs under
 `libs/*` are discovered automatically — no change to the dispatcher needed.
 

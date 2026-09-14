@@ -1,6 +1,6 @@
 {
   "name": "react-hooks-global-states",
-  "version": "16.0.2",
+  "version": "16.0.3",
   "description": "A package to easily handle global state across your React components using hooks.",
   "main": "./bundle.cjs",
   "module": "./bundle.mjs",

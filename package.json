@@ -23,6 +23,8 @@
     "ts-check:tests": "node scripts/run.mjs ts-check:tests",
     "publish:pkg": "node scripts/run.mjs publish:pkg",
     "publish:beta": "node scripts/run.mjs publish:beta",
+    "prepare-packages": "node scripts/run.mjs build",
+    "tarball": "node scripts/tarball.mjs",
     "coverage": "node scripts/coverage-report.mjs",
     "graph": "nx graph"
   },
