@@ -1,0 +1,30 @@
+ARCHITECTURE.md
+  h_6029769cf9ac60 59-60,64-68,78-130
+eslint.config.mts
+  h_6029769cf9ac60 57-61
+libs/mobile/__test__/tsconfig.json
+  h_6029769cf9ac60 15-16,21
+libs/mobile/src/uniqueId.ts
+  h_6029769cf9ac60 1
+libs/shared-tests/uniqueId.default.test.ts
+  h_6029769cf9ac60 1-2
+libs/universal/package.json
+  h_6029769cf9ac60 81-82
+libs/web/__test__/tsconfig.json
+  h_6029769cf9ac60 11-12,17
+package.json
+  h_6029769cf9ac60 26
+scripts/coverage-report.mjs
+  h_6029769cf9ac60 1-139
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "fbba223f3ba64203e60b05d9df625dbf6ded7b7c",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
