@@ -39,6 +39,7 @@ const entryPoints: Record<string, string> = {
   shallowCompare: 'src/shallowCompare.ts',
   throwWrongKeyOnActionCollectionConfig: 'src/throwWrongKeyOnActionCollectionConfig.ts',
   uniqueId: 'src/uniqueId.ts',
+  actions: 'src/actions.ts',
   // react-native specific public subpath
   asyncStorageWrapper: 'src/asyncStorageWrapper.ts',
   // internal modules imported by GlobalStore (kept as sibling files, not public subpaths)

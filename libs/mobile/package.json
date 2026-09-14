@@ -27,6 +27,11 @@
       "import": "./createGlobalState.mjs",
       "require": "./createGlobalState.cjs"
     },
+    "./types": {
+      "types": "./types.d.ts",
+      "import": "./types.mjs",
+      "require": "./types.cjs"
+    },
     "./GlobalStore": {
       "types": "./GlobalStore.d.ts",
       "import": "./GlobalStore.mjs",
@@ -51,6 +56,11 @@
       "types": "./uniqueId.d.ts",
       "import": "./uniqueId.mjs",
       "require": "./uniqueId.cjs"
+    },
+    "./actions": {
+      "types": "./actions.d.ts",
+      "import": "./actions.mjs",
+      "require": "./actions.cjs"
     },
     "./package.json": "./package.json"
   },

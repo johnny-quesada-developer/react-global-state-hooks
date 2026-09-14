@@ -5,8 +5,14 @@
     "emitDeclarationOnly": true,
     "outDir": "./dist",
     "declarationDir": "./dist",
+    "rootDir": "./src",
     "sourceMap": false,
-    "noEmit": false
+    "noEmit": false,
+    "paths": {
+      "react-hooks-global-states": ["../universal/dist/index.d.ts"],
+      "react-hooks-global-states/*": ["../universal/dist/*"],
+      "*": ["src/*"]
+    }
   },
   "include": ["src/**/*", "types/**/*"],
   "exclude": ["node_modules", "lib", "__test__"]
