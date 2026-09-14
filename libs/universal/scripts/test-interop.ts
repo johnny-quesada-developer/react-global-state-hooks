@@ -27,12 +27,27 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
 const dist = path.resolve(root, 'dist');
-const tsxBin = path.resolve(root, 'node_modules/.bin/tsx');
+const workspaceRoot = path.resolve(root, '../..');
 
 function fail(msg: string): never {
   console.error(`\n[interop] FAIL: ${msg}`);
   process.exit(1);
 }
+
+// Yarn hoists most binaries to the workspace-root node_modules, but a package can also carry a
+// local copy. Prefer the lib-local bin, fall back to the workspace root — resolving whichever
+// actually exists instead of assuming a fixed location.
+function resolveBin(name: string): string {
+  const candidates = [
+    path.resolve(root, 'node_modules/.bin', name),
+    path.resolve(workspaceRoot, 'node_modules/.bin', name),
+  ];
+  const found = candidates.find((p) => fs.existsSync(p));
+  if (!found) fail(`could not find the \`${name}\` binary in ${candidates.join(' or ')}.`);
+  return found;
+}
+
+const tsxBin = resolveBin('tsx');
 
 function run(cmd: string, args: string[], cwd: string): string {
   return execFileSync(cmd, args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });

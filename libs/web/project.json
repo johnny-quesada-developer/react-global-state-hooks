@@ -14,9 +14,9 @@
       "executor": "nx:run-commands",
       "options": { "command": "yarn test", "cwd": "libs/web" }
     },
-    "test:src": {
+    "test:quick": {
       "executor": "nx:run-commands",
-      "options": { "command": "yarn test:src", "cwd": "libs/web" }
+      "options": { "command": "yarn test:quick", "cwd": "libs/web" }
     },
     "test:debug": {
       "executor": "nx:run-commands",
@@ -25,10 +25,6 @@
     "test:debug:no-watch": {
       "executor": "nx:run-commands",
       "options": { "command": "yarn test:debug:no-watch", "cwd": "libs/web" }
-    },
-    "test:quick": {
-      "executor": "nx:run-commands",
-      "options": { "command": "yarn test:quick", "cwd": "libs/web" }
     },
     "test:coverage": {
       "executor": "nx:run-commands",

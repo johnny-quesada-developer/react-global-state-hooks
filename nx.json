@@ -7,8 +7,8 @@
       "default",
       "!{projectRoot}/__test__/**/*",
       "!{projectRoot}/**/*.test.{ts,tsx}",
-      "!{projectRoot}/jest.config.js",
-      "!{projectRoot}/jestSetup.ts"
+      "!{projectRoot}/vitest.config.ts",
+      "!{projectRoot}/vitest.setup.ts"
     ],
     "sharedGlobals": [
       "{workspaceRoot}/tsconfig.base.json",
@@ -23,17 +23,9 @@
       "outputs": ["{projectRoot}/dist"]
     },
     "test": {
+      "//": "Tests run against TypeScript source (vitest resolves the base package + own alias to libs/*/src). No build is required, so this target has no build dependency. Built-artifact / CJS-shape correctness is covered separately by each lib's `test:interop`.",
       "cache": true,
-      "inputs": ["default", "^production"],
-      "dependsOn": ["build"]
-    },
-    "test:src": {
-      "cache": true,
-      "inputs": ["default", "^production"]
-    },
-    "test:logs": {
-      "cache": true,
-      "inputs": ["default", "^production"]
+      "inputs": ["default", "^default"]
     },
     "test:quick": {
       "cache": true,

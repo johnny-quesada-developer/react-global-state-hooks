@@ -34,7 +34,7 @@ describe('LocalStorage Basics', () => {
     onStateChanged.bind(storage);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    jest.spyOn(storage, 'onStateChanged' as any).mockImplementation((...parameters) => {
+    vi.spyOn(storage, 'onStateChanged' as any).mockImplementation((...parameters) => {
       onStateChanged(...parameters);
     });
 
@@ -45,7 +45,7 @@ describe('LocalStorage Basics', () => {
 
     const [parameters] = storage.subscribers;
     const { onStoreChange } = parameters;
-    const callbackWrapper = jest.fn(onStoreChange);
+    const callbackWrapper = vi.fn(onStoreChange);
 
     parameters.onStoreChange = callbackWrapper;
 
@@ -79,7 +79,7 @@ describe('LocalStorage Basics', () => {
 
     localStorage.setItem('mapData', formatToStore(envelope));
 
-    const validatorSpy = jest.fn();
+    const validatorSpy = vi.fn();
 
     const storage = new GlobalStore(new Map(), {
       localStorage: {
@@ -182,7 +182,7 @@ describe('LocalStorage Basics', () => {
 
     localStorage.setItem('mapData', formatToStore(envelope));
 
-    const validatorSpy = jest.fn();
+    const validatorSpy = vi.fn();
 
     const storage = new GlobalStore(new Map(), {
       localStorage: {
@@ -214,7 +214,7 @@ describe('LocalStorage Basics', () => {
 
     localStorage.setItem('mapData', formatToStore(envelope));
 
-    const migratorSpy = jest.fn();
+    const migratorSpy = vi.fn();
 
     const storage = new GlobalStore(new Map(), {
       localStorage: {
@@ -288,7 +288,7 @@ describe('LocalStorage Basics', () => {
 
     localStorage.setItem('mapData', formatToStore(envelope));
 
-    const migratorSpy = jest.fn();
+    const migratorSpy = vi.fn();
 
     const storage = new GlobalStore(new Map(), {
       localStorage: {
@@ -362,7 +362,7 @@ describe('LocalStorage Basics', () => {
 
     localStorage.setItem('mapData', formatToStore(envelope));
 
-    jest.spyOn(console, 'error').mockImplementation(jest.fn());
+    vi.spyOn(console, 'error').mockImplementation(vi.fn());
 
     const store = new GlobalStore(new Map(), {
       localStorage: {
@@ -389,7 +389,7 @@ describe('LocalStorage Basics', () => {
     // simulate corrupted JSON
     localStorage.setItem('mapData', '{a/corrupted_json}');
 
-    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     const store = new GlobalStore(new Map(), {
       localStorage: {
@@ -420,7 +420,7 @@ describe('LocalStorage Basics', () => {
 
     localStorage.setItem('mapData', formatToStore(envelope));
 
-    const errorSpy = jest.fn();
+    const errorSpy = vi.fn();
 
     const store = new GlobalStore(new Map(), {
       localStorage: {
@@ -579,8 +579,8 @@ describe('localStorage selector', () => {
 describe('localStorage adapter', () => {
   it('should use custom adapter for get and set operations', () => {
     const customStorage: Record<string, number> = {};
-    const getItemSpy = jest.fn((key: string) => customStorage[key]);
-    const setItemSpy = jest.fn((key: string, value: number) => {
+    const getItemSpy = vi.fn((key: string) => customStorage[key]);
+    const setItemSpy = vi.fn((key: string, value: number) => {
       customStorage[key] = value;
     });
 
@@ -618,7 +618,7 @@ describe('localStorage adapter', () => {
             },
           },
           selector: (state) => ({ a: state.a }),
-          versioning: { version: 2, migrator: jest.fn() },
+          versioning: { version: 2, migrator: vi.fn() },
         },
       },
     );
@@ -689,7 +689,7 @@ describe('public storage methods', () => {
 
 describe('error handling during state changes', () => {
   it('should handle errors when setItem fails during state update', () => {
-    const errorSpy = jest.fn();
+    const errorSpy = vi.fn();
 
     const store = new GlobalStore(1, {
       localStorage: {
@@ -732,8 +732,8 @@ describe('getter subscriptions custom global state', () => {
       b: 2,
     });
 
-    const subscriptionSpy = jest.fn();
-    const subscriptionDerivateSpy = jest.fn();
+    const subscriptionSpy = vi.fn();
+    const subscriptionDerivateSpy = vi.fn();
 
     const subscriptions = [
       useState.subscribe((state) => {
@@ -827,7 +827,7 @@ describe('untested use cases - minimal coverage', () => {
 
   describe('error handling during state changes', () => {
     it('should handle setItem errors during state update', () => {
-      const errorSpy = jest.fn();
+      const errorSpy = vi.fn();
 
       const store = new GlobalStore(1, {
         localStorage: {

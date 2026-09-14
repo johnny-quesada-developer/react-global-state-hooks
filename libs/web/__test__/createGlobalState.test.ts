@@ -4,7 +4,7 @@ import it from './$it';
 
 describe('createGlobalState - additional edge cases', () => {
   it('should handle function initializers correctly', ({ renderHook }) => {
-    const initializer = jest.fn(() => ({ count: 10, name: 'test' }));
+    const initializer = vi.fn(() => ({ count: 10, name: 'test' }));
     const useState = createGlobalState(initializer);
 
     expect(initializer).toHaveBeenCalledTimes(1);
@@ -16,7 +16,7 @@ describe('createGlobalState - additional edge cases', () => {
   });
 
   it('should handle metadata as a function initializer', ({ renderHook }) => {
-    const metadataInitializer = jest.fn(() => ({ timestamp: Date.now(), version: 1 }));
+    const metadataInitializer = vi.fn(() => ({ timestamp: Date.now(), version: 1 }));
     const useState = createGlobalState(0, {
       metadata: metadataInitializer,
     });
@@ -304,7 +304,7 @@ describe('createGlobalState - additional edge cases', () => {
 
   it('should handle createObservable for subscriptions', () => {
     const useState = createGlobalState({ count: 0 });
-    const spy = jest.fn();
+    const spy = vi.fn();
 
     const observable = useState.createObservable((state) => state.count);
     const unsubscribe = observable(spy);
@@ -331,7 +331,7 @@ describe('createGlobalState - additional edge cases', () => {
 
   it('should handle subscribe without selector', () => {
     const useState = createGlobalState({ value: 1 });
-    const spy = jest.fn();
+    const spy = vi.fn();
 
     const unsubscribe = useState.subscribe(spy);
 
@@ -349,7 +349,7 @@ describe('createGlobalState - additional edge cases', () => {
 
   it('should handle subscribe with selector and callback', () => {
     const useState = createGlobalState({ a: 1, b: 2 });
-    const spy = jest.fn();
+    const spy = vi.fn();
 
     const unsubscribe = useState.subscribe((state) => state.a, spy);
 
@@ -449,8 +449,8 @@ describe('createGlobalState - additional edge cases', () => {
 
   it('should create independent observable chains', () => {
     const useState = createGlobalState({ a: 1, b: 2, c: 3 });
-    const spy1 = jest.fn();
-    const spy2 = jest.fn();
+    const spy1 = vi.fn();
+    const spy2 = vi.fn();
 
     const obs1 = useState.createObservable((s) => s.a);
     const obs2 = useState.createObservable((s) => s.b);
@@ -497,7 +497,7 @@ describe('createGlobalState - additional edge cases', () => {
   });
 
   it('should handle validation errors in localStorage', () => {
-    const errorSpy = jest.fn();
+    const errorSpy = vi.fn();
 
     act(() => {
       localStorage.setItem('error-validation-key-functional', JSON.stringify({ some: 'data' }));
@@ -506,7 +506,7 @@ describe('createGlobalState - additional edge cases', () => {
     const useState = createGlobalState(0, {
       localStorage: {
         key: 'error-validation-key-functional',
-        validator: jest.fn(() => {
+        validator: vi.fn(() => {
           throw new Error('Validation failed');
         }),
         onError: () => {

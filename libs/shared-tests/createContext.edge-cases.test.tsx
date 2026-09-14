@@ -6,8 +6,8 @@ import it from './$it';
 
 describe('createContext - Provider Lifecycle', () => {
   it('should execute onMounted callback from contextArgs', ({ renderHook, strict }) => {
-    const onMountedSpy = jest.fn();
-    const cleanupSpy = jest.fn();
+    const onMountedSpy = vi.fn();
+    const cleanupSpy = vi.fn();
 
     const store = createContext(0, {
       callbacks: {
@@ -34,7 +34,7 @@ describe('createContext - Provider Lifecycle', () => {
   });
 
   it('should execute onUnMount callback when provider unmounts', ({ renderHook, strict }) => {
-    const onUnMountSpy = jest.fn();
+    const onUnMountSpy = vi.fn();
 
     const store = createContext(0, {
       callbacks: {
@@ -58,7 +58,7 @@ describe('createContext - Provider Lifecycle', () => {
 
   it('should handle provider unmounting with active subscriptions', ({ renderHook }) => {
     const store = createContext(0);
-    const subscribeSpy = jest.fn();
+    const subscribeSpy = vi.fn();
 
     const { context, wrapper } = store.Provider.makeProviderWrapper();
 
@@ -83,8 +83,8 @@ describe('createContext - Provider Lifecycle', () => {
   });
 
   it('should handle provider re-mounting', ({ renderHook, strict }) => {
-    const onInitSpy = jest.fn();
-    const onMountedSpy = jest.fn();
+    const onInitSpy = vi.fn();
+    const onMountedSpy = vi.fn();
 
     const store = createContext(0, {
       callbacks: {
@@ -138,7 +138,7 @@ describe('createContext - Provider Lifecycle', () => {
 
 describe('createContext - Value Initialization', () => {
   it('should handle valueArg as function returning state', ({ renderHook }) => {
-    const stateFactory = jest.fn(() => ({ count: 10 }));
+    const stateFactory = vi.fn(() => ({ count: 10 }));
     const store = createContext(stateFactory);
 
     const { result } = renderHook(() => store.use(), {
@@ -198,7 +198,7 @@ describe('createContext - Value Initialization', () => {
   });
 
   it('should handle metadata as function in contextArgs', ({ renderHook }) => {
-    const metadataFactory = jest.fn(() => ({ initialized: true, version: 1 }));
+    const metadataFactory = vi.fn(() => ({ initialized: true, version: 1 }));
 
     const store = createContext(0, {
       metadata: metadataFactory,
@@ -216,11 +216,11 @@ describe('createContext - Value Initialization', () => {
 describe('createContext - Observables', () => {
   it('should handle isEqual option for context observable', ({ renderHook }) => {
     const store = createContext({ count: 0, data: { value: 'test' } });
-    const subscribeSpy = jest.fn();
+    const subscribeSpy = vi.fn();
 
     const { context, wrapper } = store.Provider.makeProviderWrapper();
 
-    const customIsEqual = jest.fn((a, b) => a.value === b.value);
+    const customIsEqual = vi.fn((a, b) => a.value === b.value);
 
     const { result } = renderHook(
       () =>
@@ -252,11 +252,11 @@ describe('createContext - Observables', () => {
 
   it('should handle isEqualRoot option for context observable', ({ renderHook }) => {
     const store = createContext({ count: 0 });
-    const subscribeSpy = jest.fn();
+    const subscribeSpy = vi.fn();
 
     const { context, wrapper } = store.Provider.makeProviderWrapper();
 
-    const customIsEqualRoot = jest.fn((a, b) => a.count === b.count);
+    const customIsEqualRoot = vi.fn((a, b) => a.count === b.count);
 
     const { result } = renderHook(
       () =>
@@ -320,8 +320,8 @@ describe('createContext - Observables', () => {
     expect(result.current.obsB.getState()).toBe(2);
 
     // Subscribe to track updates
-    const spyA = jest.fn();
-    const spyB = jest.fn();
+    const spyA = vi.fn();
+    const spyB = vi.fn();
 
     const unsubA = result.current.obsA.subscribe(spyA);
     const unsubB = result.current.obsB.subscribe(spyB);
@@ -372,7 +372,7 @@ describe('createContext - Selector Hooks', () => {
     const { wrapper } = store.Provider.makeProviderWrapper();
 
     const multiplier = { current: 2 };
-    const selectorSpy = jest.fn((state) => state.count * multiplier.current);
+    const selectorSpy = vi.fn((state) => state.count * multiplier.current);
 
     const useMultiplied = store.use.createSelectorHook(selectorSpy, {
       name: 'multipliedHook',
@@ -463,8 +463,8 @@ describe('createContext - Error Cases', () => {
 
 describe('createContext - makeProviderWrapper', () => {
   it('should merge onCreated callbacks from parent and child options', () => {
-    const parentOnCreatedSpy = jest.fn();
-    const childOnCreatedSpy = jest.fn();
+    const parentOnCreatedSpy = vi.fn();
+    const childOnCreatedSpy = vi.fn();
 
     const store = createContext(0, {
       callbacks: {
@@ -483,8 +483,8 @@ describe('createContext - makeProviderWrapper', () => {
   });
 
   it('should handle onMounted callback in wrapper options', () => {
-    const onMountedSpy = jest.fn();
-    const cleanupSpy = jest.fn();
+    const onMountedSpy = vi.fn();
+    const cleanupSpy = vi.fn();
 
     const store = createContext(0);
 
@@ -538,7 +538,7 @@ describe('createContext - makeProviderWrapper', () => {
   });
 
   it('should handle wrapper with value and onCreated props', () => {
-    const onCreatedSpy = jest.fn();
+    const onCreatedSpy = vi.fn();
 
     const store = createContext(0);
 
@@ -590,10 +590,10 @@ describe('createContext - Display Names', () => {
 
 describe('createContext - Complex Scenarios', () => {
   it('should handle context with complex state and multiple lifecycle hooks', ({ renderHook }) => {
-    const onInitSpy = jest.fn();
-    const onCreatedSpy = jest.fn();
-    const onMountedSpy = jest.fn();
-    const onStateChangedSpy = jest.fn();
+    const onInitSpy = vi.fn();
+    const onCreatedSpy = vi.fn();
+    const onMountedSpy = vi.fn();
+    const onStateChangedSpy = vi.fn();
 
     const store = createContext(
       { users: [] as { id: number; name: string }[], selectedId: null as number | null },
@@ -674,7 +674,7 @@ describe('createContext - Complex Scenarios', () => {
     renderHook,
     strict,
   }) => {
-    const valueCallback = jest.fn(() => 42);
+    const valueCallback = vi.fn(() => 42);
     const store = createContext(0);
 
     const { result, rerender } = renderHook(store.use, {
@@ -709,7 +709,7 @@ describe('createContext - Complex Scenarios', () => {
     let value = 10;
     let providerRenderCount = 0;
 
-    const onCreatedSpy = jest.fn();
+    const onCreatedSpy = vi.fn();
     const store = createContext(0);
 
     const { result, rerender } = renderHook(

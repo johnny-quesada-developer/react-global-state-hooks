@@ -51,7 +51,7 @@ describe('createContext', () => {
     });
 
     const { context, wrapper } = store.Provider.makeProviderWrapper();
-    const renderSpy = jest.fn();
+    const renderSpy = vi.fn();
 
     const Component = () => {
       store.use.actions();
@@ -150,7 +150,7 @@ describe('createContext', () => {
   });
 
   it('should correctly export actions hook from the context', ({ renderHook }) => {
-    const spy = jest.fn();
+    const spy = vi.fn();
 
     const store = createContext(
       { count: 0 },
@@ -201,7 +201,7 @@ describe('createContext', () => {
 
     const { result } = renderHook(() => store.use.observable((state) => state.count), { wrapper });
 
-    const spy = jest.fn();
+    const spy = vi.fn();
 
     result.current.subscribe(spy);
 
@@ -428,7 +428,7 @@ describe('createContext', () => {
       wrapper,
     });
 
-    jest.spyOn(context.current.actions, 'increase').mockImplementation(() => {
+    vi.spyOn(context.current.actions, 'increase').mockImplementation(() => {
       act(() => {
         context.current.setState((prev) => prev + 10);
       });
@@ -478,10 +478,10 @@ describe('createContext', () => {
   });
 
   it('should correctly execute the lifecycle callbacks', async ({ renderHook, strict }) => {
-    const initSpy = jest.fn();
-    const onMountedSpy = jest.fn();
-    const stateChangedSpy = jest.fn();
-    const unmountSpy = jest.fn();
+    const initSpy = vi.fn();
+    const onMountedSpy = vi.fn();
+    const stateChangedSpy = vi.fn();
+    const unmountSpy = vi.fn();
 
     const store = createContext(
       { countA: 1, countB: 2 },

@@ -72,19 +72,20 @@
   ],
   "scripts": {
     "format": "prettier --write .  --log-level silent && yarn lint:fix",
-    "test": "yarn build && yarn jest",
-    "test:src": "TEST_TARGET=src jest",
-    "test:debug:no-watch": "node --inspect-brk ../../node_modules/jest/bin/jest.js --no-watchman --runInBand",
-    "test:debug": "node --inspect-brk ../../node_modules/jest/bin/jest.js --watch --runInBand",
-    "test:quick": "yarn test --no-coverage --maxWorkers=4 -c --no-watchman -u",
-    "test:coverage": "yarn test --maxWorkers=4 -c --colors --no-watchman --verbose --coverage",
+    "test": "yarn ts-check:tests && vitest run",
+    "test:watch": "vitest",
+    "test:quick": "vitest run",
+    "test:debug": "vitest --inspect-brk --no-file-parallelism",
+    "test:debug:no-watch": "vitest run --inspect-brk --no-file-parallelism",
+    "test:coverage": "vitest run --coverage",
     "build": "yarn ts-check && yarn clean && tsc -p tsconfig.build.json && tsx esbuild.config.ts && tsx scripts/prepare-dist.ts",
     "publish:pkg": "yarn build && cd dist && npm publish --tag latest --registry https://registry.npmjs.org/",
     "publish:beta": "yarn build && cd dist && npm publish --tag beta --registry https://registry.npmjs.org/",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix --max-warnings=0",
     "clean": "rm -rf dist coverage",
-    "ts-check": "tsc -p tsconfig.json --noEmit"
+    "ts-check": "tsc -p tsconfig.json --noEmit",
+    "ts-check:tests": "tsc -p __test__/tsconfig.json --noEmit"
   },
   "repository": {
     "type": "git",

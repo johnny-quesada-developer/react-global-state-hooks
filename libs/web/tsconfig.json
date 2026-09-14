@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "./",
     "declarationDir": "./",
-    "types": ["jest", "node", "react"],
+    "types": ["node", "react"],
     "typeRoots": ["../../node_modules/@types", "./types"],
     "baseUrl": ".",
     "paths": {

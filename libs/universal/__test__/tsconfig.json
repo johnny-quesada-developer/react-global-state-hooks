@@ -5,10 +5,15 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "baseUrl": "..",
+    // The parent config sets `typeRoots` to only `@types` + local `./types`, which prevents
+    // TS from finding `vitest/globals` (it lives at `node_modules/vitest`, not under `@types`).
+    // Include the plain `node_modules` root here so the vitest globals types resolve.
+    "typeRoots": ["../../../node_modules/@types", "../../../node_modules", "../types"],
+    "types": ["vitest/globals", "node", "react"],
     "paths": {
       // The shared suite imports the subject under test via the neutral alias; type-check it
-      // against THIS variant's `src` (identical types to `dist`). Jest maps the same alias to
-      // `src` or `dist` at runtime (see jest.config.js / TEST_TARGET).
+      // against THIS variant's `src`. Vitest maps the same alias to `src` at runtime (see
+      // vitest.config.ts).
       "global-state-hooks-under-test": ["./src"],
       "global-state-hooks-under-test/*": ["./src/*"]
     }

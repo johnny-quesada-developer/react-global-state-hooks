@@ -14,7 +14,7 @@
  * So for universal/web (no reserved keys) it is an exact match; for the react-native variant it
  * is "exactly `expected` plus its known async-storage fields, and nothing else".
  *
- * Each variant declares its reserved keys from its `jestSetup.ts`:
+ * Each variant declares its reserved keys from its `vitest.setup.ts`:
  *   globalThis.__VARIANT_METADATA_KEYS__ = ['isAsyncStorageReady', 'asyncStorageKey'];
  * Variants that add nothing can leave it unset (treated as []).
  */

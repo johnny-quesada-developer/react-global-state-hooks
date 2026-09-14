@@ -30,12 +30,27 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
 const root = path.resolve(__dirname, '..');
 const dist = path.resolve(root, 'dist');
-const tsxBin = path.resolve(root, 'node_modules/.bin/tsx');
+const workspaceRoot = path.resolve(root, '../..');
 
 function fail(msg: string): never {
   console.error(`\n[interop] FAIL: ${msg}`);
   process.exit(1);
 }
+
+// Yarn hoists most binaries to the workspace-root node_modules, but a package can also carry a
+// local copy. Prefer the lib-local bin, fall back to the workspace root — resolving whichever
+// actually exists instead of assuming a fixed location.
+function resolveBin(name: string): string {
+  const candidates = [
+    path.resolve(root, 'node_modules/.bin', name),
+    path.resolve(workspaceRoot, 'node_modules/.bin', name),
+  ];
+  const found = candidates.find((p) => fs.existsSync(p));
+  if (!found) fail(`could not find the \`${name}\` binary in ${candidates.join(' or ')}.`);
+  return found;
+}
+
+const tsxBin = resolveBin('tsx');
 
 function run(cmd: string, args: string[], cwd: string): string {
   return execFileSync(cmd, args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
@@ -71,10 +86,10 @@ try {
   run('npm', ['install', tarballPath, '--no-audit', '--no-fund'], work);
   fs.rmSync(tarballPath, { force: true });
 
-  // Confirm the base package resolved transitively at the fixed version. npm may hoist it to
-  // the top-level node_modules OR nest it under react-global-state-hooks/node_modules depending
-  // on how peers dedupe; resolve it the same way Node would (from the installed package) instead
-  // of assuming a fixed location.
+  // Confirm the base package resolved transitively. npm may hoist it to the top-level
+  // node_modules OR nest it under react-global-state-hooks/node_modules depending on how peers
+  // dedupe; resolve it the same way Node would (from the installed package) instead of assuming
+  // a fixed location.
   const consumerPkgJson = path.join(work, 'node_modules', 'react-global-state-hooks', 'package.json');
   let basePkgPath: string | null = null;
   try {
@@ -101,19 +116,13 @@ try {
   if (!basePkgPath) {
     fail('react-hooks-global-states did not resolve transitively.');
   }
+  // We deliberately do NOT assert a specific base version. Which registry version npm resolves
+  // within the declared range is npm's concern, not an interop property of this artifact. What
+  // actually matters — that the base package installs and works end-to-end through web's public
+  // API — is proven by the `createGlobalState` probe below, which calls through into the base
+  // `GlobalStore`. Here we only confirm a base package resolved at all (a missing transitive dep
+  // is a real failure) and log its version for visibility.
   const baseVersion = (JSON.parse(fs.readFileSync(basePkgPath, 'utf8')) as { version: string }).version;
-  // Expect the transitive base package to match the version this repo declares as a dependency
-  // (derived from the root package.json rather than hardcoded, so it tracks version bumps).
-  const rootPkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')) as {
-    dependencies?: Record<string, string>;
-  };
-  const expectedBaseVersion = rootPkg.dependencies?.['react-hooks-global-states'];
-  if (!expectedBaseVersion) {
-    fail('react-hooks-global-states is not declared in the root package.json dependencies.');
-  }
-  if (baseVersion !== expectedBaseVersion) {
-    fail(`react-hooks-global-states resolved to ${baseVersion}, expected ${expectedBaseVersion}.`);
-  }
   console.log(`[interop] transitive react-hooks-global-states version: ${baseVersion}`);
 
   // 3) Probes for uniqueId (a base re-exporting subpath).

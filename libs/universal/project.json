@@ -13,13 +13,9 @@
       "executor": "nx:run-commands",
       "options": { "command": "yarn test", "cwd": "libs/universal" }
     },
-    "test:src": {
+    "test:quick": {
       "executor": "nx:run-commands",
-      "options": { "command": "yarn test:src", "cwd": "libs/universal" }
-    },
-    "test:logs": {
-      "executor": "nx:run-commands",
-      "options": { "command": "yarn test:logs", "cwd": "libs/universal" }
+      "options": { "command": "yarn test:quick", "cwd": "libs/universal" }
     },
     "test:debug": {
       "executor": "nx:run-commands",
@@ -28,10 +24,6 @@
     "test:debug:no-watch": {
       "executor": "nx:run-commands",
       "options": { "command": "yarn test:debug:no-watch", "cwd": "libs/universal" }
-    },
-    "test:quick": {
-      "executor": "nx:run-commands",
-      "options": { "command": "yarn test:quick", "cwd": "libs/universal" }
     },
     "test:coverage": {
       "executor": "nx:run-commands",

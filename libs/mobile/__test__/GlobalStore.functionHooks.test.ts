@@ -140,7 +140,7 @@ describe("with actions", () => {
 
 describe("with configuration callbacks", () => {
   it("should execute onInit callback", ({ renderHook }) => {
-    const onInitSpy = jest.fn(({ setMetadata }) => {
+    const onInitSpy = vi.fn(({ setMetadata }) => {
       setMetadata({
         test: true,
       });
@@ -165,7 +165,7 @@ describe("with configuration callbacks", () => {
   });
 
   it("should execute onSubscribed callback every time a subscriber is added", ({ renderHook, strict }) => {
-    const onSubscribedSpy = jest.fn();
+    const onSubscribedSpy = vi.fn();
 
     const useCount = createGlobalState(
       {
@@ -196,7 +196,7 @@ describe("with configuration callbacks", () => {
   });
 
   it("should execute onStateChanged callback every time the state is changed", ({ renderHook }) => {
-    const onStateChangedSpy = jest.fn();
+    const onStateChangedSpy = vi.fn();
 
     const useCount = createGlobalState(
       { a: true },
@@ -236,7 +236,7 @@ describe("with configuration callbacks", () => {
   it("should execute computePreventStateChange callback before state is changed and continue if it returns false", ({
     renderHook,
   }) => {
-    const computePreventStateChangeSpy = jest.fn();
+    const computePreventStateChangeSpy = vi.fn();
 
     const useCount = createGlobalState(0, {
       callbacks: {
@@ -266,7 +266,7 @@ describe("with configuration callbacks", () => {
   it("should execute computePreventStateChange callback before state is changed and prevent state change if it returns true", ({
     renderHook,
   }) => {
-    const computePreventStateChangeSpy = jest.fn();
+    const computePreventStateChangeSpy = vi.fn();
 
     const useCount = createGlobalState(0, {
       callbacks: {
@@ -324,13 +324,13 @@ describe("custom global hooks", () => {
 
     const { promise: mainPromise, ...tools } = createDecoupledPromise();
 
-    const onStateChangedSpy = jest.fn(({ getState }) => {
+    const onStateChangedSpy = vi.fn(({ getState }) => {
       const newState = getState();
 
       fakeAsyncStorage.setItem("items", formatToStore(newState));
     });
 
-    const onInitSpy = jest.fn(async ({ setMetadata, setState }) => {
+    const onInitSpy = vi.fn(async ({ setMetadata, setState }) => {
       const stored = (await fakeAsyncStorage.getItem("items")) ?? null;
 
       setMetadata({
@@ -390,13 +390,13 @@ describe("custom global hooks", () => {
 
     const { promise: mainPromise, ...tools } = createDecoupledPromise();
 
-    const onStateChangedSpy = jest.fn(({ getState }) => {
+    const onStateChangedSpy = vi.fn(({ getState }) => {
       const newState = getState();
 
       fakeAsyncStorage.setItem("items", formatToStore(newState));
     });
 
-    const onInitSpy = jest.fn(async ({ setMetadata, setState }) => {
+    const onInitSpy = vi.fn(async ({ setMetadata, setState }) => {
       const stored = (await fakeAsyncStorage.getItem("items")) ?? null;
 
       setMetadata({
@@ -462,7 +462,7 @@ describe("custom global hooks", () => {
 
     const { promise: mainPromise, ...tools } = createDecoupledPromise();
 
-    const onStateChangedSpy = jest.fn(({ getState }) => {
+    const onStateChangedSpy = vi.fn(({ getState }) => {
       const newState = getState();
 
       fakeAsyncStorage.setItem("items", formatToStore(newState));
@@ -470,7 +470,7 @@ describe("custom global hooks", () => {
       tools.resolve();
     });
 
-    const onInitSpy = jest.fn(async ({ setMetadata, setState }) => {
+    const onInitSpy = vi.fn(async ({ setMetadata, setState }) => {
       const stored = (await fakeAsyncStorage.getItem("items")) ?? null;
 
       setMetadata({
@@ -524,7 +524,7 @@ describe("custom global hooks", () => {
   it("should be able to access custom actions from other actions", ({ renderHook }) => {
     expect.assertions(9);
 
-    const logSpy = jest.fn();
+    const logSpy = vi.fn();
 
     const useCount = createGlobalState(1, {
       metadata: {
@@ -590,7 +590,7 @@ describe("custom global hooks", () => {
       b: 2,
     });
 
-    const selector = jest.fn((state: { a: number; b: number }) => state.a + state.b);
+    const selector = vi.fn((state: { a: number; b: number }) => state.a + state.b);
 
     const { result } = renderHook(() => useCount(selector));
 
@@ -620,7 +620,7 @@ describe("custom global hooks", () => {
       c: [1, 2, { a: 1 }],
     });
 
-    const selector = jest.fn(({ a, c }: { a: number; c: unknown[] }) => ({
+    const selector = vi.fn(({ a, c }: { a: number; c: unknown[] }) => ({
       a,
       c,
     }));
@@ -690,8 +690,8 @@ describe("getter subscriptions", () => {
       b: 2,
     });
 
-    const subscriptionSpy = jest.fn();
-    const subscriptionDerivateSpy = jest.fn();
+    const subscriptionSpy = vi.fn();
+    const subscriptionDerivateSpy = vi.fn();
 
     const subscriptions = [
       useHook.subscribe((state) => {
@@ -701,7 +701,7 @@ describe("getter subscriptions", () => {
         (state) => {
           return state.a;
         },
-        jest.fn((derivate) => {
+        vi.fn((derivate) => {
           subscriptionDerivateSpy(derivate);
         }),
       ),

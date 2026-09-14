@@ -3,15 +3,13 @@
  * Combined test-coverage report across the library variants.
  *
  * Usage:
- *   yarn coverage                 # every lib under libs/* that has a jest.config.js, src mode
+ *   yarn coverage                 # every lib under libs/* that has a vitest.config.ts
  *   yarn coverage web             # a single project
  *   yarn coverage web universal   # a subset
- *   yarn coverage --dist          # run against the built dist/ artifact instead of src
  *
- * By default this runs each project's jest suite against its TypeScript SOURCE
- * (TEST_TARGET=src) with coverage collection, which is the meaningful measure — coverage
- * instrumentation on the minified dist bundle is not informative. Pass --dist to measure the
- * built artifact instead.
+ * Each project runs its Vitest suite against its TypeScript SOURCE with coverage collection,
+ * which is the meaningful measure — coverage instrumentation on the minified dist bundle is not
+ * informative (and the suites run against src by design; see ARCHITECTURE.md).
  *
  * For each project it collects a coverage json-summary, then prints one combined table plus a
  * weighted total across all measured projects.
@@ -28,18 +26,17 @@ const libsDir = path.join(workspaceRoot, 'libs');
 
 const METRICS = ['statements', 'branches', 'functions', 'lines'];
 
-/** Discover lib projects that actually run jest (have a jest.config.js). */
+/** Discover lib projects that actually run Vitest (have a vitest.config.ts). */
 function discoverProjects() {
   if (!fs.existsSync(libsDir)) return [];
   return fs
     .readdirSync(libsDir, { withFileTypes: true })
-    .filter((e) => e.isDirectory() && fs.existsSync(path.join(libsDir, e.name, 'jest.config.js')))
+    .filter((e) => e.isDirectory() && fs.existsSync(path.join(libsDir, e.name, 'vitest.config.ts')))
     .map((e) => e.name)
     .sort();
 }
 
 const args = process.argv.slice(2);
-const useDist = args.includes('--dist');
 const requested = args.filter((a) => !a.startsWith('-'));
 
 const allProjects = discoverProjects();
@@ -50,8 +47,7 @@ if (!projects.length) {
   process.exit(1);
 }
 
-const target = useDist ? 'dist' : 'src';
-const jestBin = path.join(workspaceRoot, 'node_modules', '.bin', 'jest');
+const vitestBin = path.join(workspaceRoot, 'node_modules', '.bin', 'vitest');
 
 /** Run one project's coverage and return its summary totals, or null on failure. */
 function runProjectCoverage(project) {
@@ -59,19 +55,20 @@ function runProjectCoverage(project) {
   const outDir = fs.mkdtempSync(path.join(os.tmpdir(), `cov-${project}-`));
 
   const result = spawnSync(
-    jestBin,
+    vitestBin,
     [
+      'run',
       '--coverage',
-      '--coverageReporters=json-summary',
-      `--coverageDirectory=${outDir}`,
+      '--coverage.provider=v8',
+      '--coverage.reporter=json-summary',
+      `--coverage.reportsDirectory=${outDir}`,
       '--silent',
-      '--ci',
     ],
     {
       cwd,
       encoding: 'utf8',
       stdio: ['ignore', 'ignore', 'inherit'],
-      env: { ...process.env, TEST_TARGET: target },
+      env: { ...process.env },
     },
   );
 
@@ -92,7 +89,7 @@ const fmt = (n) => `${n.toFixed(2)}%`;
 const pad = (s, n) => String(s).padEnd(n);
 const padStart = (s, n) => String(s).padStart(n);
 
-console.log(`\nCoverage report (target: ${target})\n`);
+console.log(`\nCoverage report (target: src)\n`);
 
 const rows = [];
 const aggregate = Object.fromEntries(METRICS.map((m) => [m, { covered: 0, total: 0 }]));

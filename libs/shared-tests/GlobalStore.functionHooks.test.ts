@@ -1,5 +1,6 @@
 import { expectMetadata } from './expectMetadata';
 import React from 'react';
+import type { Mock } from 'vitest';
 import { createDecoupledPromise } from 'easy-cancelable-promise';
 import { formatFromStore, formatToStore } from 'json-storage-formatter';
 import { getFakeAsyncStorage } from './getFakeAsyncStorage';
@@ -8,6 +9,18 @@ import it from './$it';
 
 import { createGlobalState, GlobalStore, StoreTools, InferAPI } from 'global-state-hooks-under-test';
 
+// The subject imports `useSyncExternalStore` as a NAMED binding from 'react' and calls it
+// directly. To count its calls under Vitest (esbuild keeps named imports as live bindings, so a
+// namespace `vi.spyOn(React, ...)` would not intercept it), wrap the real hook in a persistent
+// spy at the module boundary. Everything else in 'react' stays the real implementation.
+vi.mock('react', async (importActual) => {
+  const actual = await importActual<typeof import('react')>();
+  const useSyncExternalStore = vi.fn(actual.useSyncExternalStore);
+  // Expose the spy on BOTH the named export and the default (the test uses `import React from
+  // 'react'`, the subject uses `import { useSyncExternalStore } from 'react'`).
+  return { ...actual, useSyncExternalStore, default: { ...actual, useSyncExternalStore } };
+});
+
 describe('createGlobalState', () => {
   it('should not recompute selection when deps are stable or shallow-equal, but recompute when deps change', ({
     renderHook,
@@ -15,7 +28,7 @@ describe('createGlobalState', () => {
   }) => {
     const store = new GlobalStore({ a: 1 });
 
-    const partialUpdateSpy = jest.spyOn(store, 'partialUpdateSubscription');
+    const partialUpdateSpy = vi.spyOn(store, 'partialUpdateSubscription');
     const renderCountRef: { current: number } = { current: 0 };
 
     const deps1 = [1];
@@ -125,7 +138,9 @@ describe('createGlobalState', () => {
     expect(storeTools.setMetadata).toBeInstanceOf(Function);
     expect(storeTools.subscribe).toBeInstanceOf(Function);
 
-    const spy = jest.spyOn(React, 'useSyncExternalStore');
+    // `useSyncExternalStore` is a persistent spy via the `vi.mock('react', ...)` above.
+    const spy = React.useSyncExternalStore as unknown as Mock;
+    spy.mockClear();
 
     const { result, rerender } = renderHook(() => useValue());
     let [state, setState, metadata] = result.current;
@@ -160,8 +175,8 @@ describe('createGlobalState', () => {
    * should reset the store, clear subscriptions, and re-run onInit
    */
   it('should reset the store, clear subscriptions, and re-run onInit', async ({ renderHook }) => {
-    const onInitSpy = jest.fn();
-    const onInitCleanupSpy = jest.fn();
+    const onInitSpy = vi.fn();
+    const onInitCleanupSpy = vi.fn();
 
     const initialState = { count: 0 };
     const metadata = { test: true };
@@ -269,7 +284,7 @@ describe('createGlobalState', () => {
   });
 
   it('should reset multiple times in succession', async () => {
-    const onInitSpy = jest.fn();
+    const onInitSpy = vi.fn();
 
     const store$ = createGlobalState(0, {
       callbacks: {
@@ -331,7 +346,7 @@ describe('createGlobalState', () => {
   });
 
   it('should reset and call cleanup functions', async () => {
-    const cleanupSpy = jest.fn();
+    const cleanupSpy = vi.fn();
     let onInitCallCount = 0;
 
     const store$ = createGlobalState(0, {
@@ -370,7 +385,7 @@ describe('createGlobalState', () => {
   });
 
   it('should dispose and prevent state changes from triggering subscriptions', ({ renderHook }) => {
-    const subscribeSpy = jest.fn();
+    const subscribeSpy = vi.fn();
     const store$ = createGlobalState(0);
 
     renderHook(() => store$.use());
@@ -433,7 +448,7 @@ describe('createGlobalState', () => {
 
   it('should dispose with active observables', () => {
     const store$ = createGlobalState({ count: 0 });
-    const subscribeSpy = jest.fn();
+    const subscribeSpy = vi.fn();
 
     const observable = store$.createObservable((state) => state.count);
     const unsubscribe = observable(subscribeSpy);
@@ -462,7 +477,7 @@ describe('createGlobalState', () => {
   });
 
   it('should call cleanup functions when disposing', ({ renderHook }) => {
-    const cleanupSpy = jest.fn();
+    const cleanupSpy = vi.fn();
     const store$ = createGlobalState(0, {
       callbacks: {
         onInit: () => cleanupSpy,
@@ -507,7 +522,7 @@ describe('createGlobalState', () => {
   it('should correctly subscribe to state changes with subscribe callback on initialization', ({
     renderHook,
   }) => {
-    const subscribeSpy = jest.fn();
+    const subscribeSpy = vi.fn();
 
     const counter = createGlobalState(0, {
       actions: {
@@ -546,7 +561,7 @@ describe('createGlobalState', () => {
   });
 
   it('should unsubscribe on unmount and not re-render after state changes', ({ renderHook, strict }) => {
-    const onChangesSpy = jest.fn();
+    const onChangesSpy = vi.fn();
 
     const store = new GlobalStore(0, {
       callbacks: {
@@ -554,14 +569,14 @@ describe('createGlobalState', () => {
       },
     });
 
-    const selectorSpy = jest.fn((state: number) => state);
+    const selectorSpy = vi.fn((state: number) => state);
     const useSelector = store.createSelectorHook(selectorSpy);
 
     // selectors are computed immediately upon subscription
     expect(store.subscribers.size).toBe(1);
     expect(selectorSpy).toHaveBeenCalledTimes(1);
 
-    const inComponentSelectorSpy = jest.fn((state: number) => state);
+    const inComponentSelectorSpy = vi.fn((state: number) => state);
 
     const { unmount } = renderHook(() => useSelector(inComponentSelectorSpy));
 
@@ -692,7 +707,7 @@ describe('with actions', () => {
 
 describe('with configuration callbacks', () => {
   it('should execute onInit callback', ({ renderHook }) => {
-    const onInitSpy = jest.fn(({ setMetadata }) => {
+    const onInitSpy = vi.fn(({ setMetadata }) => {
       setMetadata({
         test: true,
       });
@@ -717,7 +732,7 @@ describe('with configuration callbacks', () => {
   });
 
   it(`should execute onSubscribed callback every time a subscriber is added`, ({ renderHook, strict }) => {
-    const onSubscribedSpy = jest.fn();
+    const onSubscribedSpy = vi.fn();
 
     const useCount = createGlobalState(
       {
@@ -745,7 +760,7 @@ describe('with configuration callbacks', () => {
   });
 
   it(`should execute onStateChanged callback every time the state is changed`, ({ renderHook }) => {
-    const onStateChangedSpy = jest.fn();
+    const onStateChangedSpy = vi.fn();
 
     const useCount = createGlobalState(
       { a: true },
@@ -777,7 +792,7 @@ describe('with configuration callbacks', () => {
   it('should execute computePreventStateChange callback before state is changed and continue if it returns false', ({
     renderHook,
   }) => {
-    const computePreventStateChangeSpy = jest.fn(() => false); // allow state change
+    const computePreventStateChangeSpy = vi.fn(() => false); // allow state change
 
     const useCount = createGlobalState(0, {
       callbacks: {
@@ -808,7 +823,7 @@ describe('with configuration callbacks', () => {
   it('should execute computePreventStateChange callback before state is changed and prevent state change if it returns true', ({
     renderHook,
   }) => {
-    const computePreventStateChangeSpy = jest.fn();
+    const computePreventStateChangeSpy = vi.fn();
 
     const useCount = createGlobalState(0, {
       callbacks: {
@@ -863,13 +878,13 @@ describe('custom global hooks', () => {
 
     const { promise: mainPromise, ...tools } = createDecoupledPromise();
 
-    const onStateChangedSpy = jest.fn(({ getState }) => {
+    const onStateChangedSpy = vi.fn(({ getState }) => {
       const newState = getState();
 
       fakeAsyncStorage.setItem('items', formatToStore(newState));
     });
 
-    const onInitSpy = jest.fn(async ({ setMetadata, setState }) => {
+    const onInitSpy = vi.fn(async ({ setMetadata, setState }) => {
       const stored = (await fakeAsyncStorage.getItem('items')) ?? null;
 
       setMetadata({
@@ -926,13 +941,13 @@ describe('custom global hooks', () => {
 
     const { promise: mainPromise, ...tools } = createDecoupledPromise();
 
-    const onStateChangedSpy = jest.fn(({ getState }) => {
+    const onStateChangedSpy = vi.fn(({ getState }) => {
       const newState = getState();
 
       fakeAsyncStorage.setItem('items', formatToStore(newState));
     });
 
-    const onInitSpy = jest.fn(async ({ setMetadata, setState }) => {
+    const onInitSpy = vi.fn(async ({ setMetadata, setState }) => {
       const stored = (await fakeAsyncStorage.getItem('items')) ?? null;
 
       setMetadata({
@@ -995,7 +1010,7 @@ describe('custom global hooks', () => {
 
     const { promise: mainPromise, ...tools } = createDecoupledPromise();
 
-    const onStateChangedSpy = jest.fn(({ getState }) => {
+    const onStateChangedSpy = vi.fn(({ getState }) => {
       const newState = getState();
 
       fakeAsyncStorage.setItem('items', formatToStore(newState));
@@ -1003,7 +1018,7 @@ describe('custom global hooks', () => {
       tools.resolve();
     });
 
-    const onInitSpy = jest.fn(async ({ setMetadata, setState }) => {
+    const onInitSpy = vi.fn(async ({ setMetadata, setState }) => {
       const stored = (await fakeAsyncStorage.getItem('items')) ?? null;
 
       setMetadata({
@@ -1055,7 +1070,7 @@ describe('custom global hooks', () => {
   it('should be able to access custom actions from other actions', ({ renderHook }) => {
     expect.assertions(9);
 
-    const logSpy = jest.fn();
+    const logSpy = vi.fn();
 
     const useCount = createGlobalState(1, {
       metadata: {
@@ -1123,7 +1138,7 @@ describe('custom global hooks', () => {
       b: 2,
     });
 
-    const selector = jest.fn((state: { a: number; b: number }) => state.a + state.b);
+    const selector = vi.fn((state: { a: number; b: number }) => state.a + state.b);
 
     const { result, rerender } = renderHook(() => useCount(selector));
 
@@ -1153,7 +1168,7 @@ describe('custom global hooks', () => {
       c: [1, 2, { a: 1 }],
     });
 
-    const selector = jest.fn(({ a, c }: { a: number; c: unknown[] }) => ({
+    const selector = vi.fn(({ a, c }: { a: number; c: unknown[] }) => ({
       a,
       c,
     }));
@@ -1229,14 +1244,14 @@ describe('getter subscriptions', () => {
       b: 2,
     });
 
-    const subscriptionSpy = jest.fn();
-    const subscriptionDerivateSpy = jest.fn();
+    const subscriptionSpy = vi.fn();
+    const subscriptionDerivateSpy = vi.fn();
 
-    const callback1 = jest.fn((state) => {
+    const callback1 = vi.fn((state) => {
       subscriptionSpy(state);
     });
 
-    const callback2 = jest.fn((derivate) => {
+    const callback2 = vi.fn((derivate) => {
       subscriptionDerivateSpy(derivate);
     });
 
@@ -1331,7 +1346,7 @@ describe('createObservable', () => {
   it('should create global state with function builder parameters', ({ renderHook }) => {
     expect.assertions(9);
 
-    const logSpy = jest.fn();
+    const logSpy = vi.fn();
 
     const useCount = createGlobalState(1, {
       metadata: {

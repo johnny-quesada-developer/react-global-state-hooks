@@ -10,7 +10,7 @@
     "noUnusedParameters": false,
     "outDir": "./",
     "declarationDir": "./",
-    "types": ["jest", "node"],
+    "types": ["node"],
     "typeRoots": ["../../node_modules/@types", "./types"],
     "baseUrl": ".",
     "paths": {

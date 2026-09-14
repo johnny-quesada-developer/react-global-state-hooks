@@ -8,9 +8,10 @@ import { StoreTools } from "react-hooks-global-states";
 import { act } from "@testing-library/react";
 
 import it from "./$it";
+import { type Mock } from "vitest";
 
 const countStoreInitialState = 1;
-const createCountStoreWithActions = (spy?: jest.Mock) => {
+const createCountStoreWithActions = (spy?: Mock) => {
   const countStore = new GlobalStore(countStoreInitialState, {
     actions: {
       log(message: string) {
@@ -95,8 +96,8 @@ describe("GlobalStore Basic", () => {
     renderHook(() => store.use());
 
     const [subscriber1, subscriber2] = store.subscribers;
-    jest.spyOn(subscriber1, "onStoreChange");
-    jest.spyOn(subscriber2, "onStoreChange");
+    vi.spyOn(subscriber1, "onStoreChange");
+    vi.spyOn(subscriber2, "onStoreChange");
 
     act(() => {
       store.setState(stateValue2);
@@ -151,8 +152,8 @@ describe("GlobalStore with actions", () => {
     renderHook(() => store.use());
 
     const [subscriber1, subscriber2] = store.subscribers;
-    jest.spyOn(subscriber1, "onStoreChange");
-    jest.spyOn(subscriber2, "onStoreChange");
+    vi.spyOn(subscriber1, "onStoreChange");
+    vi.spyOn(subscriber2, "onStoreChange");
 
     expect(store.getState()).toBe(countStoreInitialState);
     expect(subscriber1.onStoreChange).toHaveBeenCalledTimes(0);
@@ -166,8 +167,8 @@ describe("GlobalStore with actions", () => {
     renderHook(() => store.use());
 
     const [subscriber1, subscriber2] = store.subscribers;
-    jest.spyOn(subscriber1, "onStoreChange");
-    jest.spyOn(subscriber2, "onStoreChange");
+    vi.spyOn(subscriber1, "onStoreChange");
+    vi.spyOn(subscriber2, "onStoreChange");
 
     act(() => {
       store.actions.increase();
@@ -184,7 +185,7 @@ describe("GlobalStore with configuration callbacks", () => {
     expect.assertions(6);
 
     const initialState = { count: 0 };
-    const onInitSpy = jest.fn();
+    const onInitSpy = vi.fn();
 
     new GlobalStore(initialState, {
       callbacks: {
@@ -212,7 +213,7 @@ describe("GlobalStore with configuration callbacks", () => {
     expect.assertions(3);
 
     const initialState = { count: 0 };
-    const onInitSpy = jest.fn();
+    const onInitSpy = vi.fn();
 
     new GlobalStore(initialState, {
       callbacks: {
@@ -246,7 +247,7 @@ describe("GlobalStore with configuration callbacks", () => {
   }) => {
     expect.assertions(strict ? 33 : 18);
 
-    const onSubscribedSpy = jest.fn();
+    const onSubscribedSpy = vi.fn();
 
     const store = new GlobalStore(
       { count: 0 },
@@ -287,7 +288,7 @@ describe("GlobalStore with configuration callbacks", () => {
   it("should execute onStateChanged callback every time the state is changed", () => {
     expect.assertions(7);
 
-    const onStateChangedSpy = jest.fn();
+    const onStateChangedSpy = vi.fn();
 
     const store = new GlobalStore(
       { count: 0 },
@@ -321,7 +322,7 @@ describe("GlobalStore with configuration callbacks", () => {
   it("should execute computePreventStateChange callback before state is changed and continue if it returns false", () => {
     expect.assertions(7);
 
-    const computePreventStateChangeSpy = jest.fn();
+    const computePreventStateChangeSpy = vi.fn();
 
     const store = new GlobalStore(
       { count: 0 },
@@ -357,7 +358,7 @@ describe("GlobalStore with configuration callbacks", () => {
   it("should execute computePreventStateChange callback before state is changed and prevent state change if it returns true", () => {
     expect.assertions(7);
 
-    const computePreventStateChangeSpy = jest.fn();
+    const computePreventStateChangeSpy = vi.fn();
 
     const store = new GlobalStore(
       { count: 0 },
@@ -403,8 +404,8 @@ describe("Custom store by using config parameter", () => {
     const initialState = getInitialState();
     const { fakeAsyncStorage } = getFakeAsyncStorage();
 
-    const onStateChangedSpy = jest.fn();
-    const onInitSpy = jest.fn();
+    const onStateChangedSpy = vi.fn();
+    const onInitSpy = vi.fn();
 
     const { promise: mainPromise, ...tools } = createDecoupledPromise();
 
@@ -462,8 +463,8 @@ describe("Custom store by using config parameter", () => {
   it("should initialize the store with the async storage data where there is async storage data", async () => {
     const initialState = getInitialState();
     const { fakeAsyncStorage } = getFakeAsyncStorage();
-    const onStateChangedSpy = jest.fn();
-    const onInitSpy = jest.fn();
+    const onStateChangedSpy = vi.fn();
+    const onInitSpy = vi.fn();
 
     const { promise: mainPromise, ...tools } = createDecoupledPromise();
 
@@ -600,7 +601,7 @@ describe("GlobalStore Accessing custom actions from other actions", () => {
   it("should be able to access custom actions from other actions", () => {
     expect.assertions(8);
 
-    const logSpy = jest.fn();
+    const logSpy = vi.fn();
 
     const store = createCountStoreWithActions(logSpy);
 

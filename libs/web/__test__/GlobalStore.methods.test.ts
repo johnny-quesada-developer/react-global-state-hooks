@@ -5,7 +5,7 @@ import formatFromStore from 'json-storage-formatter/formatFromStore';
 describe('GlobalStore - localStorage specific methods', () => {
   beforeEach(() => {
     localStorage.clear();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('getStorageItem', () => {
@@ -197,7 +197,7 @@ describe('GlobalStore - localStorage specific methods', () => {
     });
 
     it('should handle errors during storage', () => {
-      const errorSpy = jest.fn();
+      const errorSpy = vi.fn();
       const store = new GlobalStore('test', {
         localStorage: {
           key: 'error-key',
@@ -207,7 +207,7 @@ describe('GlobalStore - localStorage specific methods', () => {
 
       // Mock localStorage.setItem to throw
       const originalSetItem = Storage.prototype.setItem;
-      Storage.prototype.setItem = jest.fn(() => {
+      Storage.prototype.setItem = vi.fn(() => {
         throw new Error('Storage quota exceeded');
       });
 
@@ -220,7 +220,7 @@ describe('GlobalStore - localStorage specific methods', () => {
     });
 
     it('should use custom adapter setItem when provided', () => {
-      const customSetItem = jest.fn();
+      const customSetItem = vi.fn();
       const store = new GlobalStore(42, {
         localStorage: {
           key: 'adapter-key',
@@ -239,7 +239,7 @@ describe('GlobalStore - localStorage specific methods', () => {
 
   describe('updateStateWithValidation', () => {
     it('should update state when validator returns undefined', () => {
-      const validator = jest.fn();
+      const validator = vi.fn();
       const store = new GlobalStore(0, {
         localStorage: {
           key: 'validation-key',
@@ -254,7 +254,7 @@ describe('GlobalStore - localStorage specific methods', () => {
     });
 
     it('should use sanitized value when validator returns a value', () => {
-      const validator = jest.fn(({ restored, initial }) => {
+      const validator = vi.fn(({ restored, initial }) => {
         if (typeof restored === 'number' && restored > 0) {
           return restored;
         }
@@ -281,8 +281,8 @@ describe('GlobalStore - localStorage specific methods', () => {
     });
 
     it('should handle validation errors', () => {
-      const errorSpy = jest.fn();
-      const validator = jest.fn(() => {
+      const errorSpy = vi.fn();
+      const validator = vi.fn(() => {
         throw new Error('Validation failed');
       });
 
@@ -319,7 +319,7 @@ describe('GlobalStore - localStorage specific methods', () => {
 
   describe('handleStorageError', () => {
     it('should call custom onError when provided', () => {
-      const onError = jest.fn();
+      const onError = vi.fn();
       const store = new GlobalStore(0, {
         localStorage: {
           key: 'error-handler-key',
@@ -334,7 +334,7 @@ describe('GlobalStore - localStorage specific methods', () => {
     });
 
     it('should log to console when no custom onError is provided', () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
       const store = new GlobalStore(0, {
         name: 'TestStore',
@@ -418,7 +418,7 @@ describe('GlobalStore - localStorage specific methods', () => {
     });
 
     it('should handle custom adapter getItem on init', () => {
-      const customGetItem = jest.fn(() => 200);
+      const customGetItem = vi.fn(() => 200);
 
       const store = new GlobalStore(0, {
         localStorage: {
@@ -435,7 +435,7 @@ describe('GlobalStore - localStorage specific methods', () => {
     });
 
     it('should handle errors during initialization', () => {
-      const onError = jest.fn();
+      const onError = vi.fn();
 
       // Set invalid data that will cause parsing error
       localStorage.setItem('init-error-key', 'invalid json {');
@@ -460,7 +460,7 @@ describe('GlobalStore - localStorage specific methods', () => {
       };
       localStorage.setItem('migration-key', formatToStore(oldEnvelope));
 
-      const migrator = jest.fn(({ legacy }) => ({
+      const migrator = vi.fn(({ legacy }) => ({
         newField: legacy.oldField,
       }));
 
@@ -488,7 +488,7 @@ describe('GlobalStore - localStorage specific methods', () => {
       };
       localStorage.setItem('same-version-key', formatToStore(envelope));
 
-      const migrator = jest.fn(({ legacy }) => legacy as number);
+      const migrator = vi.fn(({ legacy }) => legacy as number);
 
       const store = new GlobalStore(0, {
         localStorage: {
@@ -514,11 +514,11 @@ describe('GlobalStore - localStorage specific methods', () => {
 
       localStorage.setItem('migration-error-key', formatToStore(oldEnvelope));
 
-      const migrator = jest.fn(() => {
+      const migrator = vi.fn(() => {
         throw new Error('Migration failed');
       });
 
-      const onError = jest.fn();
+      const onError = vi.fn();
 
       const store = new GlobalStore(
         { data: 'initial' },
@@ -539,8 +539,8 @@ describe('GlobalStore - localStorage specific methods', () => {
     });
 
     it('should skip migration when using adapter', () => {
-      const migrator = jest.fn();
-      const customGetItem = jest.fn(() => 100);
+      const migrator = vi.fn();
+      const customGetItem = vi.fn(() => 100);
 
       const store = new GlobalStore(0, {
         localStorage: {
@@ -694,7 +694,7 @@ describe('GlobalStore - localStorage specific methods', () => {
     });
 
     it('should use adapter setItem when provided on state change', () => {
-      const customSetItem = jest.fn();
+      const customSetItem = vi.fn();
 
       const store = new GlobalStore(0, {
         localStorage: {
@@ -712,7 +712,7 @@ describe('GlobalStore - localStorage specific methods', () => {
     });
 
     it('should handle sync errors gracefully', () => {
-      const onError = jest.fn();
+      const onError = vi.fn();
       const store = new GlobalStore(0, {
         localStorage: {
           key: 'sync-error-key',
@@ -722,7 +722,7 @@ describe('GlobalStore - localStorage specific methods', () => {
 
       // Mock to throw on setItem
       const originalSetItem = Storage.prototype.setItem;
-      Storage.prototype.setItem = jest.fn(() => {
+      Storage.prototype.setItem = vi.fn(() => {
         throw new Error('Sync failed');
       });
 

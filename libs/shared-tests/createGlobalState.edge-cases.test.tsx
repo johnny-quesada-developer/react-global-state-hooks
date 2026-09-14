@@ -5,7 +5,7 @@ import { act } from '@testing-library/react';
 
 describe('createGlobalState - Edge Cases', () => {
   it('should handle state as function', ({ renderHook }) => {
-    const stateFactory = jest.fn(() => ({ count: 100 }));
+    const stateFactory = vi.fn(() => ({ count: 100 }));
 
     const useStore = createGlobalState(stateFactory);
 
@@ -18,7 +18,7 @@ describe('createGlobalState - Edge Cases', () => {
   });
 
   it('should handle metadata as function', () => {
-    const metadataFactory = jest.fn(() => ({
+    const metadataFactory = vi.fn(() => ({
       initialized: true,
       timestamp: Date.now(),
     }));
@@ -37,8 +37,8 @@ describe('createGlobalState - Edge Cases', () => {
   });
 
   it('should handle both state and metadata as functions', ({ renderHook }) => {
-    const stateFactory = jest.fn(() => 'initial state');
-    const metadataFactory = jest.fn(() => ({ version: 1 }));
+    const stateFactory = vi.fn(() => 'initial state');
+    const metadataFactory = vi.fn(() => ({ version: 1 }));
 
     const useStore = createGlobalState(stateFactory, {
       metadata: metadataFactory,
@@ -54,8 +54,8 @@ describe('createGlobalState - Edge Cases', () => {
   });
 
   it('should pass all constructor params correctly', () => {
-    const onInitSpy = jest.fn();
-    const onStateChangedSpy = jest.fn();
+    const onInitSpy = vi.fn();
+    const onStateChangedSpy = vi.fn();
 
     const useStore = createGlobalState(
       { value: 10 },

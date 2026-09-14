@@ -1,14 +1,23 @@
 {
-  // ts-jest uses this config to type-check the test files. It adds the `react` lib types (the
-  // main tsconfig only pulls jest/node), turns off unused checks for tests, and maps the package
-  // self-alias to src (jest resolves the alias to src or dist at runtime via TEST_TARGET).
+  // `ts-check:tests` uses this config to type-check the test files. It adds the `react` lib
+  // types (the main tsconfig only pulls node), turns off unused checks for tests, and maps the
+  // package self-alias to src (Vitest resolves the same alias to src at runtime).
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "baseUrl": "..",
     "noEmit": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "types": ["jest", "node", "react"],
+    // `bundler` resolution lets TS read vitest's `exports` map for its `globals` types; it
+    // requires an ES module setting. This config only type-checks (noEmit), so overriding
+    // `module` here is safe and does not affect the build.
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    // The parent config's `typeRoots` only covers `@types` + local `./types`, which prevents
+    // TS from finding `vitest/globals` (it lives at `node_modules/vitest`). Include the plain
+    // `node_modules` root here so the vitest globals types resolve.
+    "typeRoots": ["../../../node_modules/@types", "../../../node_modules", "../types"],
+    "types": ["vitest/globals", "node", "react"],
     "paths": {
       "react-native-global-state-hooks": ["./src"],
       "react-native-global-state-hooks/*": ["./src/*"],

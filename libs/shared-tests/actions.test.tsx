@@ -80,7 +80,7 @@ describe('actions', () => {
   });
 
   it('should allow actions to access parent store actions', () => {
-    const logSpy = jest.fn();
+    const logSpy = vi.fn();
 
     const counter = createGlobalState(0, {
       actions: {
@@ -224,7 +224,7 @@ describe('actions', () => {
 
   it('should allow actions to subscribe to state changes', () => {
     const counter = createGlobalState(0);
-    const subscribeSpy = jest.fn();
+    const subscribeSpy = vi.fn();
 
     const actions$ = actions(counter, {
       watchChanges() {
@@ -285,7 +285,7 @@ describe('actions', () => {
   });
 
   it('should work with stores that have existing actions', () => {
-    const logSpy = jest.fn();
+    const logSpy = vi.fn();
 
     const counter = createGlobalState(0, {
       actions: {
@@ -517,7 +517,7 @@ describe('actions', () => {
   // Using actions during onInit
   describe('actions in onInit callback', () => {
     it('should allow calling derived actions from onInit', () => {
-      const initSpy = jest.fn();
+      const initSpy = vi.fn();
 
       const counter = createGlobalState(0, {
         callbacks: {
@@ -544,7 +544,7 @@ describe('actions', () => {
     });
 
     it('should allow store with actions to call them in onInit', () => {
-      const initSpy = jest.fn();
+      const initSpy = vi.fn();
 
       const counter = createGlobalState(10, {
         actions: {
@@ -573,7 +573,7 @@ describe('actions', () => {
     });
 
     it('should support async actions in onInit', async () => {
-      const loadSpy = jest.fn();
+      const loadSpy = vi.fn();
 
       const store = createGlobalState(
         { data: null as string | null, loaded: false },
@@ -857,7 +857,7 @@ describe('actions', () => {
     });
 
     it('should allow actions to access parent context store actions', ({ renderHook }) => {
-      const logSpy = jest.fn();
+      const logSpy = vi.fn();
 
       const counter = createContext(0, {
         actions: {
@@ -1008,7 +1008,7 @@ describe('actions', () => {
 
     it('should allow actions to subscribe to context state changes', ({ renderHook }) => {
       const counter = createContext(0);
-      const subscribeSpy = jest.fn();
+      const subscribeSpy = vi.fn();
 
       const makeActions = actions<InferAPI<typeof counter.Context>>()({
         watchChanges() {
@@ -1055,7 +1055,7 @@ describe('actions', () => {
     });
 
     it('should work with context stores that have existing actions', ({ renderHook }) => {
-      const logSpy = jest.fn();
+      const logSpy = vi.fn();
 
       const counter = createContext(0, {
         actions: {

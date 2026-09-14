@@ -6,7 +6,7 @@
     "declarationDir": "./",
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "types": ["jest", "node", "react"],
+    "types": ["node", "react"],
     "typeRoots": ["../../node_modules/@types", "./types"],
     "baseUrl": "."
   },

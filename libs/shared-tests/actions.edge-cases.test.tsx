@@ -196,7 +196,7 @@ describe('actions - Edge Cases', () => {
       },
     });
 
-    const callbackSpy = jest.fn();
+    const callbackSpy = vi.fn();
 
     const result = actions$.processComplex({
       id: 1,
@@ -309,7 +309,7 @@ describe('actions - Metadata Operations', () => {
 describe('actions - Subscribe in Actions', () => {
   it('should allow actions to use subscribe with selector', () => {
     const store = createGlobalState({ count: 0, name: 'test' });
-    const subscribeSpy = jest.fn();
+    const subscribeSpy = vi.fn();
 
     const actions$ = actions(store, {
       watchCount() {
@@ -350,8 +350,8 @@ describe('actions - Subscribe in Actions', () => {
 
   it('should allow actions to create multiple subscriptions', () => {
     const store = createGlobalState({ a: 1, b: 2 });
-    const spyA = jest.fn();
-    const spyB = jest.fn();
+    const spyA = vi.fn();
+    const spyB = vi.fn();
 
     const actions$ = actions(store, {
       watchBoth() {
@@ -404,7 +404,7 @@ describe('actions - Subscribe in Actions', () => {
 
   it('should handle subscribe with skipFirst option in actions', () => {
     const store = createGlobalState(0);
-    const subscribeSpy = jest.fn();
+    const subscribeSpy = vi.fn();
 
     const actions$ = actions(store, {
       watchWithSkip() {

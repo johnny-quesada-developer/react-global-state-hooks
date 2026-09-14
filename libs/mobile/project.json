@@ -14,9 +14,9 @@
       "executor": "nx:run-commands",
       "options": { "command": "yarn test", "cwd": "libs/mobile" }
     },
-    "test:src": {
+    "test:quick": {
       "executor": "nx:run-commands",
-      "options": { "command": "yarn test:src", "cwd": "libs/mobile" }
+      "options": { "command": "yarn test:quick", "cwd": "libs/mobile" }
     },
     "test:debug": {
       "executor": "nx:run-commands",
@@ -25,10 +25,6 @@
     "test:debug:no-watch": {
       "executor": "nx:run-commands",
       "options": { "command": "yarn test:debug:no-watch", "cwd": "libs/mobile" }
-    },
-    "test:quick": {
-      "executor": "nx:run-commands",
-      "options": { "command": "yarn test:quick", "cwd": "libs/mobile" }
     },
     "test:coverage": {
       "executor": "nx:run-commands",
@@ -54,6 +50,10 @@
     "ts-check": {
       "executor": "nx:run-commands",
       "options": { "command": "yarn ts-check", "cwd": "libs/mobile" }
+    },
+    "ts-check:tests": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn ts-check:tests", "cwd": "libs/mobile" }
     }
   }
 }

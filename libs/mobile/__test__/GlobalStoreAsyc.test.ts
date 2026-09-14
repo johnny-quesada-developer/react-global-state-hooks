@@ -38,7 +38,7 @@ describe('GlobalStoreAsync Basics', () => {
 
         onStateChanged.bind(storage);
 
-        jest
+        vi
           .spyOn(
             storage as unknown as {
               onStateChanged: () => void;
@@ -106,7 +106,7 @@ describe('GlobalStoreAsync Basics', () => {
         const [subscriber1] = store.subscribers;
         const callback = subscriber1.onStoreChange;
 
-        jest.spyOn(subscriber1, 'onStoreChange').mockImplementation((...args) => {
+        vi.spyOn(subscriber1, 'onStoreChange').mockImplementation((...args) => {
           act(() => {
             (callback as (...args: unknown[]) => void)(...args);
           });
@@ -118,7 +118,7 @@ describe('GlobalStoreAsync Basics', () => {
 
         onStateChanged.bind(store);
 
-        jest
+        vi
           .spyOn(
             store as unknown as {
               onStateChanged: () => void;
@@ -177,7 +177,7 @@ describe('GlobalStoreAsync Basics', () => {
 
         const [subscriber1] = store.subscribers;
         const callback = subscriber1.onStoreChange;
-        jest.spyOn(subscriber1, 'onStoreChange').mockImplementation((...args) => {
+        vi.spyOn(subscriber1, 'onStoreChange').mockImplementation((...args) => {
           act(() => {
             (callback as (...args: unknown[]) => void)(...args);
           });
@@ -190,7 +190,7 @@ describe('GlobalStoreAsync Basics', () => {
 
         onStateChanged.bind(store);
 
-        jest
+        vi
           .spyOn(
             store as unknown as {
               onStateChanged: () => void;
@@ -241,7 +241,7 @@ describe('GlobalStoreAsync Basics', () => {
 
       onStateChanged.bind(storage);
 
-      jest
+      vi
         .spyOn(
           storage as unknown as {
             onStateChanged: () => void;
@@ -306,7 +306,7 @@ describe('createGlobalState', () => {
 
       const [subscriber1] = store.subscribers;
       const callback = subscriber1.onStoreChange;
-      jest.spyOn(subscriber1, 'onStoreChange').mockImplementation((...args) => {
+      vi.spyOn(subscriber1, 'onStoreChange').mockImplementation((...args) => {
         act(() => {
           (callback as (...args: unknown[]) => void)(...args);
         });
@@ -374,7 +374,7 @@ describe('createGlobalState', () => {
 
         onStateChanged.bind(store);
 
-        jest
+        vi
           .spyOn(
             store as unknown as {
               onStateChanged: () => void;
@@ -438,7 +438,7 @@ describe('createGlobalState', () => {
 
         onStateChanged.bind(store);
 
-        jest
+        vi
           .spyOn(
             store as unknown as {
               onStateChanged: () => void;
@@ -484,8 +484,8 @@ describe('getter subscriptions custom global state', () => {
       b: 2,
     });
 
-    const subscriptionSpy = jest.fn();
-    const subscriptionDerivateSpy = jest.fn();
+    const subscriptionSpy = vi.fn();
+    const subscriptionDerivateSpy = vi.fn();
 
     const subscriptions = [
       store.subscribe(

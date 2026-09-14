@@ -1,3 +1,5 @@
+import type { Mock } from 'vitest';
+
 export type DevtoolsWireMessage = {
   action: string;
   payload?: unknown;
@@ -36,6 +38,6 @@ export type DebugGlobalThis = typeof globalThis & {
   __reactDevToolsConnectCallback?: (event?: unknown) => void;
 };
 
-export type UniqueIdMock = jest.Mock<string, [string]> & {
+export type UniqueIdMock = Mock<(prefix: string) => string> & {
   for: (prefix: string) => () => string;
 };

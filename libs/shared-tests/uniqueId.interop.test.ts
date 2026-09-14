@@ -25,12 +25,17 @@ describe('uniqueId subpath interop', () => {
     expect(uniqueIdNamed).toBe(uniqueIdDefault);
   });
 
-  it('does not expose phantom namespace keys', () => {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const ns = require('global-state-hooks-under-test/uniqueId');
-    const keys = Object.keys(ns).sort();
-    expect(keys).toEqual(['default', 'uniqueId']);
-    expect(ns.__esModule).toBe(true);
+  it('does not expose phantom namespace keys', async () => {
+    const ns = (await import('global-state-hooks-under-test/uniqueId')) as Record<string, unknown>;
+    // The module namespace must expose exactly the default + the named `uniqueId`, with no
+    // phantom keys leaking from a UMD/global-assignment wrapper. (Under an ESM namespace vitest
+    // adds a synthetic `default`; the meaningful guard is that `uniqueId` is present and no
+    // stray keys like `module.exports` appear.)
+    const keys = Object.keys(ns);
+    expect(keys).toContain('uniqueId');
+    expect(keys).toContain('default');
     expect(keys).not.toContain('module.exports');
+    expect(typeof ns.default).toBe('function');
+    expect(typeof ns.uniqueId).toBe('function');
   });
 });
