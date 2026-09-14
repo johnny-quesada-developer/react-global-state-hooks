@@ -1,0 +1,38 @@
+{
+  "name": "react-hooks-global-states-debug",
+  "version": "1.0.0-beta.0",
+  "description": "DevTools debug package for react-hooks-global-states (and react-global-state-hooks). Side-effect import that connects your global stores to the React Hooks Global States DevTools browser extension.",
+  "type": "module",
+  "main": "./debug.js",
+  "module": "./debug.js",
+  "types": "./index.d.ts",
+  "sideEffects": true,
+  "files": [
+    "debug.js",
+    "index.d.ts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johnny-quesada-developer/react-global-state-hooks.git"
+  },
+  "keywords": [
+    "react",
+    "hooks",
+    "global-state",
+    "global-states",
+    "react-hooks-global-states",
+    "react-global-state-hooks",
+    "devtools",
+    "debug",
+    "development"
+  ],
+  "author": "Johnny Quesada",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "bugs": {
+    "url": "https://github.com/johnny-quesada-developer/react-global-state-hooks/issues"
+  },
+  "homepage": "https://github.com/johnny-quesada-developer/react-global-state-hooks#readme"
+}

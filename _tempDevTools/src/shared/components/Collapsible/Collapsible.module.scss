@@ -1,0 +1,8 @@
+.details summary {
+  // remove markers
+  list-style-type: none;
+
+  &::-webkit-details-marker {
+    display: none; /* Hide marker in WebKit browsers (Chrome, Safari, etc.) */
+  }
+}

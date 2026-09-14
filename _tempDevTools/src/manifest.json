@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "react-hooks-global-states-dev-tools",
+  "version": "1.0.1",
+  "permissions": [],
+  "background": {
+    "service_worker": "lib/service_worker.js"
+  },
+  "devtools_page": "devtools_page.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["lib/content_script.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "icons": {
+    "16": "assets/devtools_page_icon-28px.ico",
+    "128": "assets/devtools_page_icon.ico"
+  }
+}

@@ -1,0 +1,19 @@
+.reactJsonContainer {
+  text-align: left;
+
+  * {
+    cursor: pointer !important;
+  }
+
+  // Make the CodeMirror editor fill its container so two side-by-side viewers
+  // (see CompareJsonValues) match the grid cell height instead of sizing to
+  // their own content.
+  :global(.cm-editor) {
+    height: 100%;
+  }
+
+  // The scroller must also fill so short content still stretches to full height.
+  :global(.cm-scroller) {
+    height: 100%;
+  }
+}

@@ -1,0 +1,3 @@
+.resizing {
+  @apply !cursor-col-resize !border-opacity-50;
+}
