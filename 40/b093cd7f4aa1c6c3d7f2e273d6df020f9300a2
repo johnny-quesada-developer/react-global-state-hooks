@@ -1,0 +1,52 @@
+eslint.config.mts
+  h_6029769cf9ac60 66-76
+libs/monkey_patch/__test__/maybeCleanupPreviousStateMetadata.test.ts
+  h_6029769cf9ac60 5
+libs/monkey_patch/__test__/mergeState.test.ts
+  h_6029769cf9ac60 2
+libs/monkey_patch/__test__/monkey_patch.integration.test.ts
+  h_6029769cf9ac60 4-9,22,25,29,77
+libs/monkey_patch/__test__/monkey_patch.logger.test.ts
+  h_6029769cf9ac60 2-4
+libs/monkey_patch/__test__/monkey_patch.real-world.test.ts
+  h_6029769cf9ac60 14,17,21,87
+libs/monkey_patch/__test__/monkey_patch.test.ts
+  h_6029769cf9ac60 7-9,24-25,28
+libs/monkey_patch/__test__/monkey_patch.utils.test.ts
+  h_6029769cf9ac60 2-3
+libs/monkey_patch/__test__/sendMessageFromMonkeyPath.test.ts
+  h_6029769cf9ac60 2-5
+libs/monkey_patch/esbuild.config.ts
+  h_6029769cf9ac60 1-73
+libs/monkey_patch/package.json
+  h_6029769cf9ac60 14-23,47-55
+libs/monkey_patch/project.json
+  h_6029769cf9ac60 1-38
+libs/monkey_patch/scripts/prepare-dist.ts
+  h_6029769cf9ac60 1-36
+libs/monkey_patch/src/schema/ActionJson.ts
+  h_6029769cf9ac60 4
+libs/monkey_patch/src/tools/react.ts
+  h_6029769cf9ac60 4,55,169-171
+libs/monkey_patch/tsconfig.json
+  h_6029769cf9ac60 1-20
+libs/monkey_patch/vitest.config.ts
+  h_6029769cf9ac60 1-27
+libs/monkey_patch/vitest.setup.ts
+  h_6029769cf9ac60 1-22
+libs/shared-tests/hookStability.test.tsx
+  h_6029769cf9ac60 1-85
+yarn.lock
+  h_6029769cf9ac60 5-17,136,289,392-396,407-411,422-426,437-441,452-456,467-471,482-486,497-501,512-516,527-531,542-546,557-561,572-576,587-591,602-606,617-621,632-636,657-661,682-686,702-706,717-721,732-736,747-751,861-872,1204,1209,1217-1221,1302-1306,1394-1518,1569-1580,1633-1641,1646-1657,1665-1669,1950-2026,2096-2100,2113-2117,2145,2251-2255,2417-2423,2476-2480,2527-2537,2551-2555,2714-2718,2779,2803-2807,2923-2927,2954-2958,3132-3136,3180-3208,3527-3533,3564-3568,3758-3765,3792,3899-3910,4135-4139,4442,4469,4487-4496,4516-4524,5148-5153,5170-5185,5460-5464,5486-5492,5498-5502,5518-5522,5912-5916,5966-5973,5979-5988,6021-6029,6222-6229,6328-6362,6584-6588,6594-6598,6614-6618,6657-6661,6684-6688,6705-6713,6723-6731,6808-6814,6822-6828,6844-6850,6910-6918,6924-6933,6942-6956,7216-7263,7387-7394,7405-7413,7423-7431,7515-7519
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "40b093cd7f4aa1c6c3d7f2e273d6df020f9300a2",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
