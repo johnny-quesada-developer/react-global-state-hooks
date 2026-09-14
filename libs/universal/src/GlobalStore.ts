@@ -99,6 +99,15 @@ export class GlobalStore<
       name?: string;
     } = { metadata: {} as Metadata },
   ) {
+    // bound methods for the hook
+    this.dispose = this.dispose.bind(this);
+    this.getMetadata = this.getMetadata.bind(this);
+    this.getState = this.getState.bind(this);
+    this.reset = this.reset.bind(this);
+    this.setMetadata = this.setMetadata.bind(this);
+    this.setState = this.setState.bind(this);
+    this.subscribe = this.subscribe.bind(this);
+
     const { metadata, callbacks, actions, name: storeName } = args;
 
     if (isFunction(state)) this.stateCallback = state;
@@ -413,23 +422,23 @@ export class GlobalStore<
 
     // inherit extensions, they should remain the same as the root store
     const apiAsReadOnly = this as ReadonlyStateApi<unknown, unknown, BaseMetadata>;
-    const getMetadata = this.getMetadata.bind(this);
+    const { getMetadata, dispose, getState, reset, setMetadata, setState, subscribe } = this;
 
     const useExtensions: StateApi<State, PublicStateMutator, Metadata> = {
       actions: this.actions,
       createObservable: this.createObservable.bind(apiAsReadOnly) as typeof use.createObservable,
       createSelectorHook: this.createSelectorHook.bind(apiAsReadOnly) as typeof use.createSelectorHook,
-      dispose: this.dispose.bind(this),
+      dispose,
 
       // this is an special placeholder prop that should be defined with defineProperty below
       metadata: undefined as unknown as Metadata,
       getMetadata,
 
-      getState: this.getState.bind(this),
-      reset: this.reset.bind(this),
-      setMetadata: this.setMetadata.bind(this),
-      setState: this.setState.bind(this),
-      subscribe: this.subscribe.bind(this),
+      getState,
+      reset,
+      setMetadata,
+      setState,
+      subscribe,
 
       // useful for debugging purposes
       subscribers: this.subscribers,
@@ -492,7 +501,7 @@ export class GlobalStore<
         return this.actions;
       }
 
-      return this.setState.bind(this);
+      return this.setState;
     })() as PublicStateMutator;
   }
 
@@ -560,18 +569,18 @@ export class GlobalStore<
     actions: PublicStateMutator extends AnyFunction ? null : PublicStateMutator;
     storeTools: StoreTools<State, PublicStateMutator, Metadata>;
   } {
-    const getMetadata = this.getMetadata.bind(this);
+    const { getMetadata, setMetadata, getState, setState, subscribe } = this;
 
     // passes the same object to all the actions
     const storeTools: typeof this.storeTools = {
-      setMetadata: this.setMetadata.bind(this),
+      setMetadata,
       get metadata() {
         return getMetadata();
       },
       getMetadata,
-      getState: this.getState.bind(this),
-      setState: this.setState.bind(this),
-      subscribe: this.subscribe.bind(this),
+      getState,
+      setState,
+      subscribe,
       actions: null as (typeof this.storeTools)['actions'],
     };
 
