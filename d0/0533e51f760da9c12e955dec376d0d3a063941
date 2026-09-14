@@ -1,0 +1,40 @@
+eslint.config.mts
+  h_6029769cf9ac60 55-66
+libs/monkey_patch/__test__/maybeCleanupPreviousStateMetadata.test.ts
+  h_6029769cf9ac60 1-2,10,22,26
+libs/monkey_patch/__test__/mergeState.test.ts
+  h_6029769cf9ac60 1-2,56,81,92,152-153,171-172,175,187,191,226,268,287,303,306
+libs/monkey_patch/__test__/monkey_patch.integration.test.ts
+  h_6029769cf9ac60 1-2,14,19,33,40,70,74,79,105,138-139,192,222,264,280,300,319,330,340,351,353-354,360,371,381,398,422,446,468,489,508,528,561,601,610,629,638,658,685,692,710,750,784,814,845,875,903,947,952,972,978,984,991,997,1007,1223,1230,1250,1256,1281,1307,1409,1417,1425-1426,1435-1436,1484-1485,1510-1511,1513,1531,1542,1666,1694-1695,1765,1831,1854
+libs/monkey_patch/__test__/monkey_patch.logger.test.ts
+  h_6029769cf9ac60 1-2,9,23,27
+libs/monkey_patch/__test__/monkey_patch.real-world.test.ts
+  h_6029769cf9ac60 1
+libs/monkey_patch/__test__/monkey_patch.test.ts
+  h_6029769cf9ac60 1
+libs/monkey_patch/__test__/monkey_patch.utils.test.ts
+  h_6029769cf9ac60 1-2,77,104-105,144,164-166,231,476-479,522-523,612
+libs/monkey_patch/__test__/sendMessageFromMonkeyPath.test.ts
+  h_6029769cf9ac60 1-2,15,18,180,190,203,227,255,287,340,367,402,480,502
+libs/monkey_patch/src/asserts/asserts.ts
+  h_6029769cf9ac60 3,37,39,46
+libs/monkey_patch/src/schema/ActionTypeJson.ts
+  h_6029769cf9ac60 16-19
+libs/monkey_patch/src/tools/react.ts
+  h_6029769cf9ac60 156
+libs/monkey_patch/src/tools/softClone.ts
+  h_6029769cf9ac60 4,6,10-12,110
+libs/monkey_patch/vitest.setup.ts
+  h_6029769cf9ac60 11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "d00533e51f760da9c12e955dec376d0d3a063941",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
