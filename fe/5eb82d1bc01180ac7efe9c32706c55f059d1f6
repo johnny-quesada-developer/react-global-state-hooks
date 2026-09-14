@@ -1,0 +1,40 @@
+libs/shared-tests/GlobalStore.functionHooks.test.ts
+  h_6029769cf9ac60 8
+libs/shared-tests/GlobalStore.test.ts
+  h_6029769cf9ac60 1
+libs/shared-tests/GlobalStore.utils.test.ts
+  h_6029769cf9ac60 1
+libs/shared-tests/actions.edge-cases.test.tsx
+  h_6029769cf9ac60 1
+libs/shared-tests/actions.test.tsx
+  h_6029769cf9ac60 2
+libs/shared-tests/createContext.edge-cases.test.tsx
+  h_6029769cf9ac60 2
+libs/shared-tests/createContext.test.tsx
+  h_6029769cf9ac60 2
+libs/shared-tests/createGlobalState.edge-cases.test.tsx
+  h_6029769cf9ac60 1
+libs/shared-tests/isRecord.test.ts
+  h_6029769cf9ac60 1
+libs/shared-tests/throwWrongKeyOnActionCollectionConfig.test.ts
+  h_6029769cf9ac60 1
+libs/shared-tests/types.inference.test.tsx
+  h_6029769cf9ac60 1-2
+libs/shared-tests/uniqueId.interop.test.ts
+  h_6029769cf9ac60 13,30
+libs/shared-tests/uniqueId.test.ts
+  h_6029769cf9ac60 2
+libs/universal/__test__/tsconfig.json
+  h_6029769cf9ac60 9-13,16-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "fe5eb82d1bc01180ac7efe9c32706c55f059d1f6",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
