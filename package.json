@@ -23,6 +23,7 @@
     "ts-check:tests": "node scripts/run.mjs ts-check:tests",
     "publish:pkg": "node scripts/run.mjs publish:pkg",
     "publish:beta": "node scripts/run.mjs publish:beta",
+    "coverage": "node scripts/coverage-report.mjs",
     "graph": "nx graph"
   },
   "repository": {

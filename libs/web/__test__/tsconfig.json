@@ -8,10 +8,12 @@
     "paths": {
       "react-global-state-hooks": ["./src"],
       "react-global-state-hooks/*": ["./src/*"],
+      "global-state-hooks-under-test": ["./src"],
+      "global-state-hooks-under-test/*": ["./src/*"],
       "react-hooks-global-states": ["../universal/src/index.ts"],
       "react-hooks-global-states/*": ["../universal/src/*"]
     }
   },
-  "include": ["**/*", "../src/**/*", "../types/**/*"],
+  "include": ["**/*", "../src/**/*", "../types/**/*", "../../shared-tests/**/*"],
   "exclude": []
 }

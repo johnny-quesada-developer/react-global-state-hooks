@@ -78,8 +78,8 @@
     "build": "yarn ts-check && yarn clean && tsc -p tsconfig.build.json && tsx esbuild.config.ts && tsx scripts/prepare-dist.ts",
     "publish:pkg": "yarn build && cd dist && npm publish --tag latest --registry https://registry.npmjs.org/",
     "publish:beta": "yarn build && cd dist && npm publish --tag beta --registry https://registry.npmjs.org/",
-    "lint": "eslint . --max-warnings=0",
-    "lint:fix": "eslint . --fix --max-warnings=0",
+    "lint": "eslint . ../shared-tests --max-warnings=0",
+    "lint:fix": "eslint . ../shared-tests --fix --max-warnings=0",
     "clean": "rm -rf dist coverage",
     "ts-check": "tsc -p tsconfig.json --noEmit",
     "ts-check:tests": "tsc -p __test__/tsconfig.json --noEmit"

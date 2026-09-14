@@ -1,5 +1,5 @@
-import uniqueId from 'react-global-state-hooks/uniqueId';
-import * as uniqueIdNs from 'react-global-state-hooks/uniqueId';
+import uniqueId from 'global-state-hooks-under-test/uniqueId';
+import * as uniqueIdNs from 'global-state-hooks-under-test/uniqueId';
 
 describe('uniqueId default export (packaging regression)', () => {
   it('exposes a callable default export', () => {

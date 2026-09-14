@@ -56,8 +56,15 @@ yarn test:src universal  # jest against the TypeScript source (no build) — bas
 yarn build web           # build a single project
 yarn lint universal
 yarn test                # run a task across every project (nx run-many)
+yarn coverage            # combined coverage report across all variants (src mode)
+yarn coverage web        # coverage for one variant; add --dist to measure the built artifact
 yarn graph               # open the Nx project graph
 ```
+
+`yarn coverage` (see `scripts/coverage-report.mjs`) runs each variant's jest with coverage and
+prints one combined table plus a weighted total. It measures the TypeScript source by default
+(coverage on the minified `dist` bundle is not meaningful); pass `--dist` to measure the built
+artifact.
 
 Each wrapper dispatches to `nx run <project>:<task>` (see `scripts/run.mjs`). New libs under
 `libs/*` are discovered automatically — no change to the dispatcher needed.
@@ -67,6 +74,59 @@ Both test modes are preserved per package:
 - default (`yarn test <project>`) runs against the compiled `dist/` artifact, so build-level
   concerns (minification, dual ESM/CJS emit, `__esModule` interop) are exercised.
 - `TEST_TARGET=src` (`yarn test:src <project>`) runs against `src/` for a fast inner loop.
+
+## Shared test suite (`libs/shared-tests`)
+
+Roughly 90% of behavior is identical across the variants — only the persistence layer differs
+(universal has none, web uses `localStorage`, mobile uses async storage). To avoid duplicating
+those tests per variant, the common suite lives once in `libs/shared-tests` (a plain,
+non-published folder — not an Nx project, it has no build/test target of its own).
+
+How it works (there is no loop): the shared files are run by **each variant's own jest**, and
+module resolution — not a runner — is what swaps in the variant. Running `yarn test <variant>`
+is three independent jest runs at most; the exact same shared file resolves to a different real
+source depending on which variant's config is active:
+
+```
+yarn test universal  ->  global-state-hooks-under-test  ->  libs/universal/src
+yarn test web        ->  global-state-hooks-under-test  ->  libs/web/src
+yarn test mobile     ->  global-state-hooks-under-test  ->  libs/mobile/src
+```
+
+Think of it as dependency injection: the shared tests declare "I need *a* global-state-hooks
+implementation" and each variant's jest config injects its own.
+
+- **Neutral subject alias.** Shared tests import the package under test as
+  `global-state-hooks-under-test` (bare and subpaths) — never a real package name. Each
+  variant's `jest.config.js` `moduleNameMapper` maps that alias to itself (its own barrel /
+  subpaths, honoring `TEST_TARGET`), and each variant's `__test__/tsconfig.json` maps it to its
+  own `src` for type-checking. (Verified: a `require.resolve` probe inside a shared test returns
+  `libs/<variant>/src/index.ts` for the variant being run.)
+- **roots.** Each variant's `jest.config.js` sets `roots: ['<rootDir>/__test__',
+  '<rootDir>/../shared-tests']`, so a run executes the variant's own (persistence-specific)
+  tests plus the shared suite.
+- **Linting.** `libs/shared-tests` is linted by the `universal` project
+  (`eslint . ../shared-tests`), and the root `eslint.config.mts` scopes
+  `@typescript-eslint/no-empty-object-type: off` to both `libs/universal/**` and
+  `libs/shared-tests/**`.
+
+Opting out of individual shared files: a variant can skip shared files it isn't compatible with
+via `testPathIgnorePatterns` (regex fragments like `shared-tests/<name>\.test\.tsx?$`).
+
+**Current variant status**
+
+- `universal` and `web` run the entire shared suite.
+- `mobile` runs the shared suite except five files it isn't compatible with yet:
+  `actions.test`, `createGlobalState.edge-cases`, `GlobalStore.functionHooks`, `GlobalStore.test`,
+  and `types.inference`. mobile augments every store's metadata with async-storage fields
+  (`isAsyncStorageReady`, `asyncStorageKey`) and hasn't adopted a couple of v16 typing features,
+  so those shared tests (which assert the exact base metadata shape / v16 types) don't hold.
+  The equivalent behavior is covered by mobile's own async-aware `GlobalStore` tests. Closing
+  that gap so mobile can drop the ignores is a tracked follow-up.
+
+Adding a shared test: put it in `libs/shared-tests`, import via
+`global-state-hooks-under-test`, and confirm it passes for every variant (a variant that can't
+pass it yet adds a `testPathIgnorePatterns` entry).
 
 ## Monorepo linkage (why `web` depends on `universal` locally)
 
