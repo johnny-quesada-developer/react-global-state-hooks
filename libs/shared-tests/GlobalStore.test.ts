@@ -1,3 +1,4 @@
+import { expectMetadata } from './expectMetadata';
 import { type StoreTools, GlobalStore } from 'global-state-hooks-under-test';
 
 import $it from './$it';
@@ -193,8 +194,8 @@ describe('GlobalStore with configuration callbacks', () => {
           const { setState, getState, getMetadata, metadata, setMetadata, actions } = parameters;
 
           expect(getState()).toEqual(initialState);
-          expect(getMetadata()).toEqual({});
-          expect(metadata).toEqual({});
+          expectMetadata(getMetadata()).toMatch({});
+          expectMetadata(metadata).toMatch({});
           expect(setState).toBeInstanceOf(Function);
           expect(setMetadata).toBeInstanceOf(Function);
           expect(actions).toBe(null);
@@ -212,32 +213,33 @@ describe('GlobalStore with configuration callbacks', () => {
     const onInitSpy = jest.fn();
 
     new GlobalStore(initialState, {
-      metadata: {
-        isAsyncStorageReady: false,
-      },
+      // `ready` typed as boolean (not the literal `false`) so `setMetadata({ ready: true })`
+      // below is assignable. The field name is intentionally neutral to avoid colliding with any
+      // variant's reserved metadata keys (e.g. the react-native variant's `isAsyncStorageReady`).
+      metadata: { ready: false } as { ready: boolean },
       callbacks: {
         onInit: (parameters) => {
           onInitSpy();
 
           const { getMetadata, setMetadata } = parameters;
 
-          expect(getMetadata()).toEqual({
-            isAsyncStorageReady: false,
+          expectMetadata(getMetadata()).toMatch({
+            ready: false,
           });
-          expect(parameters.metadata).toEqual({
-            isAsyncStorageReady: false,
+          expectMetadata(parameters.metadata).toMatch({
+            ready: false,
           });
 
           setMetadata({
-            isAsyncStorageReady: true,
+            ready: true,
           });
 
-          expect(getMetadata()).toEqual({
-            isAsyncStorageReady: true,
+          expectMetadata(getMetadata()).toMatch({
+            ready: true,
           });
           // `metadata` is a live getter, so it reflects the value set above
-          expect(parameters.metadata).toEqual({
-            isAsyncStorageReady: true,
+          expectMetadata(parameters.metadata).toMatch({
+            ready: true,
           });
         },
       },
@@ -261,8 +263,8 @@ describe('GlobalStore with configuration callbacks', () => {
             const { setState, getState, getMetadata, metadata, setMetadata, actions } = parameters;
 
             // this code will be execute 3 times
-            expect(getMetadata()).toEqual({});
-            expect(metadata).toEqual({});
+            expectMetadata(getMetadata()).toMatch({});
+            expectMetadata(metadata).toMatch({});
             expect(setState).toBeInstanceOf(Function);
             expect(setMetadata).toBeInstanceOf(Function);
             expect(actions).toBe(null);
@@ -298,8 +300,8 @@ describe('GlobalStore with configuration callbacks', () => {
 
             const { setState, getState, getMetadata, metadata, setMetadata, actions } = parameters;
 
-            expect(getMetadata()).toEqual({});
-            expect(metadata).toEqual({});
+            expectMetadata(getMetadata()).toMatch({});
+            expectMetadata(metadata).toMatch({});
             expect(setState).toBeInstanceOf(Function);
             expect(setMetadata).toBeInstanceOf(Function);
             expect(actions).toBe(null);
@@ -332,8 +334,8 @@ describe('GlobalStore with configuration callbacks', () => {
 
               const { setState, getMetadata, metadata, setMetadata, actions } = parameters;
 
-              expect(getMetadata()).toEqual({});
-              expect(metadata).toEqual({});
+              expectMetadata(getMetadata()).toMatch({});
+              expectMetadata(metadata).toMatch({});
               expect(setState).toBeInstanceOf(Function);
               expect(setMetadata).toBeInstanceOf(Function);
               expect(actions).toBe(null);
@@ -369,8 +371,8 @@ describe('GlobalStore with configuration callbacks', () => {
 
               const { setState, getMetadata, metadata, setMetadata, actions } = parameters;
 
-              expect(getMetadata()).toEqual({});
-              expect(metadata).toEqual({});
+              expectMetadata(getMetadata()).toMatch({});
+              expectMetadata(metadata).toMatch({});
               expect(setState).toBeInstanceOf(Function);
               expect(setMetadata).toBeInstanceOf(Function);
               expect(actions).toBe(null);

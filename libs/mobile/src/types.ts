@@ -45,6 +45,7 @@ export type {
 import React from "react";
 import type {
   BaseMetadata as BaseLibraryMetadata,
+  CleanupFunction,
   StateApi,
   StateChanges,
   SubscriberParameters,
@@ -205,6 +206,13 @@ export type StoreTools<
   actions: StateMutator extends AnyFunction ? null : StateMutator;
 
   /**
+   * @description Metadata associated with the global state.
+   * Metadata is non-reactive; reading it will not trigger re-renders. To change it use `setMetadata`.
+   */
+  readonly metadata: Metadata;
+
+  /**
+   * @deprecated Use the `metadata` property instead, e.g. `const { metadata } = storeTools;`. Metadata is stable, so it is exposed directly.
    * @description Metadata associated with the global state
    */
   getMetadata: () => Metadata;
@@ -222,7 +230,15 @@ export type StoreTools<
   /**
    * @description Function to set the state value
    */
-  setState: React.Dispatch<React.SetStateAction<State>>;
+  setState: (
+    setter: React.SetStateAction<State>,
+    args?: {
+      /** Force update even if the state value did not change (advanced use only). */
+      forceUpdate?: boolean;
+      /** Optional identifier visible on the devtools. */
+      identifier?: string;
+    },
+  ) => void;
 
   /**
    * @description Subscribe to the state changes
@@ -284,7 +300,9 @@ export type GlobalStoreCallbacks<State, StateMutator, Metadata extends BaseMetad
   /**
    * @description Called when the store is initialized
    */
-  onInit?: (args: StoreTools<State, StateMutator, Metadata>) => void;
+  onInit?: (
+    args: StoreTools<State, StateMutator, Metadata>,
+  ) => void | Promise<void> | CleanupFunction;
 
   /**
    * @description Called when the state has changed

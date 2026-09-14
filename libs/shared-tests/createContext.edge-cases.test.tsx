@@ -1,3 +1,4 @@
+import { expectMetadata } from './expectMetadata';
 import React, { useEffect } from 'react';
 import { createContext } from 'global-state-hooks-under-test';
 import { act, render } from '@testing-library/react';
@@ -208,7 +209,7 @@ describe('createContext - Value Initialization', () => {
     });
 
     expect(metadataFactory).toHaveBeenCalled();
-    expect(result.current[2]).toEqual({ initialized: true, version: 1 });
+    expectMetadata(result.current[2]).toMatch({ initialized: true, version: 1 });
   });
 });
 

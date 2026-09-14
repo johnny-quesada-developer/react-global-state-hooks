@@ -1,3 +1,4 @@
+import { expectMetadata } from './expectMetadata';
 import React from 'react';
 import { type ContextStoreTools, createContext, InferAPI } from 'global-state-hooks-under-test';
 import { act, render } from '@testing-library/react';
@@ -105,7 +106,7 @@ describe('createContext', () => {
     const [, setState, metadata] = result.current;
 
     expect(state).toEqual({ count: 0 });
-    expect(metadata).toEqual({ name: 'TestContext' });
+    expectMetadata(metadata).toMatch({ name: 'TestContext' });
 
     act(() => {
       setState((prev) => ({ ...prev, count: prev.count + 1 }));
@@ -248,8 +249,8 @@ describe('createContext', () => {
     expect(result.current.countX20).toBe(40);
 
     expect(context.current.actions).toBeNull();
-    expect(context.current.getMetadata()).toEqual({});
-    expect(context.current.metadata).toEqual({});
+    expectMetadata(context.current.getMetadata()).toMatch({});
+    expectMetadata(context.current.metadata).toMatch({});
     expect(context.current.getState).toBeInstanceOf(Function);
     expect(context.current.subscribe).toBeInstanceOf(Function);
 
@@ -258,9 +259,9 @@ describe('createContext', () => {
       context.current.setState(3);
     });
 
-    expect(context.current.getMetadata()).toEqual({ test: 'metadata' });
+    expectMetadata(context.current.getMetadata()).toMatch({ test: 'metadata' });
     // `metadata` is a live getter, so it reflects the value set above
-    expect(context.current.metadata).toEqual({ test: 'metadata' });
+    expectMetadata(context.current.metadata).toMatch({ test: 'metadata' });
     expect(context.current.getState).toBeInstanceOf(Function);
     expect(context.current.subscribe).toBeInstanceOf(Function);
     expect(context.current.actions).toBeNull();

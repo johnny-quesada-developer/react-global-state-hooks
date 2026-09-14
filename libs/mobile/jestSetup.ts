@@ -1,5 +1,10 @@
 import { getFakeAsyncStorage } from "./__test__/getFakeAsyncStorage";
 
+// Reserved metadata keys this variant injects into every store's metadata. The shared suite's
+// `expectMetadata(...).toMatch(...)` helper tolerates these as allowed extras while still
+// rejecting any other unexpected key.
+globalThis.__VARIANT_METADATA_KEYS__ = ["isAsyncStorageReady", "asyncStorageKey"];
+
 const { fakeAsyncStorage: asyncStorage } = getFakeAsyncStorage();
 
 jest.mock("@react-native-async-storage/async-storage", () => ({

@@ -1,3 +1,4 @@
+import { expectMetadata } from './expectMetadata';
 import React from 'react';
 import { createDecoupledPromise } from 'easy-cancelable-promise';
 import { formatFromStore, formatToStore } from 'json-storage-formatter';
@@ -263,7 +264,7 @@ describe('createGlobalState', () => {
 
     expect(state).toEqual({ value: 10 });
     expect(meta).toEqual(newMetadata);
-    expect(store$.getMetadata()).toEqual(newMetadata);
+    expectMetadata(store$.getMetadata()).toMatch(newMetadata);
     expect(store$.metadata).toEqual(newMetadata);
   });
 
@@ -492,7 +493,7 @@ describe('createGlobalState', () => {
 
     expect(state).toBe(0);
     expect(typeof setState).toBe('function');
-    expect(metadata).toEqual({});
+    expectMetadata(metadata).toMatch({});
   });
 
   it(`should be able to use sugar syntax hook.select`, ({ renderHook }) => {
@@ -659,7 +660,7 @@ describe('with actions', () => {
     expect(actions.increase).toBeInstanceOf(Function);
 
     expect(state).toBe(1);
-    expect(metadata).toEqual({
+    expectMetadata(metadata).toMatch({
       modificationsCounter: 0,
     });
 
@@ -671,7 +672,7 @@ describe('with actions', () => {
     [state, actions, metadata] = result.current;
 
     expect(state).toBe(4);
-    expect(metadata).toEqual({
+    expectMetadata(metadata).toMatch({
       modificationsCounter: 2,
     });
 
@@ -683,7 +684,7 @@ describe('with actions', () => {
     [state, actions, metadata] = result.current;
 
     expect(state).toBe(1);
-    expect(metadata).toEqual({
+    expectMetadata(metadata).toMatch({
       modificationsCounter: 4,
     });
   });
@@ -710,7 +711,7 @@ describe('with configuration callbacks', () => {
 
     expect(state).toBe(1);
     expect(setState).toBeInstanceOf(Function);
-    expect(metadata).toEqual({
+    expectMetadata(metadata).toMatch({
       test: true,
     });
   });
@@ -792,7 +793,7 @@ describe('with configuration callbacks', () => {
 
     expect(state).toEqual(0);
     expect(setState).toBeInstanceOf(Function);
-    expect(metadata).toEqual({});
+    expectMetadata(metadata).toMatch({});
 
     act(() => {
       setState((state) => state + 1);
@@ -816,7 +817,7 @@ describe('with configuration callbacks', () => {
 
           const { setState, getMetadata, setMetadata, actions } = parameters;
 
-          expect(getMetadata()).toEqual({});
+          expectMetadata(getMetadata()).toMatch({});
           expect(setState).toBeInstanceOf(Function);
           expect(setMetadata).toBeInstanceOf(Function);
           expect(actions).toBe(null);
@@ -833,7 +834,7 @@ describe('with configuration callbacks', () => {
 
     expect(state).toEqual(0);
     expect(setState).toBeInstanceOf(Function);
-    expect(metadata).toEqual({});
+    expectMetadata(metadata).toMatch({});
 
     act(() => {
       setState((state) => state + 1);
@@ -901,7 +902,7 @@ describe('custom global hooks', () => {
 
     expect(state).toEqual(initialState);
     expect(setState).toBeInstanceOf(Function);
-    expect(metadata).toEqual({});
+    expectMetadata(metadata).toMatch({});
 
     await mainPromise;
 
@@ -910,7 +911,7 @@ describe('custom global hooks', () => {
     [state, setState, metadata] = result.current;
 
     expect(state).toEqual(initialState);
-    expect(metadata).toEqual({
+    expectMetadata(metadata).toMatch({
       isAsyncStorageReady: true,
     });
   });
@@ -962,7 +963,7 @@ describe('custom global hooks', () => {
 
     expect(state).toEqual(initialState);
     expect(setState).toBeInstanceOf(Function);
-    expect(metadata).toEqual({});
+    expectMetadata(metadata).toMatch({});
 
     await mainPromise;
 
@@ -975,7 +976,7 @@ describe('custom global hooks', () => {
       ]),
     );
 
-    expect(metadata).toEqual({
+    expectMetadata(metadata).toMatch({
       isAsyncStorageReady: true,
     });
 
@@ -1028,7 +1029,7 @@ describe('custom global hooks', () => {
 
     expect(state).toEqual(initialState);
     expect(setState).toBeInstanceOf(Function);
-    expect(metadata).toEqual({});
+    expectMetadata(metadata).toMatch({});
 
     return mainPromise.then(() => {
       rerender();
@@ -1037,7 +1038,7 @@ describe('custom global hooks', () => {
 
       expect(state).toBe(initialState);
 
-      expect(metadata).toEqual({
+      expectMetadata(metadata).toMatch({
         isAsyncStorageReady: true,
       });
 
@@ -1440,7 +1441,7 @@ describe('createSelectorHook', () => {
     expect(useCountValuePlus2Value).toEqual(4);
     expect(useCountValuePlus3Value).toEqual(6);
 
-    expect(counter.getMetadata()).toEqual({ custom: 'metadata' });
+    expectMetadata(counter.getMetadata()).toMatch({ custom: 'metadata' });
   });
 
   it('should types work correctly with localstorage and onInit', () => {

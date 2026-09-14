@@ -34,12 +34,12 @@ export class GlobalStore<
 > extends GlobalStoreBase<State, AsyncMetadata<Metadata>, ActionsConfig> {
   public asyncStorage: AsyncStorageConfig<State> | null = null;
 
-  constructor(state: State);
+  constructor(state: State | (() => State));
 
   constructor(
-    state: State,
+    state: State | (() => State),
     args: {
-      metadata?: Metadata;
+      metadata?: Metadata | (() => Metadata);
       callbacks?: GlobalStoreCallbacks<
         State,
         PublicStateMutator extends AnyFunction ? null : PublicStateMutator,
@@ -52,9 +52,9 @@ export class GlobalStore<
   );
 
   constructor(
-    state: State,
+    state: State | (() => State),
     args: {
-      metadata?: Metadata;
+      metadata?: Metadata | (() => Metadata);
       callbacks?: GlobalStoreCallbacks<State, PublicStateMutator, Metadata>;
       actions?: ActionsConfig;
       name?: string;

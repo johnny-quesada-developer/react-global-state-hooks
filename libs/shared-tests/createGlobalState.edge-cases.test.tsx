@@ -1,3 +1,4 @@
+import { expectMetadata } from './expectMetadata';
 import { createGlobalState, InferAPI } from 'global-state-hooks-under-test';
 import it from './$it';
 import { act } from '@testing-library/react';
@@ -49,7 +50,7 @@ describe('createGlobalState - Edge Cases', () => {
     const { result } = renderHook(() => useStore());
 
     expect(result.current[0]).toBe('initial state');
-    expect(result.current[2]).toEqual({ version: 1 });
+    expectMetadata(result.current[2]).toMatch({ version: 1 });
   });
 
   it('should pass all constructor params correctly', () => {
@@ -77,8 +78,8 @@ describe('createGlobalState - Edge Cases', () => {
 
     expect(onInitSpy).toHaveBeenCalledTimes(1);
     expect(useStore.getState()).toEqual({ value: 10 });
-    expect(useStore.getMetadata()).toEqual({ meta: 'data' });
-    expect(useStore.metadata).toEqual({ meta: 'data' });
+    expectMetadata(useStore.getMetadata()).toMatch({ meta: 'data' });
+    expectMetadata(useStore.metadata).toMatch({ meta: 'data' });
 
     act(() => {
       useStore.actions.increment();
@@ -230,10 +231,10 @@ describe('createGlobalState - Edge Cases', () => {
     const useStore1 = createGlobalState(0, { metadata: metadataFactory });
     const useStore2 = createGlobalState(0, { metadata: metadataFactory });
 
-    expect(useStore1.getMetadata()).toEqual({ id: 1 });
-    expect(useStore2.getMetadata()).toEqual({ id: 2 });
-    expect(useStore1.metadata).toEqual({ id: 1 });
-    expect(useStore2.metadata).toEqual({ id: 2 });
+    expectMetadata(useStore1.getMetadata()).toMatch({ id: 1 });
+    expectMetadata(useStore2.getMetadata()).toMatch({ id: 2 });
+    expectMetadata(useStore1.metadata).toMatch({ id: 1 });
+    expectMetadata(useStore2.metadata).toMatch({ id: 2 });
     expect(callCount).toBe(2);
   });
 
@@ -263,7 +264,7 @@ describe('createGlobalState - Edge Cases', () => {
 
     const { result } = renderHook(() => useStore());
 
-    expect(result.current[2]).toEqual({});
+    expectMetadata(result.current[2]).toMatch({});
   });
 
   it('should handle all hook API methods', ({ renderHook }) => {

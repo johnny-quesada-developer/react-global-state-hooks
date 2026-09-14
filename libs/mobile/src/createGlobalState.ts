@@ -3,6 +3,8 @@ import type {
   ActionCollectionConfig,
   ActionCollectionResult,
   GlobalStoreCallbacks,
+  Any,
+  AnyActions,
 } from "react-hooks-global-states/types";
 
 import { AsyncStorageConfig, BaseMetadata, AsyncMetadata } from "./types";
@@ -35,7 +37,9 @@ interface CreateGlobalState {
    *   );
    * }
    */
-  <State>(state: State): StateHook<State, React.Dispatch<React.SetStateAction<State>>, BaseMetadata>;
+  <State>(
+    state: State | (() => State),
+  ): StateHook<State, React.Dispatch<React.SetStateAction<State>>, BaseMetadata>;
 
   /**
    * Creates a global state hook that you can use across your application
@@ -96,11 +100,11 @@ interface CreateGlobalState {
       ? React.Dispatch<React.SetStateAction<State>>
       : ActionCollectionResult<State, Metadata, NonNullable<ActionsConfig>>,
   >(
-    state: State,
+    state: State | (() => State),
     args: {
       name?: string;
-      metadata?: Metadata;
-      callbacks?: GlobalStoreCallbacks<State, PublicStateMutator, Metadata>;
+      metadata?: Metadata | (() => Metadata);
+      callbacks?: GlobalStoreCallbacks<Any, AnyActions, Any>;
       actions?: ActionsConfig;
       asyncStorage?: AsyncStorageConfig<State>;
     },
@@ -162,11 +166,11 @@ interface CreateGlobalState {
     ActionsConfig extends ActionCollectionConfig<State, Metadata>,
     PublicStateMutator = ActionCollectionResult<State, Metadata, NonNullable<ActionsConfig>>,
   >(
-    state: State,
+    state: State | (() => State),
     args: {
       name?: string;
-      metadata?: Metadata;
-      callbacks?: GlobalStoreCallbacks<State, PublicStateMutator, Metadata>;
+      metadata?: Metadata | (() => Metadata);
+      callbacks?: GlobalStoreCallbacks<Any, AnyActions, Any>;
       actions: ActionsConfig;
       asyncStorage?: AsyncStorageConfig<State>;
     },

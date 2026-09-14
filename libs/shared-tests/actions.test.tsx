@@ -1,3 +1,4 @@
+import { expectMetadata } from './expectMetadata';
 import { act } from '@testing-library/react';
 import { createGlobalState, actions, InferAPI, createContext } from 'global-state-hooks-under-test';
 import it from './$it';
@@ -657,23 +658,25 @@ describe('actions', () => {
             setState(100);
             const meta = getMetadata();
             // `metadata` getter should match `getMetadata()` at every read
-            expect(storeTools.metadata).toEqual(meta);
+            expectMetadata(storeTools.metadata).toMatch(meta);
             metadataLog.push(`before: ${JSON.stringify(meta)}`);
             actions.markInitialized();
             const metaAfter = getMetadata();
-            expect(storeTools.metadata).toEqual(metaAfter);
+            expectMetadata(storeTools.metadata).toMatch(metaAfter);
             metadataLog.push(`after: ${JSON.stringify(metaAfter)}`);
           },
         },
       });
 
       expect(store.getState()).toBe(100);
-      expect(store.getMetadata()).toEqual({ initialized: true, version: 1 });
-      expect(store.metadata).toEqual({ initialized: true, version: 1 });
-      expect(metadataLog).toEqual([
-        'before: {"initialized":false,"version":0}',
-        'after: {"initialized":true,"version":1}',
-      ]);
+      expectMetadata(store.getMetadata()).toMatch({ initialized: true, version: 1 });
+      expectMetadata(store.metadata).toMatch({ initialized: true, version: 1 });
+      // The log serializes the full metadata; variants may augment it with extra fields (e.g.
+      // the react-native variant adds async-storage metadata), so assert the two entries in
+      // order by the meaningful substring rather than an exact JSON match.
+      expect(metadataLog).toHaveLength(2);
+      expect(metadataLog[0]).toMatch(/^before: .*"initialized":false.*"version":0/);
+      expect(metadataLog[1]).toMatch(/^after: .*"initialized":true.*"version":1/);
     });
 
     it('should call onInit before derived actions are available', () => {

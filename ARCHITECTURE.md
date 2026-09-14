@@ -115,18 +115,42 @@ via `testPathIgnorePatterns` (regex fragments like `shared-tests/<name>\.test\.t
 
 **Current variant status**
 
-- `universal` and `web` run the entire shared suite.
-- `mobile` runs the shared suite except five files it isn't compatible with yet:
-  `actions.test`, `createGlobalState.edge-cases`, `GlobalStore.functionHooks`, `GlobalStore.test`,
-  and `types.inference`. mobile augments every store's metadata with async-storage fields
-  (`isAsyncStorageReady`, `asyncStorageKey`) and hasn't adopted a couple of v16 typing features,
-  so those shared tests (which assert the exact base metadata shape / v16 types) don't hold.
-  The equivalent behavior is covered by mobile's own async-aware `GlobalStore` tests. Closing
-  that gap so mobile can drop the ignores is a tracked follow-up.
+All three variants — `universal`, `web`, and `mobile` — run the **entire** shared suite with no
+exclusions. Making `mobile` pass the full suite required two kinds of change, both preserving
+behavior:
+
+- **Mobile type alignment to v16.** `mobile`'s `createGlobalState`/`GlobalStore` now accept lazy
+  initializers (`state: State | (() => State)`, `metadata: Metadata | (() => Metadata)`), its
+  `StoreTools` exposes the `readonly metadata` getter (with `getMetadata()` kept as deprecated),
+  and its action overloads use the base's loose `GlobalStoreCallbacks<Any, AnyActions, Any>` so
+  state literals widen the way the base does.
+- **Variant-aware metadata assertions.** Metadata is asserted with the shared
+  `expectMetadata(received).toMatch(expected)` helper (`libs/shared-tests/expectMetadata.ts`)
+  instead of a raw `toEqual`. It is an EXACT match for variants that add nothing, but tolerates a
+  variant's declared reserved metadata keys as allowed extras — so it stays strict (unexpected
+  keys still fail) while accommodating the react-native variant, which injects
+  `isAsyncStorageReady` / `asyncStorageKey` into every store's metadata. Each variant declares its
+  reserved keys from its `jestSetup.ts`:
+
+  ```ts
+  // mobile/jestSetup.ts
+  globalThis.__VARIANT_METADATA_KEYS__ = ['isAsyncStorageReady', 'asyncStorageKey'];
+  // universal / web
+  globalThis.__VARIANT_METADATA_KEYS__ = [];
+  ```
+
+  The helper runs a single underlying `expect().toEqual()` (it strips only the reserved keys the
+  test didn't explicitly expect), so `expect.assertions(n)` counts are unaffected. A couple of
+  example metadata keys in the tests were renamed to neutral names to avoid colliding with a
+  variant's reserved fields.
+
+The `testPathIgnorePatterns` opt-out mechanism still exists for a future variant that can't pass
+a given shared file yet, but no variant currently uses it.
 
 Adding a shared test: put it in `libs/shared-tests`, import via
-`global-state-hooks-under-test`, and confirm it passes for every variant (a variant that can't
-pass it yet adds a `testPathIgnorePatterns` entry).
+`global-state-hooks-under-test`, assert metadata with `expectMetadata(...).toMatch(...)` (so
+metadata-augmenting variants stay compatible without weakening the check), and confirm it passes
+for every variant.
 
 ## Monorepo linkage (why `web` depends on `universal` locally)
 
