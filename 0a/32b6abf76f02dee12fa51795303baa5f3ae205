@@ -1,0 +1,26 @@
+libs/mobile/esbuild.config.ts
+  h_6029769cf9ac60 42
+libs/mobile/package.json
+  h_6029769cf9ac60 30-34,60-64
+libs/mobile/src/actions.ts
+  h_6029769cf9ac60 1
+libs/mobile/src/index.ts
+  h_6029769cf9ac60 5-9,11,13-28,30-34,36-42,44-50,53-55,60,63,66,70-71,73
+libs/mobile/src/types.ts
+  h_6029769cf9ac60 12-42
+libs/mobile/tsconfig.build.json
+  h_6029769cf9ac60 8,10-15
+libs/web/tsconfig.build.json
+  h_6029769cf9ac60 8,10-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "0a32b6abf76f02dee12fa51795303baa5f3ae205",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
