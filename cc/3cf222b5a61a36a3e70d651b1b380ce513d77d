@@ -1,0 +1,42 @@
+ARCHITECTURE.md
+  h_6029769cf9ac60 118-148,151-153
+libs/mobile/jestSetup.ts
+  h_6029769cf9ac60 3-7
+libs/mobile/src/GlobalStore.ts
+  h_6029769cf9ac60 37,40,42,55,57
+libs/mobile/src/createGlobalState.ts
+  h_6029769cf9ac60 6-7,40-42,103,106-107,169,172-173
+libs/mobile/src/types.ts
+  h_6029769cf9ac60 48,209-215,233-241,303-305
+libs/shared-tests/GlobalStore.functionHooks.test.ts
+  h_6029769cf9ac60 1,267,496,663,675,687,714,796,820,837,905,914,966,979,1032,1041,1444
+libs/shared-tests/GlobalStore.test.ts
+  h_6029769cf9ac60 1,197-198,216-219,226-227,229-230,234,237-238,241-242,266-267,303-304,337-338,374-375
+libs/shared-tests/actions.test.tsx
+  h_6029769cf9ac60 1,661,665,672-679
+libs/shared-tests/createContext.edge-cases.test.tsx
+  h_6029769cf9ac60 1,212
+libs/shared-tests/createContext.test.tsx
+  h_6029769cf9ac60 1,109,252-253,262,264
+libs/shared-tests/createGlobalState.edge-cases.test.tsx
+  h_6029769cf9ac60 1,53,81-82,234-237,267
+libs/shared-tests/expectMetadata.ts
+  h_6029769cf9ac60 1-50
+libs/universal/jestSetup.ts
+  h_6029769cf9ac60 1-4
+libs/web/jestSetup.ts
+  h_6029769cf9ac60 1-4
+nx.json
+  h_6029769cf9ac60 2-3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "cc3cf222b5a61a36a3e70d651b1b380ce513d77d",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
