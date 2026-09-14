@@ -11,12 +11,14 @@ vi.mock('react-global-state-hooks/uniqueId', () => {
     let localCounter = 0;
     return () => `${prefix}${localCounter++}`;
   };
+  // The real module exposes both the default and a named `uniqueId` export.
   return {
     default: mockUniqueId,
+    uniqueId: mockUniqueId,
   };
 });
 
-vi.mock('../../monkey_patch/tools/react', () => ({
+vi.mock('../src/tools/react', () => ({
   onReactDevToolsConnect: vi.fn((callback) => {
     (globalThis as DebugGlobalThis).__reactDevToolsConnectCallback = callback;
   }),
@@ -82,7 +84,7 @@ describe('monkey_patch - Real World Scenarios', () => {
     } as Performance;
 
     sessionStorage.setItem('REACT_GLOBAL_STATE_HOOK_DEBUG', 'session:test-123');
-    await import('../../monkey_patch/monkey_patch');
+    await import('../src/monkey_patch');
     debugGlobal = globalThis as DebugGlobalThis;
   });
 

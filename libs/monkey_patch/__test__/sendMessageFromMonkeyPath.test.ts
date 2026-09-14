@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
-import sendMessageFromMonkeyPath from '../../monkey_patch/sendMessageFromMonkeyPath';
-import type { MonkeyPathMessage } from '../../monkey_patch/schema/MonkeyPathMessageJson';
-import { SubActionJsonEnum } from '../../monkey_patch/schema/SubActionJson';
-import { BuildTypeJsonEnum } from '../../monkey_patch/schema/BuildTypeJson';
+import sendMessageFromMonkeyPath from '../src/sendMessageFromMonkeyPath';
+import type { MonkeyPathMessage } from '../src/schema/MonkeyPathMessageJson';
+import { SubActionJsonEnum } from '../src/schema/SubActionJson';
+import { BuildTypeJsonEnum } from '../src/schema/BuildTypeJson';
 
 describe('sendMessageFromMonkeyPath', () => {
   let postMessageSpy: ReturnType<typeof vi.fn>;

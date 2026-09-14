@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { actionLogJsonSchema } from './ActionLogJson';
 import { actionTypeJsonSchema } from './ActionTypeJson';
-import { uniqueId } from 'react-global-state-hooks';
+import { uniqueId } from 'react-global-state-hooks/uniqueId';
 
 export type ActionId = ReturnType<typeof generateActionId>;
 

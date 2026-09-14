@@ -1,7 +1,7 @@
 import isNil from 'json-storage-formatter/isNil';
 import { assertIsNonNullable } from '../asserts/asserts';
 import { BuildTypeJsonEnum } from '../schema/BuildTypeJson';
-import GlobalStore from 'react-global-state-hooks/GlobalStore';
+import type GlobalStore from 'react-global-state-hooks/GlobalStore';
 import type { BaseMetadata } from 'react-global-state-hooks/types';
 
 // Kept here to avoid circular dependencies in the monkey patch entrypoints
@@ -52,7 +52,7 @@ interface GlobalThis {
   REACT_GLOBAL_STATE_HOOK_DEBUG?: (
     store: GlobalStoreParameter,
     args: unknown, // GlobalStateExtraArgs | undefined,
-    invokerHash: string
+    invokerHash: string,
   ) => void;
 }
 
@@ -166,7 +166,9 @@ export const getReactBuildType = () => {
   if (!global.__REACT_DEVTOOLS_GLOBAL_HOOK__) return BuildTypeJsonEnum.production;
 
   const renderers = Array.from(global.__REACT_DEVTOOLS_GLOBAL_HOOK__?.renderers?.values?.() ?? []);
-  const devRenderer = renderers.find((renderer) => detectReactBuildType(renderer) === BuildTypeJsonEnum.development);
+  const devRenderer = renderers.find(
+    (renderer) => detectReactBuildType(renderer) === BuildTypeJsonEnum.development,
+  );
 
   return devRenderer ? BuildTypeJsonEnum.development : BuildTypeJsonEnum.production;
 };

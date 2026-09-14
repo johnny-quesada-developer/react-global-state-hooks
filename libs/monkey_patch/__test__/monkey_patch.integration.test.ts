@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
 import GlobalStore from 'react-global-state-hooks/GlobalStore';
 import formatFromStore from 'json-storage-formatter/formatFromStore';
-import { assertMonkeyPathMessageJson } from '../../monkey_patch/schema/MonkeyPathMessageJson/MonkeyPathMessageJson';
-import { assertAddGlobalStateMessage } from '../../monkey_patch/schema/MonkeyPathMessageJson/AddGlobalStateMessage';
-import { assertStartActionMessage } from '../../monkey_patch/schema/MonkeyPathMessageJson/StartActionMessage';
-import { assertAddActionLogMessage } from '../../monkey_patch/schema/MonkeyPathMessageJson/AddActionLogMessage';
-import { assertUpdateActionMessage } from '../../monkey_patch/schema/MonkeyPathMessageJson/UpdateActionMessage';
-import { assertDeleteGlobalStateMessage } from '../../monkey_patch/schema/MonkeyPathMessageJson/DeleteGlobalStateMessage';
+import { assertMonkeyPathMessageJson } from '../src/schema/MonkeyPathMessageJson/MonkeyPathMessageJson';
+import { assertAddGlobalStateMessage } from '../src/schema/MonkeyPathMessageJson/AddGlobalStateMessage';
+import { assertStartActionMessage } from '../src/schema/MonkeyPathMessageJson/StartActionMessage';
+import { assertAddActionLogMessage } from '../src/schema/MonkeyPathMessageJson/AddActionLogMessage';
+import { assertUpdateActionMessage } from '../src/schema/MonkeyPathMessageJson/UpdateActionMessage';
+import { assertDeleteGlobalStateMessage } from '../src/schema/MonkeyPathMessageJson/DeleteGlobalStateMessage';
 
 // Mock only external boundaries - window.postMessage
 let mockPostMessage: ReturnType<typeof vi.fn>;
@@ -19,12 +19,14 @@ vi.mock('react-global-state-hooks/uniqueId', () => {
     let localCounter = 0;
     return () => `${prefix}${localCounter++}`;
   };
+  // The real module exposes both the default and a named `uniqueId` export.
   return {
     default: mockUniqueId,
+    uniqueId: mockUniqueId,
   };
 });
 
-vi.mock('../../monkey_patch/tools/react', () => ({
+vi.mock('../src/tools/react', () => ({
   onReactDevToolsConnect: vi.fn((callback) => {
     // Store callback for later invocation
     (globalThis as any).__reactDevToolsConnectCallback = callback;
@@ -72,7 +74,7 @@ describe('monkey_patch.ts - Integration Tests', () => {
 
     // Import the module once to initialize REACT_GLOBAL_STATE_HOOK_DEBUG
     sessionStorage.setItem('REACT_GLOBAL_STATE_HOOK_DEBUG', 'session:test-123');
-    await import('../../monkey_patch/monkey_patch');
+    await import('../src/monkey_patch');
     global = globalThis as any;
   });
 

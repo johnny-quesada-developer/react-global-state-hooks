@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
-import { Logger } from '../../monkey_patch/monkey_patch.logger';
-import { ActionTypeJsonEnum } from '../../monkey_patch/schema/ActionTypeJson';
-import { SubActionJsonEnum } from '../../monkey_patch/schema/SubActionJson';
+import { Logger } from '../src/monkey_patch.logger';
+import { ActionTypeJsonEnum } from '../src/schema/ActionTypeJson';
+import { SubActionJsonEnum } from '../src/schema/SubActionJson';
 
 // Mock only external boundary - window.postMessage
 let mockPostMessage: ReturnType<typeof vi.fn>;

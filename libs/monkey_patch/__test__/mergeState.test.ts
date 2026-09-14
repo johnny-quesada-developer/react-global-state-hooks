@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
-import { mergeState } from '../../monkey_patch/mergeState';
+import { mergeState } from '../src/mergeState';
 
 describe('mergeState', () => {
   describe('primitive values', () => {

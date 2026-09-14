@@ -4,9 +4,9 @@ import {
   makeGetStoreActionsMapWrapper,
   makeGetLifeCycleStoreToolsWrapper,
   sendDeleteGlobalStateMessage,
-} from '../../monkey_patch/monkey_patch';
-import type { SetStateConfigJson } from '../../monkey_patch/schema/SetStateConfigJson';
-import type { GlobalStoreParameter } from '../../monkey_patch/tools/react';
+} from '../src/monkey_patch';
+import type { SetStateConfigJson } from '../src/schema/SetStateConfigJson';
+import type { GlobalStoreParameter } from '../src/tools/react';
 import type { DevtoolsWireMessage } from './contracts';
 
 // Mock only external boundaries - window.postMessage and performance.now
@@ -21,8 +21,11 @@ vi.mock('react-global-state-hooks/uniqueId', () => {
     let localCounter = 0;
     return () => `${prefix}${localCounter++}`;
   };
+  // The real module exposes both the default and a named `uniqueId` export; mirror that so
+  // named importers (e.g. schema/ActionJson) resolve too.
   return {
     default: mockUniqueId,
+    uniqueId: mockUniqueId,
   };
 });
 

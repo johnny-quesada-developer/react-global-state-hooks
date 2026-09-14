@@ -63,4 +63,15 @@ export default defineConfig([
       '@typescript-eslint/no-empty-object-type': 'off',
     },
   },
+  {
+    // libs/monkey_patch is migrated dev-tools code (a runtime monkey patch over untyped React
+    // DevTools / global internals). It legitimately leans on `any` to describe those untyped
+    // boundaries, and was authored under the dev-tools project's looser lint config. Relax these
+    // two rules for it rather than rewrite the migrated source; tightening them is a follow-up.
+    files: ['libs/monkey_patch/**/*.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+    },
+  },
 ]);

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
-import { getGlobalStateMetaPayload } from '../../monkey_patch/monkey_patch.utils';
-import type { GlobalStoreParameter } from '../../monkey_patch/tools/react';
+import { getGlobalStateMetaPayload } from '../src/monkey_patch.utils';
+import type { GlobalStoreParameter } from '../src/tools/react';
 
 describe('getGlobalStateMetaPayload', () => {
   describe('basic state metadata extraction', () => {

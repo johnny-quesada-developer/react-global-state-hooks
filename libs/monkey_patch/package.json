@@ -11,6 +11,16 @@
     "debug.js",
     "index.d.ts"
   ],
+  "scripts": {
+    "build": "yarn ts-check && yarn clean && tsx esbuild.config.ts && tsx scripts/prepare-dist.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --fix --max-warnings=0",
+    "clean": "rm -rf dist coverage",
+    "ts-check": "tsc -p tsconfig.json --noEmit"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/johnny-quesada-developer/react-global-state-hooks.git"
@@ -34,5 +44,13 @@
   "bugs": {
     "url": "https://github.com/johnny-quesada-developer/react-global-state-hooks/issues"
   },
-  "homepage": "https://github.com/johnny-quesada-developer/react-global-state-hooks#readme"
+  "homepage": "https://github.com/johnny-quesada-developer/react-global-state-hooks#readme",
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@types/chrome": "^0.0.270",
+    "@vitest/coverage-v8": "^2.1.9",
+    "easy-cancelable-promise": "^1.0.2",
+    "vitest": "^2.1.9",
+    "zod": "^4.3.6"
+  }
 }

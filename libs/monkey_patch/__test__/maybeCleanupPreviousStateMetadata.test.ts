@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } 
 import {
   maybeCleanupPreviousStateMetadata,
   deletePreviousSessionStacks,
-} from '../../monkey_patch/maybeCleanupPreviousStateMetadata';
+} from '../src/maybeCleanupPreviousStateMetadata';
 
 // Mock only external boundary - window.postMessage
 let mockPostMessage: ReturnType<typeof vi.fn>;
