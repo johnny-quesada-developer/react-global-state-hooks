@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import type { Any } from 'react-global-state-hooks';
 import {
   maybeCleanupPreviousStateMetadata,
   deletePreviousSessionStacks,
@@ -6,7 +7,7 @@ import {
 
 // Mock only external boundary - window.postMessage
 let mockPostMessage: ReturnType<typeof vi.fn>;
-let postedMessages: any[] = [];
+let postedMessages: Any[] = [];
 
 describe('maybeCleanupPreviousStateMetadata', () => {
   beforeEach(() => {
@@ -18,11 +19,11 @@ describe('maybeCleanupPreviousStateMetadata', () => {
     // Mock browser APIs (external boundary)
     global.window = {
       postMessage: mockPostMessage,
-    } as any;
+    } as Any;
 
     global.performance = {
       now: () => 123.456,
-    } as any;
+    } as Any;
 
     vi.clearAllMocks();
     sessionStorage.clear();

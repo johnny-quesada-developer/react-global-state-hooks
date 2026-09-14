@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { Any } from 'react-global-state-hooks';
 import sendMessageFromMonkeyPath from '../src/sendMessageFromMonkeyPath';
 import type { MonkeyPathMessage } from '../src/schema/MonkeyPathMessageJson';
 import { SubActionJsonEnum } from '../src/schema/SubActionJson';
@@ -11,10 +12,10 @@ describe('sendMessageFromMonkeyPath', () => {
     postMessageSpy = vi.fn();
     global.window = {
       postMessage: postMessageSpy,
-    } as any;
+    } as Any;
     global.performance = {
       now: () => 123.456,
-    } as any;
+    } as Any;
   });
 
   describe('message validation and formatting', () => {
@@ -176,7 +177,7 @@ describe('sendMessageFromMonkeyPath', () => {
         id: 'msg-1',
         // missing action
         payload: {},
-      } as any;
+      } as Any;
 
       expect(() => sendMessageFromMonkeyPath(invalidMessage)).toThrow();
     });
@@ -186,7 +187,7 @@ describe('sendMessageFromMonkeyPath', () => {
         id: 'msg-1',
         action: 'INVALID_ACTION',
         payload: {},
-      } as any;
+      } as Any;
 
       expect(() => sendMessageFromMonkeyPath(invalidMessage)).toThrow();
     });
@@ -199,7 +200,7 @@ describe('sendMessageFromMonkeyPath', () => {
           // missing required fields like name, globalStatePath, etc
           globalStateId: 'state-1',
         },
-      } as any;
+      } as Any;
 
       // Should throw due to missing required fields
       try {
@@ -223,7 +224,7 @@ describe('sendMessageFromMonkeyPath', () => {
           globalStateId: 'state-1',
           name: 'State with function',
           globalStatePath: '/src/state.ts',
-          initialState: { value: 1, fn: func } as any,
+          initialState: { value: 1, fn: func } as Any,
           actions: {},
           callbacks: [],
           localStorage: null,
@@ -251,7 +252,7 @@ describe('sendMessageFromMonkeyPath', () => {
           logId: 'action-log:1',
           globalStateId: 'state-1',
           actionId: 'action:1',
-          payload: { timestamp: date } as any,
+          payload: { timestamp: date } as Any,
           case: 'resolved',
           scope: 'action',
           timestamp: Date.now(),
@@ -283,7 +284,7 @@ describe('sendMessageFromMonkeyPath', () => {
                 fn: () => 'nested function',
               },
             },
-          } as any,
+          } as Any,
           case: 'resolved',
           scope: 'action',
           timestamp: Date.now(),
@@ -336,7 +337,7 @@ describe('sendMessageFromMonkeyPath', () => {
       ];
 
       actions.forEach((action) => {
-        const message: any = {
+        const message: Any = {
           id: 'msg-1',
           action,
           payload:
@@ -363,7 +364,7 @@ describe('sendMessageFromMonkeyPath', () => {
           sendMessageFromMonkeyPath(message);
           const sentMessage = postMessageSpy.mock.calls[postMessageSpy.mock.calls.length - 1][0];
           expect(sentMessage.action).toBe(`monkey-patch/${action}`);
-        } catch (error) {
+        } catch {
           // Some messages might fail validation with minimal payload, that's ok for this test
         }
       });
@@ -398,7 +399,7 @@ describe('sendMessageFromMonkeyPath', () => {
       let counter = 100;
       global.performance = {
         now: () => counter++,
-      } as any;
+      } as Any;
 
       const message: MonkeyPathMessage = {
         id: 'msg-1',
@@ -476,7 +477,7 @@ describe('sendMessageFromMonkeyPath', () => {
             map: new Map([['key', 'value']]),
             set: new Set([1, 2, 3]),
             date: new Date('2026-04-18'),
-          } as any,
+          } as Any,
           case: 'resolved',
           scope: 'action',
           timestamp: Date.now(),
@@ -498,7 +499,7 @@ describe('sendMessageFromMonkeyPath', () => {
         postMessage: () => {
           throw new Error('postMessage failed');
         },
-      } as any;
+      } as Any;
 
       const message: MonkeyPathMessage = {
         id: 'msg-1',

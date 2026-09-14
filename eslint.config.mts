@@ -53,6 +53,18 @@ export default defineConfig([
   tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
   {
+    // Standard convention: an underscore prefix marks an intentionally-unused ARGUMENT
+    // (e.g. a mock/callback parameter that exists only to define arity/shape). Unused local
+    // variables are still reported (so dead code is caught). Caught errors that go unused are
+    // allowed (a bare `catch {}` is preferred, but `catch (e) {}` without using `e` is fine).
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', caughtErrors: 'none' },
+      ],
+    },
+  },
+  {
     // The base library (universal) intentionally uses `{}` in a few generic/utility type
     // positions and disabled this rule globally in its pre-monorepo config. The shared test
     // suite (extracted from universal's tests) inherits the same `{}` usage. Scope the override
@@ -61,17 +73,6 @@ export default defineConfig([
     files: ['libs/universal/**/*.{ts,tsx}', 'libs/shared-tests/**/*.{ts,tsx}'],
     rules: {
       '@typescript-eslint/no-empty-object-type': 'off',
-    },
-  },
-  {
-    // libs/monkey_patch is migrated dev-tools code (a runtime monkey patch over untyped React
-    // DevTools / global internals). It legitimately leans on `any` to describe those untyped
-    // boundaries, and was authored under the dev-tools project's looser lint config. Relax these
-    // two rules for it rather than rewrite the migrated source; tightening them is a follow-up.
-    files: ['libs/monkey_patch/**/*.{ts,tsx}'],
-    rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-unused-vars': 'off',
     },
   },
 ]);

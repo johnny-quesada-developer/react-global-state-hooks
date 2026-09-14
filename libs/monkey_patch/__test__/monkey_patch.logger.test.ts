@@ -1,11 +1,12 @@
-import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import type { Any } from 'react-global-state-hooks';
 import { Logger } from '../src/monkey_patch.logger';
 import { ActionTypeJsonEnum } from '../src/schema/ActionTypeJson';
 import { SubActionJsonEnum } from '../src/schema/SubActionJson';
 
 // Mock only external boundary - window.postMessage
 let mockPostMessage: ReturnType<typeof vi.fn>;
-let postedMessages: any[] = [];
+let postedMessages: Any[] = [];
 
 describe('monkey_patch.logger - Message Contract Tests', () => {
   let logger: Logger;
@@ -19,11 +20,11 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
     // Mock browser APIs (external boundary)
     global.window = {
       postMessage: mockPostMessage,
-    } as any;
+    } as Any;
 
     global.performance = {
       now: () => 123.456,
-    } as any;
+    } as Any;
 
     vi.clearAllMocks();
     vi.useFakeTimers();

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
 import type { DebugGlobalThis, DevtoolsWireMessage, MockStore, PatchedStore, UniqueIdMock } from './contracts';
 
 let mockPostMessage: ReturnType<typeof vi.fn>;

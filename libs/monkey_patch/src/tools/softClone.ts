@@ -1,12 +1,15 @@
 import isDate from 'json-storage-formatter/isDate';
 import isPrimitive from 'json-storage-formatter/isPrimitive';
 import isRecord from 'react-global-state-hooks/isRecord';
+import type { Any } from 'react-global-state-hooks/types';
 
-export function isReactElement(object: any): boolean {
+export function isReactElement(object: Any): boolean {
   return isRecord(object) && Boolean(object._reactName);
 }
 
-export const isNonSerializable = (value: unknown): value is ((...args: any[]) => any) | symbol | bigint => {
+export const isNonSerializable = (
+  value: unknown,
+): value is ((...args: never[]) => unknown) | symbol | bigint => {
   if (
     typeof value === 'function' ||
     typeof value === 'symbol' ||
@@ -104,7 +107,7 @@ const clone = <T>(obj: T, seen = new WeakSet()): T => {
 export const softClone = <T>(_obj: T): T => {
   try {
     return clone(_obj, new WeakSet());
-  } catch (error) {
+  } catch {
     return getPlaceholder(_obj);
   }
 };

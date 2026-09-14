@@ -13,9 +13,10 @@ export const actionTypeJsonSchema = z.enum([
   ActionTypeJsonEnum.LIFE_CYCLE_PARAMETER,
   ActionTypeJsonEnum.CUSTOM_ACTION,
   ActionTypeJsonEnum.STATE_ACTION,
-  'async' as any, // Legacy test value
-  'action' as any, // Legacy test value
-  'callback' as any, // Legacy test value
+  // Legacy values kept for backwards compatibility with older payloads/tests.
+  'async',
+  'action',
+  'callback',
 ]);
 
 export type ActionTypeJson = z.infer<typeof actionTypeJsonSchema>;

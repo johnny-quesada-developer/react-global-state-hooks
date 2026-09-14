@@ -153,7 +153,7 @@ export const getReactBuildType = () => {
         // However, the branch above is Stack-only so this is 15 or earlier.
         return 'outdated';
       }
-    } catch (err) {
+    } catch {
       // Weird environments may exist.
       // This code needs a higher fault tolerance
       // because it runs even with closed DevTools.

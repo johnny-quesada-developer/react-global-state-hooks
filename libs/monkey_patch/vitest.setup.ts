@@ -8,7 +8,7 @@ afterEach(() => {
 });
 
 // Minimal chrome API stub for tests that touch the extension surface.
-(global as any).chrome = {
+(globalThis as { chrome?: unknown }).chrome = {
   devtools: {
     inspectedWindow: {
       tabId: 1,

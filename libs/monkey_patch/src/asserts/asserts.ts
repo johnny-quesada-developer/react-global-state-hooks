@@ -1,5 +1,6 @@
 import isNil from 'json-storage-formatter/isNil';
 import isRecord from 'react-global-state-hooks/isRecord';
+import type { Any } from 'react-global-state-hooks/types';
 
 export function assertIsNil(value: unknown, validation: string): asserts value is null | undefined {
   if (!isNil(value)) {
@@ -33,15 +34,15 @@ export function assertIsString(value: unknown, validation: string): asserts valu
   }
 }
 
-export function assertIsFunction<T extends (...args: any[]) => any>(
+export function assertIsFunction<T extends (...args: Any[]) => unknown>(
   value: unknown,
-  validation: string
+  validation: string,
 ): asserts value is T {
   if (typeof value !== 'function') {
     throw new Error(validation);
   }
 }
 
-export function isFunction<T extends (...args: any[]) => any>(value: unknown): value is T {
+export function isFunction<T extends (...args: Any[]) => unknown>(value: unknown): value is T {
   return typeof value === 'function';
 }

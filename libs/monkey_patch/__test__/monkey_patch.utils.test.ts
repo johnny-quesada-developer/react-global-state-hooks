@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect } from 'vitest';
+import type { Any } from 'react-global-state-hooks';
 import { getGlobalStateMetaPayload } from '../src/monkey_patch.utils';
 import type { GlobalStoreParameter } from '../src/tools/react';
 
@@ -73,7 +74,7 @@ describe('getGlobalStateMetaPayload', () => {
         actionsConfig: {
           increment: () => {},
           decrement: () => {},
-          add: (n: number) => {},
+          add: (_n: number) => {},
         },
         callbacks: {},
         metadata: {},
@@ -100,8 +101,8 @@ describe('getGlobalStateMetaPayload', () => {
           increment: () => {},
           notAFunction: 'string value',
           anotherNonFunction: 123,
-          validAction: (a: number, b: number) => {},
-        } as any,
+          validAction: (_a: number, _b: number) => {},
+        } as Any,
         callbacks: {},
         metadata: {},
       };
@@ -140,7 +141,7 @@ describe('getGlobalStateMetaPayload', () => {
     it('should handle undefined actionsConfig', () => {
       const globalState: GlobalStoreParameter = {
         state: { count: 0 },
-        actionsConfig: undefined as any,
+        actionsConfig: undefined as Any,
         callbacks: {},
         metadata: {},
       };
@@ -160,9 +161,9 @@ describe('getGlobalStateMetaPayload', () => {
         state: {},
         actionsConfig: {
           noArgs: () => {},
-          oneArg: (a: any) => {},
-          twoArgs: (a: any, b: any) => {},
-          threeArgs: (a: any, b: any, c: any) => {},
+          oneArg: (_a: Any) => {},
+          twoArgs: (_a: Any, _b: Any) => {},
+          threeArgs: (_a: Any, _b: Any, _c: Any) => {},
         },
         callbacks: {},
         metadata: {},
@@ -227,7 +228,7 @@ describe('getGlobalStateMetaPayload', () => {
       const globalState: GlobalStoreParameter = {
         state: { count: 0 },
         actionsConfig: {},
-        callbacks: undefined as any,
+        callbacks: undefined as Any,
         metadata: {},
       };
 
@@ -472,10 +473,10 @@ describe('getGlobalStateMetaPayload', () => {
           filter: 'all',
         },
         actionsConfig: {
-          addTodo: (text: string) => {},
-          toggleTodo: (id: number) => {},
-          removeTodo: (id: number) => {},
-          setFilter: (filter: string) => {},
+          addTodo: (_text: string) => {},
+          toggleTodo: (_id: number) => {},
+          removeTodo: (_id: number) => {},
+          setFilter: (_filter: string) => {},
         },
         callbacks: {
           onInit: () => {},
@@ -518,8 +519,8 @@ describe('getGlobalStateMetaPayload', () => {
           submitCount: 0,
         },
         actionsConfig: {
-          updateField: (name: string, value: string) => {},
-          touchField: (name: string) => {},
+          updateField: (_name: string, _value: string) => {},
+          touchField: (_name: string) => {},
           submit: () => {},
           reset: () => {},
         },
@@ -608,7 +609,7 @@ describe('getGlobalStateMetaPayload', () => {
     });
 
     it('should handle state with circular references', () => {
-      const state: any = { a: 1 };
+      const state: Any = { a: 1 };
       state.self = state;
 
       const globalState: GlobalStoreParameter = {

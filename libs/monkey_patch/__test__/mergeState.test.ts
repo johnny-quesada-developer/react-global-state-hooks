@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect } from 'vitest';
+import type { Any } from 'react-global-state-hooks';
 import { mergeState } from '../src/mergeState';
 
 describe('mergeState', () => {
@@ -52,7 +53,7 @@ describe('mergeState', () => {
     it('should handle nested objects recursively', () => {
       const state = { user: { name: 'John', age: 30 } };
       const newState = { user: { age: 31 } };
-      const result = mergeState(state, newState) as any;
+      const result = mergeState(state, newState) as Any;
 
       expect(result).toEqual({ user: { age: 31 } });
     });
@@ -77,7 +78,7 @@ describe('mergeState', () => {
           },
         },
       };
-      const result = mergeState(state, newState) as any;
+      const result = mergeState(state, newState) as Any;
 
       expect(result.level1.level2.level3.value).toBe('new');
     });
@@ -88,7 +89,7 @@ describe('mergeState', () => {
     });
 
     it('should create objects with null prototype', () => {
-      const result = mergeState({ a: 1 }, { b: 2 }) as any;
+      const result = mergeState({ a: 1 }, { b: 2 }) as Any;
       expect(Object.getPrototypeOf(result)).toBeNull();
     });
   });
@@ -148,8 +149,8 @@ describe('mergeState', () => {
     it('should preserve old values for non-serializable properties', () => {
       const oldFn = () => 'old function';
       const state = { fn: oldFn, value: 1 };
-      const newState = { fn: { __non_serializable__: true } as any, value: 2 };
-      const result = mergeState(state, newState) as any;
+      const newState = { fn: { __non_serializable__: true } as Any, value: 2 };
+      const result = mergeState(state, newState) as Any;
 
       expect(result.fn).toBe(oldFn);
       expect(result.value).toBe(2);
@@ -167,11 +168,11 @@ describe('mergeState', () => {
       const fn2 = () => 'fn2';
       const state = { fn1, fn2, value: 1 };
       const newState = {
-        fn1: { __non_serializable__: true } as any,
-        fn2: { __non_serializable__: true } as any,
+        fn1: { __non_serializable__: true } as Any,
+        fn2: { __non_serializable__: true } as Any,
         value: 2,
       };
-      const result = mergeState(state, newState) as any;
+      const result = mergeState(state, newState) as Any;
 
       expect(result.fn1).toBe(fn1);
       expect(result.fn2).toBe(fn2);
@@ -183,11 +184,11 @@ describe('mergeState', () => {
       const state = { nested: { fn, value: 1 } };
       const newState = {
         nested: {
-          fn: { __non_serializable__: true } as any,
+          fn: { __non_serializable__: true } as Any,
           value: 2,
         },
       };
-      const result = mergeState(state, newState) as any;
+      const result = mergeState(state, newState) as Any;
 
       expect(result.nested.fn).toBe(fn);
       expect(result.nested.value).toBe(2);
@@ -222,7 +223,7 @@ describe('mergeState', () => {
         obj: { nested: 'updated' },
         arr: [3, 4, 5],
       };
-      const result = mergeState(state, newState) as any;
+      const result = mergeState(state, newState) as Any;
 
       expect(result.num).toBe(2);
       expect(result.str).toBe('new');
@@ -264,7 +265,7 @@ describe('mergeState', () => {
         },
         isSubmitting: true,
       };
-      const result = mergeState(state, newState) as any;
+      const result = mergeState(state, newState) as Any;
 
       expect(result.fields.email.value).toBe('new@example.com');
       expect(result.fields.password.touched).toBe(true);
@@ -283,7 +284,7 @@ describe('mergeState', () => {
         items: [{ id: '1', quantity: 3, price: 10 }],
         total: 30,
       };
-      const result = mergeState(state, newState) as any;
+      const result = mergeState(state, newState) as Any;
 
       expect(result.items).toHaveLength(1);
       expect(result.items[0].quantity).toBe(3);
@@ -299,10 +300,10 @@ describe('mergeState', () => {
       };
       const newState = {
         theme: 'light',
-        formatter: { __non_serializable__: true } as any,
+        formatter: { __non_serializable__: true } as Any,
         fontSize: 16,
       };
-      const result = mergeState(state, newState) as any;
+      const result = mergeState(state, newState) as Any;
 
       expect(result.theme).toBe('light');
       expect(result.formatter).toBe(customFormatter);
