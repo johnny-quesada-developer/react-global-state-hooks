@@ -1,5 +1,5 @@
-import { createContext, createGlobalState } from '@react-hooks-global-states';
-import type { InferActionsType, InferStateApi, InferContextApi } from '@react-hooks-global-states';
+import { createContext, createGlobalState } from 'global-state-hooks-under-test';
+import type { InferActionsType, InferStateApi, InferContextApi } from 'global-state-hooks-under-test';
 
 type AssertType<TExpected, TActual extends TExpected> = TExpected extends TActual ? true : never;
 

@@ -1,4 +1,4 @@
-import { shallowCompare } from '@react-hooks-global-states';
+import { shallowCompare } from 'global-state-hooks-under-test';
 
 describe('shallowCompare', () => {
   it('should return true if the objects are the same reference', () => {

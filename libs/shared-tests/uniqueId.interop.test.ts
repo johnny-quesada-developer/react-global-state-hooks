@@ -10,7 +10,7 @@
  * The full cross-runtime proof (tsx/esbuild + Node ESM + Node CJS against the packed
  * tarball) lives in `scripts/test-interop.ts` (`yarn test:interop`).
  */
-import uniqueIdDefault, { uniqueId as uniqueIdNamed } from '@react-hooks-global-states/uniqueId';
+import uniqueIdDefault, { uniqueId as uniqueIdNamed } from 'global-state-hooks-under-test/uniqueId';
 
 describe('uniqueId subpath interop', () => {
   it('exposes a callable default export', () => {
@@ -27,7 +27,7 @@ describe('uniqueId subpath interop', () => {
 
   it('does not expose phantom namespace keys', () => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const ns = require('@react-hooks-global-states/uniqueId');
+    const ns = require('global-state-hooks-under-test/uniqueId');
     const keys = Object.keys(ns).sort();
     expect(keys).toEqual(['default', 'uniqueId']);
     expect(ns.__esModule).toBe(true);

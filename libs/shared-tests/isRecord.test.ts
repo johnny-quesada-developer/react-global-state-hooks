@@ -1,4 +1,4 @@
-import { isRecord } from '@react-hooks-global-states';
+import { isRecord } from 'global-state-hooks-under-test';
 
 describe('isRecord', () => {
   it('should return true for plain objects', () => {

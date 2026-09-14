@@ -1,4 +1,4 @@
-import { type StoreTools, GlobalStore } from '@react-hooks-global-states';
+import { type StoreTools, GlobalStore } from 'global-state-hooks-under-test';
 
 import $it from './$it';
 

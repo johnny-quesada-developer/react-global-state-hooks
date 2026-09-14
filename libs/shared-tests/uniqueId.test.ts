@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { uniqueId } from '@react-hooks-global-states';
+import { uniqueId } from 'global-state-hooks-under-test';
 
 declare const ItemBrand1: unique symbol;
 declare const ItemBrand2: unique symbol;

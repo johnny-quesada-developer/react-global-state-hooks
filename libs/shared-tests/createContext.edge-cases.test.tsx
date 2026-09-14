@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { createContext } from '@react-hooks-global-states';
+import { createContext } from 'global-state-hooks-under-test';
 import { act, render } from '@testing-library/react';
 import it from './$it';
 

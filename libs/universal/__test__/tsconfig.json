@@ -6,12 +6,14 @@
   "compilerOptions": {
     "baseUrl": "..",
     "paths": {
-      // Type-checks against `src` (identical types to `dist`).
-      // Jest maps the alias to `src` or `dist` at runtime (see jest.config.js / TEST_TARGET).
-      "@react-hooks-global-states": ["./src"],
-      "@react-hooks-global-states/*": ["./src/*"]
+      // The shared suite imports the subject under test via the neutral alias; type-check it
+      // against THIS variant's `src` (identical types to `dist`). Jest maps the same alias to
+      // `src` or `dist` at runtime (see jest.config.js / TEST_TARGET).
+      "global-state-hooks-under-test": ["./src"],
+      "global-state-hooks-under-test/*": ["./src/*"]
     }
   },
-  "include": ["**/*"],
+  // Type-check this variant's own tests plus the shared suite.
+  "include": ["**/*", "../../shared-tests/**/*"],
   "exclude": []
 }
