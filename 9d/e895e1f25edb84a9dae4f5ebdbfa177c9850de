@@ -1,0 +1,28 @@
+.gitignore
+  h_6029769cf9ac60 117-119
+ARCHITECTURE.md
+  h_6029769cf9ac60 69-90
+libs/mobile/package.json
+  h_6029769cf9ac60 3,82-83,139
+libs/universal/package.json
+  h_6029769cf9ac60 3
+libs/web/LICENSE
+  h_6029769cf9ac60 1-21
+libs/web/package.json
+  h_6029769cf9ac60 3,119
+package.json
+  h_6029769cf9ac60 26-27
+scripts/tarball.mjs
+  h_6029769cf9ac60 1-139
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "9de895e1f25edb84a9dae4f5ebdbfa177c9850de",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
