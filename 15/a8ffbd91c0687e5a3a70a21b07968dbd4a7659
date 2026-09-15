@@ -1,0 +1,64 @@
+DEVTOOLS.md
+  h_6029769cf9ac60 46-48,50-52
+README.md
+  h_6029769cf9ac60 45-54
+apps/devtools/package.json
+  h_6029769cf9ac60 4,8-15,17,19-22,24,45
+apps/devtools/project.json
+  h_6029769cf9ac60 1-22,24-27,29-32,34-36,38-41,43-45,47-60
+apps/devtools/src/__tests__/end-to-end-workflows.test.ts
+  h_6029769cf9ac60 14-15,17,22,66
+apps/devtools/src/__tests__/error-recovery-edge-cases.test.ts
+  h_6029769cf9ac60 13-14,16,21,65
+apps/devtools/src/lib/content_script.ts
+  h_6029769cf9ac60 2
+apps/devtools/src/pages/main_tab/components/GlobalStateList/GlobalStateListFilter/GlobalStoreListFilter.tsx
+  h_6029769cf9ac60 14
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/ActionsTab/components/CodeEditor/CodeEditor.tsx
+  h_6029769cf9ac60 28
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogDetails/LogDetails.tsx
+  h_6029769cf9ac60 13,51
+apps/devtools/src/pages/main_tab/context/mainTabContext.ts
+  h_6029769cf9ac60 1
+apps/devtools/src/pages/main_tab/hooks/useMountEffect.ts
+  h_6029769cf9ac60 1-2,6-9,11,15
+apps/devtools/src/pages/main_tab/hooks/useStableRef.ts
+  h_6029769cf9ac60 8-13,17,19,25,27,29,44
+apps/devtools/src/shared/components/JsonViewer/JsonViewer.tsx
+  h_6029769cf9ac60 43
+apps/devtools/src/shared/components/Tooltip/Tooltip.tsx
+  h_6029769cf9ac60 45,150
+apps/devtools/src/shared/tools/react.ts
+  h_6029769cf9ac60 1
+apps/devtools/tsconfig.app.json
+  h_6029769cf9ac60 20,30-38,44-45
+apps/devtools/tsconfig.json
+  h_6029769cf9ac60 4-5
+apps/devtools/tsconfig.lib.json
+  h_6029769cf9ac60 1-29
+apps/devtools/tsconfig.node.json
+  h_6029769cf9ac60 16-17,19
+apps/devtools/vite.config.ts
+  h_6029769cf9ac60 1,4-5,7-18,20-38,43-45,58,64-65,68-84,86
+apps/devtools/vitest.config.ts
+  h_6029769cf9ac60 3-10,14-30,33
+apps/devtools/vitest.setup.ts
+  h_6029769cf9ac60 2,5,10-11
+apps/devtools/webpack.config.cjs
+  h_6029769cf9ac60 3,5-8,14,38-42,49-53,75
+eslint.config.mts
+  h_6029769cf9ac60 90-105
+yarn.lock
+  h_6029769cf9ac60 10-14,34,162,202-206,225-304,333-337,897,931,939-971,1057-1139,1458-1463,1827-1972,2015-2028,2039-2048,2081-2098,2212,2237-2247,2297-2301,2312-2316,2348,2355,2429-2433,2455,2468-2496,2507-2511,2554-2562,2568-2585,2598-2607,2615-2619,2630-2634,2640-2654,2680-2692,2706-2710,2764-2770,2883-2897,2905-2909,3005-3012,3018-3022,3137-3141,3539-3543,3559,3592-3596,3611-3615,3635-3659,3699-3706,3723,3750-3757,3789-3793,3887,3943,4087-4091,4100-4107,4132-4136,4171-4177,4260,4302-4308,4416-4420,4502-4510,4521-4525,4589-4593,4638-4642,4676-4680,4686-4697,4705-4714,4725-4729,5083-5092,5113-5121,5139-5143,5154-5160,5171-5175,5183-5190,5349,5354-5358,5503-5509,5517-5523,5531-5535,5570-5574,5608,5613,5618-5629,5635-5678,5715-5721,5748-5752,5763-5772,5789-5793,5809-5823,5887-5895,5903-5907,5917-5940,5990-6001,6007-6011,6017-6026,6109-6115,6154-6290,6310-6319,6400-6404,6410-6416,6429,6504,6527-6536,6718-6735,6743,6760-6809,6821-6831,6850-6863,6869-6873,6884,6950-6959,6965-6978,6998,7096-7100,7116-7120,7141-7158,7168-7172,7184-7197,7240-7249,7257-7263,7271-7275,7281-7336,7362-7369,7445-7449,7540
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "15a8ffbd91c0687e5a3a70a21b07968dbd4a7659",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
