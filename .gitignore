@@ -117,3 +117,7 @@ dist
 
 # Package tarballs from `yarn tarball`
 /artifacts
+
+# Private signing keys (e.g. the Chrome extension .pem). NEVER commit these — a leaked key lets
+# anyone sign a build as this extension. The signed .crx artifact is fine to commit; the key is not.
+*.pem
