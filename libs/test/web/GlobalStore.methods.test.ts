@@ -1,4 +1,4 @@
-import { GlobalStore, ItemEnvelope } from 'react-global-state-hooks';
+import { GlobalStore, ItemEnvelope } from 'global-state-hooks-under-test';
 import formatToStore from 'json-storage-formatter/formatToStore';
 import formatFromStore from 'json-storage-formatter/formatFromStore';
 

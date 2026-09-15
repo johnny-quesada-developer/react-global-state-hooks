@@ -11,8 +11,9 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./vitest.setup.ts'],
-    // This variant has no persistence-specific tests of its own; it runs the shared suite.
-    include: ['__test__/**/*.{test,spec}.{ts,tsx}', '../shared-tests/**/*.{test,spec}.{ts,tsx}'],
+    // The universal variant is the base behavior; it runs the neutral suite (test/universal) and
+    // has no persistence-specific tests of its own.
+    include: ['../test/universal/**/*.{test,spec}.{ts,tsx}'],
   },
   resolve: {
     alias: [

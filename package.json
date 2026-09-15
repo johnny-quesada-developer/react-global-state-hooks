@@ -27,6 +27,9 @@
     "coverage": "node scripts/coverage-report.mjs",
     "graph": "nx graph"
   },
+  "scriptsInfo": {
+    "test": "--reporter=verbose"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/johnny-quesada-developer/react-global-state-hooks.git"

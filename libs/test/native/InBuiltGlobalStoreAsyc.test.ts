@@ -1,11 +1,12 @@
 import { createDecoupledPromise } from "easy-cancelable-promise/createDecoupledPromise";
 
-import { GlobalStore, createGlobalState, asyncStorageWrapper } from "react-native-global-state-hooks";
+import { GlobalStore, createGlobalState, asyncStorageWrapper } from "global-state-hooks-under-test";
 import formatToStore from "json-storage-formatter/formatToStore";
-import { getFakeAsyncStorage } from "./getFakeAsyncStorage";
+import { getFakeAsyncStorage } from "../helpers/getFakeAsyncStorage";
+import { waitForAsyncStorageReady } from "../helpers/waitForAsyncStorageReady";
 import { act } from "@testing-library/react";
-import it from "./$it";
-import tryCatch from "react-native-global-state-hooks/tryCatch";
+import it from "../helpers/$it";
+import tryCatch from "global-state-hooks-under-test/tryCatch";
 
 export const { fakeAsyncStorage: asyncStorage } = getFakeAsyncStorage();
 asyncStorageWrapper.addAsyncStorageManager(() => Promise.resolve(asyncStorage));
@@ -57,8 +58,7 @@ describe("GlobalStoreAsync Basics", () => {
 
         await onStateChangedPromise;
 
-        // wait two ticks to ensure the isAsyncStorageReady flag is set
-        await new Promise((r) => setTimeout(r, 2));
+        await waitForAsyncStorageReady(() => store.getMetadata());
 
         expect(store.getMetadata().isAsyncStorageReady).toBe(true);
 
@@ -134,8 +134,7 @@ describe("createGlobalState", () => {
 
         await onStateChangedPromise;
 
-        // wait two ticks to ensure the isAsyncStorageReady flag is set
-        await new Promise((r) => setTimeout(r, 2));
+        await waitForAsyncStorageReady(() => store.getMetadata());
 
         [data, setData, metadata] = result.current;
 

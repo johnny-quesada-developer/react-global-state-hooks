@@ -1,13 +1,13 @@
 import { createDecoupledPromise } from "easy-cancelable-promise/createDecoupledPromise";
 import { CancelablePromise } from "easy-cancelable-promise/CancelablePromise";
-import { GlobalStore } from "react-native-global-state-hooks";
+import { GlobalStore } from "global-state-hooks-under-test";
 
 import { formatFromStore, formatToStore } from "json-storage-formatter";
-import { getFakeAsyncStorage } from "./getFakeAsyncStorage";
+import { getFakeAsyncStorage } from "../helpers/getFakeAsyncStorage";
 import { StoreTools } from "react-hooks-global-states";
 import { act } from "@testing-library/react";
 
-import it from "./$it";
+import it from "../helpers/$it";
 import { type Mock } from "vitest";
 
 const countStoreInitialState = 1;

@@ -70,7 +70,7 @@ export default defineConfig([
     // suite (extracted from universal's tests) inherits the same `{}` usage. Scope the override
     // to those two so web keeps flagging `{}` (web disables it inline per-line, and a
     // workspace-wide off would turn those inline directives into "unused" warnings).
-    files: ['libs/universal/**/*.{ts,tsx}', 'libs/shared-tests/**/*.{ts,tsx}'],
+    files: ['libs/universal/**/*.{ts,tsx}', 'libs/test/**/*.{ts,tsx}'],
     rules: {
       '@typescript-eslint/no-empty-object-type': 'off',
     },

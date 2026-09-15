@@ -1,11 +1,11 @@
-import { expectMetadata } from './expectMetadata';
+import { expectMetadata } from '../helpers/expectMetadata';
 import React from 'react';
 import type { Mock } from 'vitest';
 import { createDecoupledPromise } from 'easy-cancelable-promise';
 import { formatFromStore, formatToStore } from 'json-storage-formatter';
-import { getFakeAsyncStorage } from './getFakeAsyncStorage';
+import { getFakeAsyncStorage } from '../helpers/getFakeAsyncStorage';
 import { act } from '@testing-library/react';
-import it from './$it';
+import it from '../helpers/$it';
 
 import { createGlobalState, GlobalStore, StoreTools, InferAPI } from 'global-state-hooks-under-test';
 

@@ -1,4 +1,4 @@
-import $it from './$it';
+import $it from '../helpers/$it';
 import { act } from '@testing-library/react';
 import { createGlobalState } from 'global-state-hooks-under-test';
 

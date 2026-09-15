@@ -24,6 +24,12 @@
       "react-hooks-global-states/*": ["../universal/src/*"]
     }
   },
-  "include": ["**/*", "../src/**/*", "../types/**/*", "../../shared-tests/**/*"],
+  "include": [
+    "../src/**/*",
+    "../types/**/*",
+    "../../test/universal/**/*",
+    "../../test/web/**/*",
+    "../../test/helpers/**/*"
+  ],
   "exclude": []
 }

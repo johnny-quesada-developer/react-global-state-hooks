@@ -1,9 +1,9 @@
-import { expectMetadata } from './expectMetadata';
-import { expectCalledWithStore } from './expectCalledWithStore';
+import { expectMetadata } from '../helpers/expectMetadata';
+import { expectCalledWithStore } from '../helpers/expectCalledWithStore';
 import React from 'react';
 import { type ContextStoreTools, createContext, InferAPI } from 'global-state-hooks-under-test';
 import { act, render } from '@testing-library/react';
-import it from './$it';
+import it from '../helpers/$it';
 
 describe('createContext', () => {
   it('should pass down the proper store tools to the actions', ({ renderHook }) => {

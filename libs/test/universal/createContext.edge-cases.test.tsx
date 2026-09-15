@@ -1,8 +1,8 @@
-import { expectMetadata } from './expectMetadata';
+import { expectMetadata } from '../helpers/expectMetadata';
 import React, { useEffect } from 'react';
 import { createContext } from 'global-state-hooks-under-test';
 import { act, render } from '@testing-library/react';
-import it from './$it';
+import it from '../helpers/$it';
 
 describe('createContext - Provider Lifecycle', () => {
   it('should execute onMounted callback from contextArgs', ({ renderHook, strict }) => {

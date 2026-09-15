@@ -110,49 +110,56 @@ interception). Build-level concerns — minification, dual ESM/CJS emit, `__esMo
 are exercised separately by `yarn test:interop <project>`, which runs `scripts/test-interop.ts`
 against the built `dist/` artifact.
 
-## Shared test suite (`libs/shared-tests`)
+## Reusable test suite (`libs/test`)
 
 Roughly 90% of behavior is identical across the variants — only the persistence layer differs
 (universal has none, web uses `localStorage`, mobile uses async storage). To avoid duplicating
-those tests per variant, the common suite lives once in `libs/shared-tests` (a plain,
-non-published folder — not an Nx project, it has no build/test target of its own).
-
-How it works (there is no loop): the shared files are run by **each variant's own Vitest**, and
-module resolution — not a runner — is what swaps in the variant. Running `yarn test <variant>`
-is three independent Vitest runs at most; the exact same shared file resolves to a different real
-source depending on which variant's config is active:
+those tests per variant, the tests live once in `libs/test` (a plain, non-published folder — not
+an Nx project, it has no build/test target of its own), organized by which variant a file
+targets:
 
 ```
-yarn test universal  ->  global-state-hooks-under-test  ->  libs/universal/src
-yarn test web        ->  global-state-hooks-under-test  ->  libs/web/src
-yarn test mobile     ->  global-state-hooks-under-test  ->  libs/mobile/src
+libs/test/
+  universal/   the neutral suite — the ~90% that every variant must satisfy
+  web/         web-only tests (localStorage, methods, ...)
+  native/      mobile-only tests (async storage)
+  helpers/     shared test helpers: $it, getFakeAsyncStorage, expectMetadata, expectCalledWithStore
 ```
 
-Think of it as dependency injection: the shared tests declare "I need *a* global-state-hooks
+Every test file imports the subject under test as `global-state-hooks-under-test` (bare and
+subpaths) — never a real package name — and imports helpers from `../helpers/*`. Nothing in
+`libs/test` names a concrete variant, so the same file can run against any variant.
+
+How it works (there is no loop): the files are run by **each variant's own Vitest**, and module
+resolution — not a runner — is what swaps in the variant. Each variant includes the folders it is
+responsible for and aliases the neutral name to its own `src`:
+
+```
+yarn test universal  ->  test/universal                ->  global-state-hooks-under-test -> libs/universal/src
+yarn test web        ->  test/universal + test/web      ->  global-state-hooks-under-test -> libs/web/src
+yarn test mobile     ->  test/universal + test/native   ->  global-state-hooks-under-test -> libs/mobile/src
+```
+
+Think of it as dependency injection: the tests declare "I need *a* global-state-hooks
 implementation" and each variant's Vitest config injects its own.
 
-- **Neutral subject alias.** Shared tests import the package under test as
-  `global-state-hooks-under-test` (bare and subpaths) — never a real package name. Each
-  variant's `vitest.config.ts` `resolve.alias` maps that alias to its own `src` (barrel and
-  subpaths), and each variant's `__test__/tsconfig.json` maps it to the same `src` for
-  type-checking.
-- **include.** Each variant's `vitest.config.ts` sets
-  `include: ['__test__/**/*.{test,spec}.{ts,tsx}', '../shared-tests/**/*.{test,spec}.{ts,tsx}']`,
-  so a run executes the variant's own (persistence-specific) tests plus the shared suite.
-- **Linting.** `libs/shared-tests` is linted by the `universal` project
-  (`eslint . ../shared-tests`), and the root `eslint.config.mts` scopes
-  `@typescript-eslint/no-empty-object-type: off` to both `libs/universal/**` and
-  `libs/shared-tests/**`.
-
-Opting out of individual shared files: a variant can skip shared files it isn't compatible with
-via its `vitest.config.ts` `test.exclude` (glob fragments like
-`../shared-tests/<name>.test.tsx`).
+- **Neutral subject alias.** Each variant's `vitest.config.ts` `resolve.alias` maps
+  `global-state-hooks-under-test` (barrel and subpaths) to its own `src`, and each variant's
+  `__test__/tsconfig.json` maps it to the same `src` for type-checking. Each variant's test
+  tsconfig `include` covers exactly the `test/*` folders that variant runs, so the suites are
+  type-checked against the correct subject (e.g. the native `asyncStorage` API only type-checks
+  under the mobile mapping).
+- **include.** Each variant's `vitest.config.ts` `include` lists the `../test/*` folders it owns
+  (universal → `test/universal`; web → `test/universal` + `test/web`; mobile → `test/universal` +
+  `test/native`).
+- **Linting.** `libs/test` is linted by the `universal` project (`eslint . ../test`), and the
+  root `eslint.config.mts` scopes `@typescript-eslint/no-empty-object-type: off` to both
+  `libs/universal/**` and `libs/test/**`.
 
 **Current variant status**
 
-All three variants — `universal`, `web`, and `mobile` — run the **entire** shared suite with no
-exclusions. Making `mobile` pass the full suite required two kinds of change, both preserving
-behavior:
+All three variants run the neutral suite plus their own persistence tests with no exclusions.
+Making `mobile` pass the neutral suite required two kinds of change, both preserving behavior:
 
 - **Mobile type alignment to v16.** `mobile`'s `createGlobalState`/`GlobalStore` now accept lazy
   initializers (`state: State | (() => State)`, `metadata: Metadata | (() => Metadata)`), its
@@ -160,7 +167,7 @@ behavior:
   and its action overloads use the base's loose `GlobalStoreCallbacks<Any, AnyActions, Any>` so
   state literals widen the way the base does.
 - **Variant-aware metadata assertions.** Metadata is asserted with the shared
-  `expectMetadata(received).toMatch(expected)` helper (`libs/shared-tests/expectMetadata.ts`)
+  `expectMetadata(received).toMatch(expected)` helper (`libs/test/helpers/expectMetadata.ts`)
   instead of a raw `toEqual`. It is an EXACT match for variants that add nothing, but tolerates a
   variant's declared reserved metadata keys as allowed extras — so it stays strict (unexpected
   keys still fail) while accommodating the react-native variant, which injects
@@ -179,54 +186,67 @@ behavior:
   example metadata keys in the tests were renamed to neutral names to avoid colliding with a
   variant's reserved fields.
 
-The `vitest.config.ts` `test.exclude` opt-out mechanism still exists for a future variant that
-can't pass a given shared file yet, but no variant currently uses it.
+A variant can skip a file it isn't compatible with via its `vitest.config.ts` `test.exclude`, but
+no variant currently uses it.
 
-Adding a shared test: put it in `libs/shared-tests`, import via
-`global-state-hooks-under-test`, assert metadata with `expectMetadata(...).toMatch(...)` (so
-metadata-augmenting variants stay compatible without weakening the check), and confirm it passes
-for every variant.
+Adding a test: put it in the folder for the variant(s) it targets (`test/universal` if it should
+hold for every variant), import the subject via `global-state-hooks-under-test` and helpers via
+`../helpers/*`, assert metadata with `expectMetadata(...).toMatch(...)`, and confirm it passes for
+every variant that runs it.
 
 ## Running the shared suite under the debug patch (`monkey_patch`)
 
 `react-hooks-global-states-debug` (in `libs/monkey_patch`) is a side-effect "monkey patch" that,
 once imported, wraps every store on creation to stream activity to the DevTools extension. A core
 requirement is that installing it does **not** change the libraries' observable behavior. The
-cheapest proof of that is to run the entire reusable shared suite with the patch installed and
-confirm it still passes — reusing `libs/shared-tests` rather than duplicating it (the earlier
-playground harness copy-pasted the suite; this replaces that with alias-based reuse).
+cheapest proof of that is to run the entire reusable suite (`libs/test`) with the patch installed
+and confirm it still passes — reusing the same files the variants run rather than duplicating
+them (the earlier playground harness copy-pasted the suite; this replaces that with alias-based
+reuse).
 
-`libs/monkey_patch` runs three Vitest projects in one pass, defined in `vitest.workspace.ts`
+`libs/monkey_patch` runs four Vitest projects in one pass, defined in `vitest.workspace.ts`
 (Vitest 2.x multi-project config lives in a `vitest.workspace.ts`, not inline `test.projects`):
 
 - **unit** — monkey_patch's own tests of the patch internals (`__test__/**`), setup
   `vitest.setup.ts`.
-- **shared-universal** — the shared suite with the neutral alias
+- **patched-universal** — `test/universal` with the neutral alias
   `global-state-hooks-under-test` -> `libs/universal/src`, patch installed.
-- **shared-web** — the same shared suite with the neutral alias -> `libs/web/src`, patch
-  installed.
+- **patched-web** — `test/universal` + `test/web` with the neutral alias -> `libs/web/src`,
+  patch installed.
+- **patched-native** — `test/universal` + `test/native` with the neutral alias ->
+  `libs/mobile/src`, patch installed. This is the mirror of `yarn test mobile`, run under the
+  patch — so all three variants' suites pass on top of a monkey-patched global state.
 
-The two shared projects use `vitest.setup.patched.ts`, which mirrors the playground harness in
-this order: (1) stub `window.__REACT_DEVTOOLS_GLOBAL_HOOK__` BEFORE importing the patch (the
-patch polls for it with a recurring `setTimeout`; without the stub the timer fires after teardown
-and throws); (2) stub a minimal `chrome`; (3) `await import('./src/debug')` gated by
+The patched projects use `vitest.setup.patched.ts`, which mirrors the playground harness in this
+order: (1) stub `window.__REACT_DEVTOOLS_GLOBAL_HOOK__` BEFORE importing the patch (the patch
+polls for it with a recurring `setTimeout`; without the stub the timer fires after teardown and
+throws); (2) stub a minimal `chrome`; (3) `await import('./src/debug')` gated by
 `DEBUG_PATCH !== 'off'`; (4) polyfill single-arg `window.postMessage` (jsdom requires a
 `targetOrigin`, the patch omits it); (5) declare `__VARIANT_METADATA_KEYS__ = []` and
 `__PATCH_RESERVED_STORE_KEYS__ = ['_DEV_TOOLS_STORE_ID', ...]`; (6) RTL `cleanup` +
-`localStorage.clear()` between tests.
+`localStorage.clear()` between tests. The **patched-native** project layers
+`vitest.setup.patched.native.ts` on top, which re-imports that base setup and then adds the
+async-storage mock and overrides `__VARIANT_METADATA_KEYS__` to the mobile variant's reserved
+keys.
 
 Parity baseline: `yarn test:no-patch monkey_patch` (a.k.a. `DEBUG_PATCH=off`) runs the exact same
-three projects WITHOUT installing the patch. Both the patched and unpatched runs must pass the
+four projects WITHOUT installing the patch. Both the patched and unpatched runs must pass the
 same test count — that equivalence is the regression guarantee.
 
 Because the patch wraps store methods (so `setState` / `actions.*` are different function
 references than a plain store) and adds `_DEV_TOOLS_*` bookkeeping keys, one shared assertion that
 compared a captured lifecycle-callback argument against `context.current` by exact object identity
 was too rigid under the patch. It now uses `expectCalledWithStore(spy).toHaveBeenCalledWith(...)`
-(`libs/shared-tests/expectCalledWithStore.ts`): for variants that augment nothing it is an exact
+(`libs/test/helpers/expectCalledWithStore.ts`): for variants that augment nothing it is an exact
 `toHaveBeenCalledWith`; when `__PATCH_RESERVED_STORE_KEYS__` is set it matches function slots by
 type (tolerating wrappers) and ignores the reserved keys, while still deep-equalling data — the
 same "tolerate declared extras, stay strict on everything else" philosophy as `expectMetadata`.
+
+Type-checking note: monkey_patch's `ts-check:tests` covers only its own harness (src + the Vitest
+config/workspace/setup files + `test/helpers`), not the reusable suites. A single tsconfig can
+bind the neutral alias to only ONE variant, which would wrongly reject the others' variant-
+specific APIs (e.g. the native `asyncStorage` config). The suites are instead type-checked by the
+variant lib that owns each subject (`universal`/`web`/`mobile`'s own `ts-check:tests`).
 
 ## Monorepo linkage (why `web` depends on `universal` locally)
 

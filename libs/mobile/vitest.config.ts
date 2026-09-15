@@ -14,7 +14,12 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./vitest.setup.ts'],
-    include: ['__test__/**/*.{test,spec}.{ts,tsx}', '../shared-tests/**/*.{test,spec}.{ts,tsx}'],
+    // The mobile variant runs the neutral suite (test/universal) plus its own async-storage
+    // tests (test/native).
+    include: [
+      '../test/universal/**/*.{test,spec}.{ts,tsx}',
+      '../test/native/**/*.{test,spec}.{ts,tsx}',
+    ],
   },
   resolve: {
     alias: [

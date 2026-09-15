@@ -11,14 +11,15 @@
     "typeRoots": ["../../../node_modules/@types", "../../../node_modules", "../types"],
     "types": ["vitest/globals", "node", "react"],
     "paths": {
-      // The shared suite imports the subject under test via the neutral alias; type-check it
+      // The reusable suite imports the subject under test via the neutral alias; type-check it
       // against THIS variant's `src`. Vitest maps the same alias to `src` at runtime (see
       // vitest.config.ts).
       "global-state-hooks-under-test": ["./src"],
       "global-state-hooks-under-test/*": ["./src/*"]
     }
   },
-  // Type-check this variant's own tests plus the shared suite.
-  "include": ["**/*", "../../shared-tests/**/*"],
+  // Type-check the neutral suite (test/universal) + shared helpers. The universal variant runs
+  // only the neutral suite.
+  "include": ["../../test/universal/**/*", "../../test/helpers/**/*"],
   "exclude": []
 }

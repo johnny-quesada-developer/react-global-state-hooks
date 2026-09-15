@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "build": "yarn ts-check && yarn clean && tsx esbuild.config.ts && tsx scripts/prepare-dist.ts",
-    "test": "yarn ts-check:tests && vitest run",
+    "test": "yarn ts-check:tests && vitest run && yarn test:no-patch",
     "test:no-patch": "DEBUG_PATCH=off vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",

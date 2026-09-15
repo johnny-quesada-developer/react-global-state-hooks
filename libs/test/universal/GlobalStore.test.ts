@@ -1,12 +1,12 @@
-import { expectMetadata } from './expectMetadata';
+import { expectMetadata } from '../helpers/expectMetadata';
 import { type Mock } from 'vitest';
 import { type StoreTools, GlobalStore } from 'global-state-hooks-under-test';
 
-import $it from './$it';
+import $it from '../helpers/$it';
 
 import { CancelablePromise, createDecoupledPromise } from 'easy-cancelable-promise';
 import { formatFromStore, formatToStore, isNil } from 'json-storage-formatter';
-import { getFakeAsyncStorage } from './getFakeAsyncStorage';
+import { getFakeAsyncStorage } from '../helpers/getFakeAsyncStorage';
 import { act } from 'react';
 
 const countStoreInitialState = 1;

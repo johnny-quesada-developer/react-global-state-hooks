@@ -1,10 +1,10 @@
 import { createDecoupledPromise } from "easy-cancelable-promise/createDecoupledPromise";
 
 import { formatFromStore, formatToStore } from "json-storage-formatter";
-import { getFakeAsyncStorage } from "./getFakeAsyncStorage";
-import { createGlobalState } from "react-native-global-state-hooks";
+import { getFakeAsyncStorage } from "../helpers/getFakeAsyncStorage";
+import { createGlobalState } from "global-state-hooks-under-test";
 import { act } from "@testing-library/react";
-import it from "./$it";
+import it from "../helpers/$it";
 
 describe("basic", () => {
   it("should be able to create a new instance with state", ({ renderHook }) => {

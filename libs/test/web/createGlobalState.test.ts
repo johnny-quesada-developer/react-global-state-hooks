@@ -1,6 +1,6 @@
-import { createGlobalState } from 'react-global-state-hooks';
+import { createGlobalState } from 'global-state-hooks-under-test';
 import { act } from '@testing-library/react';
-import it from './$it';
+import it from '../helpers/$it';
 
 describe('createGlobalState - additional edge cases', () => {
   it('should handle function initializers correctly', ({ renderHook }) => {

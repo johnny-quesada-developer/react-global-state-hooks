@@ -1,7 +1,7 @@
-import { expectMetadata } from './expectMetadata';
+import { expectMetadata } from '../helpers/expectMetadata';
 import { act } from '@testing-library/react';
 import { createGlobalState, actions, InferAPI, createContext } from 'global-state-hooks-under-test';
-import it from './$it';
+import it from '../helpers/$it';
 
 describe('actions', () => {
   it('should create actions directly bound to a store', () => {

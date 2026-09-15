@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import formatToStore from 'json-storage-formatter/formatToStore';
 
-import { createGlobalState, GlobalStore, ItemEnvelope } from 'react-global-state-hooks';
+import { createGlobalState, GlobalStore, ItemEnvelope } from 'global-state-hooks-under-test';
 import { act } from '@testing-library/react';
-import it from './$it';
+import it from '../helpers/$it';
 import { isMap } from 'react-hooks-global-states/shallowCompare';
 import { formatFromStore } from 'json-storage-formatter';
 

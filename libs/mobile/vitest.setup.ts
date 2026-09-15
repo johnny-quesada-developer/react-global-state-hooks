@@ -1,5 +1,5 @@
 import { beforeEach, vi } from 'vitest';
-import { getFakeAsyncStorage } from './__test__/getFakeAsyncStorage';
+import { getFakeAsyncStorage } from '../test/helpers/getFakeAsyncStorage';
 
 // Reserved metadata keys this variant injects into every store's metadata. The shared suite's
 // `expectMetadata(...).toMatch(...)` helper tolerates these as allowed extras while still

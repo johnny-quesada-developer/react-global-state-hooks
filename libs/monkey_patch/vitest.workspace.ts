@@ -19,8 +19,8 @@ const baseLibraryAlias = [
   { find: /^react-hooks-global-states$/, replacement: `${universalSrc}/index.ts` },
 ];
 
-// The neutral subject alias used by the shared suite (libs/shared-tests). Each shared project
-// points it at a different variant's source, so the SAME shared files run against that variant.
+// The neutral subject alias used by the reusable suite (libs/test). Each patched project points
+// it at a different variant's source, so the SAME test files run against that variant.
 const neutralAlias = (variantSrc: string) => [
   { find: /^global-state-hooks-under-test\/(.*)$/, replacement: `${variantSrc}/$1` },
   { find: /^global-state-hooks-under-test$/, replacement: `${variantSrc}/index.ts` },
@@ -29,13 +29,19 @@ const neutralAlias = (variantSrc: string) => [
 // Resolve extensionless TS subpath aliases (e.g. react-global-state-hooks/uniqueId).
 const extensions = ['.ts', '.tsx', '.js', '.mjs', '.cjs', '.json'];
 
-// Three projects run in one `vitest run`:
-//  - unit:             monkey_patch's own unit tests (patch internals), unchanged.
-//  - shared-universal: the reusable shared suite (libs/shared-tests) with the debug patch
-//                      installed, subject = universal variant.
-//  - shared-web:       the same shared suite with the patch installed, subject = web variant.
-// The two shared projects are the regression guarantee that the debug patch does not alter the
-// libraries' behavior (run with DEBUG_PATCH=off for the unpatched parity baseline).
+const mobileSrc = path.resolve(__dirname, '../mobile/src');
+
+// Four projects run in one `vitest run`:
+//  - unit:            monkey_patch's own unit tests (patch internals), unchanged.
+//  - patched-universal: the neutral suite (test/universal) with the debug patch installed,
+//                       subject = universal variant.
+//  - patched-web:       the neutral suite + web-specific tests (test/universal + test/web) with
+//                       the patch installed, subject = web variant.
+//  - patched-native:    the neutral suite + native-specific tests (test/universal + test/native)
+//                       with the patch installed, subject = mobile variant.
+// The three patched projects are the regression guarantee that the debug patch does not alter
+// the libraries' behavior (run with DEBUG_PATCH=off for the unpatched parity baseline). Each
+// runs the exact same reusable suites the individual variants run — no duplication.
 export default defineWorkspace([
   {
     resolve: { alias: [...baseLibraryAlias], extensions },
@@ -51,23 +57,40 @@ export default defineWorkspace([
   {
     resolve: { alias: [...neutralAlias(universalSrc), ...baseLibraryAlias], extensions },
     test: {
-      name: 'shared-universal',
+      name: 'patched-universal',
       root: __dirname,
       environment: 'jsdom',
       globals: true,
       setupFiles: ['./vitest.setup.patched.ts'],
-      include: ['../shared-tests/**/*.{test,spec}.{ts,tsx}'],
+      include: ['../test/universal/**/*.{test,spec}.{ts,tsx}'],
     },
   },
   {
     resolve: { alias: [...neutralAlias(webSrc), ...baseLibraryAlias], extensions },
     test: {
-      name: 'shared-web',
+      name: 'patched-web',
       root: __dirname,
       environment: 'jsdom',
       globals: true,
       setupFiles: ['./vitest.setup.patched.ts'],
-      include: ['../shared-tests/**/*.{test,spec}.{ts,tsx}'],
+      include: [
+        '../test/universal/**/*.{test,spec}.{ts,tsx}',
+        '../test/web/**/*.{test,spec}.{ts,tsx}',
+      ],
+    },
+  },
+  {
+    resolve: { alias: [...neutralAlias(mobileSrc), ...baseLibraryAlias], extensions },
+    test: {
+      name: 'patched-native',
+      root: __dirname,
+      environment: 'jsdom',
+      globals: true,
+      setupFiles: ['./vitest.setup.patched.native.ts'],
+      include: [
+        '../test/universal/**/*.{test,spec}.{ts,tsx}',
+        '../test/native/**/*.{test,spec}.{ts,tsx}',
+      ],
     },
   },
 ]);

@@ -1,5 +1,5 @@
 import { type Any, createGlobalState, actions, InferAPI } from 'global-state-hooks-under-test';
-import it from './$it';
+import it from '../helpers/$it';
 
 describe('actions - Error Handling', () => {
   it('should throw error when action config returns non-function', () => {
