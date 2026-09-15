@@ -1,0 +1,28 @@
+apps/devtools/package.json
+  h_6029769cf9ac60 4
+apps/playground/package.json
+  h_6029769cf9ac60 4
+libs/mobile/package.json
+  h_6029769cf9ac60 3,140
+libs/monkey_patch/package.json
+  h_6029769cf9ac60 3
+libs/universal/package.json
+  h_6029769cf9ac60 3,115
+libs/web/package.json
+  h_6029769cf9ac60 3,119
+package.json
+  h_6029769cf9ac60 3
+scripts/version-bump.mjs
+  h_6029769cf9ac60 5,7-12,14-20,22-23,27-34,36-37,39,56,63-68,78,84-88,106,113-140,142,144-145,147-161,163,165-194,196,198-201,203-220,223-224,226,229,234,240-241,248-250,252-253,264,270-272,274-298,300-301,304-309
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "72a4a82f4692048cd37d49d60d69e278d793bc48",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
