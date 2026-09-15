@@ -17,7 +17,11 @@ import {
 import { EntityAdapter } from '@src/shared/tools/EntityAdapter';
 import { AdaptiveEntityAdapter } from '@src/shared/tools/AdaptiveEntityAdapter';
 import { default as isSetStateSubAction } from '@src/shared/tools/isSetStateSubAction';
-import { addGlobalStateToPath, removeGlobalStatePath, removeGlobalStatesOfPath } from './helpers/globalStatesIdsByPath';
+import {
+  addGlobalStateToPath,
+  removeGlobalStateIdFromPath,
+  removeGlobalStatesOfPath,
+} from './helpers/globalStatesIdsByPath';
 import type { ClearGlobalStatesMessagePayload } from '@src/shared/schema/MonkeyPathMessageJson/ClearGlobalStatesMessage';
 
 export type ContentScriptMessage<T> = {
@@ -280,7 +284,8 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
 
         setState(rootState);
         removeStateIdsFromDerivedStores([payload.globalStateId]);
-        removeGlobalStatePath(stateMeta.globalStatePath);
+        // Only this instance unmounted; other instances sharing the path stay registered.
+        removeGlobalStateIdFromPath(stateMeta.globalStatePath, payload.globalStateId);
       };
     },
   },

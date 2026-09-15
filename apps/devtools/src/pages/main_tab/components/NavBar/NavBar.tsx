@@ -1,10 +1,10 @@
 import React from 'react';
 import { cn } from '@src/shared/tools/cn';
-import { GoGear } from 'react-icons/go';
 import selectedGlobalStateId$ from '../../hooks/selectedGlobalStateId';
 import { selectedTab$, TopNavigationValue } from '../../hooks/selectedTab';
 import theme$ from '../../hooks/theme';
 import globalStates$ from '../../hooks/globalStates';
+import { SettingsMenu } from '../SettingsMenu';
 
 export type NavBarProps = React.HTMLAttributes<HTMLUListElement> & Record<string, unknown>;
 
@@ -58,14 +58,7 @@ export const NavBar: React.FC<NavBarProps> = ({ className = '', ...props }: NavB
       ))}
 
       <li className="relative flex justify-start p-2 cursor-pointer">
-        <button
-          className="px-4"
-          disabled={!selectedStore}
-          onClick={theme$.actions.toggleTheme}
-          title={selectedStore ? 'Settings' : 'Select a store to view its details.'}
-        >
-          <GoGear />
-        </button>
+        <SettingsMenu />
       </li>
     </ul>
   );
