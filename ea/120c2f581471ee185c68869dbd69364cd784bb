@@ -1,0 +1,36 @@
+apps/devtools/package.json
+  h_6029769cf9ac60 4
+apps/playground/package.json
+  h_6029769cf9ac60 4
+libs/mobile/esbuild.config.ts
+  h_6029769cf9ac60 45-48
+libs/mobile/package.json
+  h_6029769cf9ac60 3,65-69,148
+libs/mobile/src/debug.ts
+  h_6029769cf9ac60 1-21
+libs/monkey_patch/package.json
+  h_6029769cf9ac60 3
+libs/universal/package.json
+  h_6029769cf9ac60 3,118
+libs/web/esbuild.config.ts
+  h_6029769cf9ac60 43-46
+libs/web/package.json
+  h_6029769cf9ac60 3,60-64,127
+libs/web/src/debug.ts
+  h_6029769cf9ac60 1-21
+package.json
+  h_6029769cf9ac60 3
+scripts/publish-all.mjs
+  h_6029769cf9ac60 26-28,41-44,49-50,62-92,121-134
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "ea120c2f581471ee185c68869dbd69364cd784bb",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
