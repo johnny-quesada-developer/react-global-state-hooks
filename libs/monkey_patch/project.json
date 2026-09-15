@@ -41,6 +41,14 @@
     "ts-check:tests": {
       "executor": "nx:run-commands",
       "options": { "command": "yarn ts-check:tests", "cwd": "libs/monkey_patch" }
+    },
+    "publish:pkg": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn publish:pkg", "cwd": "libs/monkey_patch" }
+    },
+    "publish:beta": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn publish:beta", "cwd": "libs/monkey_patch" }
     }
   }
 }
