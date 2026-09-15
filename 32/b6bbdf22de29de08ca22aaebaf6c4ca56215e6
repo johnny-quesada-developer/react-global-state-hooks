@@ -1,0 +1,82 @@
+ARCHITECTURE.md
+  h_6029769cf9ac60 113,117-119,121-135,138-140,143,146-157,161-162,170,189-190,192-195,202-205,207,212,214-223,227-230,233,240,245-250
+eslint.config.mts
+  h_6029769cf9ac60 73
+libs/mobile/__test__/tsconfig.json
+  h_6029769cf9ac60 30-36
+libs/mobile/vitest.config.ts
+  h_6029769cf9ac60 17-22
+libs/mobile/vitest.setup.ts
+  h_6029769cf9ac60 2
+libs/monkey_patch/__test__/tsconfig.json
+  h_6029769cf9ac60 2-5,7-15,28-29,42-43
+libs/monkey_patch/package.json
+  h_6029769cf9ac60 16
+libs/monkey_patch/vitest.config.ts
+  h_6029769cf9ac60 3-5,10-14
+libs/monkey_patch/vitest.setup.patched.native.ts
+  h_6029769cf9ac60 1-40
+libs/monkey_patch/vitest.setup.patched.ts
+  h_6029769cf9ac60 4-10,55-56,62
+libs/monkey_patch/vitest.workspace.ts
+  h_6029769cf9ac60 22-23,32-44,60,65,71,76-93
+libs/test/helpers/getFakeAsyncStorage.ts
+  h_6029769cf9ac60 2-6,23,25
+libs/test/helpers/waitForAsyncStorageReady.ts
+  h_6029769cf9ac60 1-18
+libs/test/native/GlobalStore.functionHooks.test.ts
+  h_6029769cf9ac60 4-5,7
+libs/test/native/GlobalStore.test.ts
+  h_6029769cf9ac60 3,6,10
+libs/test/native/GlobalStoreAsyc.test.ts
+  h_6029769cf9ac60 3-5,7-8,60,135,206,260,316,389,452
+libs/test/native/InBuiltGlobalStoreAsyc.test.ts
+  h_6029769cf9ac60 3,5-6,8-9,61,137
+libs/test/universal/GlobalStore.functionHooks.test.ts
+  h_6029769cf9ac60 1,6,8
+libs/test/universal/GlobalStore.test.ts
+  h_6029769cf9ac60 1,5,9
+libs/test/universal/actions.edge-cases.test.tsx
+  h_6029769cf9ac60 2
+libs/test/universal/actions.test.tsx
+  h_6029769cf9ac60 1,4
+libs/test/universal/createContext.edge-cases.test.tsx
+  h_6029769cf9ac60 1,5
+libs/test/universal/createContext.test.tsx
+  h_6029769cf9ac60 1-2,6
+libs/test/universal/createGlobalState.edge-cases.test.tsx
+  h_6029769cf9ac60 1,3
+libs/test/universal/hookStability.test.tsx
+  h_6029769cf9ac60 1
+libs/test/web/GlobalStore.localStorage.test.ts
+  h_6029769cf9ac60 4,6
+libs/test/web/GlobalStore.methods.test.ts
+  h_6029769cf9ac60 1
+libs/test/web/createGlobalState.test.ts
+  h_6029769cf9ac60 1,3
+libs/test/web/tryCatch.test.ts
+  h_6029769cf9ac60 1
+libs/universal/__test__/tsconfig.json
+  h_6029769cf9ac60 14,21-23
+libs/universal/package.json
+  h_6029769cf9ac60 80-81
+libs/universal/vitest.config.ts
+  h_6029769cf9ac60 14-16
+libs/web/__test__/tsconfig.json
+  h_6029769cf9ac60 27-33
+libs/web/vitest.config.ts
+  h_6029769cf9ac60 17-22
+package.json
+  h_6029769cf9ac60 30-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "32b6bbdf22de29de08ca22aaebaf6c4ca56215e6",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
