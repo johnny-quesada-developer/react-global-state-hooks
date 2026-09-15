@@ -187,6 +187,47 @@ Adding a shared test: put it in `libs/shared-tests`, import via
 metadata-augmenting variants stay compatible without weakening the check), and confirm it passes
 for every variant.
 
+## Running the shared suite under the debug patch (`monkey_patch`)
+
+`react-hooks-global-states-debug` (in `libs/monkey_patch`) is a side-effect "monkey patch" that,
+once imported, wraps every store on creation to stream activity to the DevTools extension. A core
+requirement is that installing it does **not** change the libraries' observable behavior. The
+cheapest proof of that is to run the entire reusable shared suite with the patch installed and
+confirm it still passes — reusing `libs/shared-tests` rather than duplicating it (the earlier
+playground harness copy-pasted the suite; this replaces that with alias-based reuse).
+
+`libs/monkey_patch` runs three Vitest projects in one pass, defined in `vitest.workspace.ts`
+(Vitest 2.x multi-project config lives in a `vitest.workspace.ts`, not inline `test.projects`):
+
+- **unit** — monkey_patch's own tests of the patch internals (`__test__/**`), setup
+  `vitest.setup.ts`.
+- **shared-universal** — the shared suite with the neutral alias
+  `global-state-hooks-under-test` -> `libs/universal/src`, patch installed.
+- **shared-web** — the same shared suite with the neutral alias -> `libs/web/src`, patch
+  installed.
+
+The two shared projects use `vitest.setup.patched.ts`, which mirrors the playground harness in
+this order: (1) stub `window.__REACT_DEVTOOLS_GLOBAL_HOOK__` BEFORE importing the patch (the
+patch polls for it with a recurring `setTimeout`; without the stub the timer fires after teardown
+and throws); (2) stub a minimal `chrome`; (3) `await import('./src/debug')` gated by
+`DEBUG_PATCH !== 'off'`; (4) polyfill single-arg `window.postMessage` (jsdom requires a
+`targetOrigin`, the patch omits it); (5) declare `__VARIANT_METADATA_KEYS__ = []` and
+`__PATCH_RESERVED_STORE_KEYS__ = ['_DEV_TOOLS_STORE_ID', ...]`; (6) RTL `cleanup` +
+`localStorage.clear()` between tests.
+
+Parity baseline: `yarn test:no-patch monkey_patch` (a.k.a. `DEBUG_PATCH=off`) runs the exact same
+three projects WITHOUT installing the patch. Both the patched and unpatched runs must pass the
+same test count — that equivalence is the regression guarantee.
+
+Because the patch wraps store methods (so `setState` / `actions.*` are different function
+references than a plain store) and adds `_DEV_TOOLS_*` bookkeeping keys, one shared assertion that
+compared a captured lifecycle-callback argument against `context.current` by exact object identity
+was too rigid under the patch. It now uses `expectCalledWithStore(spy).toHaveBeenCalledWith(...)`
+(`libs/shared-tests/expectCalledWithStore.ts`): for variants that augment nothing it is an exact
+`toHaveBeenCalledWith`; when `__PATCH_RESERVED_STORE_KEYS__` is set it matches function slots by
+type (tolerating wrappers) and ignores the reserved keys, while still deep-equalling data — the
+same "tolerate declared extras, stay strict on everything else" philosophy as `expectMetadata`.
+
 ## Monorepo linkage (why `web` depends on `universal` locally)
 
 `web` declares a normal npm dependency on the base library:

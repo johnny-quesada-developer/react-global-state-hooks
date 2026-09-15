@@ -1,0 +1,45 @@
+{
+  // `ts-check:tests` uses this config to type-check the patched-run HARNESS (the Vitest
+  // workspace/config/setup files) and the reusable shared suite it runs under the debug patch.
+  // It adds the `react` + `vitest/globals` types (the main tsconfig pulls only node/chrome),
+  // turns off unused checks for tests, and maps the neutral subject alias to a real variant's
+  // source. Vitest resolves the same alias at runtime (see vitest.workspace.ts).
+  //
+  // NOTE: monkey_patch's OWN unit tests (__test__/*.test.ts) are intentionally NOT type-checked
+  // here. They predate this config and carry branded-id fixtures written as plain strings (e.g.
+  // `actionId: 'action:1'`), which are correct at runtime but not brand-typed. Bringing them
+  // under tsc is tracked separately; scoping this config to the harness + shared suite keeps the
+  // patched-run wiring type-safe without coupling it to that pre-existing cleanup.
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "..",
+    "noEmit": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    // The base config's `typeRoots` only covers `@types`, which prevents TS from finding
+    // `vitest/globals` (it lives at `node_modules/vitest`). Include the plain `node_modules`
+    // root here so the vitest globals types resolve.
+    "typeRoots": ["../../../node_modules/@types", "../../../node_modules"],
+    "types": ["node", "chrome", "vitest/globals", "react"],
+    "paths": {
+      // Subject-under-test for the shared suite. The neutral alias resolves to a real variant's
+      // source; web is used here (the shared files are identical regardless of subject). The base
+      // package + own-name aliases mirror the runtime workspace aliases.
+      "global-state-hooks-under-test": ["../web/src/index.ts"],
+      "global-state-hooks-under-test/*": ["../web/src/*"],
+      "react-global-state-hooks": ["../web/src/index.ts"],
+      "react-global-state-hooks/*": ["../web/src/*"],
+      "react-hooks-global-states": ["../universal/src/index.ts"],
+      "react-hooks-global-states/*": ["../universal/src/*"]
+    }
+  },
+  "include": [
+    "../src/**/*",
+    "../vitest.config.ts",
+    "../vitest.workspace.ts",
+    "../vitest.setup.ts",
+    "../vitest.setup.patched.ts",
+    "../../shared-tests/**/*"
+  ],
+  "exclude": []
+}

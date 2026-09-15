@@ -1,4 +1,5 @@
 import { expectMetadata } from './expectMetadata';
+import { expectCalledWithStore } from './expectCalledWithStore';
 import React from 'react';
 import { type ContextStoreTools, createContext, InferAPI } from 'global-state-hooks-under-test';
 import { act, render } from '@testing-library/react';
@@ -521,8 +522,11 @@ describe('createContext', () => {
     await act(async () => {});
 
     expect(result.current[1].incrementA).toBeInstanceOf(Function);
-    expect(initSpy).toHaveBeenCalledWith(context.current);
-    expect(onMountedSpy).toHaveBeenCalledWith(context.current);
+    // Use the patch-aware matcher: the debug monkey patch augments stores with `_DEV_TOOLS_*`
+    // bookkeeping keys, which the captured callback arg would otherwise diverge on. For the
+    // normal variants (no reserved keys) this is an exact `toHaveBeenCalledWith`.
+    expectCalledWithStore(initSpy).toHaveBeenCalledWith(context.current);
+    expectCalledWithStore(onMountedSpy).toHaveBeenCalledWith(context.current);
     expect(stateChangedSpy).not.toHaveBeenCalled();
 
     act(() => {

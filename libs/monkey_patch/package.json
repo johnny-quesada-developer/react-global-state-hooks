@@ -13,13 +13,15 @@
   ],
   "scripts": {
     "build": "yarn ts-check && yarn clean && tsx esbuild.config.ts && tsx scripts/prepare-dist.ts",
-    "test": "vitest run",
+    "test": "yarn ts-check:tests && vitest run",
+    "test:no-patch": "DEBUG_PATCH=off vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix --max-warnings=0",
     "clean": "rm -rf dist coverage",
-    "ts-check": "tsc -p tsconfig.json --noEmit"
+    "ts-check": "tsc -p tsconfig.json --noEmit",
+    "ts-check:tests": "tsc -p __test__/tsconfig.json --noEmit"
   },
   "repository": {
     "type": "git",
