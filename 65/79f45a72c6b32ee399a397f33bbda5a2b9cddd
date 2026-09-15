@@ -1,0 +1,14 @@
+docs/TESTING_GUIDE.md
+  h_6029769cf9ac60 3-5,7-9,11,14-15,17-18,20-21,23-24,27-28,30,32-37,39,41-43,45,47,55-56,62,68,70-71,73-74,76,78,81,86,91,100,107,109,120,125,131-132,135-136,140-143,145,147,149-151,153-154,156,165-166,170,175-185,189,191-192
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "6579f45a72c6b32ee399a397f33bbda5a2b9cddd",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
