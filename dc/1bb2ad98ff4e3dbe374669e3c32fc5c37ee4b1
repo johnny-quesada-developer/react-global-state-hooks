@@ -1,0 +1,24 @@
+apps/devtools/postcss.config.js
+  h_6029769cf9ac60 1-9
+apps/devtools/src/pages/main_tab/hooks/globalStates/__tests__/globalStatesIdsByPath.test.ts
+  h_6029769cf9ac60 1-79
+apps/devtools/src/pages/main_tab/hooks/globalStates/globalStates.ts
+  h_6029769cf9ac60 157-158,167-168
+libs/monkey_patch/__test__/monkey_patch.integration.test.ts
+  h_6029769cf9ac60 656-661,673,678,682,684-685
+libs/monkey_patch/src/monkey_patch.ts
+  h_6029769cf9ac60 23-35
+libs/monkey_patch/vitest.setup.patched.ts
+  h_6029769cf9ac60 40,43-44,49-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "dc1bb2ad98ff4e3dbe374669e3c32fc5c37ee4b1",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
