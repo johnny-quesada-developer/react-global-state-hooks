@@ -1,0 +1,32 @@
+apps/playground/package.json
+  h_6029769cf9ac60 1-16
+apps/playground/project.json
+  h_6029769cf9ac60 1-33
+apps/playground/src/smoke.test.ts
+  h_6029769cf9ac60 1-2,4-9,11-12,14-15
+apps/playground/tsconfig.json
+  h_6029769cf9ac60 14,18-28,30
+apps/playground/vite.config.ts
+  h_6029769cf9ac60 3-16,23-34
+apps/playground/vitest.config.ts
+  h_6029769cf9ac60 1-15
+eslint.config.mts
+  h_6029769cf9ac60 78-89
+package.json
+  h_6029769cf9ac60 7-8,12,78-79
+scripts/run.mjs
+  h_6029769cf9ac60 32-33,35,38-42,44-52,54
+yarn.lock
+  h_6029769cf9ac60 43,108-112,136,143-156,184,1021-1025,1206-1238,1522-1533,4953-4957,5878
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "a19b25a0028929bd27e535799b12e4408fcc5142",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
