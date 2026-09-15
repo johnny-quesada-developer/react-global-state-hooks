@@ -1,0 +1,24 @@
+libs/monkey_patch/package.json
+  h_6029769cf9ac60 3
+libs/universal/esbuild.config.ts
+  h_6029769cf9ac60 40-43,50-59
+libs/universal/package.json
+  h_6029769cf9ac60 60-64,114-115
+libs/universal/src/debug.ts
+  h_6029769cf9ac60 1-17
+package.json
+  h_6029769cf9ac60 29
+scripts/version-bump.mjs
+  h_6029769cf9ac60 1-216
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "56070698018264a2210c774ad410d602895149cf",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
