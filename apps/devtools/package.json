@@ -1,7 +1,7 @@
 {
   "name": "react-hooks-global-states-dev-tools",
   "private": true,
-  "version": "16.0.4",
+  "version": "16.0.4-beta",
   "type": "module",
   "scripts": {
     "copy:static": "mkdir -p dist/assets && cp src/manifest.json dist/manifest.json && cp src/devtools_page.html dist/devtools_page.html && cp src/assets/devtools_page_icon.ico dist/assets/devtools_page_icon.ico && cp src/assets/devtools_page_icon-28px.ico dist/assets/devtools_page_icon-28px.ico",

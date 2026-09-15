@@ -40,6 +40,10 @@ const entryPoints: Record<string, string> = {
   throwWrongKeyOnActionCollectionConfig: 'src/throwWrongKeyOnActionCollectionConfig.ts',
   uniqueId: 'src/uniqueId.ts',
   actions: 'src/actions.ts',
+  // opt-in DevTools debug side-effect subpath (import 'react-global-state-hooks/debug').
+  // Delegates to react-hooks-global-states/debug, which is already external (see bareExternals),
+  // so nothing is bundled into this package.
+  debug: 'src/debug.ts',
   // internal module imported by GlobalStore (kept as a sibling file, not a public subpath)
   tryCatch: 'src/tryCatch.ts',
 };

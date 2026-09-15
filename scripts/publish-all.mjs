@@ -23,7 +23,9 @@
  *   node scripts/publish-all.mjs <otp> [--beta] [--dry-run] [--plan]
  *
  *   <otp>        The npm one-time password (2FA). Optional: omit to let npm prompt.
- *   --beta       Use each package's `npm-publish:beta` script instead of `npm-publish`.
+ *   --beta       Publish to the `beta` tag. Before publishing, every package whose version lacks a
+ *                `-beta` prerelease is bumped to `x.y.z-beta.0` (written to source + dist
+ *                package.json), so betas never burn a plain x.y.z version.
  *   --dry-run    `npm publish --dry-run` for each (packs, no upload). Requires dist/ to exist.
  *   --plan       Print the publish order and exit. Uploads nothing.
  *
@@ -36,9 +38,15 @@ import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+const semver = require('semver');
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const workspaceRoot = path.resolve(__dirname, '..');
+
+const BETA_ID = 'beta';
 
 // Ordered so each package is published after its workspace dependencies.
 const PUBLISH_ORDER = [
@@ -50,6 +58,37 @@ const PUBLISH_ORDER = [
 
 /** npm's error text when a version already exists on the registry. */
 const ALREADY_PUBLISHED = /cannot publish over the previously published versions/i;
+
+/** Rewrite only the `version` field of a package.json, preserving formatting/order. */
+function writeVersion(pkgPath, version) {
+  const json = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+  json.version = version;
+  fs.writeFileSync(pkgPath, `${JSON.stringify(json, null, 2)}\n`);
+}
+
+/**
+ * Ensure a package's version carries a `-beta` prerelease. Returns the (possibly new) version.
+ * A stable version like 16.0.4 becomes 16.0.4-beta.0; a version already on a `-beta` prerelease is
+ * left untouched. The new version is written to BOTH the source package.json and the built
+ * dist/package.json (npm publishes from dist/), so no rebuild is needed.
+ */
+function ensureBetaVersion(cwd) {
+  const srcPath = path.join(workspaceRoot, cwd, 'package.json');
+  const distPath = path.join(workspaceRoot, cwd, 'dist', 'package.json');
+  const current = JSON.parse(fs.readFileSync(srcPath, 'utf8')).version;
+  const pre = semver.prerelease(current); // e.g. ['beta', 0] or null
+
+  // Already a -beta prerelease -> leave it.
+  if (pre && pre[0] === BETA_ID) return { version: current, changed: false };
+
+  // Non-beta prerelease (e.g. -rc.1) or stable -> move to a fresh -beta.0 of the base version.
+  const base = pre ? `${semver.major(current)}.${semver.minor(current)}.${semver.patch(current)}` : current;
+  const next = `${base}-${BETA_ID}.0`;
+
+  writeVersion(srcPath, next);
+  if (fs.existsSync(distPath)) writeVersion(distPath, next);
+  return { version: next, changed: true, from: current };
+}
 
 function main() {
   const args = process.argv.slice(2);
@@ -77,6 +116,20 @@ function main() {
     console.error(`\n[publish-all] missing dist/ for: ${missing.map((p) => p.name).join(', ')}`);
     console.error('[publish-all] Run `yarn prepare-packages` first to validate + build all packages.');
     process.exit(1);
+  }
+
+  // Beta guard: publishing to the `beta` tag must ship a `-beta` prerelease VERSION (so the plain
+  // x.y.z stays free for the eventual stable release). Add `-beta.0` to any package that lacks it.
+  if (beta) {
+    console.log('\n[publish-all] beta: ensuring every package version carries a -beta prerelease...');
+    for (const pkg of PUBLISH_ORDER) {
+      const res = ensureBetaVersion(pkg.cwd);
+      console.log(
+        res.changed
+          ? `  ${pkg.name}: ${res.from} -> ${res.version}  (added -beta)`
+          : `  ${pkg.name}: ${res.version}  (already beta)`,
+      );
+    }
   }
 
   // NPM_OTP -> ${NPM_OTP:+--otp=$NPM_OTP}; NPM_DRY_RUN -> ${NPM_DRY_RUN:+--dry-run}.

@@ -42,6 +42,10 @@ const entryPoints: Record<string, string> = {
   actions: 'src/actions.ts',
   // react-native specific public subpath
   asyncStorageWrapper: 'src/asyncStorageWrapper.ts',
+  // opt-in DevTools debug side-effect subpath (import 'react-native-global-state-hooks/debug').
+  // Delegates to react-hooks-global-states/debug, which is already external (see bareExternals),
+  // so nothing is bundled into this package.
+  debug: 'src/debug.ts',
   // internal modules imported by GlobalStore (kept as sibling files, not public subpaths)
   tryCatch: 'src/tryCatch.ts',
   isPromise: 'src/isPromise.ts',
