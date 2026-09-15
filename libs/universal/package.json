@@ -57,6 +57,11 @@
       "import": "./actions.mjs",
       "require": "./actions.cjs"
     },
+    "./debug": {
+      "types": "./debug.d.ts",
+      "import": "./debug.mjs",
+      "require": "./debug.cjs"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -106,7 +111,8 @@
   },
   "homepage": "https://github.com/johnny-quesada-developer/react-hooks-global-states#readme",
   "dependencies": {
-    "json-storage-formatter": "^4.0.0"
+    "json-storage-formatter": "^4.0.0",
+    "react-hooks-global-states-debug": "^1.0.0"
   },
   "peerDependencies": {
     "react": ">=18.0.0",

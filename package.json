@@ -26,6 +26,7 @@
     "publish:beta": "node scripts/run.mjs publish:beta",
     "prepare-packages": "node scripts/run.mjs build",
     "tarball": "node scripts/tarball.mjs",
+    "version-bump": "node scripts/version-bump.mjs",
     "coverage": "node scripts/coverage-report.mjs",
     "graph": "nx graph"
   },

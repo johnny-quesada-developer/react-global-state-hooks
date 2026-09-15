@@ -1,6 +1,6 @@
 {
   "name": "react-hooks-global-states-debug",
-  "version": "1.0.0-beta.0",
+  "version": "1.0.0",
   "description": "DevTools debug package for react-hooks-global-states (and react-global-state-hooks). Side-effect import that connects your global stores to the React Hooks Global States DevTools browser extension.",
   "type": "module",
   "main": "./debug.js",

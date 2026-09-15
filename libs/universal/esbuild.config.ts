@@ -37,13 +37,26 @@ const entryPoints: Record<string, string> = {
   throwWrongKeyOnActionCollectionConfig: 'src/throwWrongKeyOnActionCollectionConfig.ts',
   uniqueId: 'src/uniqueId.ts',
   actions: 'src/actions.ts',
+  // opt-in DevTools debug side-effect subpath (import 'react-hooks-global-states/debug').
+  // Just re-imports the external react-hooks-global-states-debug package; kept external below so
+  // it is never bundled into the base library or its consumers.
+  debug: 'src/debug.ts',
 };
 
 // bare-module externals: never bundle these.
 // react / react-dom are peer dependencies. json-storage-formatter is a runtime dependency
 // that now ships a clean dual ESM/CJS format (>=4.0.0-beta), so it interops correctly under
 // native ESM and can safely stay external (deduped/shared instead of duplicated per subpath).
-const bareExternals = ['react', 'react-dom', 'json-storage-formatter', 'json-storage-formatter/*'];
+// react-hooks-global-states-debug is the opt-in DevTools debug package pulled in by ./debug; it
+// must stay external so it never inflates this package's (or its consumers') bundle size.
+const bareExternals = [
+  'react',
+  'react-dom',
+  'json-storage-formatter',
+  'json-storage-formatter/*',
+  'react-hooks-global-states-debug',
+  'react-hooks-global-states-debug/*',
+];
 
 const outdir = path.resolve(__dirname, 'dist');
 
