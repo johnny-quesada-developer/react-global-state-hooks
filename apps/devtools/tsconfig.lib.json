@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "lib": ["es2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "skipLibCheck": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@src/*": ["./src/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@shared": ["./src/shared/index.ts"],
+      "react-hooks-global-states-debug": ["../../libs/monkey_patch/src/debug.ts"],
+      "react-hooks-global-states-debug/*": ["../../libs/monkey_patch/src/*"]
+    },
+    "types": ["chrome", "node"]
+  },
+  // The extension lib bundles built by webpack (content_script / service_worker / devtools_page)
+  // and whatever they import from src/shared. `references`-safe: emit is driven by ts-loader, not
+  // tsc, so this config just tells ts-loader how to compile.
+  "include": ["src/lib", "src/shared"],
+  "exclude": ["**/__tests__", "**/*.test.ts", "**/*.test.tsx", "node_modules"]
+}

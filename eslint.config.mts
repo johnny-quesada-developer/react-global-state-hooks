@@ -87,4 +87,20 @@ export default defineConfig([
       'react/no-unescaped-entities': 'off',
     },
   },
+  {
+    // The DevTools app is a browser-extension dev tool that inspects ARBITRARY runtime state
+    // (Chrome APIs, user stores, serialized messages), where `any` is often the honest type. It
+    // was also authored against its own (looser) lint config. Relax the rules that would
+    // otherwise produce a large amount of low-value churn, while keeping the rest of the
+    // shared config active.
+    files: ['apps/devtools/**/*.{ts,tsx,cjs,js,mjs}'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrors: 'none' }],
+      // TS types the props; the plugin's runtime prop-types / display-name checks are redundant noise here.
+      'react/prop-types': 'off',
+      'react/display-name': 'off',
+    },
+  },
 ]);

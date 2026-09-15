@@ -1,0 +1,60 @@
+{
+  "name": "devtools",
+  "sourceRoot": "apps/devtools/src",
+  "projectType": "application",
+  "tags": ["scope:devtools", "type:app"],
+  "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn dev", "cwd": "apps/devtools" }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn start", "cwd": "apps/devtools" }
+    },
+    "preview:dev": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn preview:dev", "cwd": "apps/devtools" }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/dist"],
+      "options": { "command": "yarn build", "cwd": "apps/devtools" }
+    },
+    "build:dev": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/dist"],
+      "options": { "command": "yarn build:dev", "cwd": "apps/devtools" }
+    },
+    "zip": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/react-hooks-global-states-dev-tools.zip"],
+      "options": { "command": "yarn zip", "cwd": "apps/devtools" }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn test", "cwd": "apps/devtools" }
+    },
+    "test:coverage": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/coverage"],
+      "options": { "command": "yarn test:coverage", "cwd": "apps/devtools" }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn lint", "cwd": "apps/devtools" }
+    },
+    "lint:fix": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn lint:fix", "cwd": "apps/devtools" }
+    },
+    "ts-check": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn ts-check", "cwd": "apps/devtools" }
+    },
+    "clean": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn clean", "cwd": "apps/devtools" }
+    }
+  }
+}

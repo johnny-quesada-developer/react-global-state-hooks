@@ -43,10 +43,10 @@ See every action that changes state
 
 ## 📸 Screenshots
 
-| Track State Changes                                                                                                                   | Modify State                                                                                                                |
-| ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| ![Track State Changes](https://github.com/johnny-quesada-developer/react-hooks-global-states/raw/main/public/track-state-changes.png) | ![Modify State](https://github.com/johnny-quesada-developer/react-hooks-global-states/raw/main/public/modify-the-state.png) |
+| Track State Changes                                                                                                                       | Modify State                                                                                                                    |
+| ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| ![Track State Changes](https://raw.githubusercontent.com/johnny-quesada-developer/react-global-state-hooks/main/public/track-state-changes.png) | ![Modify State](https://raw.githubusercontent.com/johnny-quesada-developer/react-global-state-hooks/main/public/modify-the-state.png) |
 
-| Restore State                                                                                                                 | Action Granularity                                                                                                                          |
-| ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| ![Restore State](https://github.com/johnny-quesada-developer/react-hooks-global-states/raw/main/public/restore-the-state.png) | ![Action Granularity](https://github.com/johnny-quesada-developer/react-hooks-global-states/raw/main/public/custom-actions-granularity.png) |
+| Restore State                                                                                                                     | Action Granularity                                                                                                                              |
+| --------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| ![Restore State](https://raw.githubusercontent.com/johnny-quesada-developer/react-global-state-hooks/main/public/restore-the-state.png) | ![Action Granularity](https://raw.githubusercontent.com/johnny-quesada-developer/react-global-state-hooks/main/public/custom-actions-granularity.png) |

@@ -42,6 +42,16 @@ function Counter() {
 
 ---
 
+## 🛠️ DevTools Extension
+
+Inspect, time-travel, and live-edit your global state right from the browser. See the full guide in **[DEVTOOLS.md](./DEVTOOLS.md)**.
+
+[**🔗 Install for Chrome**](https://chromewebstore.google.com/detail/bafojplmkpejhglhjpibpdhoblickpee/preview?hl=en&authuser=0)
+
+![DevTools — Track State Changes](https://raw.githubusercontent.com/johnny-quesada-developer/react-global-state-hooks/main/public/track-state-changes.png)
+
+---
+
 ## 🚀 Why Developers Love This Library
 
 ### 🎓 **Zero Learning Curve**

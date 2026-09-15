@@ -1,0 +1,51 @@
+{
+  "name": "react-hooks-global-states-dev-tools",
+  "private": true,
+  "version": "1.0.1",
+  "type": "module",
+  "scripts": {
+    "copy:static": "mkdir -p dist/assets && cp src/manifest.json dist/manifest.json && cp src/devtools_page.html dist/devtools_page.html && cp src/assets/devtools_page_icon.ico dist/assets/devtools_page_icon.ico && cp src/assets/devtools_page_icon-28px.ico dist/assets/devtools_page_icon-28px.ico",
+    "build:lib": "webpack --config webpack.config.cjs --mode production",
+    "build:lib:dev": "webpack --config webpack.config.cjs --mode development --env no-watch",
+    "build:vite": "vite build --mode production",
+    "build:vite:dev": "vite build --mode development",
+    "build": "yarn ts-check && rm -rf dist && yarn copy:static && concurrently --kill-others-on-fail 'yarn build:lib' 'yarn build:vite'",
+    "build:dev": "rm -rf dist && yarn copy:static && concurrently --kill-others-on-fail 'yarn build:lib:dev' 'yarn build:vite:dev'",
+    "dev": "rm -rf dist && yarn copy:static && concurrently --kill-others --names 'LIB,VITE' 'webpack --config webpack.config.cjs --mode development' 'vite build --mode development --watch'",
+    "start": "vite dev --mode development",
+    "preview:dev": "node scripts/preview-dev.mjs",
+    "zip": "yarn build && cd dist && zip -r ../react-hooks-global-states-dev-tools.zip . && cd ..",
+    "ts-check": "tsc -b",
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --fix --max-warnings=0",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "clean": "rm -rf dist coverage react-hooks-global-states-dev-tools.zip"
+  },
+  "dependencies": {
+    "@codemirror/lang-javascript": "^6.2.2",
+    "clsx": "^2.1.1",
+    "codemirror": "^6.0.1",
+    "diff": "^7.0.0",
+    "json-storage-formatter": "^4.0.0",
+    "react-icons": "^5.3.0",
+    "react-json-view": "^1.21.3",
+    "tailwind-merge": "^3.7.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.270",
+    "@types/diff": "^7.0.1",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^8.2.2",
+    "postcss": "^8.4.44",
+    "sass-embedded": "^1.78.0",
+    "tailwindcss": "^3.4.10",
+    "terser-webpack-plugin": "^5.3.10",
+    "ts-loader": "^9.5.1",
+    "vite-plugin-checker": "^0.11.0",
+    "webpack": "^5.94.0",
+    "webpack-cli": "^5.1.4"
+  }
+}
