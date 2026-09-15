@@ -10,6 +10,12 @@
       "dependsOn": ["^build", { "projects": ["universal"], "target": "build" }],
       "options": { "command": "yarn build", "cwd": "libs/web" }
     },
+    "validate": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/dist"],
+      "dependsOn": [{ "projects": ["universal"], "target": "build" }],
+      "options": { "command": "yarn validate", "cwd": "libs/web" }
+    },
     "test": {
       "executor": "nx:run-commands",
       "options": { "command": "yarn test", "cwd": "libs/web" }

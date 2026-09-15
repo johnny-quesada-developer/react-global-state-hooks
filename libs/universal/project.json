@@ -9,6 +9,11 @@
       "outputs": ["{projectRoot}/dist"],
       "options": { "command": "yarn build", "cwd": "libs/universal" }
     },
+    "validate": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/dist"],
+      "options": { "command": "yarn validate", "cwd": "libs/universal" }
+    },
     "test": {
       "executor": "nx:run-commands",
       "options": { "command": "yarn test", "cwd": "libs/universal" }
