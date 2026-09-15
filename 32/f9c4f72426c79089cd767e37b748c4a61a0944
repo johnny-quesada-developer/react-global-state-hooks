@@ -1,0 +1,20 @@
+.gitignore
+  h_6029769cf9ac60 1-7,9,12-13,16-18,20-21,23-24,26,28,33
+apps/devtools/.env.example
+  h_6029769cf9ac60 1-10
+apps/devtools/src/vite-env.d.ts
+  h_6029769cf9ac60 1-19
+libs/monkey_patch/src/index.d.ts
+  h_6029769cf9ac60 1-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "32f9c4f72426c79089cd767e37b748c4a61a0944",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
