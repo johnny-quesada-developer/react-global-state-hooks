@@ -1,0 +1,34 @@
+libs/mobile/package.json
+  h_6029769cf9ac60 82-86
+libs/mobile/project.json
+  h_6029769cf9ac60 13-18
+libs/monkey_patch/package.json
+  h_6029769cf9ac60 16-20
+libs/monkey_patch/project.json
+  h_6029769cf9ac60 12-16
+libs/universal/package.json
+  h_6029769cf9ac60 83-87
+libs/universal/project.json
+  h_6029769cf9ac60 12-16
+libs/web/package.json
+  h_6029769cf9ac60 78-82
+libs/web/project.json
+  h_6029769cf9ac60 13-18
+package.json
+  h_6029769cf9ac60 25-29,32
+scripts/publish-all.mjs
+  h_6029769cf9ac60 1-121
+scripts/versions-remote.mjs
+  h_6029769cf9ac60 1-111
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "619b93b9b7afef91aa0f4ed99a2302a873737620",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
