@@ -75,4 +75,16 @@ export default defineConfig([
       '@typescript-eslint/no-empty-object-type': 'off',
     },
   },
+  {
+    // The playground app uses the modern JSX transform (tsconfig `jsx: react-jsx`), so components
+    // don't import React. Turn off the legacy "React must be in scope" rule for apps and pin the
+    // React version so eslint-plugin-react stops warning it can't detect it.
+    files: ['apps/**/*.{ts,tsx}'],
+    settings: { react: { version: 'detect' } },
+    rules: {
+      'react/react-in-jsx-scope': 'off',
+      // Playground UI copy contains quotes/apostrophes; escaping them adds noise for no benefit.
+      'react/no-unescaped-entities': 'off',
+    },
+  },
 ]);

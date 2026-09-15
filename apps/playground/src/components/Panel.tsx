@@ -20,7 +20,6 @@ const styles: Record<string, React.CSSProperties> = {
   title: { marginTop: 0, fontSize: 16 },
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const btn: React.CSSProperties = {
   padding: '6px 12px',
   borderRadius: 8,
@@ -31,7 +30,6 @@ export const btn: React.CSSProperties = {
   marginTop: 8,
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const input: React.CSSProperties = {
   padding: '6px 10px',
   borderRadius: 8,

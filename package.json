@@ -4,10 +4,12 @@
   "private": true,
   "description": "Monorepo for the react-global-state-hooks family of packages (universal, web, react-native).",
   "workspaces": [
-    "libs/*"
+    "libs/*",
+    "apps/*"
   ],
   "scripts": {
     "format": "node scripts/run.mjs format",
+    "dev": "node scripts/run.mjs dev",
     "test": "node scripts/run.mjs test",
     "test:quick": "node scripts/run.mjs test:quick",
     "test:debug": "node scripts/run.mjs test:debug",
@@ -73,6 +75,8 @@
     "@typescript-eslint/parser": "^4.9.1",
     "easy-cancelable-promise": "^1.0.1",
     "esbuild": "^0.24.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.1",
     "eslint": "^9.39.1",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-plugin-import": "^2.22.1",

@@ -1,0 +1,16 @@
+{
+  "name": "react-hooks-global-states-debug-playground",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --force",
+    "build": "yarn ts-check && vite build",
+    "preview": "vite preview",
+    "test": "yarn ts-check && vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --fix --max-warnings=0",
+    "ts-check": "tsc -p tsconfig.json --noEmit"
+  }
+}

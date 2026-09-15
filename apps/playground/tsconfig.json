@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "types": ["vitest/globals", "node"],
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    // Mirror the Vite aliases so type-checking resolves the state libraries + debug patch from
+    // monorepo SOURCE. Subpath entries first so they win for deep imports.
+    "paths": {
+      "react-hooks-global-states-debug": ["../../libs/monkey_patch/src/debug.ts"],
+      "react-global-state-hooks": ["../../libs/web/src/index.ts"],
+      "react-global-state-hooks/*": ["../../libs/web/src/*"],
+      "react-hooks-global-states": ["../../libs/universal/src/index.ts"],
+      "react-hooks-global-states/*": ["../../libs/universal/src/*"]
+    }
+  },
+  "include": ["src", "vite.config.ts", "vitest.config.ts"]
+}

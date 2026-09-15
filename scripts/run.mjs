@@ -29,27 +29,30 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const workspaceRoot = path.resolve(__dirname, '..');
-const libsDir = path.join(workspaceRoot, 'libs');
+// Projects live under libs/* (publishable packages) and apps/* (non-published apps).
+const projectDirs = [path.join(workspaceRoot, 'libs'), path.join(workspaceRoot, 'apps')];
 
-/** Read the Nx project name for every lib under libs/* (falls back to the folder name). */
+/** Read the Nx project name for every project under libs/* and apps/* (falls back to folder). */
 function discoverProjects() {
-  if (!fs.existsSync(libsDir)) return new Set();
-
   const names = new Set();
-  for (const entry of fs.readdirSync(libsDir, { withFileTypes: true })) {
-    if (!entry.isDirectory()) continue;
+  for (const dir of projectDirs) {
+    if (!fs.existsSync(dir)) continue;
 
-    const projectJson = path.join(libsDir, entry.name, 'project.json');
-    if (fs.existsSync(projectJson)) {
-      try {
-        const parsed = JSON.parse(fs.readFileSync(projectJson, 'utf8'));
-        names.add(parsed.name ?? entry.name);
-        continue;
-      } catch {
-        // fall through to the folder name
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (!entry.isDirectory()) continue;
+
+      const projectJson = path.join(dir, entry.name, 'project.json');
+      if (fs.existsSync(projectJson)) {
+        try {
+          const parsed = JSON.parse(fs.readFileSync(projectJson, 'utf8'));
+          names.add(parsed.name ?? entry.name);
+          continue;
+        } catch {
+          // fall through to the folder name
+        }
       }
+      names.add(entry.name);
     }
-    names.add(entry.name);
   }
   return names;
 }
