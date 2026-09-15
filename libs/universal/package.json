@@ -1,6 +1,6 @@
 {
   "name": "react-hooks-global-states",
-  "version": "16.0.3",
+  "version": "16.0.4",
   "description": "A package to easily handle global state across your React components using hooks.",
   "main": "./bundle.cjs",
   "module": "./bundle.mjs",
@@ -112,7 +112,7 @@
   "homepage": "https://github.com/johnny-quesada-developer/react-hooks-global-states#readme",
   "dependencies": {
     "json-storage-formatter": "^4.0.0",
-    "react-hooks-global-states-debug": "^1.0.0"
+    "react-hooks-global-states-debug": "^16.0.4"
   },
   "peerDependencies": {
     "react": ">=18.0.0",

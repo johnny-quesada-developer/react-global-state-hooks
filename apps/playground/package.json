@@ -1,7 +1,7 @@
 {
   "name": "react-hooks-global-states-debug-playground",
   "private": true,
-  "version": "0.0.0",
+  "version": "16.0.4",
   "type": "module",
   "scripts": {
     "dev": "vite --force",
