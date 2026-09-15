@@ -8,7 +8,6 @@ import { SubActionJsonEnum } from './schema/SubActionJson';
 import { softClone } from './tools/softClone';
 import { EntityAdapter } from './tools/EntityAdapter';
 import { onReactDevToolsConnect, getGlobalThis, getReactBuildType } from './tools/react';
-import { deletePreviousSessionStacks, maybeCleanupPreviousStateMetadata } from './maybeCleanupPreviousStateMetadata';
 import { mergeState } from './mergeState';
 import formatFromStore from 'json-storage-formatter/formatFromStore';
 import isFunction from 'json-storage-formatter/isFunction';
@@ -21,12 +20,19 @@ import type { AnyFunction } from 'react-global-state-hooks';
 
 const global = getGlobalThis(globalThis);
 
-// devtools panel do not refresh with the page reload, so we need to cleanup previous session data on reload
-const previousSessionId = sessionStorage.getItem('REACT_GLOBAL_STATE_HOOK_DEBUG');
-deletePreviousSessionStacks(previousSessionId);
-
-const sessionId = uniqueId('session:');
-sessionStorage.setItem('REACT_GLOBAL_STATE_HOOK_DEBUG', sessionId);
+// The devtools panel does not reload with the page. On every page load the patch re-executes, so
+// we clear everything the panel held for the previous load and start fresh. '*' means "clear all".
+// Guarded so a load-time environment without a usable messaging channel (SSR, tests importing
+// helpers) cannot throw during module eval.
+tryCatch(() =>
+  sendMessageFromMonkeyPath({
+    id: uniqueId('cleanup:'),
+    action: 'CLEAR_GLOBAL_STATES',
+    payload: {
+      globalStatePath: '*',
+    },
+  })
+);
 
 type RegisteredStore = { store: GlobalStoreParameter; args: unknown; storePath: string };
 
@@ -105,11 +111,6 @@ onReactDevToolsConnect(() => {
 
 // connector function, extends the instances of GlobalStore to add devtool capabilities
 global.REACT_GLOBAL_STATE_HOOK_DEBUG = (store, args, storePath) => {
-  // if there was a fast refresh, we need to cleanup the previous global state
-  // we do it based on the stack trace of the global state creation which should be unique
-  // there cannot be two different global states with the same stack trace
-  maybeCleanupPreviousStateMetadata({ sessionId, globalStatePath: storePath });
-
   const storeId = uniqueId('store-id:');
 
   store._DEV_TOOLS_STORE_ID = storeId;

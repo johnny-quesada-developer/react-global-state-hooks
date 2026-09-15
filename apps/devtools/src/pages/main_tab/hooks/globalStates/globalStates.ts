@@ -154,6 +154,8 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
       };
     },
 
+    // Clears the states for a path. '*' clears everything — the page sends CLEAR_GLOBAL_STATES('*')
+    // on every load so the panel (which does not reload with the page) starts fresh.
     CLEAR_GLOBAL_STATES: (
       message: ContentScriptMessage<ClearGlobalStatesMessagePayload>,
       _sender: chrome.runtime.MessageSender
@@ -162,9 +164,8 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
         const previousState = new EntityAdapter(getState());
         const previousIds = [...previousState.ids];
 
-        // delete the states associated with and specific path
-        // this is compatible with fast refresh and page reload
-        // if the path is not found, returns the current state otherwise copy
+        // Remove the states for the given path ('*' returns a fresh empty adapter).
+        // If the path is not found, returns the current state otherwise a copy.
         const currentState = removeGlobalStatesOfPath(
           message.payload.globalStatePath,
           new EntityAdapter(previousState)

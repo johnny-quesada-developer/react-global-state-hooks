@@ -653,8 +653,12 @@ describe('monkey_patch.ts - Integration Tests', () => {
     });
   });
 
-  describe('fast reload handling', () => {
-    it('should send CLEAR_GLOBAL_STATES on fast reload', () => {
+  describe('same-path re-creation', () => {
+    it('does NOT send CLEAR_GLOBAL_STATES when a store is created again at the same path', () => {
+      // Page-reload cleanup is now handled solely by the CLEAR_GLOBAL_STATES('*') message on boot. Creating
+      // a store at a path that already exists in the same session is a legitimate additional
+      // instance (multiple context providers, or a store created per component), so the patch must
+      // NOT clear the path — each creation simply announces its own ADD_GLOBAL_STATE.
       const mockStore: Any = {
         state: { count: 0 },
         setState: vi.fn(),
@@ -666,17 +670,19 @@ describe('monkey_patch.ts - Integration Tests', () => {
 
       const storePath = '/src/stores/counter.ts';
 
-      // First initialization
+      // First instance
       global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, storePath);
 
       postedMessages.length = 0;
 
-      // Fast reload - same path, same session
+      // Second instance at the same path/session
       global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, storePath);
 
       const clearCall = postedMessages.find((msg) => msg.action === 'monkey-patch/CLEAR_GLOBAL_STATES');
+      const addCall = postedMessages.find((msg) => msg.action === 'monkey-patch/ADD_GLOBAL_STATE');
 
-      expect(clearCall).toBeDefined();
+      expect(clearCall).toBeUndefined();
+      expect(addCall).toBeDefined();
     });
   });
 

@@ -33,24 +33,26 @@
   runtime: { onConnect: { addListener: () => {} } },
 };
 
-// 3) Install the patch via a side-effect import, gated by DEBUG_PATCH so the same suite can run
+import '@testing-library/jest-dom';
+import { afterEach, beforeEach } from 'vitest';
+import { cleanup } from '@testing-library/react';
+
+// 3) jsdom requires window.postMessage(message, targetOrigin); real browsers accept a single
+//    argument, which is the form the patch uses (see src/sendMessageFromMonkeyPath.ts). Default
+//    the missing targetOrigin here rather than changing production code for the test env.
+//    This MUST be installed before the patch import below: the patch posts a CLEAR_GLOBAL_STATES
+//    message on load, so the single-arg form has to be tolerated by then.
+const originalPostMessage = window.postMessage.bind(window);
+window.postMessage = ((message: unknown, targetOrigin: string = '*', transfer?: Transferable[]) =>
+  originalPostMessage(message, targetOrigin, transfer)) as typeof window.postMessage;
+
+// 4) Install the patch via a side-effect import, gated by DEBUG_PATCH so the same suite can run
 //    patched (default) or unpatched (DEBUG_PATCH=off) for parity. The debug entry installs
 //    globalThis.REACT_GLOBAL_STATE_HOOK_DEBUG, which the state libraries invoke on store
 //    creation. Awaited at top level so it completes before any test imports the subject.
 if (process.env.DEBUG_PATCH !== 'off') {
   await import('./src/debug');
 }
-
-import '@testing-library/jest-dom';
-import { afterEach, beforeEach } from 'vitest';
-import { cleanup } from '@testing-library/react';
-
-// 4) jsdom requires window.postMessage(message, targetOrigin); real browsers accept a single
-//    argument, which is the form the patch uses (see src/sendMessageFromMonkeyPath.ts). Default
-//    the missing targetOrigin here rather than changing production code for the test env.
-const originalPostMessage = window.postMessage.bind(window);
-window.postMessage = ((message: unknown, targetOrigin: string = '*', transfer?: Transferable[]) =>
-  originalPostMessage(message, targetOrigin, transfer)) as typeof window.postMessage;
 
 // 5) The universal/web variants inject no extra reserved metadata keys. (The native variant
 //    overrides this in vitest.setup.patched.native.ts.) See libs/test/helpers/expectMetadata.ts.
