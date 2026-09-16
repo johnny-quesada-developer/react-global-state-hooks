@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
+import { FaBell } from 'react-icons/fa';
 import { cn } from '@src/shared/tools/cn';
+import { throttle } from '@src/shared/tools';
 import type { GlobalStateId } from '@src/shared/schema/GlobalStateJson';
 import { stateMetaDevTools$ } from '../../../../hooks/globalStates';
 import { assertIsNonNullable } from '@src/shared/asserts/asserts';
@@ -11,17 +13,28 @@ export type UnseenBadgeProps = {
 
 const format = (count: number) => (count > 99 ? '99+' : String(count));
 
-/**
- * Self-contained "unseen logs" pill. Updates its OWN DOM node imperatively via a ref rather than
- * React state, so a state that changes as fast as a progress bar never triggers re-renders across
- * the (potentially large) state list. Only this one node's text/visibility mutate.
- */
 export const UnseenBadge: React.FC<UnseenBadgeProps> = React.memo(({ globalStateId, className }) => {
   const ref = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const element = ref.current;
     if (!element) return;
+
+    // avoid onMount animation
+    let shouldAnimate = false;
+
+    const ring = throttle(() => {
+      if (!shouldAnimate) {
+        shouldAnimate = true;
+        return;
+      }
+
+      element.classList.remove('animate-bell-ring');
+      // Force reflow to restart the CSS animation
+      // DO NOT REMOVE THIS LINE EVEN IF IT SEEMS UNUSED
+      void element.offsetWidth;
+      element.classList.add('animate-bell-ring');
+    }, 400);
 
     const unsubscribe = stateMetaDevTools$.subscribe(
       (state) => {
@@ -30,14 +43,14 @@ export const UnseenBadge: React.FC<UnseenBadgeProps> = React.memo(({ globalState
         return meta.unseenLength;
       },
       (unseenLength) => {
-        if (unseenLength > 0) {
-          element.textContent = format(unseenLength);
-          element.style.display = '';
+        if (unseenLength <= 0) {
+          element.style.display = 'none';
           return;
         }
 
-        element.textContent = '';
-        element.style.display = 'none';
+        element.dataset.count = format(unseenLength);
+        element.style.display = '';
+        ring();
       },
     );
 
@@ -49,15 +62,17 @@ export const UnseenBadge: React.FC<UnseenBadgeProps> = React.memo(({ globalState
   return (
     <span
       ref={ref}
-      // Starts hidden; the effect reveals it if there are unseen logs.
       style={{ display: 'none' }}
       title="unseen actions"
       className={cn(
-        'ml-auto inline-flex items-center rounded-sm px-1 text-xxs font-semibold leading-4',
+        'ml-auto inline-flex items-center gap-1 rounded-sm px-1 text-xxs font-semibold leading-4',
         'bg-blue-500 text-white',
+        'after:content-[attr(data-count)]',
         className,
       )}
-    />
+    >
+      <FaBell />
+    </span>
   );
 });
 

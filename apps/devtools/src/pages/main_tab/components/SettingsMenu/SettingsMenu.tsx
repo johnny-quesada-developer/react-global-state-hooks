@@ -4,7 +4,10 @@ import { GoGear } from 'react-icons/go';
 import { FiDownload, FiUpload } from 'react-icons/fi';
 import { MdDarkMode, MdLightMode } from 'react-icons/md';
 import theme$ from '../../hooks/theme';
-import { downloadGlobalStatesSnapshot, promptLoadGlobalStatesFromFile } from '@main_tab/util/globalStatesFile';
+import {
+  downloadGlobalStatesSnapshot,
+  promptLoadGlobalStatesFromFile,
+} from '@main_tab/util/globalStatesFile';
 
 export type SettingsMenuProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -14,7 +17,10 @@ export type SettingsMenuProps = React.HTMLAttributes<HTMLDivElement>;
  *  - Load a states snapshot from a JSON file
  *  - Download the current states as a JSON snapshot
  */
-export const SettingsMenu: React.FC<SettingsMenuProps> = ({ className = '', ...props }: SettingsMenuProps) => {
+export const SettingsMenu: React.FC<SettingsMenuProps> = ({
+  className = '',
+  ...props
+}: SettingsMenuProps) => {
   const [theme] = theme$();
   const isLight = theme === 'light';
   const [open, setOpen] = useState(false);
@@ -38,7 +44,7 @@ export const SettingsMenu: React.FC<SettingsMenuProps> = ({ className = '', ...p
         document.removeEventListener('keydown', onKeyDown);
       };
     },
-    [open]
+    [open],
   );
 
   const runAndClose = (action: () => void) => () => {
@@ -52,16 +58,16 @@ export const SettingsMenu: React.FC<SettingsMenuProps> = ({ className = '', ...p
   });
 
   return (
-    <div ref={containerRef} className={cn('relative', className)} {...props}>
+    <div ref={containerRef} className={cn('relative flex justify-center', className)} {...props}>
       <button
         type="button"
-        className="px-4 text-gray-700 dark:text-gray-200"
+        className="text-gray-700 dark:text-gray-200"
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
         title="Settings"
       >
-        <GoGear />
+        <GoGear size={16} />
       </button>
 
       {open && (
@@ -69,10 +75,15 @@ export const SettingsMenu: React.FC<SettingsMenuProps> = ({ className = '', ...p
           role="menu"
           className={cn(
             'absolute right-0 z-20 mt-1 min-w-44 overflow-hidden rounded border shadow-lg',
-            isLight ? 'bg-white border-gray-300' : 'bg-eighties border-gray-600'
+            isLight ? 'bg-white border-gray-300' : 'bg-eighties border-gray-600',
           )}
         >
-          <button type="button" role="menuitem" className={itemClassName} onClick={runAndClose(theme$.actions.toggleTheme)}>
+          <button
+            type="button"
+            role="menuitem"
+            className={itemClassName}
+            onClick={runAndClose(theme$.actions.toggleTheme)}
+          >
             {isLight ? <MdDarkMode /> : <MdLightMode />}
             {isLight ? 'Dark theme' : 'Light theme'}
           </button>
