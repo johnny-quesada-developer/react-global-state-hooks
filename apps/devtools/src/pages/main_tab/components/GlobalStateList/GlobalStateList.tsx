@@ -1,8 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@src/shared/tools/cn';
 import { GlobalStateItem } from './GlobalStateItem';
 import { GlobalStateListFilter } from './GlobalStateListFilter';
 import { useListNavigation } from '@src/shared/facelessComponents/useListNavigation';
+import { focusLogsPerActionList, globalStateListClass } from '@src/pages/main_tab/util/listFocusBridge';
 import selectedGlobalStateId$ from '../../hooks/selectedGlobalStateId';
 import globalStates$, { stateMetaDevTools$ } from '../../hooks/globalStates';
 import { shallowCompare } from 'react-global-state-hooks';
@@ -42,8 +43,23 @@ export const GlobalStateList: React.FC<GlobalStateListProps> = ({
     [filter, globalStates],
   );
 
+  useEffect(() => {
+    const listEl = listRef.current;
+    if (!listEl) return;
+
+    const onKeydown = (event: KeyboardEvent) => {
+      if (event.key !== 'ArrowRight') return;
+
+      event.preventDefault();
+      focusLogsPerActionList();
+    };
+
+    listEl.addEventListener('keydown', onKeydown);
+    return () => listEl.removeEventListener('keydown', onKeydown);
+  }, []);
+
   return (
-    <div className={cn('flex flex-col min-h-0', className)} {...props}>
+    <div className={cn(globalStateListClass, 'flex flex-col min-h-0', className)} {...props}>
       <GlobalStateListFilter
         className="sticky top-0 z-10"
         inputProps={{

@@ -6,6 +6,7 @@ import { logsFilter$, selectedActionHeader$ } from '../_hooks';
 import { LogsFilter } from '../LogsFilter';
 import { ActionLogListItem, actionLogListItemClass } from '../ActionLogListItem';
 import { getNexIndex } from '@src/shared/facelessComponents/useListNavigation';
+import { focusGlobalStateList } from '@src/pages/main_tab/util/listFocusBridge';
 import { isEqualRoot } from '@src/pages/main_tab/hooks/globalStates/hooks/useActionsHeaders';
 import selectedGlobalStateId$ from '@src/pages/main_tab/hooks/selectedGlobalStateId';
 import { UnsubscribeCallback } from 'react-hooks-global-states';
@@ -40,6 +41,12 @@ export const LogsPerActionList: React.FC<LogsPerActionListProps> = ({
     }
 
     function onListKeydown(event: KeyboardEvent) {
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        focusGlobalStateList();
+        return;
+      }
+
       if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
 
       const rows = Array.from(listEl.querySelectorAll(`.${actionLogListItemClass}`));

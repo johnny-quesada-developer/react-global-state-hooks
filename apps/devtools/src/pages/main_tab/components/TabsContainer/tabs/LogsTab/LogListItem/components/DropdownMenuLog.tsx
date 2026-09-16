@@ -34,13 +34,13 @@ export const DropdownMenuLog: React.FC<DropdownMenuLogProps> = ({
         },
       });
     },
-    [log, sendMessageToContentScript]
+    [log, sendMessageToContentScript],
   );
 
   return (
     <button
       onClick={onClick}
-      className={cn('absolute top-0 right-0 w-6 h-full flex justify-center items-center hover:scale-125', className)}
+      className={cn('w-6 h-full flex justify-center items-center hover:scale-125', className)}
       {...props}
     >
       <IoEllipsisVertical />

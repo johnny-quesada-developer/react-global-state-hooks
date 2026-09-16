@@ -6,6 +6,7 @@ import { formatTimeToHHMMSS } from '@src/shared/tools/date';
 import { useIsSelectedHeader } from '../_hooks';
 import { theme$ } from '@src/pages/main_tab/hooks/theme';
 import selectedGlobalStateId$ from '@src/pages/main_tab/hooks/selectedGlobalStateId';
+import { DATA_LIST_SELECTED } from '@src/pages/main_tab/util/listFocusBridge';
 import { DropdownMenuLog } from './components';
 
 export type ActionLogListItemProps = React.HTMLAttributes<HTMLLIElement> & {
@@ -37,6 +38,7 @@ export const ActionLogListItem: React.FC<ActionLogListItemProps> = ({
     <li
       id={actionId}
       tabIndex={-1}
+      {...(isSelectedAction ? { [DATA_LIST_SELECTED]: true } : {})}
       {...props}
       title={title}
       className={cn(

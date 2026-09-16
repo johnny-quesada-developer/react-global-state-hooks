@@ -37,15 +37,9 @@ export const LogListItem = ({ className = '', navItem, ...props }: LogListItemPr
         },
         'relative w-full flex gap-2 pl-4 py-2 transition-colors duration-300',
         'justify-start items-center select-text text-nowrap',
-        className
+        className,
       )}
     >
-      <span
-        className={cn('absolute top-0 right-0 z-10', 'text-xxs', 'whitespace-nowrap', 'text-gray-800 dark:text-white')}
-      >
-        {dateString}
-      </span>
-
       <button className="text-start flex-1">
         <span
           className={cn('font-semibold', {
@@ -67,6 +61,10 @@ export const LogListItem = ({ className = '', navItem, ...props }: LogListItemPr
         </span>
         {isRejected && <span className="text-red-500 text-xxs">❌</span>}
       </button>
+
+      <span className={cn('z-10', 'text-xxs', 'whitespace-nowrap', 'text-gray-800 dark:text-white')}>
+        {dateString}
+      </span>
 
       <DropdownMenuLog className="" log={actionLog} />
     </li>

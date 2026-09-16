@@ -3,6 +3,7 @@ import { cn } from '@src/shared/tools/cn';
 import { useIsSelectedState } from '@src/pages/main_tab/hooks/selectedGlobalStateId';
 import { theme$ } from '@src/pages/main_tab/hooks/theme';
 import { NavItemProps } from '@src/shared/facelessComponents';
+import { DATA_LIST_SELECTED } from '@src/pages/main_tab/util/listFocusBridge';
 import useStateMeta from '@src/pages/main_tab/hooks/globalStates/hooks/useStateMeta';
 import generateStackHash from '@src/pages/main_tab/util/generateStackHash';
 import type { GlobalStateId } from '@src/shared/schema/GlobalStateJson';
@@ -59,6 +60,7 @@ export const GlobalStateItem: React.FC<GlobalStateItemProps> = ({
       )}
       {...props}
       {...navProps}
+      {...(isSelected ? { [DATA_LIST_SELECTED]: true } : {})}
     >
       {Boolean(localStorageKey) && (
         <span
