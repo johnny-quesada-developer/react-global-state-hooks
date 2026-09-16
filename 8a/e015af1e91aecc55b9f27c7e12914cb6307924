@@ -1,0 +1,22 @@
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/ActionLogListItem/ActionLogListItem.tsx
+  h_6029769cf9ac60 42,47-51,53,62-64
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogsPerActionList/LogsPerActionList.tsx
+  h_6029769cf9ac60 36,51-53
+apps/devtools/src/pages/main_tab/util/__tests__/createBudgetedQueue.test.ts
+  h_6029769cf9ac60 1-111
+apps/devtools/src/pages/main_tab/util/createBudgetedQueue.ts
+  h_6029769cf9ac60 1-61
+apps/devtools/src/pages/main_tab/util/getContentScriptPort.ts
+  h_6029769cf9ac60 7,26-27,58-61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "8ae015af1e91aecc55b9f27c7e12914cb6307924",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
