@@ -7,7 +7,14 @@ import sendMessageFromMonkeyPath from './sendMessageFromMonkeyPath';
 import { SubActionJsonEnum } from './schema/SubActionJson';
 import { softClone } from './tools/softClone';
 import { EntityAdapter } from './tools/EntityAdapter';
-import { onReactDevToolsConnect, getGlobalThis, getReactBuildType } from './tools/react';
+import {
+  onReactDevToolsConnect,
+  getGlobalThis,
+  getReactBuildType,
+  getCurrentFiber,
+  addFiberUnmountSubscription,
+  type Fiber,
+} from './tools/react';
 import { mergeState } from './mergeState';
 import formatFromStore from 'json-storage-formatter/formatFromStore';
 import isFunction from 'json-storage-formatter/isFunction';
@@ -31,12 +38,55 @@ tryCatch(() =>
     payload: {
       globalStatePath: '*',
     },
-  })
+  }),
 );
 
 type RegisteredStore = { store: GlobalStoreParameter; args: unknown; storePath: string };
 
 const globalStatesById = new EntityAdapter<string, RegisteredStore>();
+
+/**
+ * Fiber-based lifecycle cleanup.
+ *
+ * When a store is created during a React render (context providers, or a store created inside a
+ * component via useState/useMemo), we associate its storeId with the currently-rendering fiber.
+ * When React unmounts that fiber, we delete those stores. Stores created at module scope have no
+ * current fiber and are left alone (they live for the page's lifetime).
+ *
+ * React double-buffers a component's fiber (current <-> alternate), and the object passed to
+ * onCommitFiberUnmount may be either half of that pair, so we key BOTH the fiber and its alternate
+ * and union-lookup on unmount.
+ */
+const storeIdsByFiber = new WeakMap<Fiber, Set<string>>();
+
+const addStoreIdToFiber = (fiber: Fiber, storeId: string) => {
+  const ids = storeIdsByFiber.get(fiber) ?? new Set<string>();
+  ids.add(storeId);
+  storeIdsByFiber.set(fiber, ids);
+};
+
+/** Associate a store with the fiber that created it (if any). No-op at module scope. */
+const registerStoreForFiber = (storeId: string) => {
+  const fiber = getCurrentFiber();
+  if (!fiber) return;
+
+  addStoreIdToFiber(fiber, storeId);
+  if (fiber.alternate) addStoreIdToFiber(fiber.alternate, storeId);
+};
+
+addFiberUnmountSubscription((fiber) => {
+  const ids = new Set<string>([
+    ...(storeIdsByFiber.get(fiber) ?? []),
+    ...(fiber.alternate ? (storeIdsByFiber.get(fiber.alternate) ?? []) : []),
+  ]);
+
+  if (!ids.size) return;
+
+  for (const storeId of ids) sendDeleteGlobalStateMessage(storeId);
+
+  storeIdsByFiber.delete(fiber);
+  if (fiber.alternate) storeIdsByFiber.delete(fiber.alternate);
+});
 
 /**
  * Re-emits the minimal set of messages needed to recreate every live store at its
@@ -113,10 +163,14 @@ onReactDevToolsConnect(() => {
 global.REACT_GLOBAL_STATE_HOOK_DEBUG = (store, args, storePath) => {
   const storeId = uniqueId('store-id:');
 
+  // Tie this store to the fiber creating it (if inside a render), so it's cleaned up when that
+  // component unmounts. Module-scope stores have no current fiber and are skipped.
+  registerStoreForFiber(storeId);
+
   store._DEV_TOOLS_STORE_ID = storeId;
 
   store._DEV_TOOLS_IS_CONTEXT = Boolean(
-    (args as { __devtools_isContextStore?: boolean } | undefined)?.__devtools_isContextStore
+    (args as { __devtools_isContextStore?: boolean } | undefined)?.__devtools_isContextStore,
   );
 
   // store the global state instance by its id for later usage
@@ -135,7 +189,7 @@ global.REACT_GLOBAL_STATE_HOOK_DEBUG = (store, args, storePath) => {
     }),
   });
 
-  const { setState, getMainHook, dispose, getStoreActionsMap, createSelectorHook, __onUnMountContext } = store;
+  const { setState, getMainHook, dispose, getStoreActionsMap, createSelectorHook } = store;
 
   // setState is captured here, before store.setState is overridden below.
   // Passing this original reference into the action wrappers prevents double-logging:
@@ -217,11 +271,6 @@ global.REACT_GLOBAL_STATE_HOOK_DEBUG = (store, args, storePath) => {
     getStoreActionsMap: () => getStoreActionsMap.call(store),
   });
 
-  store.__onUnMountContext = () => {
-    sendDeleteGlobalStateMessage(storeId);
-    __onUnMountContext?.call(store);
-  };
-
   store.dispose = () => {
     sendDeleteGlobalStateMessage(storeId);
     dispose.call(store);
@@ -235,7 +284,7 @@ export function makeSetStateWrapper(
     store: GlobalStoreParameter;
     setState: GlobalStoreParameter['setState'];
   },
-  logCallback: (args: { state: unknown; config: SetStateConfigJson }) => void
+  logCallback: (args: { state: unknown; config: SetStateConfigJson }) => void,
 ) {
   return (setter: unknown | (() => unknown), config: SetStateConfigJson = {}) => {
     const previousState = args.store.state;
@@ -279,9 +328,9 @@ export function makeGetStoreActionsMapWrapper({
     const isStateChangeScope = logsPrefix.includes('onStateChanged');
 
     // avoid creating a infinite loop when setState is called from onStateChanged
-    const stateSetter = (isStateChangeScope ? store.setActualStateWithoutValidations : setState) as React.Dispatch<
-      React.SetStateAction<unknown>
-    >;
+    const stateSetter = (
+      isStateChangeScope ? store.setActualStateWithoutValidations : setState
+    ) as React.Dispatch<React.SetStateAction<unknown>>;
 
     const logger = new Logger({ storeId: store._DEV_TOOLS_STORE_ID, prefix: `${logsPrefix}:action` });
 
@@ -320,7 +369,7 @@ export function makeGetStoreActionsMapWrapper({
 
           try {
             const handlerResult = runWithActiveActionContext(storeId, { onSetState }, () =>
-              actionHandler.apply(actions, parameters)
+              actionHandler.apply(actions, parameters),
             );
 
             if (!isPromise(handlerResult)) {
@@ -471,7 +520,7 @@ export function addDevtoolsListeners() {
           parameters: string;
           state: string;
         };
-      }>
+      }>,
     ) => {
       if (event.source !== window) return;
 
@@ -494,7 +543,7 @@ export function addDevtoolsListeners() {
 
         const actionFunction: (...args: unknown[]) => unknown = Object.getOwnPropertyDescriptor(
           globalState.actions,
-          actionName
+          actionName,
         )?.value;
 
         return actionFunction.apply(globalState.actions, args);
@@ -528,7 +577,7 @@ export function addDevtoolsListeners() {
         // the restore could be partial due non serializable data
         return globalState.setState.apply(globalState, [merged]);
       }
-    }
+    },
   );
 }
 

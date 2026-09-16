@@ -34,6 +34,13 @@ vi.mock('../src/tools/react', () => ({
   }),
   getGlobalThis: vi.fn((g) => g),
   getReactBuildType: vi.fn(() => 'development'),
+  // No current fiber in this unit context (module-scope) -> stores are not fiber-registered.
+  getCurrentFiber: vi.fn(() => null),
+  // Capture the unmount callback so tests could drive it; returns an unsubscribe fn.
+  addFiberUnmountSubscription: vi.fn((callback) => {
+    (globalThis as Any).__fiberUnmountCallback = callback;
+    return () => {};
+  }),
 }));
 
 describe('monkey_patch.ts - Integration Tests', () => {
@@ -96,7 +103,6 @@ describe('monkey_patch.ts - Integration Tests', () => {
       const originalCreateSelectorHook = vi.fn(() => vi.fn());
       const originalSetState = vi.fn();
       const originalDispose = vi.fn();
-      const originalOnUnmount = vi.fn();
       const mockActions = {
         increment: vi.fn(() => 'incremented'),
         decrement: vi.fn(() => 'decremented'),
@@ -112,7 +118,6 @@ describe('monkey_patch.ts - Integration Tests', () => {
           storeTools: { state: { count: 0 }, setState: vi.fn() },
         })),
         createSelectorHook: originalCreateSelectorHook,
-        __onUnMountContext: originalOnUnmount,
         actions: mockActions,
         getState: vi.fn(() => ({ count: 0 })),
       };
@@ -146,10 +151,6 @@ describe('monkey_patch.ts - Integration Tests', () => {
       expect(patchedStore.dispose).not.toBe(originalDispose);
       expect(typeof patchedStore.dispose).toBe('function');
 
-      // 6. __onUnMountContext should be wrapped
-      expect(patchedStore.__onUnMountContext).not.toBe(originalOnUnmount);
-      expect(typeof patchedStore.__onUnMountContext).toBe('function');
-
       // 7. __devtools_initialize_getStoreActionsMapWrapped should be added
       expect(patchedStore.__devtools_initialize_getStoreActionsMapWrapped).toBeDefined();
       expect(typeof patchedStore.__devtools_initialize_getStoreActionsMapWrapped).toBe('function');
@@ -170,11 +171,6 @@ describe('monkey_patch.ts - Integration Tests', () => {
       expect(originalDispose).toHaveBeenCalled();
       const deleteCall = postedMessages.find((msg) => msg.action === 'monkey-patch/DELETE_GLOBAL_STATE');
       expect(deleteCall).toBeDefined();
-
-      // Test wrapped __onUnMountContext calls original
-      postedMessages.length = 0;
-      patchedStore.__onUnMountContext();
-      expect(originalOnUnmount).toHaveBeenCalled();
 
       // Test wrapped actions map
       const wrappedActionsMap = patchedStore.__devtools_initialize_getStoreActionsMapWrapped();
@@ -437,47 +433,6 @@ describe('monkey_patch.ts - Integration Tests', () => {
 
       const deleteCall = postedMessages.find((msg) => msg.action === 'monkey-patch/DELETE_GLOBAL_STATE');
       expect(deleteCall).toBeDefined();
-    });
-  });
-
-  describe('__onUnMountContext wrapping', () => {
-    it('should wrap __onUnMountContext to send DELETE_GLOBAL_STATE message', () => {
-      const originalOnUnmount = vi.fn();
-      const mockStore: Any = {
-        state: { count: 0 },
-        setState: vi.fn(),
-        getMainHook: vi.fn(() => ({ state: { count: 0 }, setState: vi.fn() })),
-        dispose: vi.fn(),
-        getStoreActionsMap: vi.fn(() => ({ actions: null, storeTools: {} })),
-        createSelectorHook: vi.fn(() => vi.fn()),
-        __onUnMountContext: originalOnUnmount,
-      };
-
-      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
-
-      postedMessages.length = 0;
-      wrappedStore.__onUnMountContext();
-
-      expect(originalOnUnmount).toHaveBeenCalled();
-
-      const deleteCall = postedMessages.find((msg) => msg.action === 'monkey-patch/DELETE_GLOBAL_STATE');
-      expect(deleteCall).toBeDefined();
-    });
-
-    it('should handle missing __onUnMountContext gracefully', () => {
-      const mockStore: Any = {
-        state: { count: 0 },
-        setState: vi.fn(),
-        getMainHook: vi.fn(() => ({ state: { count: 0 }, setState: vi.fn() })),
-        dispose: vi.fn(),
-        getStoreActionsMap: vi.fn(() => ({ actions: null, storeTools: {} })),
-        createSelectorHook: vi.fn(() => vi.fn()),
-        // No __onUnMountContext
-      };
-
-      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
-
-      expect(() => wrappedStore.__onUnMountContext()).not.toThrow();
     });
   });
 
@@ -1831,23 +1786,6 @@ describe('Real GlobalStore comprehensive workflow tests', () => {
       store.dispose();
 
       expect(msgs('DELETE_GLOBAL_STATE').length).toBe(2);
-    });
-
-    it('__onUnMountContext sends DELETE_GLOBAL_STATE with the correct store ID', () => {
-      const store = new GlobalStore({ count: 0 }, { name: 'unmountable' } as Any) as Any;
-
-      if (store._DEV_TOOLS_STORE_ID == null) {
-        global.REACT_GLOBAL_STATE_HOOK_DEBUG(store, undefined, '/stores/unmountable.ts');
-      }
-
-      const storeId = store._DEV_TOOLS_STORE_ID;
-      postedMessages.length = 0;
-
-      store.__onUnMountContext?.();
-
-      const [del] = msgs('DELETE_GLOBAL_STATE');
-      expect(del).toBeDefined();
-      expect(del.globalStateId).toBe(storeId);
     });
 
     it('dispose from store A does not affect store B registration', () => {

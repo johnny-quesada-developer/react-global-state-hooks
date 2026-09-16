@@ -24,6 +24,8 @@ vi.mock('../src/tools/react', () => ({
   }),
   getGlobalThis: vi.fn((g) => g),
   getReactBuildType: vi.fn(() => 'development'),
+  getCurrentFiber: vi.fn(() => null),
+  addFiberUnmountSubscription: vi.fn(() => () => {}),
 }));
 
 describe('monkey_patch - Real World Scenarios', () => {

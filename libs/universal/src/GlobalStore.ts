@@ -1,4 +1,4 @@
-import { useDebugValue, useMemo, useRef, useSyncExternalStore } from 'react';
+import { useDebugValue, useRef, useState, useSyncExternalStore } from 'react';
 import type {
   ActionCollectionConfig,
   GlobalStoreCallbacks,
@@ -389,7 +389,7 @@ export class GlobalStore<
       // keep the hook props updated
       this.partialUpdateSubscription(subscriptionRef.current, extensions);
 
-      const { subscribe, getSnapshot, getServerSnapshot } = useMemo(() => {
+      const [{ subscribe, getSnapshot, getServerSnapshot }] = useState(() => {
         const subscribe = (onStoreChange: () => void) => {
           subscriptionRef.current.onStoreChange = onStoreChange;
 
@@ -403,7 +403,7 @@ export class GlobalStore<
         const getServerSnapshot = getSnapshot;
 
         return { subscribe, getSnapshot, getServerSnapshot };
-      }, []);
+      });
 
       // could partially update the state if the dependencies changed
       // this helps us to prevent unnecessary re-renders the next time the hook is used
