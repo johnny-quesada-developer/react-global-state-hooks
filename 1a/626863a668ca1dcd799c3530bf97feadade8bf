@@ -1,0 +1,22 @@
+apps/devtools/src/pages/main_tab/components/SettingsMenu/SettingsMenu.tsx
+  h_6029769cf9ac60 7-10,20-23,47,61,64,70,78,81-86
+apps/devtools/src/shared/tools/throttle.ts
+  h_6029769cf9ac60 2
+  h_6029769cf9ac60 6,9
+apps/devtools/src/base.css
+  h_6029769cf9ac60 9-31
+apps/devtools/src/pages/main_tab/components/GlobalStateList/GlobalStateItem/UnseenBadge/UnseenBadge.tsx
+  h_6029769cf9ac60 2,4,26,32-38,46-47,51-53,68,70,73-75
+  h_6029769cf9ac60 23-25,27-31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "1a626863a668ca1dcd799c3530bf97feadade8bf",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
