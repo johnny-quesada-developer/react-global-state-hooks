@@ -1,3 +1,4 @@
+import { startTransition } from 'react';
 import { createGlobalState, InferStateApi } from 'react-global-state-hooks/createGlobalState';
 import { type GlobalStateMetaExtended } from './helpers/useGlobalStates.types';
 import { assertIsNonNullable } from '@src/shared/asserts';
@@ -85,7 +86,9 @@ export const stateMetaDevTools$ = createGlobalState((): Map<GlobalStateId, State
           unseenLength: 0,
         });
 
-        stateMetaDevTools$.setState(newState);
+        startTransition(() => {
+          stateMetaDevTools$.setState(newState);
+        });
       };
     },
   },
@@ -160,7 +163,9 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
         // Update derived stores BEFORE globalStates$ so that when globalStates$ triggers
         // selectedGlobalStateId$ → useLogsArray subscriber, the action data is already available.
         syncActionToStores(initialAction);
-        setState(rootState);
+        startTransition(() => {
+          setState(rootState);
+        });
         addGlobalStateToPath(globalStateJson.globalStatePath, globalStateJson.globalStateId);
       };
     },
@@ -184,7 +189,9 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
         const removedStateIds = previousIds.filter((stateId) => !currentState.has(stateId));
         if (!removedStateIds.length) return;
 
-        setState(currentState);
+        startTransition(() => {
+          setState(currentState);
+        });
         removeStateIdsFromDerivedStores(removedStateIds);
       };
     },
@@ -211,7 +218,9 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
             ...stateMeta,
           });
 
-          setState(rootState);
+          startTransition(() => {
+            setState(rootState);
+          });
         }
 
         syncActionToStores(action);
@@ -235,7 +244,9 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
           logs: actionMeta.logs,
         });
 
-        actionsById$.setState(actionsById);
+        startTransition(() => {
+          actionsById$.setState(actionsById);
+        });
       };
     },
 
@@ -261,7 +272,9 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
           logs: [...actionMeta.logs, actionLog],
         });
 
-        actionsById$.setState(actionsById);
+        startTransition(() => {
+          actionsById$.setState(actionsById);
+        });
 
         // Order matters: set actionsById$ first, then bump actionIdsByStateId$ last.
         // Consumers (logsArray$, useActionsHeaders) react to actionIdsByStateId$ and
@@ -270,7 +283,9 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
         const actionIdsByStateId = new EntityAdapter(actionIdsByStateId$.getState());
         const currentIds = actionIdsByStateId.get(actionLog.globalStateId);
         actionIdsByStateId.set(actionLog.globalStateId, new Set(currentIds));
-        actionIdsByStateId$.setState(actionIdsByStateId);
+        startTransition(() => {
+          actionIdsByStateId$.setState(actionIdsByStateId);
+        });
 
         if (isSetStateSubAction(actionLog)) {
           stateMeta.currentState = actionLog.payload;
@@ -300,7 +315,9 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
 
         rootState.delete(payload.globalStateId);
 
-        setState(rootState);
+        startTransition(() => {
+          setState(rootState);
+        });
         removeStateIdsFromDerivedStores([payload.globalStateId]);
         // Only this instance unmounted; other instances sharing the path stay registered.
         removeGlobalStateIdFromPath(stateMeta.globalStatePath, payload.globalStateId);
@@ -340,13 +357,15 @@ export function syncActionToStores(action: ActionJson) {
 
   stateMetaDevTools.set(action.globalStateId, newMeta);
 
-  // Order matters: actionIdsByStateId$ must be set last. logsArray$ and
-  // useActionsHeaders react to it and read actionsById$ during that reaction,
-  // so actionsById$ has to already hold the new action or it gets dropped.
-  actionsById$.setState(actionsById);
-  actionKeysByStateId$.setState(actionKeysByStateId);
-  actionIdsByStateId$.setState(actionIdsByStateId);
-  stateMetaDevTools$.setState(stateMetaDevTools);
+  startTransition(() => {
+    // Order matters: actionIdsByStateId$ must be set last. logsArray$ and
+    // useActionsHeaders react to it and read actionsById$ during that reaction,
+    // so actionsById$ has to already hold the new action or it gets dropped.
+    actionsById$.setState(actionsById);
+    actionKeysByStateId$.setState(actionKeysByStateId);
+    actionIdsByStateId$.setState(actionIdsByStateId);
+    stateMetaDevTools$.setState(stateMetaDevTools);
+  });
 }
 
 function removeStateIdsFromDerivedStores(stateIds: GlobalStateId[]) {
@@ -369,10 +388,12 @@ function removeStateIdsFromDerivedStores(stateIds: GlobalStateId[]) {
     stateMetaDevTools.delete(stateId);
   }
 
-  actionsById$.setState(actionsById);
-  actionIdsByStateId$.setState(actionIdsByStateId);
-  actionKeysByStateId$.setState(actionKeysByStateId);
-  stateMetaDevTools$.setState(stateMetaDevTools);
+  startTransition(() => {
+    actionsById$.setState(actionsById);
+    actionIdsByStateId$.setState(actionIdsByStateId);
+    actionKeysByStateId$.setState(actionKeysByStateId);
+    stateMetaDevTools$.setState(stateMetaDevTools);
+  });
 }
 
 export default globalStates$;

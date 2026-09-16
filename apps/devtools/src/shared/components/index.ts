@@ -1,5 +1,4 @@
 export * from './Badge';
-export * from './JsonViewer';
 export * from './SimpleFilter';
 export * from './Tooltip';
 export * from './Resizable';

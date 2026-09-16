@@ -79,7 +79,7 @@ export const CodeViewer: React.FC<CodeViewerProps> = ({ className = '', children
 
       editorRef.current.setState(editorState);
     },
-    [onChange, metadata, src]
+    [onChange, metadata, src],
   );
 
   useEffect(
@@ -89,7 +89,7 @@ export const CodeViewer: React.FC<CodeViewerProps> = ({ className = '', children
       const shouldUnfold = isNumber(collapsed) || collapsed === false;
       (shouldUnfold ? unfoldAll : foldAll)(editorRef.current);
     },
-    [collapsed]
+    [collapsed],
   );
 
   return (
@@ -105,7 +105,7 @@ export const CodeViewer: React.FC<CodeViewerProps> = ({ className = '', children
               Discard
             </button>
           )}
-
+          x
           {!error && (
             <button
               disabled={!temporaryOutput}
@@ -115,7 +115,7 @@ export const CodeViewer: React.FC<CodeViewerProps> = ({ className = '', children
                 'rounded-md bg-blue-500 px-3 py-1 text-xs text-white  disabled:cursor-not-allowed disabled:opacity-50',
                 {
                   'hover:bg-blue-600': !!temporaryOutput,
-                }
+                },
               )}
             >
               Set State
