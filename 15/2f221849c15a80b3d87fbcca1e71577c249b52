@@ -1,0 +1,16 @@
+apps/playground/src/App.tsx
+  h_6029769cf9ac60 7,25
+apps/playground/src/components/ScopedCounterPanel.tsx
+  h_6029769cf9ac60 1-85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "152f221849c15a80b3d87fbcca1e71577c249b52",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
