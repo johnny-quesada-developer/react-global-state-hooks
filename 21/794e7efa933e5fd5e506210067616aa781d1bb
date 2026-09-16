@@ -1,0 +1,14 @@
+apps/devtools/src/lib/service_worker.ts
+  h_6029769cf9ac60 26-28,37,46,59-65,93-95,97-102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "21794e7efa933e5fd5e506210067616aa781d1bb",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
