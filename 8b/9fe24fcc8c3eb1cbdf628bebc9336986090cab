@@ -1,0 +1,24 @@
+apps/playground/src/components/FormContextPanel.tsx
+  h_6029769cf9ac60 1,34-40,42-48,52-79,92-107
+libs/monkey_patch/__test__/monkey_patch.integration.test.ts
+  h_6029769cf9ac60 37-43
+libs/monkey_patch/__test__/monkey_patch.real-world.test.ts
+  h_6029769cf9ac60 27-28
+libs/monkey_patch/src/monkey_patch.ts
+  h_6029769cf9ac60 10-17,41,48-90,166-169,173,192,287,331-333,372,523,546,580
+libs/monkey_patch/src/tools/react.ts
+  h_6029769cf9ac60 2,31-37,45-47,74-103,217-222,225,228-246,273-276,306-313,319
+libs/universal/src/GlobalStore.ts
+  h_6029769cf9ac60 1,392,406
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "8b9fe24fcc8c3eb1cbdf628bebc9336986090cab",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
