@@ -39,16 +39,18 @@ export const ActionLogListItem: React.FC<ActionLogListItemProps> = ({
           'hover:bg-blue-200': !isSelectedAction && theme === 'light',
           'hover:bg-blue-600': !isSelectedAction && theme !== 'light',
         },
-        className
+        className,
       )}
     >
       <button className="">
         <span
-          className={cn('text-xxs whitespace-nowrap', 'top-0.5 right-0.5 absolute ', 'text-gray-800 dark:text-white')}
+          className={cn(
+            'text-xxs whitespace-nowrap',
+            'top-0.5 right-0.5 absolute ',
+            'text-gray-800 dark:text-white',
+          )}
         >
-          {
-            formatTimeToHHMMSS(header.value.timestamp ?? Date.now())
-          }
+          {formatTimeToHHMMSS(header.value.timestamp ?? Date.now())}
         </span>
 
         <span
@@ -57,7 +59,9 @@ export const ActionLogListItem: React.FC<ActionLogListItemProps> = ({
             'text-orange-500': !header.value.hasError && header.value.actionType === 'LIFE_CYCLE_PARAMETER',
           })}
         >
-          <span className={cn('text-xxs', 'text-gray-500 dark:text-white')}>{header.props.tabIndex + 1}.</span>{' '}
+          <span className={cn('text-xxs', 'text-gray-500 dark:text-white')}>
+            {header.props.tabIndex + 1}.
+          </span>{' '}
           {header.value.action}
         </span>
 

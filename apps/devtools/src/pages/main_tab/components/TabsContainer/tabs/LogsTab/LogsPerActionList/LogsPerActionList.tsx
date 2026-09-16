@@ -33,7 +33,7 @@ export const LogsPerActionList: React.FC<LogsPerActionListProps> = ({
         selectedActionHeader$.setState(item.value.actionId);
       },
     },
-    [actionsHeaders, logsFilter]
+    [actionsHeaders, logsFilter],
   );
 
   return (
@@ -48,7 +48,9 @@ export const LogsPerActionList: React.FC<LogsPerActionListProps> = ({
         <LogsFilter className="border-b border-gray-400 w-full" />
 
         {!navigation.navigationItems.length && (
-          <p className="flex gap-4 p-2 transition-colors duration-300 text-gray-400">No logs match the query...</p>
+          <p className="flex gap-4 p-2 transition-colors duration-300 text-gray-400">
+            No logs match the query...
+          </p>
         )}
       </div>
 

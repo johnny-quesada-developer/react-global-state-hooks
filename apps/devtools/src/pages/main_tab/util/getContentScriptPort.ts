@@ -4,6 +4,7 @@ import isString from 'json-storage-formatter/isString';
 import formatFromStore from 'json-storage-formatter/formatFromStore';
 import messagesLogs$ from '../hooks/messagesLog';
 import globalStates$, { ContentScriptMessage, isGlobalStateAction } from '../hooks/globalStates/globalStates';
+import { createBudgetedQueue } from './createBudgetedQueue';
 
 /**
  * Panel side of the transport.
@@ -22,7 +23,8 @@ let workerPort: chrome.runtime.Port | null = null;
 // same store ids and a page reload re-announces itself, so neither needs a re-request.
 let hasRequestedSnapshot = false;
 
-const handleIncomingMessage = (rawMessage: ContentScriptMessage<any>) => {
+// Time-budgeted so a flood of messages (e.g. a tight setState loop) can't starve the main thread.
+const messageQueue = createBudgetedQueue(function processMessage(rawMessage: ContentScriptMessage<any>) {
   // if there is no action, ignore the message
   if (isNil(rawMessage?.action)) return;
 
@@ -53,6 +55,10 @@ const handleIncomingMessage = (rawMessage: ContentScriptMessage<any>) => {
   }
 
   messagesLogs$.actions.push(message);
+});
+
+const handleIncomingMessage = (message: ContentScriptMessage<any>) => {
+  messageQueue.push(message);
 };
 
 const connectToWorker = () => {
