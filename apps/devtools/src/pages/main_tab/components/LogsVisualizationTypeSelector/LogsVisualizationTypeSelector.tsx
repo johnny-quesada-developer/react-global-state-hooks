@@ -104,7 +104,7 @@ export const LogsVisualizationTypeSelector: React.FC<LogsVisualizationTypeSelect
             </React.Fragment>
           }
         >
-          <FaInfoCircle className=" text-base mt-2" />
+          <FaInfoCircle className="text-base mt-2 text-gray-500 dark:text-gray-300" />
         </Tooltip>
       </li>
     </ul>

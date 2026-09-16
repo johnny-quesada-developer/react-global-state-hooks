@@ -55,7 +55,7 @@ export const SettingsMenu: React.FC<SettingsMenuProps> = ({ className = '', ...p
     <div ref={containerRef} className={cn('relative', className)} {...props}>
       <button
         type="button"
-        className="px-4"
+        className="px-4 text-gray-700 dark:text-gray-200"
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}

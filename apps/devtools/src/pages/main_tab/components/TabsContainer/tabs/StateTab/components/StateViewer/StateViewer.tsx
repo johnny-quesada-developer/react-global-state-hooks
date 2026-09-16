@@ -67,11 +67,11 @@ export const StateViewer: React.FC<StateViewerProps> = ({ className = '', ...pro
             </div>
           }
         >
-          <FaInfoCircle className="text-base" />
+          <FaInfoCircle className="text-base text-gray-500 dark:text-gray-300" />
         </Tooltip>
       </h2>
 
-      <JsonCodeViewer src={currentState} collapsed={4} onEdit={onEdit} />
+      <JsonCodeViewer src={currentState} collapsed={3} onEdit={onEdit} />
     </div>
   );
 };

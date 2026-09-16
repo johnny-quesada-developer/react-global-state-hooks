@@ -40,7 +40,7 @@ export const GlobalStateListFilter: React.FC<GlobalStateListFilterProps> = ({
           </React.Fragment>
         }
       >
-        <FaInfoCircle className=" text-base" />
+        <FaInfoCircle className="text-base text-gray-500 dark:text-gray-300" />
       </Tooltip>
     </div>
   );

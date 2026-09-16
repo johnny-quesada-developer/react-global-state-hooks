@@ -19,7 +19,7 @@ export type JsonCodeViewerProps = React.HTMLAttributes<HTMLDivElement> & {
 export const JsonCodeViewer: React.FC<JsonCodeViewerProps> = React.memo(
   ({
     className = '',
-    collapsed: collapsedArg = true,
+    collapsed: collapsedArg = 3,
     defaultView = 'code',
     onEdit,
     src,

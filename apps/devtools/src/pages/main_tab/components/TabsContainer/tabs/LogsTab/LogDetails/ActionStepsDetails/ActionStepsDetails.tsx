@@ -78,13 +78,13 @@ export const ActionStepsDetails: React.FC<ActionStepsDetailsProps> = ({
             isDifferent={isDifferent}
             isInitialLog={isInitialGroup}
             currentLog={currentLog}
-            collapsed={true}
+            collapsed={3}
           />
 
           <hr className="border-gray-400 dark:border-white" />
 
           <h1 className="font-semibold text-sm">Payload</h1>
-          <JsonCodeViewer src={{ value: currentLog?.payload }} collapsed={4} />
+          <JsonCodeViewer src={{ value: currentLog?.payload }} collapsed={3} />
         </div>
       </div>
     </Resizable>
