@@ -1,0 +1,26 @@
+apps/devtools/src/pages/main_tab/components/GlobalStateList/GlobalStateItem/GlobalStateItem.tsx
+  h_6029769cf9ac60 6,63
+apps/devtools/src/pages/main_tab/components/GlobalStateList/GlobalStateList.tsx
+  h_6029769cf9ac60 1,6,46-60,62
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/ActionLogListItem/ActionLogListItem.tsx
+  h_6029769cf9ac60 9,41
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogListItem/LogListItem.tsx
+  h_6029769cf9ac60 40,65-68
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogListItem/components/DropdownMenuLog.tsx
+  h_6029769cf9ac60 37,43
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogsPerActionList/LogsPerActionList.tsx
+  h_6029769cf9ac60 9,44-49
+apps/devtools/src/pages/main_tab/util/listFocusBridge.ts
+  h_6029769cf9ac60 1-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "91ee5de6e629ab029ccdc529272fe4431c092402",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
