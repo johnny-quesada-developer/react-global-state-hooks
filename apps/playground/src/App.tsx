@@ -4,6 +4,7 @@ import { TodosPanel } from './components/TodosPanel';
 import { FormContextPanel } from './components/FormContextPanel';
 import { ProgressPanel } from './components/ProgressPanel';
 import { PipelinePanel } from './components/PipelinePanel';
+import { ScopedCounterPanel } from './components/ScopedCounterPanel';
 
 export function App() {
   return (
@@ -21,6 +22,7 @@ export function App() {
         <AuthPanel />
         <TodosPanel />
         <FormContextPanel />
+        <ScopedCounterPanel />
         <ProgressPanel />
         <PipelinePanel />
       </main>
