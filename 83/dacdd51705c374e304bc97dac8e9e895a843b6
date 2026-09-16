@@ -1,0 +1,24 @@
+apps/devtools/src/pages/main_tab/components/GlobalStateList/GlobalStateItem/GlobalStateItem.tsx
+  h_6029769cf9ac60 11-13,20-22,33,39-44,58,73
+apps/devtools/src/pages/main_tab/components/GlobalStateList/GlobalStateItem/UnseenBadge/UnseenBadge.tsx
+  h_6029769cf9ac60 4-5,19,23-37,39-42
+apps/devtools/src/pages/main_tab/components/GlobalStateList/GlobalStateList.tsx
+  h_6029769cf9ac60 7,16-19,22,39,42
+apps/devtools/src/pages/main_tab/hooks/globalStates/globalStates.ts
+  h_6029769cf9ac60 64-70,72-77,79-80,82-86,88-92,94,320,331-342,349-375,377-378
+apps/devtools/src/pages/main_tab/hooks/globalStates/helpers/getOrderedGlobalStates.ts
+  h_6029769cf9ac60 12
+package.json
+  h_6029769cf9ac60 34-35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "83dacdd51705c374e304bc97dac8e9e895a843b6",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
