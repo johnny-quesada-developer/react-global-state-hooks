@@ -16,7 +16,7 @@ export type ActionHeader = {
   logsCount: number;
 };
 
-const toHeader = (action: ActionJson): ActionHeader => ({
+export const toHeader = (action: ActionJson): ActionHeader => ({
   actionId: action.actionId,
   globalStateId: action.globalStateId,
   action: action.action,
@@ -32,33 +32,44 @@ export const mapGroupedToHeaders = (grouped: EntityAdapter<ActionId, ActionJson>
 
 const buildHeaders = (actionIds: Set<ActionId> | undefined): ActionHeader[] => {
   if (!actionIds) return [];
+
   const actionsById = actionsById$.getState();
   const headers: ActionHeader[] = [];
 
   for (const actionId of actionIds) {
     const action = actionsById.get(actionId);
-    if (action) headers.push(toHeader(action));
+    headers.push(toHeader(action));
   }
 
   return headers;
 };
 
+const selectHeaders = (
+  selectedStateId: GlobalStateId | null,
+  actionIdsByStateId: EntityAdapter<GlobalStateId, Set<ActionId>>,
+): ActionHeader[] => {
+  if (isNil(selectedStateId)) return [];
+  return buildHeaders(actionIdsByStateId.get(selectedStateId));
+};
+
+export const isEqualRoot =
+  (selectedStateId: GlobalStateId | null) =>
+  (
+    current: EntityAdapter<GlobalStateId, Set<ActionId>>,
+    next: EntityAdapter<GlobalStateId, Set<ActionId>>,
+  ): boolean => {
+    if (!selectedStateId) return current === next;
+    return current.get(selectedStateId) === next.get(selectedStateId);
+  };
+
 export const useActionsHeaders = (): ActionHeader[] => {
   const [selectedStateId] = selectedGlobalStateId$();
 
   return actionIdsByStateId$.use.select(
-    (actionIdsByStateId) => {
-      if (isNil(selectedStateId)) return [];
-
-      return buildHeaders(actionIdsByStateId.get(selectedStateId));
-    },
+    (actionIdsByStateId) => selectHeaders(selectedStateId, actionIdsByStateId),
     {
       dependencies: [selectedStateId],
-      isEqualRoot: (current, next): boolean => {
-        if (!selectedStateId) return current === next;
-
-        return current.get(selectedStateId) === next.get(selectedStateId);
-      },
-    }
+      isEqualRoot: isEqualRoot(selectedStateId),
+    },
   );
 };

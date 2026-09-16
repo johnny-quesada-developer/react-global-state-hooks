@@ -2,7 +2,10 @@ import { NavItem, DATA_ITEM_ID } from './useListNavigation.types';
 import { isNonNullable } from '../../asserts';
 import { uniqueId } from 'react-global-state-hooks/uniqueId';
 
-export const buildNavigationItems = <Item>(items: Item[], filter?: (item: Item, index: number) => boolean) => {
+export const buildNavigationItems = <Item>(
+  items: Item[],
+  filter?: (item: Item, index: number) => boolean,
+) => {
   const navigationItems: NavItem<Item>[] = [];
 
   let tabIndex = 0;
@@ -31,8 +34,8 @@ export const buildNavigationItems = <Item>(items: Item[], filter?: (item: Item, 
   return navigationItems;
 };
 
-export const getNexIndex = <T>(args: {
-  navigationItems: NavItem<T>[];
+export const getNexIndex = (args: {
+  navigationItems: { length: number };
   selectedIndex: number;
   keyDirection: 1 | -1;
 }): number => {
