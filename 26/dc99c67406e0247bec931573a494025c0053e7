@@ -1,0 +1,20 @@
+apps/devtools/src/pages/main_tab/hooks/globalStates/__tests__/globalStates.test.ts
+  h_6029769cf9ac60 1-236
+apps/devtools/src/pages/main_tab/hooks/globalStates/globalStates.ts
+  h_6029769cf9ac60 1,89-91,166-168,192-194,221-223,247-249,275-277,286-288,318-320,360-368,391-396
+apps/devtools/src/shared/components/JsonCodeViewer/JsonCodeViewer.tsx
+  h_6029769cf9ac60 58,65,119,125
+apps/devtools/src/shared/components/JsonCodeViewer/components/CodeViewer/CodeViewer.tsx
+  h_6029769cf9ac60 82,92,108,118
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "26dc99c67406e0247bec931573a494025c0053e7",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
