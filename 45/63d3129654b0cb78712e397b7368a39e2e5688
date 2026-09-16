@@ -1,0 +1,22 @@
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogsPerActionList/LogsPerActionList.tsx
+  h_6029769cf9ac60 1-3,7-11,21-22,24-25,36-153,155-159,164-169,173-179,182
+  h_6029769cf9ac60 26-35,154
+apps/devtools/src/pages/main_tab/hooks/globalStates/hooks/useActionsHeaders.ts
+  h_6029769cf9ac60 19,35,41,47-64,69,72-73
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/ActionLogListItem/ActionLogListItem.tsx
+  h_6029769cf9ac60 3-4,8,12-13,20-21,24-27,30-35,42-43,46,61-62,65,68,71-75
+  h_6029769cf9ac60 16-17,38
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/ActionLogListItem/components/DropdownMenuLog.tsx
+  h_6029769cf9ac60 45,51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "4563d3129654b0cb78712e397b7368a39e2e5688",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
