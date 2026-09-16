@@ -7,6 +7,7 @@ import useStateMeta from '@src/pages/main_tab/hooks/globalStates/hooks/useStateM
 import generateStackHash from '@src/pages/main_tab/util/generateStackHash';
 import type { GlobalStateId } from '@src/shared/schema/GlobalStateJson';
 import { Badge } from '@src/shared/components';
+import { UnseenBadge } from './UnseenBadge';
 
 export type GlobalStateItemProps = React.HTMLAttributes<HTMLLIElement> & {
   globalStateId: GlobalStateId;
@@ -70,6 +71,7 @@ export const GlobalStateItem: React.FC<GlobalStateItemProps> = ({
           context
         </Badge>
       )}
+      <UnseenBadge globalStateId={globalStateId} />
     </li>
   );
 };

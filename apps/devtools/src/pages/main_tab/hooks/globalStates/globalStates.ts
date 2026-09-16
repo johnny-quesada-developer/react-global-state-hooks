@@ -23,6 +23,7 @@ import {
   removeGlobalStatesOfPath,
 } from './helpers/globalStatesIdsByPath';
 import type { ClearGlobalStatesMessagePayload } from '@src/shared/schema/MonkeyPathMessageJson/ClearGlobalStatesMessage';
+import { markStateSeen, forgetStates, registerActionCountSource, type ActionCountSource } from '../unseenLogs';
 
 export type ContentScriptMessage<T> = {
   action: string;
@@ -49,14 +50,20 @@ export const actionIdsByStateId$ = createGlobalState(new EntityAdapter<GlobalSta
   name: 'actionIdsByStateId',
 });
 
+// The unseen-actions pill derives its count from this store (injected to avoid a circular import).
+registerActionCountSource(actionIdsByStateId$ as unknown as ActionCountSource);
+
 /**
  * Per-store grouping of action calls by action key: globalStateId -> Map(actionKey
  * -> ordered actionIds). Lets a single store's action-key groups be fetched directly
  * (no scanning of other stores) and shows how many times each named action ran.
  */
-export const actionKeysByStateId$ = createGlobalState(new EntityAdapter<GlobalStateId, Map<string, ActionId[]>>({}), {
-  name: 'actionKeysByStateId',
-});
+export const actionKeysByStateId$ = createGlobalState(
+  new EntityAdapter<GlobalStateId, Map<string, ActionId[]>>({}),
+  {
+    name: 'actionKeysByStateId',
+  },
+);
 
 export type GlobalStatesContextApi = InferStateApi<typeof globalStates$>;
 
@@ -80,6 +87,8 @@ const removeStateIdsFromDerivedStores = (stateIds: GlobalStateId[]) => {
   actionsById$.setState(actionsById);
   actionIdsByStateId$.setState(actionIdsByStateId);
   actionKeysByStateId$.setState(actionKeysByStateId);
+
+  forgetStates(stateIds);
 };
 
 /**
@@ -95,7 +104,7 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
   actions: {
     SET_REACT_BUILD_TYPE: (
       { payload }: ContentScriptMessage<{ buildType: 'production' | 'development' }>,
-      _sender: chrome.runtime.MessageSender
+      _sender: chrome.runtime.MessageSender,
     ) => {
       return () => {
         assertIsNonNullable(payload?.buildType, 'payload.buildType should be defined');
@@ -108,7 +117,7 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
 
     ADD_GLOBAL_STATE: (
       { payload: globalStateJson }: ContentScriptMessage<GlobalStateJson>,
-      _sender: chrome.runtime.MessageSender
+      _sender: chrome.runtime.MessageSender,
     ) => {
       return ({ setState, getState }) => {
         assertIsNonNullable(globalStateJson, 'stateMeta should be defined');
@@ -151,6 +160,10 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
         syncActionToStores(initialAction);
         setState(rootState);
         addGlobalStateToPath(globalStateJson.globalStatePath, globalStateJson.globalStateId);
+
+        // Baseline this state's unseen count to its current action count, so its initial actions
+        // (e.g. initialize) are not shown as unseen. Only actions arriving afterwards count.
+        markStateSeen(globalStateJson.globalStateId);
       };
     },
 
@@ -158,7 +171,7 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
     // on every load so the panel (which does not reload with the page) starts fresh.
     CLEAR_GLOBAL_STATES: (
       message: ContentScriptMessage<ClearGlobalStatesMessagePayload>,
-      _sender: chrome.runtime.MessageSender
+      _sender: chrome.runtime.MessageSender,
     ) => {
       return ({ setState, getState }) => {
         const previousState = new EntityAdapter(getState());
@@ -168,7 +181,7 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
         // If the path is not found, returns the current state otherwise a copy.
         const currentState = removeGlobalStatesOfPath(
           message.payload.globalStatePath,
-          new EntityAdapter(previousState)
+          new EntityAdapter(previousState),
         );
         const removedStateIds = previousIds.filter((stateId) => !currentState.has(stateId));
         if (!removedStateIds.length) return;
@@ -178,7 +191,10 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
       };
     },
 
-    START_ACTION: ({ payload: action }: ContentScriptMessage<ActionJson>, _sender: chrome.runtime.MessageSender) => {
+    START_ACTION: (
+      { payload: action }: ContentScriptMessage<ActionJson>,
+      _sender: chrome.runtime.MessageSender,
+    ) => {
       return ({ setState, getState }) => {
         assertIsNonNullable(action, 'action should be defined');
 
@@ -204,7 +220,10 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
       };
     },
 
-    UPDATE_ACTION: ({ payload }: ContentScriptMessage<ActionUpdate>, _sender: chrome.runtime.MessageSender) => {
+    UPDATE_ACTION: (
+      { payload }: ContentScriptMessage<ActionUpdate>,
+      _sender: chrome.runtime.MessageSender,
+    ) => {
       return () => {
         assertActionUpdate(payload);
 
@@ -224,7 +243,7 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
 
     ADD_ACTION_LOG: (
       { payload: actionLog }: ContentScriptMessage<ActionLogJson>,
-      _sender: chrome.runtime.MessageSender
+      _sender: chrome.runtime.MessageSender,
     ) => {
       return ({ setState, getState }) => {
         assertIsNonNullable(actionLog, 'payload should be defined');
@@ -271,7 +290,7 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
       }: ContentScriptMessage<{
         globalStateId: GlobalStateId;
       }>,
-      _sender: chrome.runtime.MessageSender
+      _sender: chrome.runtime.MessageSender,
     ) => {
       return ({ setState, getState }) => {
         assertIsNonNullable(payload, 'payload should be defined');

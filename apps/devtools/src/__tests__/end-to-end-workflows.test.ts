@@ -25,6 +25,8 @@ vi.mock('react-hooks-global-states-debug/tools/react', () => ({
   }),
   getGlobalThis: vi.fn((g) => g),
   getReactBuildType: vi.fn(() => 'development'),
+  getCurrentFiber: vi.fn(() => null),
+  addFiberUnmountSubscription: vi.fn(() => () => {}),
 }));
 
 describe('End-to-End Workflows', () => {
