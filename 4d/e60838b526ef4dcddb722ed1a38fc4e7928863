@@ -1,0 +1,26 @@
+apps/devtools/src/pages/main_tab/components/GlobalStateList/GlobalStateListFilter/GlobalStoreListFilter.tsx
+  h_6029769cf9ac60 43
+apps/devtools/src/pages/main_tab/components/LogsVisualizationTypeSelector/LogsVisualizationTypeSelector.tsx
+  h_6029769cf9ac60 107
+apps/devtools/src/pages/main_tab/components/SettingsMenu/SettingsMenu.tsx
+  h_6029769cf9ac60 58
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogDetails/ActionStepsDetails/ActionStepsDetails.tsx
+  h_6029769cf9ac60 81,87
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogDetails/ShowChangesSummary/ShowChangesSummary.tsx
+  h_6029769cf9ac60 19
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/StateTab/components/StateViewer/StateViewer.tsx
+  h_6029769cf9ac60 70,74
+apps/devtools/src/shared/components/JsonCodeViewer/JsonCodeViewer.tsx
+  h_6029769cf9ac60 22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "4de60838b526ef4dcddb722ed1a38fc4e7928863",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
