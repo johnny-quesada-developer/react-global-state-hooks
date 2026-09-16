@@ -1,0 +1,32 @@
+apps/devtools/src/__tests__/end-to-end-workflows.test.ts
+  h_6029769cf9ac60 28-29
+apps/devtools/src/__tests__/error-recovery-edge-cases.test.ts
+  h_6029769cf9ac60 27-28
+apps/devtools/src/index.tsx
+  h_6029769cf9ac60 8,12-16
+apps/devtools/src/pages/main_tab/PanelErrorBoundary.tsx
+  h_6029769cf9ac60 1-35
+apps/devtools/src/pages/main_tab/components/GlobalStateList/GlobalStateItem/GlobalStateItem.tsx
+  h_6029769cf9ac60 10,74
+apps/devtools/src/pages/main_tab/components/GlobalStateList/GlobalStateItem/UnseenBadge/UnseenBadge.tsx
+  h_6029769cf9ac60 1-60
+apps/devtools/src/pages/main_tab/components/GlobalStateList/GlobalStateItem/UnseenBadge/index.ts
+  h_6029769cf9ac60 1-2
+apps/devtools/src/pages/main_tab/hooks/globalStates/globalStates.ts
+  h_6029769cf9ac60 26,58-63,87-88,104,117,160-164,172,182,192-195,221-224,244,266-267,293,327-329
+apps/devtools/src/pages/main_tab/hooks/selectedGlobalStateId.ts
+  h_6029769cf9ac60 7,39-62
+apps/devtools/src/pages/main_tab/hooks/unseenLogs.ts
+  h_6029769cf9ac60 1-103
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "c8e6d7200f8d600770385c23764ccb21236a225c",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
