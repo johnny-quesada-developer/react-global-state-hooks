@@ -1,0 +1,18 @@
+apps/devtools/src/base.css
+  h_6029769cf9ac60 9-31
+apps/devtools/src/pages/main_tab/components/GlobalStateList/GlobalStateItem/UnseenBadge/UnseenBadge.tsx
+  h_6029769cf9ac60 2,4,17,19,28-34,42-43,47-49,64,66-68,71-73
+apps/devtools/src/pages/main_tab/components/SettingsMenu/SettingsMenu.tsx
+  h_6029769cf9ac60 7-10,20-23,47,61,64,70,78,81-86
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "a88978da42bd25a82bdd581e160cb20e8d409162",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
