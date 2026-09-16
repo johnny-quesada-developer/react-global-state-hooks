@@ -9,7 +9,7 @@ export type OrderedGlobalState = {
 };
 
 export const getOrderedGlobalStates = (
-  globalStates: EntityAdapter<GlobalStateId, GlobalStateMetaExtended>
+  globalStates: EntityAdapter<GlobalStateId, GlobalStateMetaExtended>,
 ): OrderedGlobalState[] => {
   return globalStates
     .entries()

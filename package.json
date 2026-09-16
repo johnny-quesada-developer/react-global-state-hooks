@@ -31,7 +31,8 @@
     "version-bump": "node scripts/version-bump.mjs",
     "version:check": "node scripts/versions-remote.mjs",
     "coverage": "node scripts/coverage-report.mjs",
-    "graph": "nx graph"
+    "graph": "nx graph",
+    "preview:dev": "nx preview:dev devtools"
   },
   "scriptsInfo": {
     "test": "--reporter=verbose"

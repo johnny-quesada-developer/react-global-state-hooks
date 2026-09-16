@@ -4,26 +4,22 @@ import { GlobalStateItem } from './GlobalStateItem';
 import { GlobalStateListFilter } from './GlobalStateListFilter';
 import { useListNavigation } from '@src/shared/facelessComponents/useListNavigation';
 import selectedGlobalStateId$ from '../../hooks/selectedGlobalStateId';
-import globalStates$ from '../../hooks/globalStates';
-import type { GlobalStateId } from '@src/shared/schema/GlobalStateJson';
+import globalStates$, { stateMetaDevTools$ } from '../../hooks/globalStates';
 import { shallowCompare } from 'react-global-state-hooks';
 import { getOrderedGlobalStates } from '../../hooks/globalStates/helpers/getOrderedGlobalStates';
 
 export type GlobalStateListProps = React.HTMLAttributes<HTMLDivElement>;
 
-type GlobalStateListRow = {
-  globalStateId: GlobalStateId;
-  name: string;
-  sort: number;
-};
-
 /**
  * TODO: Optimize to select only the names and allow the GlobalStateItem to select the rest of the data.
  */
-export const GlobalStateList: React.FC<GlobalStateListProps> = ({ className = '', ...props }: GlobalStateListProps) => {
+export const GlobalStateList: React.FC<GlobalStateListProps> = ({
+  className = '',
+  ...props
+}: GlobalStateListProps) => {
   const [filter, setFilter] = useState('');
 
-  const [globalStates] = globalStates$.use((state) => getOrderedGlobalStates(state) as GlobalStateListRow[], {
+  const [globalStates] = globalStates$.use((state) => getOrderedGlobalStates(state), {
     isEqualRoot: (current, next) => shallowCompare(current.ids, next.ids),
   });
 
@@ -40,9 +36,10 @@ export const GlobalStateList: React.FC<GlobalStateListProps> = ({ className = ''
       },
       onSelect: (item) => {
         selectedGlobalStateId$.setState(item.value.globalStateId);
+        stateMetaDevTools$.actions.markAsTainted(item.value.globalStateId);
       },
     },
-    [filter, globalStates]
+    [filter, globalStates],
   );
 
   return (

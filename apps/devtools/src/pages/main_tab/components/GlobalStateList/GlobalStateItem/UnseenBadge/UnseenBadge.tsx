@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { cn } from '@src/shared/tools/cn';
 import type { GlobalStateId } from '@src/shared/schema/GlobalStateJson';
-import { getUnseenCount, subscribeToUnseenCount } from '@src/pages/main_tab/hooks/unseenLogs';
+import { stateMetaDevTools$ } from '../../../../hooks/globalStates';
+import { assertIsNonNullable } from '@src/shared/asserts/asserts';
 
 export type UnseenBadgeProps = {
   globalStateId: GlobalStateId;
@@ -15,25 +16,30 @@ const format = (count: number) => (count > 99 ? '99+' : String(count));
  * React state, so a state that changes as fast as a progress bar never triggers re-renders across
  * the (potentially large) state list. Only this one node's text/visibility mutate.
  */
-export const UnseenBadge: React.FC<UnseenBadgeProps> = React.memo(({ globalStateId, className = '' }) => {
+export const UnseenBadge: React.FC<UnseenBadgeProps> = React.memo(({ globalStateId, className }) => {
   const ref = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
+    const element = ref.current;
+    if (!element) return;
 
-    const render = (count: number) => {
-      if (count > 0) {
-        node.textContent = format(count);
-        node.style.display = '';
-      } else {
-        node.textContent = '';
-        node.style.display = 'none';
-      }
-    };
+    const unsubscribe = stateMetaDevTools$.subscribe(
+      (state) => {
+        const meta = state.get(globalStateId);
+        assertIsNonNullable(meta, `Unable to find state meta for globalStateId: ${globalStateId}`);
+        return meta.unseenLength;
+      },
+      (unseenLength) => {
+        if (unseenLength > 0) {
+          element.textContent = format(unseenLength);
+          element.style.display = '';
+          return;
+        }
 
-    render(getUnseenCount(globalStateId));
-    const unsubscribe = subscribeToUnseenCount(globalStateId, render);
+        element.textContent = '';
+        element.style.display = 'none';
+      },
+    );
 
     return () => {
       unsubscribe();

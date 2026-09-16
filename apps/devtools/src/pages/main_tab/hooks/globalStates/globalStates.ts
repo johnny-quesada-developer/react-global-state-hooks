@@ -23,7 +23,6 @@ import {
   removeGlobalStatesOfPath,
 } from './helpers/globalStatesIdsByPath';
 import type { ClearGlobalStatesMessagePayload } from '@src/shared/schema/MonkeyPathMessageJson/ClearGlobalStatesMessage';
-import { markStateSeen, forgetStates, registerActionCountSource, type ActionCountSource } from '../unseenLogs';
 
 export type ContentScriptMessage<T> = {
   action: string;
@@ -50,9 +49,6 @@ export const actionIdsByStateId$ = createGlobalState(new EntityAdapter<GlobalSta
   name: 'actionIdsByStateId',
 });
 
-// The unseen-actions pill derives its count from this store (injected to avoid a circular import).
-registerActionCountSource(actionIdsByStateId$ as unknown as ActionCountSource);
-
 /**
  * Per-store grouping of action calls by action key: globalStateId -> Map(actionKey
  * -> ordered actionIds). Lets a single store's action-key groups be fetched directly
@@ -65,31 +61,37 @@ export const actionKeysByStateId$ = createGlobalState(
   },
 );
 
-export type GlobalStatesContextApi = InferStateApi<typeof globalStates$>;
-
-const removeStateIdsFromDerivedStores = (stateIds: GlobalStateId[]) => {
-  if (!stateIds.length) return;
-
-  const actionsById = new AdaptiveEntityAdapter(actionsById$.getState());
-  const actionIdsByStateId = new EntityAdapter(actionIdsByStateId$.getState());
-  const actionKeysByStateId = new EntityAdapter(actionKeysByStateId$.getState());
-
-  for (const stateId of stateIds) {
-    const actionIds = actionIdsByStateId.get(stateId);
-    if (actionIds) {
-      for (const actionId of actionIds) actionsById.delete(actionId);
-    }
-
-    actionIdsByStateId.delete(stateId);
-    actionKeysByStateId.delete(stateId);
-  }
-
-  actionsById$.setState(actionsById);
-  actionIdsByStateId$.setState(actionIdsByStateId);
-  actionKeysByStateId$.setState(actionKeysByStateId);
-
-  forgetStates(stateIds);
+/**
+ * Metadata that exists only on the dev tools for each global state.
+ */
+export type StateMetaDevTools = {
+  isPristine: boolean;
+  unseenLength: number;
 };
+
+export const stateMetaDevTools$ = createGlobalState((): Map<GlobalStateId, StateMetaDevTools> => new Map(), {
+  name: 'stateMetaDevTools',
+  actions: {
+    markAsTainted: (globalStateId: GlobalStateId) => {
+      return ({ getState }) => {
+        const newState = new Map(getState());
+
+        const storeMeta = newState.get(globalStateId);
+        assertIsNonNullable(storeMeta, 'Unable to find the store metadata for the given globalStateId');
+
+        newState.set(globalStateId, {
+          ...storeMeta,
+          isPristine: false,
+          unseenLength: 0,
+        });
+
+        stateMetaDevTools$.setState(newState);
+      };
+    },
+  },
+});
+
+export type GlobalStatesContextApi = InferStateApi<typeof globalStates$>;
 
 /**
  * Registry of every inspected store, keyed by globalStateId. Holds each store's
@@ -160,10 +162,6 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
         syncActionToStores(initialAction);
         setState(rootState);
         addGlobalStateToPath(globalStateJson.globalStatePath, globalStateJson.globalStateId);
-
-        // Baseline this state's unseen count to its current action count, so its initial actions
-        // (e.g. initialize) are not shown as unseen. Only actions arriving afterwards count.
-        markStateSeen(globalStateJson.globalStateId);
       };
     },
 
@@ -315,12 +313,11 @@ export function isGlobalStateAction(action: string): action is keyof GlobalState
   return Boolean(globalStates$.actions![action as keyof GlobalStatesContextApi['actions']]);
 }
 
-export default globalStates$;
-
 export function syncActionToStores(action: ActionJson) {
   const actionsById = new AdaptiveEntityAdapter(actionsById$.getState());
   const actionIdsByStateId = new EntityAdapter(actionIdsByStateId$.getState());
   const actionKeysByStateId = new EntityAdapter(actionKeysByStateId$.getState());
+  const stateMetaDevTools = new Map(stateMetaDevTools$.getState());
 
   actionsById.add(action.actionId, action);
 
@@ -331,10 +328,51 @@ export function syncActionToStores(action: ActionJson) {
   keysByActionKey.set(action.action, [...(keysByActionKey.get(action.action) ?? []), action.actionId]);
   actionKeysByStateId.set(action.globalStateId, keysByActionKey);
 
+  const actionsLength = actionIdsByStateId.get(action.globalStateId).size;
+
+  const newMeta: StateMetaDevTools = {
+    isPristine: true,
+    unseenLength: 0,
+    ...stateMetaDevTools.get(action.globalStateId),
+  };
+
+  newMeta.unseenLength = newMeta.isPristine ? actionsLength : newMeta.unseenLength + 1;
+
+  stateMetaDevTools.set(action.globalStateId, newMeta);
+
   // Order matters: actionIdsByStateId$ must be set last. logsArray$ and
   // useActionsHeaders react to it and read actionsById$ during that reaction,
   // so actionsById$ has to already hold the new action or it gets dropped.
   actionsById$.setState(actionsById);
   actionKeysByStateId$.setState(actionKeysByStateId);
   actionIdsByStateId$.setState(actionIdsByStateId);
+  stateMetaDevTools$.setState(stateMetaDevTools);
 }
+
+function removeStateIdsFromDerivedStores(stateIds: GlobalStateId[]) {
+  if (!stateIds.length) return;
+
+  const actionsById = new AdaptiveEntityAdapter(actionsById$.getState());
+  const actionIdsByStateId = new EntityAdapter(actionIdsByStateId$.getState());
+  const actionKeysByStateId = new EntityAdapter(actionKeysByStateId$.getState());
+  const stateMetaDevTools = new Map(stateMetaDevTools$.getState());
+
+  for (const stateId of stateIds) {
+    const actionIds = actionIdsByStateId.get(stateId);
+
+    if (actionIds) {
+      for (const actionId of actionIds) actionsById.delete(actionId);
+    }
+
+    actionIdsByStateId.delete(stateId);
+    actionKeysByStateId.delete(stateId);
+    stateMetaDevTools.delete(stateId);
+  }
+
+  actionsById$.setState(actionsById);
+  actionIdsByStateId$.setState(actionIdsByStateId);
+  actionKeysByStateId$.setState(actionKeysByStateId);
+  stateMetaDevTools$.setState(stateMetaDevTools);
+}
+
+export default globalStates$;

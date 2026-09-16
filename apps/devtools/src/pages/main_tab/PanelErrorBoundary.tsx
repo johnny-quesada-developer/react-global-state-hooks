@@ -2,10 +2,6 @@ import React from 'react';
 
 type PanelErrorBoundaryState = { error: Error | null };
 
-/**
- * Prevents a single render error from blanking the whole DevTools panel. Shows the error + stack
- * on-screen (the panel itself is hard to inspect), which is far more useful than an empty page.
- */
 export class PanelErrorBoundary extends React.Component<React.PropsWithChildren, PanelErrorBoundaryState> {
   state: PanelErrorBoundaryState = { error: null };
 

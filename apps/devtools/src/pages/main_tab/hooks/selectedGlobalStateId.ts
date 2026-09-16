@@ -4,7 +4,6 @@ import isNil from 'json-storage-formatter/isNil';
 import { isNonNullable } from '@src/shared/asserts';
 import type { GlobalStateId } from '@src/shared/schema/GlobalStateJson';
 import { getOrderedGlobalStates } from './globalStates/helpers/getOrderedGlobalStates';
-import { markStateSeen, subscribeToActionArrivals } from './unseenLogs';
 
 const selectedGlobalStateId$ = createGlobalState(null as GlobalStateId | null, {
   name: 'selectedStateId',
@@ -34,30 +33,6 @@ const selectedGlobalStateId$ = createGlobalState(null as GlobalStateId | null, {
       });
     },
   },
-});
-
-// Viewing a state marks it seen (unseen count -> 0). Covers both user clicks/keyboard and the
-// auto-selection above.
-//
-// Deferred + guarded: during load, states stream in and the auto-selection can transiently point at
-// several "first" states before settling. Marking seen synchronously would clear the badge of every
-// transiently-selected state. Deferring to a microtask and re-checking that the id is STILL selected
-// means only the FINAL settled selection is marked seen.
-selectedGlobalStateId$.subscribe((selectedId) => {
-  if (isNil(selectedId)) return;
-
-  queueMicrotask(() => {
-    if (selectedGlobalStateId$.getState() === selectedId) markStateSeen(selectedId);
-  });
-});
-
-// Actions arriving for the state you're currently viewing shouldn't show as unseen: keep ONLY the
-// selected state's seen mark current. Actions for any other state must stay unseen. Deferred +
-// guarded like the selection handler so transient load-time selections don't wrongly clear badges.
-subscribeToActionArrivals((changedId) => {
-  queueMicrotask(() => {
-    if (changedId === selectedGlobalStateId$.getState()) markStateSeen(changedId);
-  });
 });
 
 export const useIsSelectedState = (key: GlobalStateId) => {
