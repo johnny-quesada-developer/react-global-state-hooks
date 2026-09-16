@@ -1,10 +1,11 @@
 import React from 'react';
+import clsx from 'clsx';
 import { cn } from '@src/shared/tools/cn';
+import { actionLabel, selectableRow } from '@src/shared/tools';
 import { toHeader, useActionJson } from '@src/pages/main_tab/hooks/globalStates/hooks';
 import type { ActionId } from '@src/shared/schema';
 import { formatTimeToHHMMSS } from '@src/shared/tools/date';
 import { useIsSelectedHeader } from '../_hooks';
-import { theme$ } from '@src/pages/main_tab/hooks/theme';
 import selectedGlobalStateId$ from '@src/pages/main_tab/hooks/selectedGlobalStateId';
 import { DATA_LIST_SELECTED } from '@src/pages/main_tab/util/listFocusBridge';
 import { DropdownMenuLog } from './components';
@@ -26,7 +27,6 @@ export const ActionLogListItem: React.FC<ActionLogListItemProps> = ({
 
   const action = useActionJson({ stateId: selectedStateId, actionId });
   const [isSelectedAction] = useIsSelectedHeader(actionId);
-  const [theme] = theme$();
 
   if (!action) return null;
 
@@ -41,30 +41,17 @@ export const ActionLogListItem: React.FC<ActionLogListItemProps> = ({
       {...(isSelectedAction ? { [DATA_LIST_SELECTED]: true } : {})}
       {...props}
       title={title}
-      className={cn(
+      className={clsx(
         actionLogListItemClass,
-        'relative w-full gap-2 px-1 py-2 transition-colors duration-300',
-        'flex justify-start items-center select-text cursor-pointer',
-        {
-          '!text-red-500': header.hasError,
-          'border-l-4 border-blue-500': isSelectedAction,
-          'text-gray-900': theme === 'light',
-          'text-gray-100': theme !== 'light',
-          'bg-blue-100': isSelectedAction && theme === 'light',
-          'bg-blue-700': isSelectedAction && theme !== 'light',
-          'hover:bg-blue-200': !isSelectedAction && theme === 'light',
-          'hover:bg-blue-600': !isSelectedAction && theme !== 'light',
-        },
+        selectableRow({
+          selected: isSelectedAction,
+          error: header.hasError,
+        }),
         className,
       )}
     >
       <button className="">
-        <span
-          className={cn('font-semibold', {
-            'text-green-500': !header.hasError && header.actionType === 'LIFE_CYCLE',
-            'text-orange-500': !header.hasError && header.actionType === 'LIFE_CYCLE_PARAMETER',
-          })}
-        >
+        <span className={actionLabel({ actionType: header.actionType, error: header.hasError })}>
           <span className={cn('text-xxs', 'text-gray-500 dark:text-white')}>{index}.</span> {header.action}
         </span>
 

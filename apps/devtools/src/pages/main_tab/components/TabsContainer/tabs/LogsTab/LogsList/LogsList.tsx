@@ -1,7 +1,8 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { cn } from '@src/shared/tools/cn';
 import { selectedLogs$, logsFilter$ } from '../_hooks';
 import { useListNavigation } from '@src/shared/facelessComponents/useListNavigation';
+import { focusGlobalStateList, logsListClass } from '@src/pages/main_tab/util/listFocusBridge';
 import { LogsFilter } from '../LogsFilter';
 import { RecordsCount } from '../RecordsCount';
 import { LogListItem } from '../LogListItem';
@@ -29,13 +30,28 @@ export const LogsList: React.FC<LogsListProps> = ({ className = '', ...props }: 
         selectedLogs$.setState([previousItem, item.value]);
       },
     },
-    [logsHistory, logsFilter]
+    [logsHistory, logsFilter],
   );
 
   const [theme] = theme$();
 
+  useEffect(() => {
+    const listEl = containerRef.current;
+    if (!listEl) return;
+
+    const onKeydown = (event: KeyboardEvent) => {
+      if (event.key !== 'ArrowLeft') return;
+
+      event.preventDefault();
+      focusGlobalStateList();
+    };
+
+    listEl.addEventListener('keydown', onKeydown);
+    return () => listEl.removeEventListener('keydown', onKeydown);
+  }, []);
+
   return (
-    <div className={cn('LogsList flex flex-col', className)} {...props}>
+    <div className={cn(logsListClass, 'flex flex-col', className)} {...props}>
       <div className="sticky top-0 z-10 ">
         <RecordsCount
           className="border-b border-gray-400"
@@ -58,19 +74,17 @@ export const LogsList: React.FC<LogsListProps> = ({ className = '', ...props }: 
       </div>
 
       <ul ref={containerRef} className="flex-grow min-h-0 flex flex-col overflow-y-scroll">
-        {navigation.navigationItems.map((item) => {
-          return (
-            <React.Fragment key={item.key}>
-              <LogListItem navItem={item} />
-              <li
-                className={cn('border-b border-gray-400 first:border-none', {
-                  'text-gray-900': theme === 'light',
-                  'text-gray-100': theme !== 'light',
-                })}
-              />
-            </React.Fragment>
-          );
-        })}
+        {navigation.navigationItems.map((item) => (
+          <React.Fragment key={item.key}>
+            <LogListItem key={item.key} navItem={item} />
+            <li
+              className={cn('border-b border-gray-400 first:border-none', {
+                'text-gray-900': theme === 'light',
+                'text-gray-100': theme !== 'light',
+              })}
+            />
+          </React.Fragment>
+        ))}
       </ul>
     </div>
   );

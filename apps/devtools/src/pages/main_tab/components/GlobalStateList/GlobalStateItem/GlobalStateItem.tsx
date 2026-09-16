@@ -1,5 +1,7 @@
 import React from 'react';
 import { cn } from '@src/shared/tools/cn';
+import { selectableRow } from '@src/shared/tools';
+import clsx from 'clsx';
 import { useIsSelectedState } from '@src/pages/main_tab/hooks/selectedGlobalStateId';
 import { theme$ } from '@src/pages/main_tab/hooks/theme';
 import { NavItemProps } from '@src/shared/facelessComponents';
@@ -45,19 +47,7 @@ export const GlobalStateItem: React.FC<GlobalStateItemProps> = ({
 
   return (
     <li
-      className={cn(
-        'relative flex justify-start p-2 cursor-pointer',
-        {
-          'border-l-4 border-blue-500': isSelected,
-          'text-gray-900': theme === 'light',
-          'text-gray-100': theme !== 'light',
-          'bg-blue-100': isSelected && theme === 'light',
-          'bg-blue-700': isSelected && theme !== 'light',
-          'hover:bg-blue-200': !isSelected && theme === 'light',
-          'hover:bg-blue-600': !isSelected && theme !== 'light',
-        },
-        className,
-      )}
+      className={clsx(selectableRow({ selected: isSelected }), className)}
       {...props}
       {...navProps}
       {...(isSelected ? { [DATA_LIST_SELECTED]: true } : {})}

@@ -3,7 +3,7 @@ import { cn } from '@src/shared/tools/cn';
 import { GlobalStateItem } from './GlobalStateItem';
 import { GlobalStateListFilter } from './GlobalStateListFilter';
 import { useListNavigation } from '@src/shared/facelessComponents/useListNavigation';
-import { focusLogsPerActionList, globalStateListClass } from '@src/pages/main_tab/util/listFocusBridge';
+import { focusLogsList, globalStateListClass } from '@src/pages/main_tab/util/listFocusBridge';
 import selectedGlobalStateId$ from '../../hooks/selectedGlobalStateId';
 import globalStates$, { stateMetaDevTools$ } from '../../hooks/globalStates';
 import { shallowCompare } from 'react-global-state-hooks';
@@ -51,7 +51,7 @@ export const GlobalStateList: React.FC<GlobalStateListProps> = ({
       if (event.key !== 'ArrowRight') return;
 
       event.preventDefault();
-      focusLogsPerActionList();
+      focusLogsList();
     };
 
     listEl.addEventListener('keydown', onKeydown);
@@ -80,13 +80,21 @@ export const GlobalStateList: React.FC<GlobalStateListProps> = ({
           </li>
         )}
 
-        {navigation.navigationItems.map((navItem) => (
-          <GlobalStateItem
-            key={navItem.key}
-            navProps={navItem.props}
-            globalStateId={navItem.value.globalStateId}
-            className="border-b border-gray-400 last-of-type:border-b-0"
-          />
+        {navigation.navigationItems.map((navItem, index) => (
+          <React.Fragment key={navItem.key}>
+            <li
+              className={cn(
+                { 'first:border-none': index === 0 },
+                'border-b border-gray-400 text-gray-900 dark:border-gray-100',
+              )}
+            />
+
+            <GlobalStateItem
+              key={navItem.key}
+              navProps={navItem.props}
+              globalStateId={navItem.value.globalStateId}
+            />
+          </React.Fragment>
         ))}
       </ul>
     </div>

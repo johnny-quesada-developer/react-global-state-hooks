@@ -170,12 +170,17 @@ export const LogsPerActionList: React.FC<LogsPerActionListProps> = ({
 
       const root = createRoot(rowMount);
       itemRoots.push(root);
+
       root.render(
-        <ActionLogListItem
-          actionId={actionId}
-          index={renderedCount}
-          className="border-b border-gray-400 last-of-type:border-none"
-        />,
+        <>
+          <li
+            className={cn(
+              { 'first:border-none': renderedCount === 1 },
+              'border-b border-gray-400 text-gray-900 dark:border-gray-100',
+            )}
+          />
+          <ActionLogListItem actionId={actionId} index={renderedCount} />
+        </>,
       );
     }
 
