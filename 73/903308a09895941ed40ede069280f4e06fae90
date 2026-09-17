@@ -1,0 +1,62 @@
+apps/devtools/src/pages/main_tab/hooks/globalStates/__tests__/evaluateConnectionOutcome.test.ts
+  h_6029769cf9ac60 1-85
+apps/devtools/vitest.config.ts
+  h_6029769cf9ac60 36-37
+apps/devtools/src/pages/main_tab/util/globalStatesFile.ts
+  h_6029769cf9ac60 1-8,36-68,72-77,82-88
+apps/playground/vitest.config.ts
+  h_6029769cf9ac60 12-13
+apps/devtools/src/pages/main_tab/hooks/globalStates/globalStates.ts
+  h_6029769cf9ac60 26,131-134,162,175
+libs/web/vitest.config.ts
+  h_6029769cf9ac60 17-18,21
+apps/devtools/src/pages/main_tab/hooks/globalStates/helpers/evaluateConnectionOutcome.ts
+  h_6029769cf9ac60 1-51
+apps/devtools/src/pages/main_tab/hooks/globalStates/__tests__/normalizeStatePath.test.ts
+  h_6029769cf9ac60 1-39
+libs/universal/vitest.config.ts
+  h_6029769cf9ac60 14-15
+libs/monkey_patch/src/monkey_patch.ts
+  h_6029769cf9ac60 537-545,550-555,569-574,584-588
+apps/devtools/src/shared/components/Modal/index.ts
+  h_6029769cf9ac60 1-2
+apps/devtools/src/pages/main_tab/components/LoadMismatchModal/index.ts
+  h_6029769cf9ac60 1-2
+apps/devtools/src/shared/components/Modal/Modal.tsx
+  h_6029769cf9ac60 1-63
+apps/devtools/src/pages/main_tab/hooks/globalStates/__tests__/loadTimeReconnect.test.ts
+  h_6029769cf9ac60 1-243
+apps/devtools/src/pages/main_tab/components/LoadMismatchModal/LoadMismatchModal.tsx
+  h_6029769cf9ac60 1-110
+libs/monkey_patch/__test__/monkey_patch.integration.test.ts
+  h_6029769cf9ac60 126-130,204-208,278-282,298-302,321-325,344-348,369-373,393-397,418-422,439-443,467-471,500-504,520-524,547-551,661-663,742-746,786-790,820-824,855-859,878-896,908-912,971-975,1014-1015,1173-1175,1552-1555,1637,1657,1675,1695,1715,1754,1787-1789,1791-1793,1817-1819,1870-1872
+apps/devtools/src/pages/main_tab/hooks/globalStates/helpers/normalizeStatePath.ts
+  h_6029769cf9ac60 1-24
+apps/devtools/src/pages/main_tab/MainTab.tsx
+  h_6029769cf9ac60 4,16-20,24-26,29-31,40-41
+apps/devtools/src/pages/main_tab/hooks/globalStates/helpers/loadMockState.ts
+  h_6029769cf9ac60 4,11-12,19-32,38-40,42,46,50,52,58-87,94-160,197-198
+apps/devtools/src/pages/main_tab/hooks/loadMismatch.ts
+  h_6029769cf9ac60 1-43
+apps/devtools/src/pages/main_tab/hooks/globalStates/helpers/globalStatesIdsByPath.ts
+  h_6029769cf9ac60 43-70,99
+apps/devtools/src/pages/main_tab/components/index.ts
+  h_6029769cf9ac60 2
+libs/mobile/vitest.config.ts
+  h_6029769cf9ac60 17-18,21
+apps/devtools/src/shared/components/index.ts
+  h_6029769cf9ac60 2
+libs/monkey_patch/vitest.config.ts
+  h_6029769cf9ac60 10-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "73903308a09895941ed40ede069280f4e06fae90",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
