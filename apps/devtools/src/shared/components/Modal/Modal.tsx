@@ -17,7 +17,13 @@ export type ModalProps = {
  * layer, and Escape-to-close for free. Styling follows the panel's light/dark convention via
  * `dark:` variants (the theme toggles a class on <html>).
  */
-export const Modal: React.FC<ModalProps> = ({ open, onClose, title, children, className = '' }: ModalProps) => {
+export const Modal: React.FC<ModalProps> = ({
+  open,
+  onClose,
+  title,
+  children,
+  className = '',
+}: ModalProps) => {
   const dialogRef = useRef<HTMLDialogElement | null>(null);
 
   useEffect(() => {
@@ -46,15 +52,15 @@ export const Modal: React.FC<ModalProps> = ({ open, onClose, title, children, cl
         if (event.target === dialogRef.current) onClose();
       }}
       className={cn(
-        'm-auto w-[28rem] max-w-[90vw] rounded-lg border p-0 shadow-xl backdrop:bg-black/40',
+        'm-auto w-[28rem] max-w-[calc(100vw_-_2rem)] overflow-hidden rounded-lg border p-0 shadow-xl backdrop:bg-black/40',
         'bg-white text-gray-900 border-gray-300',
         'dark:bg-eighties dark:text-gray-100 dark:border-gray-600',
         className,
       )}
     >
-      <div className="flex flex-col gap-3 p-4">
+      <div className="flex w-full flex-col gap-3 p-4 break-words">
         {title != null && <h2 className="text-base font-semibold">{title}</h2>}
-        <div className="text-sm leading-relaxed">{children}</div>
+        <div className="w-full text-sm leading-relaxed break-words">{children}</div>
       </div>
     </dialog>
   );
