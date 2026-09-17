@@ -13,6 +13,7 @@ import { normalizeStatePath } from '@main_tab/hooks/globalStates/helpers/normali
 import { getContentScriptPort } from './getContentScriptPort';
 import { uniqueId } from 'react-global-state-hooks/uniqueId';
 import { tryCatch } from 'easy-cancelable-promise/tryCatch';
+import { downloadFile, fileTimestamp } from '@src/shared/tools/downloadFile';
 
 /**
  * Download a single JSON file with a full snapshot of everything the DevTools currently holds
@@ -24,20 +25,7 @@ import { tryCatch } from 'easy-cancelable-promise/tryCatch';
  */
 export const downloadGlobalStatesSnapshot = (): void => {
   const snapshot = getStateSnapshot();
-  const json = JSON.stringify(snapshot, null, 2);
-
-  const blob = new Blob([json], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-
-  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const anchor = document.createElement('a');
-  anchor.href = url;
-  anchor.download = `global-states-snapshot-${stamp}.json`;
-  document.body.appendChild(anchor);
-  anchor.click();
-  anchor.remove();
-
-  URL.revokeObjectURL(url);
+  downloadFile(JSON.stringify(snapshot, null, 2), `global-states-snapshot-${fileTimestamp()}.json`);
 };
 
 /** The stores a snapshot file describes, reduced to what path-matching needs (name + path). */

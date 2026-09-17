@@ -14,6 +14,7 @@ export {
   onReactDevToolsConnect,
 } from './react';
 export { softClone, isReactElement, isNonSerializable } from './softClone';
+export { downloadFile, fileTimestamp } from './downloadFile';
 export { startSecondsTimer } from './startSecondsTimer';
 export { throttle } from './throttle';
 export { cn } from './cn';

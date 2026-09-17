@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { IoEllipsisVertical } from 'react-icons/io5';
 import { LuHistory } from 'react-icons/lu';
+import { FiCopy, FiDownload } from 'react-icons/fi';
 import { DropdownMenu, Modal } from '@src/shared/components';
+import { downloadFile, fileTimestamp } from '@src/shared/tools';
 import { useSendMessagesToContentScript } from '@src/pages/main_tab/hooks/useSendMessagesToContentScript';
 
 export type RestoreTarget = {
@@ -41,6 +43,25 @@ export const LogRestoreMenu: React.FC<LogRestoreMenuProps> = ({ resolveTarget, c
     });
   };
 
+  /** The resulting state at this log, serialized for copy/download. */
+  const resultJson = (): string | null => {
+    const target = resolveTarget();
+    if (!target) return null;
+    return JSON.stringify(target.getState() ?? null, null, 2);
+  };
+
+  const copyResult = () => {
+    const json = resultJson();
+    if (json == null) return;
+    void navigator.clipboard?.writeText(json);
+  };
+
+  const downloadResult = () => {
+    const json = resultJson();
+    if (json == null) return;
+    downloadFile(json, `state-${fileTimestamp()}.json`);
+  };
+
   return (
     <>
       <DropdownMenu
@@ -52,6 +73,16 @@ export const LogRestoreMenu: React.FC<LogRestoreMenuProps> = ({ resolveTarget, c
             label: 'Restore state',
             icon: <LuHistory />,
             onSelect: () => setConfirming(true),
+          },
+          {
+            label: 'Copy result',
+            icon: <FiCopy />,
+            onSelect: copyResult,
+          },
+          {
+            label: 'Download',
+            icon: <FiDownload />,
+            onSelect: downloadResult,
           },
         ]}
       />
