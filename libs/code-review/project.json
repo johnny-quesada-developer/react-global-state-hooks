@@ -1,0 +1,32 @@
+{
+  "name": "code-review",
+  "sourceRoot": "libs/code-review/src",
+  "projectType": "library",
+  "tags": ["scope:code-review", "type:tool"],
+  "targets": {
+    "review": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn review", "cwd": "libs/code-review" }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn test", "cwd": "libs/code-review" }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn lint", "cwd": "libs/code-review" }
+    },
+    "lint:fix": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn lint:fix", "cwd": "libs/code-review" }
+    },
+    "ts-check": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn ts-check", "cwd": "libs/code-review" }
+    },
+    "clean": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn clean", "cwd": "libs/code-review" }
+    }
+  }
+}

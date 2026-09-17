@@ -305,6 +305,21 @@ Making this work required aligning `mobile` to strict null checking: `mobile`'s 
 settings. A few small, behavior-preserving null-safety edits in `libs/mobile/src`
 (`asyncStorageWrapper.ts`, `GlobalStore.ts`) were needed to satisfy the stricter check.
 
+## Code review pipeline (`libs/code-review`)
+
+`libs/code-review` is a private tool, not a published package. `yarn review <target>` runs a
+[LangGraph.js](https://langchain-ai.github.io/langgraphjs/) pipeline over the files of a target
+(file, folder, glob, Nx project, commit or `changes`):
+
+1. **Provider setup** (no AI): detects the installed `claude`, `codex` or `kiro-cli`, recommends one,
+   picks its fast/cheap model and an edit mode that respects the provider's own permission settings.
+2. **Target selection**: resolves the target into source files.
+3. **Rules**: one rule at a time from `src/segments/rules/ruleRegistry.ts`; each rule is its own graph.
+4. **Summary**: terminal tables plus `.review/runs/<timestamp>/summary.md` (git-ignored).
+
+AI output is made predictable through structure: deterministic checks after every agent step and
+retry loops that feed earlier attempts back into the prompt. See `libs/code-review/README.md`.
+
 ## Adding a new library
 
 1. Create `libs/<name>/` with its own `package.json`, `tsconfig.json` (extending

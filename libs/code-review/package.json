@@ -1,0 +1,24 @@
+{
+  "name": "code-review",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Deterministic LangGraph review pipelines (provider setup, target selection, rules) for the monorepo apps and libs.",
+  "type": "module",
+  "scripts": {
+    "review": "tsx src/cli.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --fix --max-warnings=0",
+    "ts-check": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf coverage"
+  },
+  "dependencies": {
+    "@clack/prompts": "^1.8.1",
+    "@langchain/core": "^1.1.0",
+    "@langchain/langgraph": "^1.4.15",
+    "minimatch": "^10.0.3",
+    "typescript": "^5.8.2",
+    "zod": "^4.3.6"
+  }
+}
