@@ -11,11 +11,15 @@ export const selectableRow = tv({
     'relative w-full flex gap-2 px-1 py-2 transition-colors duration-300',
     'justify-start items-center select-text cursor-pointer text-nowrap',
     'text-gray-900 dark:text-gray-100',
+    // Clear cue for which list currently has focus (keyboard nav and cross-list
+    // jumps both call .focus()). Inset so the scroll container doesn't clip it;
+    // amber to stand apart from the blue selection.
+    'outline-none focus:ring-2 focus:ring-inset focus:ring-amber-500',
   ),
   variants: {
     selected: {
-      true: '!border-l-4 !border-blue-500 !bg-blue-100 !dark:bg-blue-700',
-      false: '!hover:bg-blue-200 !dark:hover:bg-blue-600',
+      true: 'border-l-4 border-blue-500 bg-blue-200 dark:bg-blue-800',
+      false: 'hover:bg-gray-100 dark:hover:bg-white/10',
     },
     error: {
       true: '!text-red-500',

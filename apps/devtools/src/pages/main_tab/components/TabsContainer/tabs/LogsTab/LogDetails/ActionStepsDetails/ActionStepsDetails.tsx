@@ -8,6 +8,7 @@ import { LogListItem } from '../../LogListItem';
 import { useListNavigation } from '@src/shared/facelessComponents/useListNavigation';
 import { Resizable } from '@src/shared/components';
 import selectedGlobalStateId$ from '@src/pages/main_tab/hooks/selectedGlobalStateId';
+import { actionStepsListClass, focusLogsList } from '@src/pages/main_tab/util/listFocusBridge';
 import { useActionJson } from '@src/pages/main_tab/hooks/globalStates';
 import { JsonCodeViewer } from '@src/shared/components';
 import selectedLogs$ from '../../_hooks/selectedLogs/selectedLogs';
@@ -50,9 +51,28 @@ export const ActionStepsDetails: React.FC<ActionStepsDetailsProps> = ({
   );
 
   useEffect(() => {
-    const firstElement = logs[0] ?? null;
-    setSelectedLogs([null, firstElement]);
+    // Select the last step by default so the panel shows the action's final result.
+    const lastLog = logs[logs.length - 1] ?? null;
+    if (!lastLog) return setSelectedLogs([null, null]);
+
+    const previousLog = logsArray$.getState()[lastLog.index - 1] ?? null;
+    setSelectedLogs([previousLog, lastLog]);
   }, [logs, setSelectedLogs]);
+
+  useEffect(() => {
+    const listEl = listRef.current;
+    if (!listEl) return;
+
+    const onKeydown = (event: KeyboardEvent) => {
+      if (event.key !== 'ArrowLeft') return;
+
+      event.preventDefault();
+      focusLogsList();
+    };
+
+    listEl.addEventListener('keydown', onKeydown);
+    return () => listEl.removeEventListener('keydown', onKeydown);
+  }, []);
 
   const isInitialGroup = !previousLog;
   const { diffDisplay, isDifferent } = useLogsDiff(previousLog, currentLog!);
@@ -61,7 +81,10 @@ export const ActionStepsDetails: React.FC<ActionStepsDetailsProps> = ({
     <Resizable initialLeft="25%" className={cn('StateDiffPerAction', className)} {...props}>
       <ul
         ref={listRef}
-        className="flex-grow shrink-0 basis-0 flex flex-col overflow-y-scroll text-black h-fit"
+        className={cn(
+          actionStepsListClass,
+          'flex-grow shrink-0 basis-0 flex flex-col overflow-y-scroll text-black h-fit',
+        )}
       >
         <li>
           <h1 className="px-4 py-2 bg-white border-b border-gray-400 font-semibold text-gray-500 sticky top-0">

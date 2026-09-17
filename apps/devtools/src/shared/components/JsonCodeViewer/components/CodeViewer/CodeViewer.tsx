@@ -105,7 +105,7 @@ export const CodeViewer: React.FC<CodeViewerProps> = ({ className = '', children
               Discard
             </button>
           )}
-          x
+
           {!error && (
             <button
               disabled={!temporaryOutput}
