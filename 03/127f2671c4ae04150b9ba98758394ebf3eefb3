@@ -1,0 +1,20 @@
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/_shared/LogRestoreMenu.tsx
+  h_6029769cf9ac60 4,6,46-64,77-86
+apps/devtools/src/pages/main_tab/util/globalStatesFile.ts
+  h_6029769cf9ac60 16,28
+apps/devtools/src/shared/tools/downloadFile.ts
+  h_6029769cf9ac60 1-20
+apps/devtools/src/shared/tools/index.ts
+  h_6029769cf9ac60 17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "03127f2671c4ae04150b9ba98758394ebf3eefb3",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
