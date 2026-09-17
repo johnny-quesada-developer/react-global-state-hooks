@@ -53,6 +53,9 @@ export async function detectTarget({
   return undefined;
 }
 
+export const describeTargets = (targets: Target[], workspaceRoot: string) =>
+  targets.map((target) => describeTarget(target, workspaceRoot)).join(' + ');
+
 export function describeTarget(target: Target, workspaceRoot: string): string {
   switch (target.kind) {
     case 'file':

@@ -6,7 +6,7 @@ import { codexProvider } from '../../providers/codexProvider';
 import { kiroProvider } from '../../providers/kiroProvider';
 import type { ProviderDefinition } from '../../providers/ProviderDefinition';
 import { detectInstalledProviders } from './detectInstalledProviders';
-import { rankInstalledProviders, suggestEditMode } from './recommendProvider';
+import { rankInstalledProviders } from './recommendProvider';
 
 const temporaryDirectories: string[] = [];
 
@@ -76,14 +76,5 @@ describe('detectInstalledProviders', () => {
       pathEnvironment: createBinDirectory({}),
     });
     expect(rankInstalledProviders(freshMachine)).toEqual([]);
-  });
-
-  it('suggests an edit mode that follows the provider permission settings', () => {
-    expect(suggestEditMode('autoApproved').mode).toBe('headless');
-    expect(suggestEditMode('asksForApproval').mode).toBe('interactive');
-    expect(suggestEditMode('unknown')).toEqual({
-      mode: 'interactive',
-      reason: expect.stringContaining('could not be read'),
-    });
   });
 });

@@ -1,17 +1,41 @@
 import path from 'node:path';
 import { describeHistory, type AttemptRecord } from '../../../graph/attemptHistory';
-import type { TestMetadata } from '../steps/measureFileCoverage';
+import { readIfExists } from '../../../shared/workspace';
+import { renderVerifyCommands, type TestMetadata } from '../steps/measureFileCoverage';
 import { describeGuidelines } from '../testingGuidelines';
 import type { CoverageSnapshot } from '../TrackedFile';
+import { findExampleTest } from './metadataPrompt';
 
-export function buildIncreaseCoveragePrompt({
+export function buildCoverageSystemPrompt(): string {
+  return `You raise the test coverage of one source file at a time inside a monorepo. The pipeline that runs you is deterministic: after you finish it measures coverage itself and either accepts the result or sends you the measured feedback.
+
+Testing guidelines (they are scored after coverage passes):
+${describeGuidelines()}
+
+Working rules:
+- You already receive the source, the current test file and an example test from the project. Do not re-read them unless something looks stale.
+- Write the complete test file in ONE Write call (not many small edits), run the verify command ONCE, fix what fails, run it once more, then stop. Do not report coverage numbers; the pipeline measures them.
+- The source file is the review target, not an edit boundary: change imports, exports, barrels, configs, shared test utilities, types, or make a small production change for testability when the task needs it, in the same attempt. Never change the observable behavior of the source file.
+- If the source file was recently moved into its own folder, fix anything still broken by that move.
+- Do not delete, skip or weaken existing tests.`;
+}
+
+const describeCoverage = (coverage: CoverageSnapshot) =>
+  `lines ${coverage.lines}% · statements ${coverage.statements}% · functions ${coverage.functions}% · branches ${coverage.branches}%`;
+
+const failingTestsSection = (coverage: CoverageSnapshot) =>
+  coverage.testsPassed
+    ? ''
+    : `\nThe related tests are currently FAILING. Runner output:\n${coverage.outputTail}\n`;
+
+export function buildInitialCoveragePrompt({
   workspaceRoot,
   sourcePath,
   testPath,
   metadata,
   goal,
   coverage,
-  history,
+  history = [],
 }: {
   workspaceRoot: string;
   sourcePath: string;
@@ -19,33 +43,56 @@ export function buildIncreaseCoveragePrompt({
   metadata: TestMetadata;
   goal: number;
   coverage: CoverageSnapshot;
-  history: AttemptRecord[];
+  history?: AttemptRecord[];
 }): string {
   const relative = (file: string) => path.relative(workspaceRoot, file);
-  const failingTestsSection = coverage.testsPassed
-    ? ''
-    : `\nThe related tests are currently FAILING. Runner output:\n${coverage.outputTail}\n`;
+  const exampleTest = findExampleTest(metadata.projectRoot);
+  const exampleSection =
+    exampleTest && exampleTest !== testPath
+      ? `\n--- example test from this project: ${relative(exampleTest)} ---\n${readIfExists(exampleTest, 4000)}\n`
+      : '';
+  const historySection = history.length
+    ? `\nPrevious attempts for this file:\n${describeHistory(history)}\n`
+    : '';
 
-  return `Task: raise the line coverage of ONE source file to at least ${goal}%.
+  return `Task: raise the line coverage of ${relative(sourcePath)} to at least ${goal}%.
 
-Source file: ${relative(sourcePath)}
 Test file to work in: ${relative(testPath)}
-Current coverage: lines ${coverage.lines}% · statements ${coverage.statements}% · functions ${coverage.functions}% · branches ${coverage.branches}%
+Current coverage: ${describeCoverage(coverage)}
 Uncovered source lines: ${coverage.uncoveredLines}
-${failingTestsSection}
+${failingTestsSection(coverage)}
 How tests run in this project (${relative(metadata.projectRoot) || '.'}):
 - runner: ${metadata.runner}, environment: ${metadata.testEnvironment}
 - notes: ${metadata.testingNotes}
+- verify with exactly these commands (cwd: ${relative(metadata.projectRoot) || '.'}):
+${renderVerifyCommands({ metadata, sourcePath })
+  .map((command) => `    ${command}`)
+  .join('\n')}
 
-Testing guidelines (they will be scored after coverage passes):
-${describeGuidelines()}
+--- source: ${relative(sourcePath)} ---
+${readIfExists(sourcePath, 16000)}
 
-Scope:
-- The source file is the review target, not an edit boundary. Make every change elsewhere in the repository that this work requires in the same attempt: imports, exports, barrels, configs, shared test utilities, types, or a small production change for testability. Never change the observable behavior of the source file.
-- If the source file was recently moved into its own folder, make sure anything still broken by that move is fixed.
-- Do not delete, skip or weaken existing tests.
-- The pipeline measures coverage itself after you finish; you do not need to report numbers.
+--- current test file: ${relative(testPath)} ---
+${readIfExists(testPath, 16000) ?? '(does not exist yet)'}
+${exampleSection}${historySection}`;
+}
 
-Previous attempts for this file:
-${describeHistory(history)}`;
+export function buildCoverageFeedbackPrompt({
+  attemptNumber,
+  goal,
+  coverage,
+  editProblems,
+}: {
+  attemptNumber: number;
+  goal: number;
+  coverage: CoverageSnapshot;
+  editProblems: string[];
+}): string {
+  const problems = editProblems.length
+    ? `\nProblems with your last attempt: ${editProblems.join(' · ')}`
+    : '';
+  return `Attempt ${attemptNumber} measured by the pipeline: ${describeCoverage(coverage)} → goal ${goal}% NOT reached.
+Uncovered source lines: ${coverage.uncoveredLines}
+${failingTestsSection(coverage)}${problems}
+Continue from the current state of the files (they contain your previous edits). Cover the remaining lines, make every test pass, verify once with the same commands, then stop.`;
 }

@@ -11,6 +11,7 @@ export async function analyzeStructured<T>({
   provider,
   task,
   prompt,
+  systemPrompt,
   schema,
   cwd,
   logger,
@@ -19,6 +20,7 @@ export async function analyzeStructured<T>({
   provider: AgentProvider;
   task: string;
   prompt: string;
+  systemPrompt?: string;
   schema: z.ZodType<T>;
   cwd: string;
   logger: Logger;
@@ -41,6 +43,7 @@ export async function analyzeStructured<T>({
       const response = await provider.analyze({
         task,
         prompt: `${prompt}\n\n${outputContract}${correction}`,
+        systemPrompt,
         jsonSchema,
         cwd,
       });

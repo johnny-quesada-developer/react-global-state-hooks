@@ -34,3 +34,4 @@ openapi.json
 # Nx cache and workspace data
 .nx/cache
 .nx/workspace-data
+.claude/settings.local.json

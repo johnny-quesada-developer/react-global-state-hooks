@@ -5,6 +5,11 @@ import type { ProviderDefinition } from './ProviderDefinition';
 
 const home = os.homedir();
 
+const TRUSTED_TOOLS = 'fs_read,fs_write,execute_bash';
+
+const withSystemPrompt = (prompt: string, systemPrompt: string | undefined) =>
+  systemPrompt ? `${systemPrompt}\n\n---\n\n${prompt}` : prompt;
+
 export const kiroProvider: ProviderDefinition = {
   id: 'kiro',
   label: 'Kiro CLI',
@@ -16,7 +21,8 @@ export const kiroProvider: ProviderDefinition = {
   ],
   installHint: 'curl -fsSL https://cli.kiro.dev/install | bash',
   loginHint: 'kiro-cli login',
-  fastModel: 'claude-haiku-4.5',
+  models: { fast: 'claude-haiku-4.5', capable: 'claude-sonnet-4.5' },
+  supportsSessions: false,
 
   async checkAuthentication({ binary, workspaceRoot }) {
     const result = await runCommand({
@@ -28,17 +34,26 @@ export const kiroProvider: ProviderDefinition = {
     return result.exitCode === 0 ? 'authenticated' : 'unknown';
   },
 
-  readEditApproval: () => 'unknown',
+  describeGrant: () => [
+    `--trust-tools=${TRUSTED_TOOLS} (Kiro cannot scope writes to a folder; the whole workspace is writable)`,
+  ],
 
-  analyzeCommand: ({ model, prompt }) => ({ args: ['chat', '--no-interactive', '--model', model, prompt] }),
-
-  readAnalyzeOutput: ({ stdout }) => stdout,
-
-  headlessEditCommand: ({ model, prompt }) => ({
-    args: ['chat', '--no-interactive', '--model', model, prompt],
+  analyzeCommand: ({ model, prompt, systemPrompt }) => ({
+    args: ['chat', '--no-interactive', '--model', model, withSystemPrompt(prompt, systemPrompt)],
   }),
 
-  interactiveEditCommand: ({ model, prompt }) => ({ args: ['chat', '--model', model, prompt] }),
+  readAnalyzeOutput: ({ stdout }) => ({ text: stdout }),
 
-  parseHeadlessEditOutput: (stdout) => ({ summary: stdout.slice(-2000), deniedActions: [] }),
+  editCommand: ({ model, prompt, systemPrompt }) => ({
+    args: [
+      'chat',
+      '--no-interactive',
+      `--trust-tools=${TRUSTED_TOOLS}`,
+      '--model',
+      model,
+      withSystemPrompt(prompt, systemPrompt),
+    ],
+  }),
+
+  parseEditLine: (line) => (line.trim() ? [{ kind: 'text', text: line }] : []),
 };

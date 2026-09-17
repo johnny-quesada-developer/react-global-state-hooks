@@ -1,5 +1,13 @@
 {
   "permissions": {
-    "allow": ["Edit(apps/playground/**)", "Write(apps/playground/**)"]
+    "allow": [
+      "Edit(apps/playground/**)",
+      "Write(apps/playground/**)",
+      "Bash(npm test *)",
+      "Bash(yarn test *)",
+      "Bash(yarn vitest *)",
+      "Bash(node -c scripts/run.mjs scripts/mergeCoverageReports.mjs)",
+      "Bash(yarn -s test:coverage html)"
+    ]
   }
 }

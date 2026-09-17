@@ -2,35 +2,67 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { z } from 'zod';
 
-const ReviewConfigSchema = z.object({
-  provider: z.enum(['claude', 'codex', 'kiro']),
-  model: z.string().min(1),
-  editMode: z.enum(['headless', 'interactive']),
+const LocalStateSchema = z.object({
+  provider: z.enum(['claude', 'codex', 'kiro']).optional(),
+  models: z.object({ fast: z.string(), capable: z.string() }).optional(),
+  permissions: z.enum(['workspace', 'projects']).optional(),
+  concurrency: z.number().int().min(1).optional(),
+  coverage: z
+    .object({
+      goal: z.number(),
+      maxCoverageAttempts: z.number().int(),
+      maxQualityAttempts: z.number().int(),
+      testSuffix: z.enum(['test', 'spec']).optional(),
+    })
+    .optional(),
+  savedAt: z.string().optional(),
 });
 
-export type ReviewConfig = z.infer<typeof ReviewConfigSchema>;
+export type LocalState = z.infer<typeof LocalStateSchema>;
 
-const configFile = (workspaceRoot: string) => path.join(workspaceRoot, '.review', 'config.json');
+const stateFile = (workspaceRoot: string) => path.join(workspaceRoot, '.review', 'config.json');
 
-export function loadReviewConfig(workspaceRoot: string): ReviewConfig | undefined {
-  const file = configFile(workspaceRoot);
+export function loadLocalState(workspaceRoot: string): LocalState | undefined {
+  const file = stateFile(workspaceRoot);
   if (!fs.existsSync(file)) return undefined;
   try {
-    const parsed = ReviewConfigSchema.safeParse(JSON.parse(fs.readFileSync(file, 'utf8')));
+    const parsed = LocalStateSchema.safeParse(JSON.parse(fs.readFileSync(file, 'utf8')));
     return parsed.success ? parsed.data : undefined;
   } catch {
     return undefined;
   }
 }
 
-export function saveReviewConfig({
+export function rememberChoices({
   workspaceRoot,
-  config,
+  patch,
 }: {
   workspaceRoot: string;
-  config: ReviewConfig;
-}): void {
-  const file = configFile(workspaceRoot);
+  patch: Partial<LocalState>;
+}): LocalState {
+  const merged: LocalState = {
+    ...(loadLocalState(workspaceRoot) ?? {}),
+    ...patch,
+    savedAt: new Date().toISOString(),
+  };
+  const file = stateFile(workspaceRoot);
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, `${JSON.stringify(config, null, 2)}\n`);
+  fs.writeFileSync(file, `${JSON.stringify(merged, null, 2)}\n`);
+  return merged;
+}
+
+export const hasReusableConfiguration = (state: LocalState | undefined): state is LocalState =>
+  state !== undefined && state.provider !== undefined;
+
+export function describeLocalState(state: LocalState): string {
+  const parts = [
+    state.provider,
+    state.models ? `${state.models.capable} for edits · ${state.models.fast} for scoring` : undefined,
+    state.permissions ? `${state.permissions} edit permissions` : undefined,
+    state.coverage
+      ? `coverage goal ${state.coverage.goal}% · ${state.coverage.maxCoverageAttempts}/${state.coverage.maxQualityAttempts} attempts${state.coverage.testSuffix ? ` · .${state.coverage.testSuffix} files` : ''}`
+      : undefined,
+    state.concurrency ? `concurrency ${state.concurrency}` : undefined,
+  ];
+  return parts.filter(Boolean).join(' · ');
 }
