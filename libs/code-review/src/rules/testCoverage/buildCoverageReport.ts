@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { formatDuration } from '../../segments/rules/agentEdit';
 import type { FileOutcome, FileResult, RuleReport } from '../../segments/rules/Rule';
 import {
   formatPercent,
@@ -47,6 +48,8 @@ export function buildCoverageReport({
         goal: `${options.goal}%`,
         tries: file.coverageHistory.length + Math.max(file.qualityHistory.length - 1, 0),
         quality: lowestQualityScore === undefined ? '—' : `min ${lowestQualityScore}/10`,
+        cost: file.usage.costUsd ? `$${file.usage.costUsd.toFixed(2)}` : '—',
+        time: file.usage.durationMs ? formatDuration(file.usage.durationMs) : '—',
       },
       history: { coverage: file.coverageHistory, quality: file.qualityHistory },
     };

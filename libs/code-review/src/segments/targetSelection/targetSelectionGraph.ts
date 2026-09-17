@@ -3,12 +3,12 @@ import { Annotation, END, START, StateGraph } from '@langchain/langgraph';
 import type { ReviewContext } from '../../pipeline/ReviewContext';
 import { isWorkingTreeDirty } from '../../shared/git';
 import { listNxProjects } from '../../shared/workspace';
-import { describeTarget, detectTarget, type Target, type TargetKind } from './detectTarget';
+import { describeTargets, detectTarget, type Target, type TargetKind } from './detectTarget';
 import { resolveTargetFiles } from './resolveTargetFiles';
 
 const TargetState = Annotation.Root({
   context: Annotation<ReviewContext>(),
-  target: Annotation<Target | undefined>(),
+  targets: Annotation<Target[]>(),
   files: Annotation<string[]>(),
   confirmed: Annotation<boolean>(),
 });
@@ -16,18 +16,23 @@ type State = typeof TargetState.State;
 
 const MAX_LISTED_FILES = 25;
 
-const hasTargetArgument = ({ context }: State) => Boolean(context.options.target);
+const hasTargetArgument = ({ context }: State) => context.options.targets.length > 0;
 
-const detectTargetFromArgument = async ({ context }: State) => {
-  const value = context.options.target!;
-  const target = await detectTarget({
-    value,
-    workspaceRoot: context.workspaceRoot,
-    invocationDirectory: context.invocationDirectory,
-    projects: listNxProjects(context.workspaceRoot),
-  });
-  if (!target) throw new Error(`"${value}" is not a file, folder, nx project, commit, glob or "changes"`);
-  return { target };
+const detectTargetsFromArguments = async ({ context }: State) => {
+  const projects = listNxProjects(context.workspaceRoot);
+  const targets = await Promise.all(
+    context.options.targets.map(async (value) => {
+      const target = await detectTarget({
+        value,
+        workspaceRoot: context.workspaceRoot,
+        invocationDirectory: context.invocationDirectory,
+        projects,
+      });
+      if (!target) throw new Error(`"${value}" is not a file, folder, nx project, commit, glob or "changes"`);
+      return target;
+    }),
+  );
+  return { targets };
 };
 
 const askForTarget = async ({ context }: State) => {
@@ -47,7 +52,7 @@ const askForTarget = async ({ context }: State) => {
     ],
   });
 
-  if (kind === 'workingChanges') return { target: { kind } };
+  if (kind === 'workingChanges') return { targets: [{ kind }] };
 
   if (kind === 'nxProject') {
     const projectName = await ask.select({
@@ -58,7 +63,7 @@ const askForTarget = async ({ context }: State) => {
         hint: path.relative(workspaceRoot, root),
       })),
     });
-    return { target: { kind, project: projects.find(({ name }) => name === projectName)! } };
+    return { targets: [{ kind, project: projects.find(({ name }) => name === projectName)! }] };
   }
 
   const value = await ask.text({
@@ -68,13 +73,16 @@ const askForTarget = async ({ context }: State) => {
   const target = await detectTarget({ value, workspaceRoot, invocationDirectory, projects });
   const matchesRequestedKind = target?.kind === kind;
   if (!matchesRequestedKind) throw new Error(`"${value}" is not a valid ${kind}`);
-  return { target };
+  return { targets: [target] };
 };
 
-const resolveFiles = async ({ context, target }: State) => {
-  const files = await resolveTargetFiles({ target: target!, workspaceRoot: context.workspaceRoot });
+const resolveFiles = async ({ context, targets }: State) => {
+  const perTarget = await Promise.all(
+    targets.map((target) => resolveTargetFiles({ target, workspaceRoot: context.workspaceRoot })),
+  );
+  const files = [...new Set(perTarget.flat())].sort();
   context.logger.step(
-    `target: ${describeTarget(target!, context.workspaceRoot)} → ${files.length} source file(s)`,
+    `target: ${describeTargets(targets, context.workspaceRoot)} → ${files.length} source file(s)`,
   );
   return { files };
 };
@@ -101,22 +109,22 @@ const confirmFiles = async ({ context, files }: State) => {
 };
 
 export const targetSelectionGraph = new StateGraph(TargetState)
-  .addNode('detectTargetFromArgument', detectTargetFromArgument)
+  .addNode('detectTargetsFromArguments', detectTargetsFromArguments)
   .addNode('askForTarget', askForTarget)
   .addNode('resolveFiles', resolveFiles)
   .addNode('confirmFiles', confirmFiles)
   .addConditionalEdges(
     START,
-    (state) => (hasTargetArgument(state) ? 'detectTargetFromArgument' : 'askForTarget'),
-    ['detectTargetFromArgument', 'askForTarget'],
+    (state) => (hasTargetArgument(state) ? 'detectTargetsFromArguments' : 'askForTarget'),
+    ['detectTargetsFromArguments', 'askForTarget'],
   )
-  .addEdge('detectTargetFromArgument', 'resolveFiles')
+  .addEdge('detectTargetsFromArguments', 'resolveFiles')
   .addEdge('askForTarget', 'resolveFiles')
   .addEdge('resolveFiles', 'confirmFiles')
   .addEdge('confirmFiles', END)
   .compile({ name: 'target-selection' });
 
-export async function selectTarget(context: ReviewContext): Promise<{ target?: Target; files: string[] }> {
-  const { target, files, confirmed } = await targetSelectionGraph.invoke({ context });
-  return { target, files: confirmed ? files : [] };
+export async function selectTarget(context: ReviewContext): Promise<{ targets: Target[]; files: string[] }> {
+  const { targets, files, confirmed } = await targetSelectionGraph.invoke({ context, targets: [] });
+  return { targets, files: confirmed ? files : [] };
 }

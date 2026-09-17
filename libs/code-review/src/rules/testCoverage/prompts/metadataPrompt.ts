@@ -3,7 +3,7 @@ import path from 'node:path';
 import { describeHistory, type AttemptRecord } from '../../../graph/attemptHistory';
 import { readIfExists, walkFiles } from '../../../shared/workspace';
 
-const PROJECT_CONTEXT_FILES = [
+export const PROJECT_CONTEXT_FILES = [
   'package.json',
   'project.json',
   'vitest.config.ts',
@@ -17,7 +17,7 @@ const PROJECT_CONTEXT_FILES = [
 
 const TEST_FILE = /\.(test|spec)\.[cm]?[jt]sx?$/;
 
-function findExampleTest(projectRoot: string): string | undefined {
+export function findExampleTest(projectRoot: string): string | undefined {
   return walkFiles(projectRoot).find((file) => TEST_FILE.test(file));
 }
 

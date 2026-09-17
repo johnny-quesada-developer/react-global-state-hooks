@@ -68,6 +68,25 @@ function resolveRunnerBinary({ runner, projectRoot }: { runner: string; projectR
   throw new CoverageMeasurementError(`could not find node_modules/.bin/${runner} from ${projectRoot}`);
 }
 
+export function renderVerifyCommands({
+  metadata,
+  sourcePath,
+}: {
+  metadata: TestMetadata;
+  sourcePath: string;
+}): string[] {
+  const { runner, args } = parseCoverageCommand(metadata.coverageCommand);
+  const relativeSource = path.relative(metadata.projectRoot, sourcePath);
+  const coverageArgs = args.map((arg) =>
+    arg.replaceAll('{sourceFile}', relativeSource).replaceAll('{reportDir}', 'coverage-check'),
+  );
+  const testOnly =
+    runner === 'vitest'
+      ? `npx vitest related ${relativeSource} --run`
+      : `npx jest --findRelatedTests ${relativeSource}`;
+  return [testOnly, `npx ${runner} ${coverageArgs.join(' ')}`];
+}
+
 export async function measureFileCoverage({
   metadata,
   sourcePath,

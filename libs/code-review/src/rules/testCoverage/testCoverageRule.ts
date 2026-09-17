@@ -1,17 +1,32 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import { Annotation, END, START, StateGraph } from '@langchain/langgraph';
+import { createConcurrentLoop } from '../../graph/createConcurrentLoop';
 import { createSequentialLoop } from '../../graph/createSequentialLoop';
 import type { Rule, RuleReport, RuleRunParams } from '../../segments/rules/Rule';
+import { scoreInBatches } from '../../segments/rules/scoring';
+import { annotateFailure } from '../../shared/annotateFailure';
+import { createResultCache, type ResultCache } from '../../shared/resultCache';
+import { rememberChoices } from '../../shared/reviewConfig';
 import { findOwningPackageRoot } from '../../shared/workspace';
 import { buildCoverageReport } from './buildCoverageReport';
+import { buildQualityScoreSystemPrompt, buildQualityScoreUserPrompt } from './prompts/testQualityPrompts';
 import { captureTestMetadata } from './steps/captureTestMetadata';
 import { findUntestableReason } from './steps/discardUntestableFiles';
 import { homologateFileDomain } from './steps/homologateFileDomain';
 import { increaseFileCoverage } from './steps/increaseCoverageLoop';
+import { inspectTestFile } from './steps/inspectTestFile';
 import { measureFileCoverage, type TestMetadata } from './steps/measureFileCoverage';
-import { reviewTestQuality } from './steps/reviewTestQualityLoop';
+import { QualityReviewSchema, readBlockingFlags, reviewTestQuality } from './steps/reviewTestQualityLoop';
 import { chooseTestSuffix, findDedicatedTestFile, type TestSuffix } from './steps/testNaming';
-import { isPending, meetsGoal, trackFile, type TestCoverageOptions, type TrackedFile } from './TrackedFile';
+import {
+  coverageFromCache,
+  isPending,
+  meetsGoal,
+  trackFile,
+  type TestCoverageOptions,
+  type TrackedFile,
+} from './TrackedFile';
 
 const RULE_ID = 'test-coverage';
 const RULE_TITLE = 'Increase test coverage with quality tests';
@@ -22,25 +37,36 @@ const CoverageRuleState = Annotation.Root({
   files: Annotation<TrackedFile[]>(),
   metadataByProject: Annotation<Record<string, TestMetadata>>(),
   testSuffix: Annotation<TestSuffix | undefined>(),
+  cache: Annotation<ResultCache>(),
   report: Annotation<RuleReport | undefined>(),
 });
 type State = typeof CoverageRuleState.State;
 
 const errorMessage = (error: unknown) => (error instanceof Error ? error.message : String(error));
 
+const concurrencyOf = ({ context }: RuleRunParams) =>
+  context.options.concurrency ?? context.projectConfig.agent.concurrency;
+
+const inDifferentFolders = (left: TrackedFile, right: TrackedFile) =>
+  path.dirname(left.sourcePath) !== path.dirname(right.sourcePath);
+
 async function forEachPendingFile({
+  params,
   files,
   label,
   shouldProcess = isPending,
   process,
 }: {
+  params: RuleRunParams;
   files: TrackedFile[];
   label: string;
   shouldProcess?: (file: TrackedFile) => boolean;
   process: (file: TrackedFile) => Promise<TrackedFile>;
 }): Promise<TrackedFile[]> {
-  const loop = createSequentialLoop<TrackedFile, TrackedFile>({
+  const loop = createConcurrentLoop<TrackedFile, TrackedFile>({
     name: label,
+    concurrency: concurrencyOf(params),
+    canRunTogether: inDifferentFolders,
     processItem: async (file) => {
       if (!shouldProcess(file)) return file;
       try {
@@ -52,6 +78,12 @@ async function forEachPendingFile({
   });
   return loop.run(files);
 }
+
+const cacheKeyFor = ({ cache, file, goal }: { cache: ResultCache; file: TrackedFile; goal: number }) =>
+  cache.keyFor({
+    files: [file.sourcePath, file.testPath ?? findDedicatedTestFile(file.sourcePath) ?? ''].filter(Boolean),
+    extra: `goal:${goal}`,
+  });
 
 const askOptions = async ({ params }: State) => {
   const { ask, options } = params.context;
@@ -75,9 +107,24 @@ const askOptions = async ({ params }: State) => {
       max: 10,
     }));
   params.logger.detail(
-    `goal ${goal}% · coverage attempts ${maxCoverageAttempts} · quality attempts ${maxQualityAttempts}`,
+    `goal ${goal}% · coverage attempts ${maxCoverageAttempts} · quality attempts ${maxQualityAttempts} · concurrency ${concurrencyOf(params)}`,
   );
-  return { options: { goal, maxCoverageAttempts, maxQualityAttempts }, metadataByProject: {} };
+  rememberChoices({
+    workspaceRoot: params.context.workspaceRoot,
+    patch: {
+      coverage: {
+        goal,
+        maxCoverageAttempts,
+        maxQualityAttempts,
+        testSuffix: options.testSuffix as 'test' | 'spec' | undefined,
+      },
+    },
+  });
+  return {
+    options: { goal, maxCoverageAttempts, maxQualityAttempts },
+    metadataByProject: {},
+    cache: createResultCache({ reviewDirectory: params.context.run.reviewDirectory, ruleId: RULE_ID }),
+  };
 };
 
 const discardUntestableFiles = ({ params }: State) => {
@@ -94,6 +141,25 @@ const discardUntestableFiles = ({ params }: State) => {
     `discarded ${discardedCount} non-testable file(s), ${files.length - discardedCount} left`,
   );
   return { files };
+};
+
+const skipUnchangedPasses = ({ params, files, options, cache }: State) => {
+  const relative = (file: string) => path.relative(params.context.workspaceRoot, file);
+  const skipped = files.map((file) => {
+    if (!isPending(file)) return file;
+    const cached = cache.readPass<{ lines: number }>(cacheKeyFor({ cache, file, goal: options.goal }));
+    if (!cached) return file;
+    params.logger.success(`${relative(file.sourcePath)}: passed in a previous run and is unchanged (cache)`);
+    const coverage = coverageFromCache(cached.lines);
+    return {
+      ...file,
+      status: 'alreadyCovered' as const,
+      reason: `passed in a previous run at ${cached.lines}%, unchanged since (cache)`,
+      initialCoverage: coverage,
+      latestCoverage: coverage,
+    };
+  });
+  return { files: skipped };
 };
 
 const captureMetadataPerProject = async ({ params, files }: State) => {
@@ -134,6 +200,7 @@ const captureMetadataPerProject = async ({ params, files }: State) => {
 
 const measureInitialCoverage = async ({ params, files, metadataByProject, options }: State) => {
   const measuredFiles = await forEachPendingFile({
+    params,
     files,
     label: 'initial coverage',
     process: async (file) => {
@@ -163,7 +230,7 @@ const measureInitialCoverage = async ({ params, files, metadataByProject, option
 const needsNewTestFiles = ({ files }: State) =>
   files.some((file) => isPending(file) && file.needsNewTestFile);
 
-const chooseNaming = async ({ params, files }: State) => {
+const chooseNaming = async ({ params, files, options }: State) => {
   const projectRoots = [
     ...new Set(
       files.filter((file) => isPending(file) && file.needsNewTestFile).map(({ projectRoot }) => projectRoot),
@@ -174,6 +241,10 @@ const chooseNaming = async ({ params, files }: State) => {
     ask: params.context.ask,
     requestedSuffix: params.context.options.testSuffix,
   });
+  rememberChoices({
+    workspaceRoot: params.context.workspaceRoot,
+    patch: { coverage: { ...options, testSuffix } },
+  });
   return { testSuffix };
 };
 
@@ -181,6 +252,7 @@ const homologateFileDomains = async ({ params, files, metadataByProject, testSuf
   const { workspaceRoot, run } = params.context;
   const relative = (file: string) => path.relative(workspaceRoot, file);
   const homologatedFiles = await forEachPendingFile({
+    params,
     files,
     label: 'homologation',
     shouldProcess: (file) => isPending(file) && file.needsNewTestFile,
@@ -228,6 +300,7 @@ const homologateFileDomains = async ({ params, files, metadataByProject, testSuf
 const increaseCoverage = async ({ params, files, metadataByProject, options }: State) => {
   const { workspaceRoot, run } = params.context;
   const coveredFiles = await forEachPendingFile({
+    params,
     files,
     label: 'coverage loop',
     process: (file) =>
@@ -244,12 +317,52 @@ const increaseCoverage = async ({ params, files, metadataByProject, options }: S
   return { files: coveredFiles };
 };
 
+const isReadyForQuality = (file: TrackedFile) => file.status === 'improved' && Boolean(file.testPath);
+
+const scoreQualityInBatches = async ({ params, files }: State) => {
+  const { workspaceRoot, projectConfig } = params.context;
+  const scorable = files.filter(
+    (file) => isReadyForQuality(file) && readBlockingFlags(file.testPath!).length === 0,
+  );
+  if (scorable.length < 2) return {};
+
+  params.logger.step(
+    `pre-scoring test quality for ${scorable.length} file(s) in batches of ${projectConfig.agent.scoreBatchSize}`,
+  );
+  const reviews = await scoreInBatches({
+    provider: params.provider,
+    task: 'score-test-quality',
+    systemPrompt: buildQualityScoreSystemPrompt(),
+    items: scorable.map((file) => ({
+      file: path.relative(workspaceRoot, file.testPath!),
+      section: buildQualityScoreUserPrompt({
+        workspaceRoot,
+        sourcePath: file.sourcePath,
+        testPath: file.testPath!,
+        signals: inspectTestFile(fs.readFileSync(file.testPath!, 'utf8')),
+      }),
+    })),
+    itemSchema: QualityReviewSchema,
+    batchSize: projectConfig.agent.scoreBatchSize,
+    cwd: workspaceRoot,
+    logger: params.logger,
+  });
+
+  return {
+    files: files.map((file) => ({
+      ...file,
+      pendingReview: file.testPath ? reviews.get(path.relative(workspaceRoot, file.testPath)) : undefined,
+    })),
+  };
+};
+
 const reviewQuality = async ({ params, files, metadataByProject, options }: State) => {
   const { workspaceRoot, run } = params.context;
   const reviewedFiles = await forEachPendingFile({
+    params,
     files,
     label: 'quality loop',
-    shouldProcess: (file) => file.status === 'improved' && Boolean(file.testPath),
+    shouldProcess: isReadyForQuality,
     process: (file) =>
       reviewTestQuality({
         file,
@@ -262,6 +375,32 @@ const reviewQuality = async ({ params, files, metadataByProject, options }: Stat
       }),
   });
   return { files: reviewedFiles };
+};
+
+const FAILED_WITH_EDITS = ['coverageFailed', 'qualityFailed'];
+const PASSED = ['improved', 'alreadyCovered'];
+
+const finishFiles = ({ params, files, options, cache }: State) => {
+  const relative = (file: string) => path.relative(params.context.workspaceRoot, file);
+  const finished = files.map((file) => {
+    const passedThisRun =
+      PASSED.includes(file.status) && file.latestCoverage && !file.reason.includes('(cache)');
+    if (passedThisRun) {
+      cache.rememberPass(cacheKeyFor({ cache, file, goal: options.goal }), {
+        lines: file.latestCoverage!.lines,
+      });
+    }
+
+    const leavesFailedEdits =
+      FAILED_WITH_EDITS.includes(file.status) && file.testPath !== undefined && file.changedFiles.length > 0;
+    if (!leavesFailedEdits) return file;
+    const wasAnnotated = annotateFailure({ file: file.testPath!, ruleId: RULE_ID, reason: file.reason });
+    if (wasAnnotated) params.logger.warn(`left a [TODO] comment in ${relative(file.testPath!)}`);
+    return wasAnnotated
+      ? { ...file, changedFiles: [...new Set([...file.changedFiles, file.testPath!])] }
+      : file;
+  });
+  return { files: finished };
 };
 
 const buildReport = ({ params, files, options }: State) => ({
@@ -279,19 +418,23 @@ const hasPendingFiles = ({ files }: State) => files.some(isPending);
 export const testCoverageGraph = new StateGraph(CoverageRuleState)
   .addNode('askOptions', askOptions)
   .addNode('discardUntestableFiles', discardUntestableFiles)
+  .addNode('skipUnchangedPasses', skipUnchangedPasses)
   .addNode('captureMetadataPerProject', captureMetadataPerProject)
   .addNode('measureInitialCoverage', measureInitialCoverage)
   .addNode('chooseNaming', chooseNaming)
   .addNode('homologateFileDomains', homologateFileDomains)
   .addNode('increaseCoverage', increaseCoverage)
+  .addNode('scoreQualityInBatches', scoreQualityInBatches)
   .addNode('reviewQuality', reviewQuality)
+  .addNode('finishFiles', finishFiles)
   .addNode('buildReport', buildReport)
   .addEdge(START, 'askOptions')
   .addEdge('askOptions', 'discardUntestableFiles')
+  .addEdge('discardUntestableFiles', 'skipUnchangedPasses')
   .addConditionalEdges(
-    'discardUntestableFiles',
-    (state) => (hasPendingFiles(state) ? 'captureMetadataPerProject' : 'buildReport'),
-    ['captureMetadataPerProject', 'buildReport'],
+    'skipUnchangedPasses',
+    (state) => (hasPendingFiles(state) ? 'captureMetadataPerProject' : 'finishFiles'),
+    ['captureMetadataPerProject', 'finishFiles'],
   )
   .addEdge('captureMetadataPerProject', 'measureInitialCoverage')
   .addConditionalEdges(
@@ -301,8 +444,10 @@ export const testCoverageGraph = new StateGraph(CoverageRuleState)
   )
   .addEdge('chooseNaming', 'homologateFileDomains')
   .addEdge('homologateFileDomains', 'increaseCoverage')
-  .addEdge('increaseCoverage', 'reviewQuality')
-  .addEdge('reviewQuality', 'buildReport')
+  .addEdge('increaseCoverage', 'scoreQualityInBatches')
+  .addEdge('scoreQualityInBatches', 'reviewQuality')
+  .addEdge('reviewQuality', 'finishFiles')
+  .addEdge('finishFiles', 'buildReport')
   .addEdge('buildReport', END)
   .compile({ name: RULE_ID });
 

@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { runCommand } from '../../shared/exec';
-import type { AuthStatus, EditApproval, ProviderDefinition } from '../../providers/ProviderDefinition';
+import type { AuthStatus, ProviderDefinition } from '../../providers/ProviderDefinition';
 
 export interface DetectedProvider {
   definition: ProviderDefinition;
@@ -9,7 +9,6 @@ export interface DetectedProvider {
   binary?: string;
   version?: string;
   auth: AuthStatus;
-  editApproval: EditApproval;
 }
 
 const isExecutable = (file: string) => {
@@ -54,8 +53,7 @@ export async function detectInstalledProviders({
         knownInstallLocations: definition.knownInstallLocations(),
         pathEnvironment,
       });
-      if (!binary)
-        return { definition, isInstalled: false, auth: 'unknown', editApproval: 'unknown' } as const;
+      if (!binary) return { definition, isInstalled: false, auth: 'unknown' } as const;
 
       const versionResult = await runCommand({
         command: binary,
@@ -64,8 +62,7 @@ export async function detectInstalledProviders({
         timeoutMs: 5_000,
       });
       const respondsToVersion = versionResult.exitCode === 0;
-      if (!respondsToVersion)
-        return { definition, isInstalled: false, binary, auth: 'unknown', editApproval: 'unknown' } as const;
+      if (!respondsToVersion) return { definition, isInstalled: false, binary, auth: 'unknown' } as const;
 
       return {
         definition,
@@ -73,7 +70,6 @@ export async function detectInstalledProviders({
         binary,
         version: versionResult.stdout.trim().split('\n')[0],
         auth: await definition.checkAuthentication({ binary, workspaceRoot }),
-        editApproval: definition.readEditApproval({ workspaceRoot }),
       };
     }),
   );

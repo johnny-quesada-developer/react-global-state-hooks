@@ -1,5 +1,9 @@
 import { styleText } from 'node:util';
+import type { UsageKind, UsageTotal } from '../../shared/runArtifacts';
+import { formatDuration } from '../rules/agentEdit';
 import type { FileOutcome, FileResult, RuleReport } from '../rules/Rule';
+
+export type UsageTotals = Record<UsageKind, UsageTotal>;
 
 const outcomeIcon: Record<FileOutcome, string> = {
   passed: styleText('green', '✔'),
@@ -15,23 +19,39 @@ const countOutcomes = (fileResults: FileResult[]) =>
     (outcome) => `${fileResults.filter((result) => result.outcome === outcome).length} ${outcome}`,
   );
 
+const detailKeysOf = (fileResults: FileResult[]) => [
+  ...new Set(fileResults.flatMap((result) => Object.keys(result.details))),
+];
+
 function renderTable(rows: string[][]): string[] {
   const widths = rows[0].map((_, column) => Math.max(...rows.map((row) => row[column].length)));
   return rows.map((row) => row.map((cell, column) => cell.padEnd(widths[column])).join('  '));
 }
 
-export function renderTerminalSummary(reports: RuleReport[]): string {
+const describeTotal = ({ calls, costUsd, durationMs }: UsageTotal) =>
+  `${calls} call(s) · $${costUsd.toFixed(2)} · ${formatDuration(durationMs)}`;
+
+export const describeUsageTotals = (totals: UsageTotals) =>
+  `AI usage → agent edits: ${describeTotal(totals.edit)} · fast-model analysis: ${describeTotal(totals.analyze)}`;
+
+export function renderTerminalSummary({
+  reports,
+  totals,
+}: {
+  reports: RuleReport[];
+  totals: UsageTotals;
+}): string {
   const sections = reports.map((report) => {
     const header = styleText('bold', `\n${report.title} (${report.ruleId})`);
     if (report.crashReason) return `${header}\n${styleText('red', `rule crashed: ${report.crashReason}`)}`;
 
-    const detailKeys = Object.keys(report.fileResults[0]?.details ?? {});
+    const detailKeys = detailKeysOf(report.fileResults);
     const rows = [
       ['file', 'status', ...detailKeys],
       ...report.fileResults.map((result) => [
         result.file,
         result.status,
-        ...detailKeys.map((key) => String(result.details[key])),
+        ...detailKeys.map((key) => String(result.details[key] ?? '')),
       ]),
     ];
     const [headerRow, ...bodyRows] = renderTable(rows);
@@ -62,7 +82,7 @@ export function renderTerminalSummary(reports: RuleReport[]): string {
       .filter((line) => line !== '')
       .join('\n');
   });
-  return sections.join('\n');
+  return [...sections, '', styleText('gray', describeUsageTotals(totals))].join('\n');
 }
 
 const markdownList = ({ heading, items }: { heading: string; items: string[] }) =>
@@ -71,19 +91,21 @@ const markdownList = ({ heading, items }: { heading: string; items: string[] }) 
 export function renderMarkdownSummary({
   reports,
   target,
+  totals,
 }: {
   reports: RuleReport[];
   target: string;
+  totals: UsageTotals;
 }): string {
   const sections = reports.map((report) => {
     if (report.crashReason) return `## ${report.title}\n\nRule crashed: ${report.crashReason}`;
 
-    const detailKeys = Object.keys(report.fileResults[0]?.details ?? {});
+    const detailKeys = detailKeysOf(report.fileResults);
     const headerRow = `| file | outcome | status | ${detailKeys.join(' | ')} | reason |`;
     const separator = `|${' --- |'.repeat(detailKeys.length + 4)}`;
     const rows = report.fileResults.map(
       (result) =>
-        `| \`${result.file}\` | ${result.outcome} | ${result.status} | ${detailKeys.map((key) => result.details[key]).join(' | ')} | ${result.reason.replace(/\|/g, '\\|').replace(/\n/g, ' ')} |`,
+        `| \`${result.file}\` | ${result.outcome} | ${result.status} | ${detailKeys.map((key) => result.details[key] ?? '').join(' | ')} | ${result.reason.replace(/\|/g, '\\|').replace(/\n/g, ' ')} |`,
     );
     const notes = markdownList({ heading: 'Notes', items: report.notes });
     const changedOutsideTargets = markdownList({
@@ -92,5 +114,5 @@ export function renderMarkdownSummary({
     });
     return `## ${report.title}\n\n${countOutcomes(report.fileResults).join(' · ')}\n\n${headerRow}\n${separator}\n${rows.join('\n')}${notes}${changedOutsideTargets}`;
   });
-  return `# Review summary\n\nTarget: ${target}\n\n${sections.join('\n\n')}\n`;
+  return `# Review summary\n\nTarget: ${target}\n\n${describeUsageTotals(totals)}\n\n${sections.join('\n\n')}\n`;
 }

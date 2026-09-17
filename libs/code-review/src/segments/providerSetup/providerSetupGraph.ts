@@ -2,21 +2,26 @@ import { Annotation, END, START, StateGraph } from '@langchain/langgraph';
 import { createCliProvider, type AgentProvider } from '../../providers/AgentProvider';
 import { createFakeProvider } from '../../providers/fakeProvider';
 import { providerCatalog } from '../../providers/providerCatalog';
-import type { EditMode, ProviderId } from '../../providers/ProviderDefinition';
-import { loadReviewConfig, saveReviewConfig, type ReviewConfig } from '../../shared/reviewConfig';
+import type { ModelTiers, PermissionGrant, ProviderId } from '../../providers/ProviderDefinition';
 import type { ReviewContext } from '../../pipeline/ReviewContext';
+import { loadLocalState, rememberChoices, type LocalState } from '../../shared/reviewConfig';
 import { detectInstalledProviders, type DetectedProvider } from './detectInstalledProviders';
-import { rankInstalledProviders, suggestEditMode, type RankedProvider } from './recommendProvider';
+import { rankInstalledProviders, type RankedProvider } from './recommendProvider';
+
+export interface ProviderChoice {
+  label: string;
+  models: ModelTiers;
+  describeGrant: (grant: PermissionGrant) => string[];
+  createProvider: (params: { grant: PermissionGrant; showAgentActivity: boolean }) => AgentProvider;
+}
 
 const SetupState = Annotation.Root({
   context: Annotation<ReviewContext>(),
-  savedConfig: Annotation<ReviewConfig | undefined>(),
+  localState: Annotation<LocalState | undefined>(),
   detected: Annotation<DetectedProvider[]>(),
   ranked: Annotation<RankedProvider[]>(),
   chosen: Annotation<RankedProvider | undefined>(),
-  model: Annotation<string | undefined>(),
-  editMode: Annotation<EditMode | undefined>(),
-  provider: Annotation<AgentProvider | undefined>(),
+  choice: Annotation<ProviderChoice | undefined>(),
 });
 type State = typeof SetupState.State;
 
@@ -24,7 +29,13 @@ const wantsFakeProvider = ({ context }: State) => context.options.provider === '
 
 const useFakeProvider = ({ context }: State) => {
   context.logger.warn('using the fake provider: no AI calls, edits are no-ops');
-  return { provider: createFakeProvider() };
+  const choice: ProviderChoice = {
+    label: 'Fake provider',
+    models: { fast: 'none', capable: 'none' },
+    describeGrant: () => ['(fake provider ignores permissions)'],
+    createProvider: () => createFakeProvider(),
+  };
+  return { choice };
 };
 
 const detectProviders = async ({ context }: State) => {
@@ -40,7 +51,7 @@ const detectProviders = async ({ context }: State) => {
   return {
     detected,
     ranked: rankInstalledProviders(detected),
-    savedConfig: loadReviewConfig(context.workspaceRoot),
+    localState: loadLocalState(context.workspaceRoot),
   };
 };
 
@@ -56,15 +67,19 @@ const printInstallGuide = ({ context, detected }: State) => {
   return {};
 };
 
-const chooseProvider = async ({ context, ranked, savedConfig }: State) => {
+const chooseProvider = async ({ context, ranked, localState }: State) => {
   const requestedId = context.options.provider as ProviderId | undefined;
   const requested = ranked.find(({ definition }) => definition.id === requestedId);
-  if (requestedId && !requested)
+  const missingRequested = requestedId !== undefined && !requested;
+  if (missingRequested && !context.options.reusedConfiguration) {
     throw new Error(`--provider ${requestedId} is not installed on this machine`);
+  }
+  if (missingRequested)
+    context.logger.warn(`the saved provider ${requestedId} is not installed anymore, choose another`);
   if (requested) return { chosen: requested };
 
-  const saved = ranked.find(({ definition }) => definition.id === savedConfig?.provider);
-  const recommended = saved ?? ranked[0];
+  const lastUsed = ranked.find(({ definition }) => definition.id === localState?.provider);
+  const recommended = lastUsed ?? ranked[0];
   const choiceId = await context.ask.select({
     message: 'Which AI provider should the review use?',
     defaultValue: recommended.definition.id,
@@ -72,68 +87,55 @@ const chooseProvider = async ({ context, ranked, savedConfig }: State) => {
       value: provider.definition.id,
       label:
         provider === recommended ? `${provider.definition.label} (recommended)` : provider.definition.label,
-      hint: provider === saved ? `${provider.reason}, last used` : provider.reason,
+      hint: provider === lastUsed ? `${provider.reason}, last used` : provider.reason,
     })),
   });
   return { chosen: ranked.find(({ definition }) => definition.id === choiceId) };
 };
 
-const chooseModel = async ({ context, chosen, savedConfig }: State) => {
-  if (context.options.model) return { model: context.options.model };
+const resolveModels = ({ context, chosen }: State): ModelTiers => {
   const definition = chosen!.definition;
-  const savedModel = savedConfig?.provider === definition.id ? savedConfig.model : undefined;
-  const model = await context.ask.text({
-    message: `Model for ${definition.label} (one small task per file → fastest/cheapest is enough)`,
-    defaultValue: savedModel ?? definition.fastModel,
-  });
-  return { model };
-};
-
-const chooseEditMode = async ({ context, chosen, savedConfig }: State) => {
-  if (context.options.editMode) return { editMode: context.options.editMode };
-  const suggestion = suggestEditMode(chosen!.editApproval);
-  const savedEditMode = savedConfig?.provider === chosen!.definition.id ? savedConfig.editMode : undefined;
-  const editMode = await context.ask.select<EditMode>({
-    message: 'How should the agent apply edits? (your provider permission settings always apply)',
-    defaultValue: savedEditMode ?? suggestion.mode,
-    choices: [
-      {
-        value: 'headless',
-        label: 'Headless',
-        hint:
-          suggestion.mode === 'headless'
-            ? suggestion.reason
-            : 'runs non-interactively; denied edits fail the attempt',
-      },
-      {
-        value: 'interactive',
-        label: 'Interactive',
-        hint:
-          suggestion.mode === 'interactive'
-            ? suggestion.reason
-            : 'opens the CLI session so you can approve edits',
-      },
-    ],
-  });
-  return { editMode };
-};
-
-const createProvider = ({ context, chosen, model, editMode }: State) => {
-  const config: ReviewConfig = {
-    provider: chosen!.definition.id as ReviewConfig['provider'],
-    model: model!,
-    editMode: editMode!,
+  const configured = context.projectConfig.providers[definition.id]?.models ?? {};
+  return {
+    fast: context.options.fastModel ?? configured.fast ?? definition.models.fast,
+    capable: context.options.model ?? configured.capable ?? definition.models.capable,
   };
-  saveReviewConfig({ workspaceRoot: context.workspaceRoot, config });
-  context.logger.success(`provider ready: ${chosen!.definition.label} · model ${model} · ${editMode} edits`);
-  const provider = createCliProvider({
-    definition: chosen!.definition,
-    binary: chosen!.binary!,
-    model: model!,
-    editMode: editMode!,
-    run: context.run,
+};
+
+const prepareChoice = (state: State) => {
+  const { context, chosen } = state;
+  const definition = chosen!.definition;
+  const models = resolveModels(state);
+  const { maxBudgetUsdPerAttempt, attemptTimeoutMinutes } = context.projectConfig.agent;
+  const limits = { maxBudgetUsd: maxBudgetUsdPerAttempt, timeoutMs: attemptTimeoutMinutes * 60_000 };
+  rememberChoices({
+    workspaceRoot: context.workspaceRoot,
+    patch: { provider: definition.id as LocalState['provider'], models },
   });
-  return { provider };
+  context.logger.success(
+    `provider: ${definition.label} · fast model ${models.fast} (metadata, scoring) · capable model ${models.capable} (edits)`,
+  );
+  context.logger.detail(
+    `override models with --model / --fast-model or providers.<id>.models in review.config.json · per attempt: max $${maxBudgetUsdPerAttempt}, ${attemptTimeoutMinutes} min`,
+  );
+
+  const choice: ProviderChoice = {
+    label: definition.label,
+    models,
+    describeGrant: (grant) => definition.describeGrant({ grant, workspaceRoot: context.workspaceRoot }),
+    createProvider: ({ grant, showAgentActivity }) =>
+      createCliProvider({
+        definition,
+        binary: chosen!.binary!,
+        models,
+        grant,
+        limits,
+        run: context.run,
+        workspaceRoot: context.workspaceRoot,
+        showAgentActivity,
+      }),
+  };
+  return { choice };
 };
 
 export const providerSetupGraph = new StateGraph(SetupState)
@@ -141,9 +143,7 @@ export const providerSetupGraph = new StateGraph(SetupState)
   .addNode('detectProviders', detectProviders)
   .addNode('printInstallGuide', printInstallGuide)
   .addNode('chooseProvider', chooseProvider)
-  .addNode('chooseModel', chooseModel)
-  .addNode('chooseEditMode', chooseEditMode)
-  .addNode('createProvider', createProvider)
+  .addNode('prepareChoice', prepareChoice)
   .addConditionalEdges(START, (state) => (wantsFakeProvider(state) ? 'useFakeProvider' : 'detectProviders'), [
     'useFakeProvider',
     'detectProviders',
@@ -155,13 +155,11 @@ export const providerSetupGraph = new StateGraph(SetupState)
     ['printInstallGuide', 'chooseProvider'],
   )
   .addEdge('printInstallGuide', END)
-  .addEdge('chooseProvider', 'chooseModel')
-  .addEdge('chooseModel', 'chooseEditMode')
-  .addEdge('chooseEditMode', 'createProvider')
-  .addEdge('createProvider', END)
+  .addEdge('chooseProvider', 'prepareChoice')
+  .addEdge('prepareChoice', END)
   .compile({ name: 'provider-setup' });
 
-export async function setupProvider(context: ReviewContext): Promise<AgentProvider | undefined> {
-  const { provider } = await providerSetupGraph.invoke({ context });
-  return provider;
+export async function setupProvider(context: ReviewContext): Promise<ProviderChoice | undefined> {
+  const { choice } = await providerSetupGraph.invoke({ context });
+  return choice;
 }
