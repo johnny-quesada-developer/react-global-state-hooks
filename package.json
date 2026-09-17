@@ -31,6 +31,7 @@
     "version-bump": "node scripts/version-bump.mjs",
     "version:check": "node scripts/versions-remote.mjs",
     "coverage": "node scripts/coverage-report.mjs",
+    "review": "tsx libs/code-review/src/cli.ts",
     "graph": "nx graph",
     "preview:dev": "nx preview:dev devtools"
   },

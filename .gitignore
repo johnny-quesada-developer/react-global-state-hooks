@@ -17,6 +17,9 @@ dist/
 coverage/
 .vitest-reports/
 
+# code-review pipeline config and run artifacts
+.review/
+
 # generated artifacts
 openapi.json
 
