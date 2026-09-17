@@ -47,5 +47,6 @@ export const evaluateSnapshotAgainstLive = (
   const hasAnyLive = liveCountByPath.size > 0;
   const kind: LoadMismatch['kind'] = !connected.length && !hasAnyLive ? 'no-live-page' : 'partial';
 
-  return { kind, connected, unconnected };
+  // notRestorable is filled in later, at reconcile time (it needs each store's actual state).
+  return { kind, connected, unconnected, notRestorable: [] };
 };

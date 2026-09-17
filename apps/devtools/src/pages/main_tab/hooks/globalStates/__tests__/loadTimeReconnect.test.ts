@@ -187,6 +187,26 @@ describe('load-time reconnection (reconcile against the live mirror the panel al
     expect(root.ids.length).toBe(0);
   });
 
+  it('reports a store as not-restorable when its whole state is non-serializable', () => {
+    const live = liveJson(COUNTER_PATH, 'counter');
+    addLiveState(live);
+
+    const loadedId = 'store-id:fn-state';
+    const entity = snapEntity(loadedId, COUNTER_PATH, 'counter', 0);
+    // Whole saved state is a non-serializable placeholder (e.g. the store held a function).
+    entity.currentState = { __non_serializable__: 'function' };
+
+    const { reconnected, notRestorable } = loadReconciledSnapshot({
+      ids: [loadedId],
+      entities: { [loadedId]: entity },
+    });
+
+    // It still connects (adopts the live id) and stays in the panel view, but nothing is pushed.
+    expect(globalStates$.getState().has(live.globalStateId)).toBe(true);
+    expect(reconnected).toEqual([]);
+    expect(notRestorable).toEqual(['counter']);
+  });
+
   it('connects across different Vite optimizer hashes (?v=) on the same creation site', () => {
     // Same site, but the live path and the snapshot path carry different ?v= tokens (different
     // page loads). Normalization must let them still pair.

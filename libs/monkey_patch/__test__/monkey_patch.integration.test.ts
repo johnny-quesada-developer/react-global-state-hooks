@@ -894,6 +894,49 @@ describe('monkey_patch.ts - Integration Tests', () => {
       expect(() => dispatch('RESTORE_STATE', { state: { count: 1 } })).not.toThrow();
     });
 
+    it('RESTORE_STATE ignores non-serializable values and keeps the live value for that key', () => {
+      // The live store holds a real function the devtools cannot serialize. A restore that came
+      // from a snapshot carries a `__non_serializable__` placeholder for that key. mergeState must
+      // keep the live function and only apply the serializable change (count).
+      const liveHandler = () => 'live';
+      const liveState = { count: 0, handler: liveHandler };
+      const mockSetState = vi.fn();
+      const mockStore: Any = {
+        state: liveState,
+        setState: mockSetState,
+        getState: vi.fn(() => liveState),
+        getMainHook: vi.fn(() => ({ state: liveState, setState: vi.fn() })),
+        dispose: vi.fn(),
+        getStoreActionsMap: vi.fn(() => ({ actions: null, storeTools: {} })),
+        createSelectorHook: vi.fn(() => vi.fn()),
+      };
+
+      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(
+        mockStore,
+        undefined,
+        '/src/stores/with-fn.ts',
+      );
+
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          data: {
+            action: 'devtools-request/RESTORE_STATE',
+            payload: {
+              globalStateId: wrappedStore._DEV_TOOLS_STORE_ID,
+              state: { count: 5, handler: { __non_serializable__: 'function' } },
+            },
+          },
+          source: window,
+        }),
+      );
+
+      expect(mockSetState).toHaveBeenCalledTimes(1);
+      const merged = mockSetState.mock.calls[0][0];
+      expect(merged.count).toBe(5);
+      // The non-serializable value was ignored: the original live function is preserved.
+      expect(merged.handler).toBe(liveHandler);
+    });
+
     it('should ignore messages from different source', () => {
       const mockSetState = vi.fn();
       const mockStore: Any = {

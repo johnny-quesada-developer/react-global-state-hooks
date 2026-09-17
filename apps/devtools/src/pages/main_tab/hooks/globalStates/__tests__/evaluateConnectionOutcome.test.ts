@@ -30,6 +30,7 @@ describe('evaluateSnapshotAgainstLive', () => {
       kind: 'no-live-page',
       connected: [],
       unconnected: ['counter', 'todos'],
+      notRestorable: [],
     });
   });
 
@@ -44,6 +45,7 @@ describe('evaluateSnapshotAgainstLive', () => {
       kind: 'partial',
       connected: ['counter'],
       unconnected: ['todos'],
+      notRestorable: [],
     });
   });
 
@@ -61,6 +63,7 @@ describe('evaluateSnapshotAgainstLive', () => {
       kind: 'partial',
       connected: ['form#1', 'form#2'],
       unconnected: ['form#3', 'form#4'],
+      notRestorable: [],
     });
   });
 

@@ -19,7 +19,8 @@ const groupByName = (names: string[]): { name: string; count: number }[] => {
 /** "form-context" or "2 form-context" (the count is only shown when there is more than one). */
 const label = ({ name, count }: { name: string; count: number }) => (count > 1 ? `${count} ${name}` : name);
 
-const SkippedList: React.FC<{ names: string[] }> = ({ names }) => {
+/** Collapsible, name-grouped bullet list. `verb` completes "<verb> N stores" in the summary. */
+const GroupedStoreList: React.FC<{ names: string[]; verb: string }> = ({ names, verb }) => {
   // Control open state here so the caret reflects it (Collapsible drives its height off `open`).
   const [open, setOpen] = React.useState(false);
   const groups = groupByName(names);
@@ -38,7 +39,7 @@ const SkippedList: React.FC<{ names: string[] }> = ({ names }) => {
             setOpen((value) => !value);
           }}
         >
-          {open ? '▾' : '▸'} Skipped {names.length} {names.length === 1 ? 'store' : 'stores'}
+          {open ? '▾' : '▸'} {verb} {names.length} {names.length === 1 ? 'store' : 'stores'}
         </span>
       )}
     >
@@ -51,9 +52,14 @@ const SkippedList: React.FC<{ names: string[] }> = ({ names }) => {
   );
 };
 
-const Title: React.FC<{ kind: LoadMismatch['kind'] }> = ({ kind }) => (
-  <span>{kind === 'no-live-page' ? "This snapshot doesn't fit this page" : 'A few stores were skipped'}</span>
-);
+const Title: React.FC<{ mismatch: LoadMismatch }> = ({ mismatch }) => {
+  if (mismatch.kind === 'no-live-page') return <span>This snapshot doesn&apos;t fit this page</span>;
+  // Only non-restorable, nothing skipped by path.
+  if (!mismatch.unconnected.length && mismatch.notRestorable.length) {
+    return <span>Some values couldn&apos;t be restored</span>;
+  }
+  return <span>A few stores were skipped</span>;
+};
 
 const Body: React.FC<{ mismatch: LoadMismatch }> = ({ mismatch }) => {
   if (mismatch.kind === 'no-live-page') {
@@ -67,16 +73,30 @@ const Body: React.FC<{ mismatch: LoadMismatch }> = ({ mismatch }) => {
     );
   }
 
-  const total = mismatch.connected.length + mismatch.unconnected.length;
+  const { connected, unconnected, notRestorable } = mismatch;
+  const total = connected.length + unconnected.length;
 
   return (
     <div className="flex flex-col gap-2">
-      <p>
-        Restored {mismatch.connected.length} of {total} stores. The others aren&apos;t on the page right now,
-        so I left them out.
-      </p>
+      {total > 0 && (
+        <p>
+          Restored {connected.length} of {total} stores. The others aren&apos;t on the page right now, so I
+          left them out.
+        </p>
+      )}
 
-      <SkippedList names={mismatch.unconnected} />
+      {unconnected.length > 0 && <GroupedStoreList names={unconnected} verb="Skipped" />}
+
+      {notRestorable.length > 0 && (
+        <>
+          <p>
+            {notRestorable.length === 1 ? 'One store' : `${notRestorable.length} stores`} had a value I
+            can&apos;t send back to the page (like a function or a Map), so{' '}
+            {notRestorable.length === 1 ? 'it was' : 'they were'} left as-is.
+          </p>
+          <GroupedStoreList names={notRestorable} verb="Couldn't restore" />
+        </>
+      )}
     </div>
   );
 };
@@ -91,7 +111,7 @@ export const LoadMismatchModal: React.FC = () => {
   const dismiss = () => loadMismatch$.actions.dismiss();
 
   return (
-    <Modal open={mismatch != null} onClose={dismiss} title={mismatch ? <Title kind={mismatch.kind} /> : null}>
+    <Modal open={mismatch != null} onClose={dismiss} title={mismatch ? <Title mismatch={mismatch} /> : null}>
       {mismatch && <Body mismatch={mismatch} />}
 
       <div className="mt-4 flex justify-end">

@@ -1,11 +1,18 @@
-import { getStateSnapshot, loadReconciledSnapshot } from '@main_tab/hooks/globalStates/helpers/loadMockState';
+import {
+  getStateSnapshot,
+  loadReconciledSnapshot,
+  type ReconnectedStore,
+} from '@main_tab/hooks/globalStates/helpers/loadMockState';
 import globalStates$ from '@main_tab/hooks/globalStates/globalStates';
-import loadMismatch$ from '@main_tab/hooks/loadMismatch';
+import loadMismatch$, { type LoadMismatch } from '@main_tab/hooks/loadMismatch';
 import {
   evaluateSnapshotAgainstLive,
   type SnapshotStoreRef,
 } from '@main_tab/hooks/globalStates/helpers/evaluateConnectionOutcome';
 import { normalizeStatePath } from '@main_tab/hooks/globalStates/helpers/normalizeStatePath';
+import { getContentScriptPort } from './getContentScriptPort';
+import { uniqueId } from 'react-global-state-hooks/uniqueId';
+import { tryCatch } from 'easy-cancelable-promise/tryCatch';
 
 /**
  * Download a single JSON file with a full snapshot of everything the DevTools currently holds
@@ -76,16 +83,70 @@ const getLiveCountByPath = (): Map<string, number> => {
  * multi-instance) and surface a report on mismatch, then load — loadReconciledSnapshot pairs each
  * loaded instance to a live one and discards anything with no live counterpart.
  */
+/**
+ * Push each reconnected store's snapshot state down to its live store on the page, so loading a
+ * snapshot actually RESTORES the app state (not just the panel view). Mirrors the manual-edit path
+ * (StateViewer): a `RESTORE_STATE` request the page decodes (formatFromStore) and merges. The state
+ * stays in the `$t`/`$v` encoded form the page expects — no re-encoding here.
+ */
+const restoreOnPage = (reconnected: ReconnectedStore[]): void => {
+  if (!reconnected.length) return;
+
+  tryCatch(() => {
+    const port = getContentScriptPort();
+    if (!port) return;
+
+    for (const { globalStateId, state } of reconnected) {
+      port.postMessage({
+        action: 'devtools-request/RESTORE_STATE',
+        id: uniqueId('devtools-request:'),
+        timestamp: performance.now(),
+        payload: { actionName: 'setState', globalStateId, state },
+      });
+    }
+  });
+};
+
 export const loadGlobalStatesFromFile = async (file: File): Promise<void> => {
   const text = await file.text();
   const data = JSON.parse(text);
 
-  // Validate against what the panel already mirrors, before replacing anything.
-  const outcome = evaluateSnapshotAgainstLive(readSnapshotStores(data), getLiveCountByPath());
-  if (outcome) loadMismatch$.actions.report(outcome);
-  else loadMismatch$.actions.dismiss();
+  // Path-level check against the live mirror (which stores were skipped for lack of a live store).
+  const pathOutcome = evaluateSnapshotAgainstLive(readSnapshotStores(data), getLiveCountByPath());
 
-  loadReconciledSnapshot(data);
+  // Reconcile: pair by path, then push restorable state down and learn which connected stores had
+  // a wholly non-serializable state (nothing to restore).
+  const { reconnected, notRestorable } = loadReconciledSnapshot(data);
+  restoreOnPage(reconnected);
+
+  reportLoadOutcome(pathOutcome, notRestorable);
+};
+
+/**
+ * Combine the path-level mismatch (skipped stores) with the reconcile-level result (stores that
+ * connected but whose whole state couldn't be restored) into a single modal report. Reports null
+ * (dismiss) only when everything connected AND everything was restorable.
+ */
+const reportLoadOutcome = (pathOutcome: LoadMismatch | null, notRestorable: string[]): void => {
+  if (!pathOutcome && !notRestorable.length) {
+    loadMismatch$.actions.dismiss();
+    return;
+  }
+
+  if (pathOutcome) {
+    // Fold the not-restorable stores into the existing report. Kind stays as-is: 'no-live-page'
+    // means nothing connected at all, which already dominates.
+    loadMismatch$.actions.report({ ...pathOutcome, notRestorable });
+    return;
+  }
+
+  // All paths connected, but some stores had nothing serializable to restore.
+  loadMismatch$.actions.report({
+    kind: 'partial',
+    connected: [],
+    unconnected: [],
+    notRestorable,
+  });
 };
 
 /**

@@ -10,6 +10,7 @@ import globalStates$, {
 } from '../globalStates';
 import { addGlobalStateToPath, clearGlobalStatePaths } from './globalStatesIdsByPath';
 import { normalizeStatePath } from './normalizeStatePath';
+import isRecord from 'react-global-state-hooks/isRecord';
 
 type RawMockState = {
   entities: Record<string, any>;
@@ -119,7 +120,29 @@ const captureLivePathIds = (): Map<string, GlobalStateId[]> => {
  * to the real store. A loaded instance with no live counterpart is discarded — we cannot replace
  * what does not exist, and keeping a store under a dead id would only crash on interaction.
  */
-export function loadReconciledSnapshot(snapshotData: unknown) {
+/** A store that was reconnected to a live id, plus the snapshot state to push back to the page. */
+export type ReconnectedStore = {
+  globalStateId: GlobalStateId;
+  /** The snapshot's saved state, in the `$t`/`$v` encoded form the page's RESTORE_STATE decodes. */
+  state: unknown;
+};
+
+export type ReconcileResult = {
+  /** Stores connected to a live id whose state CAN be pushed to the page. */
+  reconnected: ReconnectedStore[];
+  /**
+   * Names of stores that connected by path but whose ENTIRE saved state is non-serializable (a
+   * top-level `__non_serializable__` marker). There is nothing serializable to push, so they are
+   * loaded into the panel view but not restored on the page — surfaced to the user.
+   */
+  notRestorable: string[];
+};
+
+/** True when the value is a bare non-serializable placeholder (its whole content is unrepresentable). */
+const isWhollyNonSerializable = (value: unknown): boolean =>
+  isRecord(value) && '__non_serializable__' in (value as Record<string, unknown>);
+
+export function loadReconciledSnapshot(snapshotData: unknown): ReconcileResult {
   const raw = snapshotData as RawMockState;
 
   // Capture the live mirror BEFORE we tear it down.
@@ -127,6 +150,8 @@ export function loadReconciledSnapshot(snapshotData: unknown) {
   const consumedByPath = new Map<string, number>();
 
   const entries: StateEntry[] = [];
+  const reconnected: ReconnectedStore[] = [];
+  const notRestorable: string[] = [];
 
   for (const loadedStateId of raw.ids) {
     const { stateFields, actions } = readRawEntity(raw.entities[loadedStateId]);
@@ -153,9 +178,19 @@ export function loadReconciledSnapshot(snapshotData: unknown) {
         logs: (action.logs ?? []).map((log: any) => ({ ...log, globalStateId: liveId })),
       })),
     });
+
+    // If the whole state is non-serializable there is nothing to push down; keep it in the panel
+    // view but report it as not restorable. Otherwise remember it to RESTORE on the page.
+    if (isWhollyNonSerializable(stateFields.currentState)) {
+      notRestorable.push(stateFields.name ?? String(loadedStateId));
+    } else {
+      reconnected.push({ globalStateId: liveId, state: stateFields.currentState });
+    }
   }
 
   replaceAllStates(entries);
+
+  return { reconnected, notRestorable };
 }
 
 export function getStateSnapshot() {

@@ -12,8 +12,8 @@ export type LoadMismatch = {
   /**
    * - 'no-live-page': none of the snapshot's paths match a live store, so nothing could be
    *   restored (the app isn't running in this tab, or nothing is mounted at those paths).
-   * - 'partial': some stores matched and were restored; the rest had no matching live store and
-   *   were skipped.
+   * - 'partial': some stores connected; the rest were either skipped (no matching live store) or
+   *   could not be restored (their whole saved state was non-serializable).
    */
   kind: 'no-live-page' | 'partial';
 
@@ -22,6 +22,13 @@ export type LoadMismatch = {
 
   /** Human-readable names of snapshot stores that were skipped (no live store to pair with). */
   unconnected: string[];
+
+  /**
+   * Human-readable names of stores that matched a live store but whose entire saved state was
+   * non-serializable (e.g. a function/Map/Set at the root), so there was nothing serializable to
+   * push back to the page.
+   */
+  notRestorable: string[];
 };
 
 /**
