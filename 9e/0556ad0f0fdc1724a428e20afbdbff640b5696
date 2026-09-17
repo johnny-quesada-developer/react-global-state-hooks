@@ -1,0 +1,28 @@
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/ActionLogListItem/components/DropdownMenuLog.tsx
+  h_6029769cf9ac60 1,5,7,9,16-32
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogListItem/components/DropdownMenuLog.tsx
+  h_6029769cf9ac60 1,3,5,7,15-21
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/_shared/LogRestoreMenu.tsx
+  h_6029769cf9ac60 1-86
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/_shared/index.ts
+  h_6029769cf9ac60 1-2
+apps/devtools/src/shared/components/DropdownMenu/DropdownMenu.tsx
+  h_6029769cf9ac60 1-151
+apps/devtools/src/shared/components/DropdownMenu/index.ts
+  h_6029769cf9ac60 1-2
+apps/devtools/src/shared/components/Modal/Modal.tsx
+  h_6029769cf9ac60 20-26,55,61,63
+apps/devtools/src/shared/components/index.ts
+  h_6029769cf9ac60 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "9e0556ad0f0fdc1724a428e20afbdbff640b5696",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
