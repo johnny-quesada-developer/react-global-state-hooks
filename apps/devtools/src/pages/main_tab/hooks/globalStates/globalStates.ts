@@ -23,6 +23,7 @@ import {
   removeGlobalStateIdFromPath,
   removeGlobalStatesOfPath,
 } from './helpers/globalStatesIdsByPath';
+import { normalizeStatePath } from './helpers/normalizeStatePath';
 import type { ClearGlobalStatesMessagePayload } from '@src/shared/schema/MonkeyPathMessageJson/ClearGlobalStatesMessage';
 
 export type ContentScriptMessage<T> = {
@@ -127,6 +128,10 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
       return ({ setState, getState }) => {
         assertIsNonNullable(globalStateJson, 'stateMeta should be defined');
 
+        // Normalize the creation-stack path (strip Vite's volatile `?v=<hash>` optimizer token) so
+        // it is stable across reloads and can be matched to a loaded snapshot's stores by path.
+        const globalStatePath = normalizeStatePath(globalStateJson.globalStatePath);
+
         const actionId = generateActionId();
         const actionKey = 'initialize';
 
@@ -154,6 +159,7 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
 
         const globalStoreMeta: GlobalStateMetaExtended = {
           ...globalStateJson,
+          globalStatePath,
           currentState: globalStateJson.initialState,
         };
 
@@ -166,7 +172,7 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
         startTransition(() => {
           setState(rootState);
         });
-        addGlobalStateToPath(globalStateJson.globalStatePath, globalStateJson.globalStateId);
+        addGlobalStateToPath(globalStatePath, globalStateJson.globalStateId);
       };
     },
 

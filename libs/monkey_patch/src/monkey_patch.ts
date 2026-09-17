@@ -534,12 +534,26 @@ export function addDevtoolsListeners() {
         return replaySnapshot();
       }
 
+      // Resolve a live store by id. The devtools panel may hold stores that are not (or no longer)
+      // live on the page — e.g. a loaded snapshot whose store never mounted here, or a store that
+      // unmounted after the panel captured it. Dispatching to such an id must be a no-op, not a
+      // crash: reading `.store` off an undefined registry entry used to throw a TypeError on the
+      // page (Cannot read properties of undefined).
+      const resolveLiveStore = (id: string): GlobalStoreParameter | null => {
+        return globalStatesById.get(id)?.store ?? null;
+      };
+
       // try to execute an specific action of and specific global state
       if (action === 'EXECUTE_ACTION') {
         const { payload } = event.data;
         const { actionName, globalStateId, parameters: parametersString } = payload;
+        const globalState = resolveLiveStore(globalStateId);
+        if (!globalState) {
+          console.warn(`[devtools] EXECUTE_ACTION: no live store for ${globalStateId} (not connected)`);
+          return;
+        }
+
         const args: unknown[] = Function(`return [${parametersString.trim()}]`)();
-        const globalState = globalStatesById.get(globalStateId).store;
 
         const actionFunction: (...args: unknown[]) => unknown = Object.getOwnPropertyDescriptor(
           globalState.actions,
@@ -552,8 +566,13 @@ export function addDevtoolsListeners() {
       if (action === 'SET_STATE') {
         const { payload } = event.data;
         const { globalStateId, parameters: parametersString } = payload;
+        const globalState = resolveLiveStore(globalStateId);
+        if (!globalState) {
+          console.warn(`[devtools] SET_STATE: no live store for ${globalStateId} (not connected)`);
+          return;
+        }
+
         const setter: unknown = Function(`return [${parametersString.trim()}]`)()[0];
-        const globalState = globalStatesById.get(globalStateId).store;
 
         return globalState.setState.apply(globalState, [setter]);
       }
@@ -562,7 +581,11 @@ export function addDevtoolsListeners() {
         const { payload } = event.data;
         const { globalStateId, state } = payload;
 
-        const globalState = globalStatesById.get(globalStateId).store;
+        const globalState = resolveLiveStore(globalStateId);
+        if (!globalState) {
+          console.warn(`[devtools] RESTORE_STATE: no live store for ${globalStateId} (not connected)`);
+          return;
+        }
 
         // restore the actual state
         const newState = formatFromStore(state);

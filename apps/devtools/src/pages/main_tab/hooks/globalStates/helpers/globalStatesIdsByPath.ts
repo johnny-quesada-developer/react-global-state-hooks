@@ -40,6 +40,34 @@ export const getGlobalStatePaths = (): string[] => {
   return [...idsByPath.keys()];
 };
 
+/** Drop the entire index. Used when the whole set of states is replaced (loadMockState). */
+export const clearGlobalStatePaths = () => {
+  idsByPath.clear();
+};
+
+/**
+ * Swap a store id for another under the same path, preserving instance order. Used when a live
+ * store adopts a loaded-snapshot entry: the loaded (offline) id is replaced by the live id so the
+ * path index keeps pointing at the connected store.
+ */
+export const replaceGlobalStateIdAtPath = (
+  globalStatePath: string,
+  previousId: GlobalStateId,
+  nextId: GlobalStateId,
+) => {
+  const ids = idsByPath.get(globalStatePath);
+  if (!ids) {
+    idsByPath.set(globalStatePath, [nextId]);
+    return;
+  }
+
+  const next = ids.map((id) => (id === previousId ? nextId : id));
+  // If previousId wasn't present, append nextId so the live id is still tracked.
+  if (!next.includes(nextId)) next.push(nextId);
+
+  idsByPath.set(globalStatePath, next);
+};
+
 /**
  * Remove a SINGLE instance id from its path. The path entry is dropped only once it has no
  * remaining instances. Used when one store instance unmounts (DELETE_GLOBAL_STATE).
@@ -68,7 +96,7 @@ export const removeGlobalStatePath = (globalStatePath: string) => {
  */
 export const removeGlobalStatesOfPath = (
   globalStatePath: string,
-  state: EntityAdapter<GlobalStateId, GlobalStateMetaExtended>
+  state: EntityAdapter<GlobalStateId, GlobalStateMetaExtended>,
 ): EntityAdapter<GlobalStateId, GlobalStateMetaExtended> => {
   const isDeleteAll = globalStatePath === '*';
   if (isDeleteAll) {

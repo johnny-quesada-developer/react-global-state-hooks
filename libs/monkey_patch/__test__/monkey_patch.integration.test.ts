@@ -123,7 +123,11 @@ describe('monkey_patch.ts - Integration Tests', () => {
       };
 
       // Pass store through monkey patch
-      const patchedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
+      const patchedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(
+        mockStore,
+        undefined,
+        '/src/stores/counter.ts',
+      );
 
       // Verify ALL expected patches are applied
 
@@ -197,7 +201,11 @@ describe('monkey_patch.ts - Integration Tests', () => {
         createSelectorHook: vi.fn(() => vi.fn()),
       };
 
-      const patchedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
+      const patchedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(
+        mockStore,
+        undefined,
+        '/src/stores/counter.ts',
+      );
 
       // Original properties should be preserved
       expect(patchedStore._name).toBe('Counter Store');
@@ -267,7 +275,11 @@ describe('monkey_patch.ts - Integration Tests', () => {
         createSelectorHook: vi.fn(() => vi.fn()),
       };
 
-      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
+      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(
+        mockStore,
+        undefined,
+        '/src/stores/counter.ts',
+      );
 
       expect(wrappedStore._name).toBe('Counter Store');
     });
@@ -283,7 +295,11 @@ describe('monkey_patch.ts - Integration Tests', () => {
         localStorage: { key: 'counter-storage' },
       };
 
-      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
+      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(
+        mockStore,
+        undefined,
+        '/src/stores/counter.ts',
+      );
 
       expect(wrappedStore.localStorage).toBeDefined();
       expect(wrappedStore.localStorage.key).toBe('counter-storage');
@@ -302,7 +318,11 @@ describe('monkey_patch.ts - Integration Tests', () => {
         createSelectorHook: vi.fn(() => vi.fn()),
       };
 
-      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
+      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(
+        mockStore,
+        undefined,
+        '/src/stores/counter.ts',
+      );
 
       const hook = wrappedStore.getMainHook();
 
@@ -321,7 +341,11 @@ describe('monkey_patch.ts - Integration Tests', () => {
         createSelectorHook: vi.fn(() => vi.fn()),
       };
 
-      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
+      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(
+        mockStore,
+        undefined,
+        '/src/stores/counter.ts',
+      );
 
       const hook = wrappedStore.getMainHook() as Any;
 
@@ -342,7 +366,11 @@ describe('monkey_patch.ts - Integration Tests', () => {
         createSelectorHook: vi.fn(() => originalSelectorHook),
       };
 
-      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
+      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(
+        mockStore,
+        undefined,
+        '/src/stores/counter.ts',
+      );
 
       const selectorHook = wrappedStore.createSelectorHook((state: Any) => state.count);
 
@@ -362,7 +390,11 @@ describe('monkey_patch.ts - Integration Tests', () => {
         createSelectorHook: mockCreateSelectorHook,
       };
 
-      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
+      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(
+        mockStore,
+        undefined,
+        '/src/stores/counter.ts',
+      );
 
       const selector = (state: Any) => state.count;
       wrappedStore.createSelectorHook(selector);
@@ -383,7 +415,11 @@ describe('monkey_patch.ts - Integration Tests', () => {
         createSelectorHook: vi.fn(() => vi.fn()),
       };
 
-      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
+      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(
+        mockStore,
+        undefined,
+        '/src/stores/counter.ts',
+      );
 
       wrappedStore.setState({ count: 1 });
 
@@ -400,7 +436,11 @@ describe('monkey_patch.ts - Integration Tests', () => {
         createSelectorHook: vi.fn(() => vi.fn()),
       };
 
-      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
+      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(
+        mockStore,
+        undefined,
+        '/src/stores/counter.ts',
+      );
 
       postedMessages.length = 0;
       wrappedStore.setState({ count: 1 });
@@ -424,7 +464,11 @@ describe('monkey_patch.ts - Integration Tests', () => {
         createSelectorHook: vi.fn(() => vi.fn()),
       };
 
-      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
+      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(
+        mockStore,
+        undefined,
+        '/src/stores/counter.ts',
+      );
 
       postedMessages.length = 0;
       wrappedStore.dispose();
@@ -453,7 +497,11 @@ describe('monkey_patch.ts - Integration Tests', () => {
         createSelectorHook: vi.fn(() => vi.fn()),
       };
 
-      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
+      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(
+        mockStore,
+        undefined,
+        '/src/stores/counter.ts',
+      );
 
       expect(wrappedStore.__devtools_initialize_getStoreActionsMapWrapped).toBeDefined();
       expect(typeof wrappedStore.__devtools_initialize_getStoreActionsMapWrapped).toBe('function');
@@ -469,7 +517,11 @@ describe('monkey_patch.ts - Integration Tests', () => {
         createSelectorHook: vi.fn(() => vi.fn()),
       };
 
-      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
+      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(
+        mockStore,
+        undefined,
+        '/src/stores/counter.ts',
+      );
 
       expect(wrappedStore.__devtools_getLifeCycleStoreToolsWrapper).toBeDefined();
       expect(typeof wrappedStore.__devtools_getLifeCycleStoreToolsWrapper).toBe('function');
@@ -492,7 +544,11 @@ describe('monkey_patch.ts - Integration Tests', () => {
         createSelectorHook: vi.fn(() => vi.fn()),
       };
 
-      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
+      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(
+        mockStore,
+        undefined,
+        '/src/stores/counter.ts',
+      );
 
       const wrappedActions = wrappedStore.__devtools_initialize_getStoreActionsMapWrapped();
 
@@ -602,7 +658,9 @@ describe('monkey_patch.ts - Integration Tests', () => {
       global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore1, undefined, '/src/stores/counter.ts');
       global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore2, undefined, '/src/stores/user.ts');
 
-      const addGlobalStateCalls = postedMessages.filter((msg) => msg.action === 'monkey-patch/ADD_GLOBAL_STATE');
+      const addGlobalStateCalls = postedMessages.filter(
+        (msg) => msg.action === 'monkey-patch/ADD_GLOBAL_STATE',
+      );
 
       expect(addGlobalStateCalls.length).toBe(2);
     });
@@ -681,7 +739,11 @@ describe('monkey_patch.ts - Integration Tests', () => {
         actions: mockActions,
       };
 
-      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
+      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(
+        mockStore,
+        undefined,
+        '/src/stores/counter.ts',
+      );
 
       // Simulate devtools EXECUTE_ACTION message
       const event = new MessageEvent('message', {
@@ -721,7 +783,11 @@ describe('monkey_patch.ts - Integration Tests', () => {
         actions: mockActions,
       };
 
-      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
+      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(
+        mockStore,
+        undefined,
+        '/src/stores/counter.ts',
+      );
 
       const event = new MessageEvent('message', {
         data: {
@@ -751,7 +817,11 @@ describe('monkey_patch.ts - Integration Tests', () => {
         createSelectorHook: vi.fn(() => vi.fn()),
       };
 
-      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
+      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(
+        mockStore,
+        undefined,
+        '/src/stores/counter.ts',
+      );
 
       const event = new MessageEvent('message', {
         data: {
@@ -782,7 +852,11 @@ describe('monkey_patch.ts - Integration Tests', () => {
         createSelectorHook: vi.fn(() => vi.fn()),
       };
 
-      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
+      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(
+        mockStore,
+        undefined,
+        '/src/stores/counter.ts',
+      );
 
       const event = new MessageEvent('message', {
         data: {
@@ -801,6 +875,25 @@ describe('monkey_patch.ts - Integration Tests', () => {
       expect(mockSetState).toHaveBeenCalled();
     });
 
+    it('does not throw when a request targets an unknown store id (e.g. an unconnected loaded snapshot)', () => {
+      // No store is registered under this id on the page. A loaded snapshot whose store never
+      // mounted here would dispatch exactly this. It must be a safe no-op, not a page crash
+      // (previously threw "Cannot read properties of undefined (reading 'store')").
+      const unknownId = 'store-id:not-live';
+
+      const dispatch = (action: string, payload: Record<string, unknown>) =>
+        window.dispatchEvent(
+          new MessageEvent('message', {
+            data: { action: `devtools-request/${action}`, payload: { globalStateId: unknownId, ...payload } },
+            source: window,
+          }),
+        );
+
+      expect(() => dispatch('EXECUTE_ACTION', { actionName: 'increment', parameters: '' })).not.toThrow();
+      expect(() => dispatch('SET_STATE', { parameters: '{ count: 1 }' })).not.toThrow();
+      expect(() => dispatch('RESTORE_STATE', { state: { count: 1 } })).not.toThrow();
+    });
+
     it('should ignore messages from different source', () => {
       const mockSetState = vi.fn();
       const mockStore: Any = {
@@ -812,7 +905,11 @@ describe('monkey_patch.ts - Integration Tests', () => {
         createSelectorHook: vi.fn(() => vi.fn()),
       };
 
-      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
+      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(
+        mockStore,
+        undefined,
+        '/src/stores/counter.ts',
+      );
 
       const event = new MessageEvent('message', {
         data: {
@@ -871,7 +968,11 @@ describe('monkey_patch.ts - Integration Tests', () => {
         createSelectorHook: vi.fn(() => vi.fn()),
       };
 
-      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
+      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(
+        mockStore,
+        undefined,
+        '/src/stores/counter.ts',
+      );
 
       const event = new MessageEvent('message', {
         data: {
@@ -910,7 +1011,8 @@ describe('Real GlobalStore comprehensive workflow tests', () => {
   // ── helpers ────────────────────────────────────────────────────────────────
 
   /** Parse a message payload regardless of whether it was serialised to JSON. */
-  const parsePayload = (msg: Any): Any => (typeof msg.payload === 'string' ? JSON.parse(msg.payload) : msg.payload);
+  const parsePayload = (msg: Any): Any =>
+    typeof msg.payload === 'string' ? JSON.parse(msg.payload) : msg.payload;
 
   /** Filter messages by their monkey-patch action type. */
   const msgs = (action: string) =>
@@ -1068,7 +1170,9 @@ describe('Real GlobalStore comprehensive workflow tests', () => {
       const { actions } = store.__devtools_initialize_getStoreActionsMapWrapped();
       actions.increment();
 
-      const mutationLog = msgs('ADD_ACTION_LOG').find((p) => p.subAction === 'setState' || p.case === 'resolved');
+      const mutationLog = msgs('ADD_ACTION_LOG').find(
+        (p) => p.subAction === 'setState' || p.case === 'resolved',
+      );
       expect(mutationLog).toBeDefined();
     });
   });
@@ -1445,8 +1549,10 @@ describe('Real GlobalStore comprehensive workflow tests', () => {
       const storeA = new GlobalStore({ x: 1 }, { name: 'store-a' } as Any) as Any;
       const storeB = new GlobalStore({ y: 2 }, { name: 'store-b' } as Any) as Any;
 
-      if (storeA._DEV_TOOLS_STORE_ID == null) global.REACT_GLOBAL_STATE_HOOK_DEBUG(storeA, undefined, '/stores/a.ts');
-      if (storeB._DEV_TOOLS_STORE_ID == null) global.REACT_GLOBAL_STATE_HOOK_DEBUG(storeB, undefined, '/stores/b.ts');
+      if (storeA._DEV_TOOLS_STORE_ID == null)
+        global.REACT_GLOBAL_STATE_HOOK_DEBUG(storeA, undefined, '/stores/a.ts');
+      if (storeB._DEV_TOOLS_STORE_ID == null)
+        global.REACT_GLOBAL_STATE_HOOK_DEBUG(storeB, undefined, '/stores/b.ts');
 
       const registrations = msgs('ADD_GLOBAL_STATE');
       expect(registrations.length).toBeGreaterThanOrEqual(2);
@@ -1528,7 +1634,7 @@ describe('Real GlobalStore comprehensive workflow tests', () => {
             payload: { actionName: 'increment', globalStateId: storeId, parameters: '' },
           },
           source: window,
-        })
+        }),
       );
 
       expect(store.getState().count).toBe(before + 1);
@@ -1548,7 +1654,7 @@ describe('Real GlobalStore comprehensive workflow tests', () => {
             payload: { actionName: 'add', globalStateId: storeId, parameters: '7' },
           },
           source: window,
-        })
+        }),
       );
 
       expect(store.getState().count).toBe(before + 7);
@@ -1566,7 +1672,7 @@ describe('Real GlobalStore comprehensive workflow tests', () => {
             payload: { globalStateId: storeId, parameters: '{ count: 99 }' },
           },
           source: window,
-        })
+        }),
       );
 
       // Wrapped setState logs a START_ACTION (STATE_ACTION type)
@@ -1586,7 +1692,7 @@ describe('Real GlobalStore comprehensive workflow tests', () => {
             payload: { globalStateId: storeId, state: { count: 50 } },
           },
           source: window,
-        })
+        }),
       );
 
       // setState was called (wrapped) — a STATE_ACTION log is emitted
@@ -1606,7 +1712,7 @@ describe('Real GlobalStore comprehensive workflow tests', () => {
             payload: { globalStateId: storeId, parameters: '{ count: 999 }' },
           },
           source: null, // not the current window
-        })
+        }),
       );
 
       expect(msgs('START_ACTION').length).toBe(0);
@@ -1645,7 +1751,7 @@ describe('Real GlobalStore comprehensive workflow tests', () => {
       for (const wireMsg of postedMessages) {
         const internal = toInternalMessage(wireMsg);
         expect(() => assertMonkeyPathMessageJson(internal)).not.toThrow(
-          `Message with action ${wireMsg.action} should pass schema validation`
+          `Message with action ${wireMsg.action} should pass schema validation`,
         );
       }
     });
@@ -1678,9 +1784,13 @@ describe('Real GlobalStore comprehensive workflow tests', () => {
       const { actions } = store.__devtools_initialize_getStoreActionsMapWrapped();
       actions.add(7);
 
-      const starts = postedMessages.filter((m) => m.action === 'monkey-patch/START_ACTION').map(toInternalMessage);
+      const starts = postedMessages
+        .filter((m) => m.action === 'monkey-patch/START_ACTION')
+        .map(toInternalMessage);
 
-      const logs = postedMessages.filter((m) => m.action === 'monkey-patch/ADD_ACTION_LOG').map(toInternalMessage);
+      const logs = postedMessages
+        .filter((m) => m.action === 'monkey-patch/ADD_ACTION_LOG')
+        .map(toInternalMessage);
 
       // Validate all START_ACTION messages
       for (const msg of starts) {
@@ -1704,7 +1814,9 @@ describe('Real GlobalStore comprehensive workflow tests', () => {
       actions.increment();
       actions.decrement();
 
-      const updates = postedMessages.filter((m) => m.action === 'monkey-patch/UPDATE_ACTION').map(toInternalMessage);
+      const updates = postedMessages
+        .filter((m) => m.action === 'monkey-patch/UPDATE_ACTION')
+        .map(toInternalMessage);
 
       expect(updates.length).toBe(2);
 
@@ -1755,7 +1867,9 @@ describe('Real GlobalStore comprehensive workflow tests', () => {
       const hasAddLog = postedMessages.some((m) => m.action === 'monkey-patch/ADD_ACTION_LOG');
       const hasUpdate = postedMessages.some((m) => m.action === 'monkey-patch/UPDATE_ACTION');
       const hasStateStart = postedMessages.some(
-        (m) => m.action === 'monkey-patch/START_ACTION' && toInternalMessage(m).payload.actionType === 'STATE_ACTION'
+        (m) =>
+          m.action === 'monkey-patch/START_ACTION' &&
+          toInternalMessage(m).payload.actionType === 'STATE_ACTION',
       );
 
       expect(hasStart).toBe(true);

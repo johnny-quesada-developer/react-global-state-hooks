@@ -1,4 +1,5 @@
 export * from './Badge';
+export * from './Modal';
 export * from './SimpleFilter';
 export * from './Tooltip';
 export * from './Resizable';

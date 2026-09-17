@@ -14,12 +14,11 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./vitest.setup.ts'],
+    // Minimal per-test output: with this many tests the default verbose reporter dominates runtime.
+    reporters: ['dot'],
     // The mobile variant runs the neutral suite (test/universal) plus its own async-storage
     // tests (test/native).
-    include: [
-      '../test/universal/**/*.{test,spec}.{ts,tsx}',
-      '../test/native/**/*.{test,spec}.{ts,tsx}',
-    ],
+    include: ['../test/universal/**/*.{test,spec}.{ts,tsx}', '../test/native/**/*.{test,spec}.{ts,tsx}'],
   },
   resolve: {
     alias: [
