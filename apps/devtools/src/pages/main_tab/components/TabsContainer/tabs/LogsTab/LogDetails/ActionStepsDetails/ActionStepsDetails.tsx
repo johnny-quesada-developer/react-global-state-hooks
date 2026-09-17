@@ -46,7 +46,7 @@ export const ActionStepsDetails: React.FC<ActionStepsDetailsProps> = ({
         setSelectedLogs([previousItem, item.value]);
       },
     },
-    [logs]
+    [logs],
   );
 
   useEffect(() => {
@@ -59,7 +59,10 @@ export const ActionStepsDetails: React.FC<ActionStepsDetailsProps> = ({
 
   return (
     <Resizable initialLeft="25%" className={cn('StateDiffPerAction', className)} {...props}>
-      <ul ref={listRef} className="flex-grow shrink-0 basis-0 flex flex-col overflow-y-scroll text-black h-fit">
+      <ul
+        ref={listRef}
+        className="flex-grow shrink-0 basis-0 flex flex-col overflow-y-scroll text-black h-fit"
+      >
         <li>
           <h1 className="px-4 py-2 bg-white border-b border-gray-400 font-semibold text-gray-500 sticky top-0">
             Execution Steps
@@ -67,7 +70,13 @@ export const ActionStepsDetails: React.FC<ActionStepsDetailsProps> = ({
         </li>
 
         {navigation.navigationItems.map((navItem) => (
-          <LogListItem key={navItem.key} navItem={navItem} className="border-b border-gray-400 first:border-none" />
+          <LogListItem
+            key={navItem.key}
+            logId={navItem.value.logId}
+            index={navItem.value.index + 1}
+            {...navItem.props}
+            className="border-b border-gray-400 first:border-none"
+          />
         ))}
       </ul>
 

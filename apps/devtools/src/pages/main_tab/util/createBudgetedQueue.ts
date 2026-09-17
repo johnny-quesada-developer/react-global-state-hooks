@@ -16,7 +16,7 @@ export type BudgetedQueue<T> = {
   size: () => number;
 };
 
-const budgetMs = 10;
+const budgetMs = 8;
 const breakMs = budgetMs;
 
 export const createBudgetedQueue = <T>(process: (item: T) => void): BudgetedQueue<T> => {

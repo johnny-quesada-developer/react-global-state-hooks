@@ -3,42 +3,47 @@ import clsx from 'clsx';
 import { cn } from '@src/shared/tools/cn';
 import { actionLabel, selectableRow } from '@src/shared/tools';
 import { useIsSelectedLog } from '../_hooks';
-import { StateLog } from '@src/pages/main_tab/hooks/globalStates/helpers/useGlobalStates.types';
-import type { NavItem } from '@src/shared/facelessComponents/useListNavigation';
+import { useLog } from '@src/pages/main_tab/hooks/logsArray';
 import { formatTimeToHHMMSS } from '@src/shared/tools/date';
 import { DATA_LIST_SELECTED } from '@src/pages/main_tab/util/listFocusBridge';
 import { DropdownMenuLog } from './components';
 
+export const logListItemClass = 'ListItemLog';
+
 export type LogListItemProps = React.HTMLAttributes<HTMLLIElement> & {
-  navItem: NavItem<StateLog>;
+  logId: string;
+  index: number;
 };
 
-export const LogListItem = ({ className = '', navItem, ...props }: LogListItemProps) => {
-  const [isSelectedLog] = useIsSelectedLog(navItem.value?.logId);
-  const actionLog = navItem.value ?? {};
-  const dateString = formatTimeToHHMMSS(actionLog.timestamp);
-  const title = `${dateString} / ${actionLog.parentAction} / ${actionLog.subAction ?? actionLog.case}`;
-  const isRejected = actionLog.case === 'rejected';
+export const LogListItem = ({ className = '', logId, index, ...props }: LogListItemProps) => {
+  const log = useLog(logId);
+  const [isSelectedLog] = useIsSelectedLog(logId);
+
+  if (!log) return null;
+
+  const dateString = formatTimeToHHMMSS(log.timestamp);
+  const title = `${dateString} / ${log.parentAction} / ${log.subAction ?? log.case}`;
+  const isRejected = log.case === 'rejected';
 
   return (
     <li
+      id={logId}
+      tabIndex={-1}
+      {...(isSelectedLog ? { [DATA_LIST_SELECTED]: true } : {})}
       {...props}
       title={title}
-      {...navItem.props}
-      {...(isSelectedLog ? { [DATA_LIST_SELECTED]: true } : {})}
       className={clsx(
-        'ListItemLog',
+        logListItemClass,
         selectableRow({ selected: isSelectedLog, error: isRejected }),
         className,
       )}
     >
       <button className="text-start flex-1">
-        <span className={actionLabel({ actionType: actionLog.parentActionType, error: isRejected })}>
-          <span className={cn('text-xxs', 'text-gray-500 dark:text-white')}>{actionLog.index + 1}.</span>{' '}
-          {actionLog.parentAction}
+        <span className={actionLabel({ actionType: log.parentActionType, error: isRejected })}>
+          <span className={cn('text-xxs', 'text-gray-500 dark:text-white')}>{index}.</span> {log.parentAction}
         </span>
 
-        <span>/ {actionLog.subAction ?? actionLog.case}</span>
+        <span>/ {log.subAction ?? log.case}</span>
         {isRejected && <span className="text-red-500 text-xxs">❌</span>}
       </button>
 
@@ -46,7 +51,7 @@ export const LogListItem = ({ className = '', navItem, ...props }: LogListItemPr
         {dateString}
       </span>
 
-      <DropdownMenuLog className="" log={actionLog} />
+      <DropdownMenuLog className="" log={log} />
     </li>
   );
 };
