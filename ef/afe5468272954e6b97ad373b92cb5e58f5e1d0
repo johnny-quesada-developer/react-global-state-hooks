@@ -1,0 +1,38 @@
+apps/devtools/src/pages/main_tab/components/GlobalStateList/GlobalStateList.tsx
+  h_6029769cf9ac60 6,54,83-84,92-97
+  h_6029769cf9ac60 85-91
+apps/devtools/src/pages/main_tab/components/GlobalStateList/GlobalStateItem/GlobalStateItem.tsx
+  h_6029769cf9ac60 3-4,50
+apps/devtools/src/pages/main_tab/util/listFocusBridge.ts
+  h_6029769cf9ac60 3,10-12,17,20-23
+yarn.lock
+  h_6029769cf9ac60 6777-6781
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogsList/LogsList.tsx
+  h_6029769cf9ac60 1,5,33,38-52,54,77-87
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogListItem/LogListItem.tsx
+  h_6029769cf9ac60 2,4,9,28-29,31,36,41
+package.json
+  h_6029769cf9ac60 81-82,101-106
+apps/devtools/src/shared/tools/index.ts
+  h_6029769cf9ac60 21
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/ActionLogListItem/ActionLogListItem.tsx
+  h_6029769cf9ac60 2,4,44,46-49,54
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogsPerActionList/LogsPerActionList.tsx
+  h_6029769cf9ac60 175,182-183
+  h_6029769cf9ac60 173,176-181
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/ActionsTab/components/ActionsList/ActionsList.tsx
+  h_6029769cf9ac60 2,4,30,44-46,49-51
+apps/devtools/src/shared/tools/selectableRow.ts
+  h_6029769cf9ac60 1-63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "efafe5468272954e6b97ad373b92cb5e58f5e1d0",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
