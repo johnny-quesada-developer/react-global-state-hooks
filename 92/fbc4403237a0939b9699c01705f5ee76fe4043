@@ -1,0 +1,33 @@
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/_manualDomList/ManualDomRow.tsx
+  h_6029769cf9ac60 1-26
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogsList/LogsList.tsx
+  h_6029769cf9ac60 1,3,7,13,15-17,19,21,23,27-76,78-79,82-89
+apps/devtools/src/pages/main_tab/util/listFocusBridge.ts
+  h_6029769cf9ac60 4,26-36
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogDetails/ActionStepsDetails/ActionStepsDetails.tsx
+  h_6029769cf9ac60 11,62-76,84-87
+  h_6029769cf9ac60 54-59
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/_manualDomList/index.ts
+  h_6029769cf9ac60 1-4
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/LogsPerActionList/LogsPerActionList.tsx
+  h_6029769cf9ac60 1-2,4,10,19-94,96-102,105-112
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/_manualDomList/ManualDomListShell.tsx
+  h_6029769cf9ac60 1-54
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/_manualDomList/manualDomList.utils.ts
+  h_6029769cf9ac60 1-36
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/_hooks/selectedLogs/selectedLogs.ts
+  h_6029769cf9ac60 12-18,23-30,32,34,38
+apps/devtools/src/pages/main_tab/components/TabsContainer/tabs/LogsTab/_manualDomList/useManualDomList.ts
+  h_6029769cf9ac60 1-134
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "92fbc4403237a0939b9699c01705f5ee76fe4043",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
