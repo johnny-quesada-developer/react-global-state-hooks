@@ -1,0 +1,36 @@
+apps/devtools/src/pages/main_tab/hooks/globalStates/__tests__/globalStates.test.ts
+  h_6029769cf9ac60 236-289
+apps/devtools/src/pages/main_tab/hooks/globalStates/globalStates.ts
+  h_6029769cf9ac60 133-140,142-144,146-157,321-395
+apps/devtools/src/shared/schema/GlobalStateJson.ts
+  h_6029769cf9ac60 22-24
+apps/devtools/src/shared/schema/MonkeyPathMessageJson/MonkeyPathMessageJson.ts
+  h_6029769cf9ac60 3,13,25,33-35
+apps/devtools/src/shared/schema/MonkeyPathMessageJson/ReAddGlobalStateMessage.ts
+  h_6029769cf9ac60 1-20
+libs/monkey_patch/__test__/monkey_patch.integration.test.ts
+  h_6029769cf9ac60 702-780
+libs/monkey_patch/src/monkey_patch.ts
+  h_6029769cf9ac60 69,71,75,168-172,175-179,185-192,307-310,521-570
+libs/monkey_patch/src/monkey_patch.utils.ts
+  h_6029769cf9ac60 47,58-62,64-70,81-84
+libs/monkey_patch/src/schema/GlobalStateJson.ts
+  h_6029769cf9ac60 17-19
+libs/monkey_patch/src/schema/MonkeyPathMessageJson/MonkeyPathMessageJson.ts
+  h_6029769cf9ac60 3,13,25,33-35
+libs/monkey_patch/src/schema/MonkeyPathMessageJson/ReAddGlobalStateMessage.ts
+  h_6029769cf9ac60 1-20
+libs/monkey_patch/src/tools/react.ts
+  h_6029769cf9ac60 15-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "094d74d4dbe9f764a38e76cc91cf922ec773efc5",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
