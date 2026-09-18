@@ -1,24 +1,26 @@
 /**
- * A store's `globalStatePath` is a `new Error().stack` captured where the store is created. For
- * stores created during a React render (context providers, or stores made inside a component), the
- * stack runs through React's internals, which under Vite are served from the dependency optimizer
- * with a cache-busting query, e.g.:
+ * A store's `globalStatePath` is a `new Error().stack` captured where the store is created. Under a
+ * bundler dev server the stack frame URLs carry cache-busting query strings, e.g.:
  *
- *   at mountState (http://localhost:5199/node_modules/.vite/deps/chunk-EQIWKXWS.js?v=ba65e710:12005:28)
+ *   at useState (http://localhost:5199/node_modules/.vite/deps/chunk-EQIWKXWS.js?v=ba65e710:12005:28)
+ *   at http://localhost:5199/src/stores/auth.ts?t=1699999999999:15:30
  *
- * That `?v=<hash>` token changes whenever Vite re-optimizes deps (restarts, cache invalidation), so
- * the SAME creation site produces a DIFFERENT stack string across reloads. That breaks matching a
- * loaded snapshot's stores to the live ones by path.
+ * Vite appends `?v=<hash>` to optimized dep chunks (changes when deps re-optimize) and `?t=<ts>` to
+ * a module's own URL on every HMR update (changes on EVERY edit). The SAME creation site therefore
+ * produces a DIFFERENT stack string across reloads/HMR. That breaks identifying a store by path —
+ * both for matching a loaded snapshot and for detecting that an HMR re-eval recreated a store at
+ * the same path.
  *
- * Normalizing strips only that volatile optimizer token, keeping the stable structure (function
- * names, module paths, line:col). Everything else is left untouched.
+ * A query string on a stack-frame URL is always a bundler artifact, never part of the store's
+ * identity, so we strip the whole query (everything from `?` up to the `:line:col`, a `)`, or
+ * whitespace). The stable structure (function names, module path, line:col) is preserved.
  *
- * Example: `chunk-EQIWKXWS.js?v=ba65e710:12005:28` -> `chunk-EQIWKXWS.js:12005:28`.
+ * Example: `.../auth.ts?t=1699999999999:15:30` -> `.../auth.ts:15:30`.
  */
 export const normalizeStatePath = (globalStatePath: string): string => {
   if (!globalStatePath) return globalStatePath;
 
-  // Remove a `?v=<token>` (Vite dep-optimizer cache-bust) wherever it appears in the stack. The
-  // token is the run of characters after `?v=` up to the next `:` (line number), `)` or whitespace.
-  return globalStatePath.replace(/\?v=[^:)\s]+/g, '');
+  // Drop the query (`?...`) from every frame URL. The query runs from `?` up to the next `:` (the
+  // line number), `)`, or whitespace — none of which can appear inside a URL query here.
+  return globalStatePath.replace(/\?[^:)\s]*/g, '');
 };

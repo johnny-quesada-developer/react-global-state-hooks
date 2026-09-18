@@ -7,6 +7,7 @@ import sendMessageFromMonkeyPath from './sendMessageFromMonkeyPath';
 import { SubActionJsonEnum } from './schema/SubActionJson';
 import { softClone } from './tools/softClone';
 import { EntityAdapter } from './tools/EntityAdapter';
+import { normalizeStorePath } from './tools/normalizeStorePath';
 import {
   onReactDevToolsConnect,
   getGlobalThis,
@@ -161,8 +162,15 @@ onReactDevToolsConnect(() => {
 });
 
 // connector function, extends the instances of GlobalStore to add devtool capabilities
-global.REACT_GLOBAL_STATE_HOOK_DEBUG = (store, args, storePath) => {
+global.REACT_GLOBAL_STATE_HOOK_DEBUG = (store, args, rawStorePath) => {
   const storeId = uniqueId('store-id:');
+
+  // Strip bundler cache-bust query strings (Vite's `?v=`/`?t=`) from the creation-stack path so it
+  // is STABLE across reloads and HMR. Without this, the edited module's own frame gets a fresh
+  // `?t=<timestamp>` on every HMR, so the same creation site never matches its previous path and
+  // the untrack-on-same-path check below silently fails (leaving duplicate instances). Done once at
+  // creation, not on the hot path.
+  const storePath = normalizeStorePath(rawStorePath);
 
   // Tie this store to the fiber creating it (if inside a render), so it's cleaned up when that
   // component unmounts. Module-scope stores have no current fiber and are skipped. The return

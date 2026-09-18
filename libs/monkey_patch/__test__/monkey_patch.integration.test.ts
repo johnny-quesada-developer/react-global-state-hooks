@@ -741,6 +741,27 @@ describe('monkey_patch.ts - Integration Tests', () => {
       expect(parsePayload(addCall).globalStateId).toBe(second._DEV_TOOLS_STORE_ID);
     });
 
+    it('untracks across an HMR-changed module URL query (?t= / ?v= differ but the site is the same)', () => {
+      // Vite appends a fresh `?t=<timestamp>` to the edited module's own stack frame on every HMR,
+      // so the raw paths differ between the original and the re-evaluated store. Normalization must
+      // strip the query so they still match and the old instance is untracked (not duplicated).
+      const original = 'Error\n    at http://localhost:5199/src/stores/auth.ts?t=1111111111111:15:30';
+      const afterHmr = 'Error\n    at http://localhost:5199/src/stores/auth.ts?t=2222222222222:15:30';
+
+      const first = makeMockStore();
+      global.REACT_GLOBAL_STATE_HOOK_DEBUG(first, undefined, original);
+      const firstId = first._DEV_TOOLS_STORE_ID;
+
+      postedMessages.length = 0;
+
+      const second = makeMockStore();
+      global.REACT_GLOBAL_STATE_HOOK_DEBUG(second, undefined, afterHmr);
+
+      expect(deletesFor(firstId).length).toBe(1);
+      const addCall = postedMessages.find((m) => m.action === 'monkey-patch/ADD_GLOBAL_STATE');
+      expect(parsePayload(addCall).globalStateId).toBe(second._DEV_TOOLS_STORE_ID);
+    });
+
     it('does NOT untrack a store at a different path', () => {
       const a = makeMockStore();
       const b = makeMockStore();
