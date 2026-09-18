@@ -1,0 +1,22 @@
+apps/devtools/src/pages/main_tab/hooks/globalStates/__tests__/normalizeStatePath.test.ts
+  h_6029769cf9ac60 24-35,38
+apps/devtools/src/pages/main_tab/hooks/globalStates/helpers/normalizeStatePath.ts
+  h_6029769cf9ac60 2-3,5-6,8-12,14-16,18,23-25
+libs/monkey_patch/__test__/monkey_patch.integration.test.ts
+  h_6029769cf9ac60 744-764
+libs/monkey_patch/src/monkey_patch.ts
+  h_6029769cf9ac60 10,165,168-174
+libs/monkey_patch/src/tools/normalizeStorePath.ts
+  h_6029769cf9ac60 1-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "7cb6243f809f3b87768f3aed2d4759e0c1c46514",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
