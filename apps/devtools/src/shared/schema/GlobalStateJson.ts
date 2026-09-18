@@ -19,6 +19,9 @@ export const globalStateJsonSchema = z.object({
   initialState: z.unknown(),
   globalStatePath: z.string(),
   isContext: z.boolean(),
+  // True when created during a React render (fiber lifecycle). Non-fiber stores are the ones the
+  // untrack-on-same-path / re-announce-on-interaction flow applies to.
+  isFiber: z.boolean().optional(),
 });
 
 export type GlobalStateJson = z.infer<typeof globalStateJsonSchema>;

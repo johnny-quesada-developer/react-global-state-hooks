@@ -66,12 +66,13 @@ const addStoreIdToFiber = (fiber: Fiber, storeId: string) => {
 };
 
 /** Associate a store with the fiber that created it (if any). No-op at module scope. */
-const registerStoreForFiber = (storeId: string) => {
+const registerStoreForFiber = (storeId: string): boolean => {
   const fiber = getCurrentFiber();
-  if (!fiber) return;
+  if (!fiber) return false;
 
   addStoreIdToFiber(fiber, storeId);
   if (fiber.alternate) addStoreIdToFiber(fiber.alternate, storeId);
+  return true;
 };
 
 addFiberUnmountSubscription((fiber) => {
@@ -164,14 +165,30 @@ global.REACT_GLOBAL_STATE_HOOK_DEBUG = (store, args, storePath) => {
   const storeId = uniqueId('store-id:');
 
   // Tie this store to the fiber creating it (if inside a render), so it's cleaned up when that
-  // component unmounts. Module-scope stores have no current fiber and are skipped.
-  registerStoreForFiber(storeId);
+  // component unmounts. Module-scope stores have no current fiber and are skipped. The return
+  // value classifies the store: fiber stores have a real lifecycle; non-fiber (module-scope /
+  // dynamic) stores do not, and are handled by the untrack-on-same-path + re-announce-on-interaction
+  // flow below.
+  const isFiber = registerStoreForFiber(storeId);
 
   store._DEV_TOOLS_STORE_ID = storeId;
+  store._DEV_TOOLS_FIBER = isFiber;
+  // Stash creation inputs on the instance so an untracked non-fiber store can rebuild its own
+  // announce payload later (it will no longer be in globalStatesById to look them up).
+  store._DEV_TOOLS_ARGS = args;
+  store._DEV_TOOLS_PATH = storePath;
 
   store._DEV_TOOLS_IS_CONTEXT = Boolean(
     (args as { __devtools_isContextStore?: boolean } | undefined)?.__devtools_isContextStore,
   );
+
+  // A non-fiber store has no unmount lifecycle, so DevTools can only ever track ONE instance per
+  // creation path. When a new one appears at a path already held by another non-fiber store, the
+  // previous id is stale (HMR re-eval) OR the panel simply can't show both (dynamic factory) —
+  // either way we stop tracking the previous id(s) at that path. Removing from DevTools does not
+  // kill the store: if a superseded store is still alive, its next instrumented setState
+  // re-announces it (see makeSetStateWrapper).
+  if (!isFiber) untrackNonFiberStoresAtPath(storePath, storeId);
 
   // store the global state instance by its id for later usage
   // this reference allow the devtool panel to request interactions with specific global states
@@ -287,6 +304,10 @@ export function makeSetStateWrapper(
   logCallback: (args: { state: unknown; config: SetStateConfigJson }) => void,
 ) {
   return (setter: unknown | (() => unknown), config: SetStateConfigJson = {}) => {
+    // If this non-fiber store was untracked (superseded at its path but still alive), bring it back
+    // BEFORE logging the mutation so the log lands on a tracked store.
+    reAnnounceIfUntracked(args.store);
+
     const previousState = args.store.state;
     const newState = isFunction(setter) ? setter(previousState) : setter;
 
@@ -494,6 +515,56 @@ export function sendDeleteGlobalStateMessage(globalStateId: string) {
     payload: {
       globalStateId,
     },
+  });
+}
+
+/**
+ * Stop tracking every NON-FIBER store currently registered at `storePath`, except `keepId`.
+ *
+ * A non-fiber store has no unmount lifecycle, so only one instance per path can be tracked. When a
+ * new one is created at a path already held by others (HMR re-eval, or a dynamic factory producing
+ * a fresh instance), the previous ones are untracked. This does NOT kill them: a still-alive store
+ * re-announces itself on its next setState (see reAnnounceIfUntracked).
+ */
+function untrackNonFiberStoresAtPath(storePath: string, keepId: string) {
+  for (const [id, entry] of globalStatesById.entries()) {
+    if (id === keepId) continue;
+    if (entry.store._DEV_TOOLS_FIBER) continue; // fiber stores keep their own lifecycle
+    if (entry.storePath !== storePath) continue;
+
+    sendDeleteGlobalStateMessage(id);
+  }
+}
+
+/**
+ * Self-heal a non-fiber store that DevTools stopped tracking (e.g. it was superseded at its path by
+ * a sibling created later, but it is still alive and now mutating). We re-register it and re-emit a
+ * RE_ADD_GLOBAL_STATE — a distinct message from ADD_GLOBAL_STATE so it does NOT wipe the path's
+ * other tracked stores; it just brings this one back. No-op for fiber stores (real lifecycle) and
+ * for stores already tracked.
+ */
+function reAnnounceIfUntracked(store: GlobalStoreParameter) {
+  if (store._DEV_TOOLS_FIBER) return;
+
+  const storeId = store._DEV_TOOLS_STORE_ID;
+  // No id => never instrumented/registered (e.g. a bare store in a unit test). Nothing to re-add.
+  if (!storeId) return;
+  if (globalStatesById.has(storeId)) return;
+
+  const storePath = store._DEV_TOOLS_PATH ?? '';
+  const args = store._DEV_TOOLS_ARGS;
+
+  globalStatesById.add(storeId, { store, args, storePath });
+
+  sendMessageFromMonkeyPath({
+    id: uniqueId('path:'),
+    action: 'RE_ADD_GLOBAL_STATE',
+    payload: getGlobalStateMetaPayload({
+      globalState: store,
+      globalStateId: storeId,
+      globalStatePath: storePath,
+      args,
+    }),
   });
 }
 

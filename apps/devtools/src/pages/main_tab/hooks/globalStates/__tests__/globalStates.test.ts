@@ -233,4 +233,58 @@ describe('globalStates reducers', () => {
       expect(getDevMeta(b.globalStateId)).toBeUndefined();
     });
   });
+
+  describe('non-fiber path replacement (ADD wipes, RE_ADD does not)', () => {
+    const reAddState = (json: GlobalStateJson) => actions.RE_ADD_GLOBAL_STATE(wrap(json));
+
+    it('ADD_GLOBAL_STATE with isFiber:false replaces the previous non-fiber store at that path', () => {
+      const path = '/src/stores/hmr.ts';
+      const first = makeGlobalStateJson({ globalStatePath: path, isFiber: false, name: 'first' });
+      addState(first);
+      expect(getMeta(first.globalStateId)).toBeDefined();
+
+      const second = makeGlobalStateJson({ globalStatePath: path, isFiber: false, name: 'second' });
+      addState(second);
+
+      // Old one wiped, new one present.
+      expect(getMeta(first.globalStateId)).toBeUndefined();
+      expect(getMeta(second.globalStateId)).toBeDefined();
+      expect(getActionCount(first.globalStateId)).toBe(0);
+    });
+
+    it('ADD_GLOBAL_STATE with isFiber:true keeps multiple instances at the same path', () => {
+      const path = '/src/context/Provider.tsx';
+      const a = makeGlobalStateJson({ globalStatePath: path, isFiber: true, name: 'ctx' });
+      const b = makeGlobalStateJson({ globalStatePath: path, isFiber: true, name: 'ctx' });
+      addState(a);
+      addState(b);
+
+      expect(getMeta(a.globalStateId)).toBeDefined();
+      expect(getMeta(b.globalStateId)).toBeDefined();
+    });
+
+    it('ADD_GLOBAL_STATE with isFiber undefined does not wipe (back-compat)', () => {
+      const path = '/src/stores/legacy.ts';
+      const a = makeGlobalStateJson({ globalStatePath: path, name: 'a' });
+      const b = makeGlobalStateJson({ globalStatePath: path, name: 'b' });
+      addState(a);
+      addState(b);
+
+      expect(getMeta(a.globalStateId)).toBeDefined();
+      expect(getMeta(b.globalStateId)).toBeDefined();
+    });
+
+    it('RE_ADD_GLOBAL_STATE adds a store without wiping others at the same path', () => {
+      const path = '/src/stores/dynamic.ts';
+      const live = makeGlobalStateJson({ globalStatePath: path, isFiber: false, name: 'live' });
+      addState(live);
+
+      // A superseded-but-alive store re-announces itself; must NOT remove `live`.
+      const revived = makeGlobalStateJson({ globalStatePath: path, isFiber: false, name: 'revived' });
+      reAddState(revived);
+
+      expect(getMeta(live.globalStateId)).toBeDefined();
+      expect(getMeta(revived.globalStateId)).toBeDefined();
+    });
+  });
 });

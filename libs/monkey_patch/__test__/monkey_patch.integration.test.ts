@@ -699,6 +699,85 @@ describe('monkey_patch.ts - Integration Tests', () => {
     });
   });
 
+  describe('non-fiber same-path lifecycle (HMR / dynamic recreation)', () => {
+    const parsePayload = (msg: Any): Any =>
+      typeof msg.payload === 'string' ? JSON.parse(msg.payload) : msg.payload;
+
+    const makeMockStore = (state: Any = { count: 0 }): Any => ({
+      state,
+      setState: vi.fn(),
+      getState: vi.fn(() => state),
+      getMainHook: vi.fn(() => ({ state, setState: vi.fn() })),
+      dispose: vi.fn(),
+      getStoreActionsMap: vi.fn(() => ({ actions: null, storeTools: {} })),
+      createSelectorHook: vi.fn(() => vi.fn()),
+    });
+
+    const deletesFor = (id: string) =>
+      postedMessages.filter(
+        (m) => m.action === 'monkey-patch/DELETE_GLOBAL_STATE' && parsePayload(m).globalStateId === id,
+      );
+
+    it('untracks the previous non-fiber store when a new one is created at the same path', () => {
+      const path = '/src/stores/hmr-counter.ts';
+
+      const first = makeMockStore();
+      global.REACT_GLOBAL_STATE_HOOK_DEBUG(first, undefined, path);
+      const firstId = first._DEV_TOOLS_STORE_ID;
+
+      // Module-scope creation => not inside a fiber.
+      expect(first._DEV_TOOLS_FIBER).toBe(false);
+
+      postedMessages.length = 0;
+
+      // A new store appears at the SAME path (HMR re-eval).
+      const second = makeMockStore();
+      global.REACT_GLOBAL_STATE_HOOK_DEBUG(second, undefined, path);
+
+      // The previous id is untracked, and the new one is announced.
+      expect(deletesFor(firstId).length).toBe(1);
+      const addCall = postedMessages.find((m) => m.action === 'monkey-patch/ADD_GLOBAL_STATE');
+      expect(addCall).toBeDefined();
+      expect(parsePayload(addCall).globalStateId).toBe(second._DEV_TOOLS_STORE_ID);
+    });
+
+    it('does NOT untrack a store at a different path', () => {
+      const a = makeMockStore();
+      const b = makeMockStore();
+      global.REACT_GLOBAL_STATE_HOOK_DEBUG(a, undefined, '/src/stores/a.ts');
+      const aId = a._DEV_TOOLS_STORE_ID;
+
+      postedMessages.length = 0;
+      global.REACT_GLOBAL_STATE_HOOK_DEBUG(b, undefined, '/src/stores/b.ts');
+
+      expect(deletesFor(aId).length).toBe(0);
+    });
+
+    it('re-announces (RE_ADD_GLOBAL_STATE) an untracked non-fiber store on its next setState', () => {
+      const path = '/src/stores/re-add.ts';
+
+      // Build a real store so the instrumented setState (which triggers re-announce) is active.
+      const store = new GlobalStore({ count: 0 }, { name: 're-add' }) as Any;
+      global.REACT_GLOBAL_STATE_HOOK_DEBUG(store, undefined, path);
+      const storeId = store._DEV_TOOLS_STORE_ID;
+
+      // Supersede it at the same path so the first store gets untracked.
+      const successor = makeMockStore();
+      global.REACT_GLOBAL_STATE_HOOK_DEBUG(successor, undefined, path);
+
+      postedMessages.length = 0;
+
+      // The still-alive original mutates -> it should re-announce itself via RE_ADD_GLOBAL_STATE
+      // (NOT ADD_GLOBAL_STATE, which would wipe the successor).
+      store.setState({ count: 1 });
+
+      const reAdd = postedMessages.find((m) => m.action === 'monkey-patch/RE_ADD_GLOBAL_STATE');
+      expect(reAdd).toBeDefined();
+      expect(parsePayload(reAdd).globalStateId).toBe(storeId);
+      expect(postedMessages.find((m) => m.action === 'monkey-patch/ADD_GLOBAL_STATE')).toBeUndefined();
+    });
+  });
+
   describe('React DevTools integration', () => {
     it('should register onReactDevToolsConnect callback', () => {
       expect((globalThis as Any).__reactDevToolsConnectCallback).toBeDefined();

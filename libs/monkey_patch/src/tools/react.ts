@@ -12,6 +12,11 @@ export type GlobalStoreParameter = GlobalStore<unknown, BaseMetadata, unknown> &
   _DEV_TOOLS_STORE_ID: string;
   _DEV_TOOLS_PARENT_STORE_ID: string;
   _DEV_TOOLS_IS_CONTEXT?: boolean;
+  /** True when the store was created during a React render (has a fiber lifecycle). */
+  _DEV_TOOLS_FIBER?: boolean;
+  /** Creation args + path, stashed so an untracked non-fiber store can re-announce itself. */
+  _DEV_TOOLS_ARGS?: unknown;
+  _DEV_TOOLS_PATH?: string;
 
   __onUnMountContext?: () => void;
 

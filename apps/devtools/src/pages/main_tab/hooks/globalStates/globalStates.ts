@@ -128,51 +128,33 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
       return ({ setState, getState }) => {
         assertIsNonNullable(globalStateJson, 'stateMeta should be defined');
 
-        // Normalize the creation-stack path (strip Vite's volatile `?v=<hash>` optimizer token) so
-        // it is stable across reloads and can be matched to a loaded snapshot's stores by path.
         const globalStatePath = normalizeStatePath(globalStateJson.globalStatePath);
 
-        const actionId = generateActionId();
-        const actionKey = 'initialize';
+        // A non-fiber store has no unmount lifecycle, so only one instance per creation path is
+        // tracked: a fresh ADD at a path already held by other non-fiber stores replaces them
+        // (HMR re-eval, or a dynamic factory superseding the previous instance). Fiber stores are
+        // legitimately multi-instance (e.g. several context providers at one path), so they never
+        // wipe the path.
+        if (globalStateJson.isFiber === false) {
+          removePathBeforeAdd(globalStatePath, { setState, getState });
+        }
 
-        const firstLog: ActionLogJson = {
-          logId: generateActionLogId(),
-          globalStateId: globalStateJson.globalStateId,
-          actionId,
-          payload: globalStateJson.initialState,
-          case: 'resolved',
-          scope: 'lifecycle',
-          timestamp: Date.now(),
-          subAction: SubActionJsonEnum.setState,
-        };
+        addGlobalStateEntry(globalStateJson, globalStatePath, { setState, getState });
+      };
+    },
 
-        const initialAction: ActionJson = {
-          globalStateId: globalStateJson.globalStateId,
-          actionId,
-          action: actionKey,
-          async: false,
-          start: Date.now(),
-          timing: 0,
-          logs: [firstLog],
-          actionType: ActionTypeJsonEnum.LIFE_CYCLE,
-        };
+    // Re-announce a store DevTools had lost track of (a still-alive non-fiber store that was
+    // superseded at its path, now mutating again). Unlike ADD_GLOBAL_STATE this NEVER wipes the
+    // path — it just brings this one store back alongside whatever else is tracked there.
+    RE_ADD_GLOBAL_STATE: (
+      { payload: globalStateJson }: ContentScriptMessage<GlobalStateJson>,
+      _sender: chrome.runtime.MessageSender,
+    ) => {
+      return ({ setState, getState }) => {
+        assertIsNonNullable(globalStateJson, 'stateMeta should be defined');
 
-        const globalStoreMeta: GlobalStateMetaExtended = {
-          ...globalStateJson,
-          globalStatePath,
-          currentState: globalStateJson.initialState,
-        };
-
-        const rootState = new EntityAdapter(getState());
-        rootState.add(globalStateJson.globalStateId, globalStoreMeta);
-
-        // Update derived stores BEFORE globalStates$ so that when globalStates$ triggers
-        // selectedGlobalStateId$ → useLogsArray subscriber, the action data is already available.
-        syncActionToStores(initialAction);
-        startTransition(() => {
-          setState(rootState);
-        });
-        addGlobalStateToPath(globalStatePath, globalStateJson.globalStateId);
+        const globalStatePath = normalizeStatePath(globalStateJson.globalStatePath);
+        addGlobalStateEntry(globalStateJson, globalStatePath, { setState, getState });
       };
     },
 
@@ -334,6 +316,81 @@ const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalS
 
 export function isGlobalStateAction(action: string): action is keyof GlobalStatesContextApi['actions'] {
   return Boolean(globalStates$.actions![action as keyof GlobalStatesContextApi['actions']]);
+}
+
+type GlobalStatesStoreTools = {
+  getState: () => EntityAdapter<GlobalStateId, GlobalStateMetaExtended>;
+  setState: (state: EntityAdapter<GlobalStateId, GlobalStateMetaExtended>) => void;
+};
+
+/**
+ * Register a store in the panel: create its initialize action, add its meta to globalStates$, wire
+ * the derived action stores, and index it by path. Shared by ADD_GLOBAL_STATE and
+ * RE_ADD_GLOBAL_STATE (the difference between them is only whether the path is wiped first).
+ */
+function addGlobalStateEntry(
+  globalStateJson: GlobalStateJson,
+  globalStatePath: string,
+  { setState, getState }: GlobalStatesStoreTools,
+) {
+  const actionId = generateActionId();
+
+  const firstLog: ActionLogJson = {
+    logId: generateActionLogId(),
+    globalStateId: globalStateJson.globalStateId,
+    actionId,
+    payload: globalStateJson.initialState,
+    case: 'resolved',
+    scope: 'lifecycle',
+    timestamp: Date.now(),
+    subAction: SubActionJsonEnum.setState,
+  };
+
+  const initialAction: ActionJson = {
+    globalStateId: globalStateJson.globalStateId,
+    actionId,
+    action: 'initialize',
+    async: false,
+    start: Date.now(),
+    timing: 0,
+    logs: [firstLog],
+    actionType: ActionTypeJsonEnum.LIFE_CYCLE,
+  };
+
+  const globalStoreMeta: GlobalStateMetaExtended = {
+    ...globalStateJson,
+    globalStatePath,
+    currentState: globalStateJson.initialState,
+  };
+
+  const rootState = new EntityAdapter(getState());
+  rootState.add(globalStateJson.globalStateId, globalStoreMeta);
+
+  // Update derived stores BEFORE globalStates$ so that when globalStates$ triggers
+  // selectedGlobalStateId$ → useLogsArray subscriber, the action data is already available.
+  syncActionToStores(initialAction);
+  startTransition(() => {
+    setState(rootState);
+  });
+  addGlobalStateToPath(globalStatePath, globalStateJson.globalStateId);
+}
+
+/**
+ * Remove every store currently tracked at `globalStatePath` (and its derived data) before a new
+ * store takes over that path. Used by ADD_GLOBAL_STATE for non-fiber stores.
+ */
+function removePathBeforeAdd(globalStatePath: string, { setState, getState }: GlobalStatesStoreTools) {
+  const previousState = new EntityAdapter(getState());
+  const previousIds = [...previousState.ids];
+
+  const currentState = removeGlobalStatesOfPath(globalStatePath, new EntityAdapter(previousState));
+  const removedStateIds = previousIds.filter((stateId) => !currentState.has(stateId));
+  if (!removedStateIds.length) return;
+
+  startTransition(() => {
+    setState(currentState);
+  });
+  removeStateIdsFromDerivedStores(removedStateIds);
 }
 
 export function syncActionToStores(action: ActionJson) {
