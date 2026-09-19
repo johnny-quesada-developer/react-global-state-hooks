@@ -2,15 +2,15 @@ import path from 'node:path';
 import { describeHistory, type AttemptRecord } from '../../../graph/attemptHistory';
 import { readIfExists } from '../../../shared/workspace';
 import { renderVerifyCommands, type TestMetadata } from '../steps/measureFileCoverage';
-import { describeGuidelines } from '../testingGuidelines';
+import { describeGuidelines, type Guideline } from '../testingGuidelines';
 import type { CoverageSnapshot } from '../TrackedFile';
 import { findExampleTest } from './metadataPrompt';
 
-export function buildCoverageSystemPrompt(): string {
-  return `You raise the test coverage of one source file at a time inside a monorepo. The pipeline that runs you is deterministic: after you finish it measures coverage itself and either accepts the result or sends you the measured feedback.
+export function buildCoverageSystemPrompt({ guidelines }: { guidelines: Guideline[] }): string {
+  return `You raise the test coverage of one source file at a time. The pipeline that runs you is deterministic: after you finish it measures coverage itself and either accepts the result or sends you the measured feedback.
 
 Testing guidelines (they are scored after coverage passes):
-${describeGuidelines()}
+${describeGuidelines(guidelines)}
 
 Working rules:
 - You already receive the source, the current test file and an example test from the project. Do not re-read them unless something looks stale.

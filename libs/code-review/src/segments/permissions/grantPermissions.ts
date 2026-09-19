@@ -35,8 +35,8 @@ export async function grantPermissions({
   choice: ProviderChoice;
   files: string[];
 }): Promise<PermissionGrant> {
-  const { workspaceRoot, ask, logger, options, projectConfig } = context;
-  const bashPatterns = projectConfig.permissions.bash;
+  const { workspaceRoot, ask, logger, options, settings } = context;
+  const bashPatterns = settings.permissions.bash;
   const toGrant = (scope: PermissionScope) => buildGrant({ scope, files, workspaceRoot, bashPatterns });
   const projectLabels = toGrant('projects').editDirectories.map(
     (directory) => path.relative(workspaceRoot, directory) || '.',

@@ -95,7 +95,7 @@ const chooseProvider = async ({ context, ranked, localState }: State) => {
 
 const resolveModels = ({ context, chosen }: State): ModelTiers => {
   const definition = chosen!.definition;
-  const configured = context.projectConfig.providers[definition.id]?.models ?? {};
+  const configured = context.settings.providers[definition.id]?.models ?? {};
   return {
     fast: context.options.fastModel ?? configured.fast ?? definition.models.fast,
     capable: context.options.model ?? configured.capable ?? definition.models.capable,
@@ -106,7 +106,7 @@ const prepareChoice = (state: State) => {
   const { context, chosen } = state;
   const definition = chosen!.definition;
   const models = resolveModels(state);
-  const { maxBudgetUsdPerAttempt, attemptTimeoutMinutes } = context.projectConfig.agent;
+  const { maxBudgetUsdPerAttempt, attemptTimeoutMinutes } = context.settings.agent;
   const limits = { maxBudgetUsd: maxBudgetUsdPerAttempt, timeoutMs: attemptTimeoutMinutes * 60_000 };
   rememberChoices({
     workspaceRoot: context.workspaceRoot,
@@ -116,7 +116,7 @@ const prepareChoice = (state: State) => {
     `provider: ${definition.label} · fast model ${models.fast} (metadata, scoring) · capable model ${models.capable} (edits)`,
   );
   context.logger.detail(
-    `override models with --model / --fast-model or providers.<id>.models in review.config.json · per attempt: max $${maxBudgetUsdPerAttempt}, ${attemptTimeoutMinutes} min`,
+    `override models with --model / --fast-model or providers.<id>.models in settings.ts · per attempt: max $${maxBudgetUsdPerAttempt}, ${attemptTimeoutMinutes} min`,
   );
 
   const choice: ProviderChoice = {

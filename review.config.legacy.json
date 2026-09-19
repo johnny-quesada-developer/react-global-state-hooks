@@ -1,0 +1,41 @@
+{
+  "rulesDirectory": "libs/code-review/rules",
+  "providers": {
+    "claude": {
+      "models": {
+        "fast": "haiku",
+        "capable": "sonnet"
+      }
+    },
+    "codex": {
+      "models": {
+        "fast": "gpt-5.1-codex-mini",
+        "capable": "gpt-5.1-codex"
+      }
+    },
+    "kiro": {
+      "models": {
+        "fast": "claude-haiku-4.5",
+        "capable": "claude-sonnet-4.5"
+      }
+    }
+  },
+  "permissions": {
+    "bash": [
+      "yarn test *",
+      "yarn vitest *",
+      "npx vitest *",
+      "npm test *",
+      "vitest *",
+      "git diff *",
+      "git status *",
+      "git log *"
+    ]
+  },
+  "agent": {
+    "maxBudgetUsdPerAttempt": 1,
+    "attemptTimeoutMinutes": 10,
+    "scoreBatchSize": 4,
+    "concurrency": 1
+  }
+}

@@ -1,4 +1,10 @@
-export const testingGuidelines = [
+export interface Guideline {
+  id: string;
+  title: string;
+  rule: string;
+}
+
+export const defaultGuidelines: Guideline[] = [
   {
     id: 'overMocking',
     title: 'Do not over-mock',
@@ -29,9 +35,10 @@ export const testingGuidelines = [
     title: 'Few dense functional tests',
     rule: 'Prefer a few robust functional tests that walk through realistic flows with several assertions over many tiny tests, because each test pays the full setup and cleanup cost.',
   },
-] as const;
+];
 
-export type GuidelineId = (typeof testingGuidelines)[number]['id'];
+/** Guidelines carrying a `score` key are the ones the quality loop actually scores; the rest (like `realEnvironment`) are general guidance included in prompts but not part of the schema. */
+export const DEFAULT_SCORED_CRITERIA = ['overMocking', 'isolation', 'globalsAvoidance', 'density', 'selfContainment'];
 
-export const describeGuidelines = () =>
-  testingGuidelines.map(({ title, rule }, index) => `${index + 1}. ${title}: ${rule}`).join('\n');
+export const describeGuidelines = (guidelines: Guideline[] = defaultGuidelines) =>
+  guidelines.map(({ title, rule }, index) => `${index + 1}. ${title}: ${rule}`).join('\n');

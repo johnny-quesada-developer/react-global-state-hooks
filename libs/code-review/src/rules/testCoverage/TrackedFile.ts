@@ -5,6 +5,7 @@ import type { QualityReview } from './prompts/testQualityPrompts';
 
 export type CoverageStatus =
   | 'pending'
+  | 'outOfScope'
   | 'notTestable'
   | 'alreadyCovered'
   | 'improved'

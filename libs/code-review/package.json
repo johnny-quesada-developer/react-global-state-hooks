@@ -1,9 +1,20 @@
 {
   "name": "code-review",
-  "private": true,
   "version": "0.1.0",
-  "description": "Deterministic LangGraph review pipelines (provider setup, target selection, rules) for the monorepo apps and libs.",
+  "description": "Deterministic LangGraph review pipelines: provider setup, target selection, a reusable configurable coverage rule and a prompt-rule engine, driven by a settings.ts + rules/ folder you own and commit in your own repository.",
   "type": "module",
+  "bin": {
+    "review": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
   "scripts": {
     "review": "tsx src/cli.ts",
     "test": "vitest run",
@@ -11,14 +22,19 @@
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix --max-warnings=0",
     "ts-check": "tsc -p tsconfig.json --noEmit",
-    "clean": "rm -rf coverage"
+    "clean": "rm -rf dist coverage",
+    "build": "yarn ts-check && yarn clean && tsc -p tsconfig.build.json && tsx esbuild.config.ts && tsx scripts/prepare-dist.ts"
   },
   "dependencies": {
     "@clack/prompts": "^1.8.1",
     "@langchain/core": "^1.1.0",
     "@langchain/langgraph": "^1.4.15",
+    "jiti": "^2.7.0",
     "minimatch": "^10.0.3",
     "typescript": "^5.8.2",
     "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0"
   }
 }

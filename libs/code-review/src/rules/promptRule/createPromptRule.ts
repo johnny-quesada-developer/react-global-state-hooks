@@ -242,12 +242,15 @@ export function createPromptRule(definition: PromptRuleDefinition): Rule {
     title: definition.title,
     description: definition.description,
     async run(params): Promise<RuleReport> {
-      const { workspaceRoot, projectConfig, options, run } = params.context;
+      const { workspaceRoot, settings, options, run } = params.context;
       const relative = (file: string) => path.relative(workspaceRoot, file);
       const cache: ResultCache = createResultCache({
         reviewDirectory: run.reviewDirectory,
         ruleId: definition.id,
       });
+      // Fingerprinting the effective rule definition (not just file contents) means editing
+      // criteria/threshold/scope invalidates every earlier pass instead of trusting a stale one.
+      const cacheKeyFor = (file: string) => cache.keyFor({ files: [file], extra: JSON.stringify(definition) });
 
       const classified = params.files.map((file) => {
         const relativePath = relative(file);
@@ -260,7 +263,7 @@ export function createPromptRule(definition: PromptRuleDefinition): Rule {
               reason: 'not in the rule scope',
             }),
           };
-        if (cache.readPass(cache.keyFor({ files: [file] }))) {
+        if (cache.readPass(cacheKeyFor(file))) {
           return {
             file,
             skip: skippedResult({
@@ -285,7 +288,7 @@ export function createPromptRule(definition: PromptRuleDefinition): Rule {
                 section: buildRuleScoreUserPrompt({ workspaceRoot, file }),
               })),
               itemSchema: buildReviewSchema(definition),
-              batchSize: projectConfig.agent.scoreBatchSize,
+              batchSize: settings.agent.scoreBatchSize,
               cwd: workspaceRoot,
               logger: params.logger,
             })
@@ -296,7 +299,7 @@ export function createPromptRule(definition: PromptRuleDefinition): Rule {
         FileOutcomeWithChanges
       >({
         name: definition.id,
-        concurrency: options.concurrency ?? projectConfig.agent.concurrency,
+        concurrency: options.concurrency ?? settings.agent.concurrency,
         canRunTogether: (left, right) => path.dirname(left.file) !== path.dirname(right.file),
         processItem: async ({ file, skip }, { index, total }) => {
           if (skip) return skip;
@@ -307,8 +310,7 @@ export function createPromptRule(definition: PromptRuleDefinition): Rule {
             file,
             initialReview: initialReviews.get(relative(file)),
           });
-          if (outcome.passed)
-            cache.rememberPass(cache.keyFor({ files: [file] }), { status: outcome.result.status });
+          if (outcome.passed) cache.rememberPass(cacheKeyFor(file), { status: outcome.result.status });
           return outcome;
         },
       });

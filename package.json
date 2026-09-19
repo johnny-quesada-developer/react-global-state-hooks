@@ -31,7 +31,7 @@
     "version-bump": "node scripts/version-bump.mjs",
     "version:check": "node scripts/versions-remote.mjs",
     "coverage": "node scripts/coverage-report.mjs",
-    "review": "tsx libs/code-review/src/cli.ts",
+    "review": "review",
     "graph": "nx graph",
     "preview:dev": "nx preview:dev devtools"
   },
@@ -81,6 +81,7 @@
     "@typescript-eslint/parser": "^4.9.1",
     "@vitejs/plugin-react": "^4.3.1",
     "@vitest/coverage-v8": "^2.1.9",
+    "code-review": "*",
     "easy-cancelable-promise": "^1.0.1",
     "esbuild": "^0.24.0",
     "eslint": "^9.39.1",

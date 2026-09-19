@@ -10,6 +10,7 @@ import {
 
 const outcomeByStatus: Record<CoverageStatus, FileOutcome> = {
   pending: 'failed',
+  outOfScope: 'skipped',
   notTestable: 'skipped',
   alreadyCovered: 'passed',
   improved: 'passed',

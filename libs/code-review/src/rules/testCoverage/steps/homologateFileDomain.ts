@@ -170,7 +170,7 @@ const renderIndex = ({ baseName, hasDefaultExport }: { baseName: string; hasDefa
     .join('\n')
     .concat('\n');
 
-function renderTestSkeleton({
+export function renderTestSkeleton({
   baseName,
   runner,
 }: {

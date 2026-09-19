@@ -19,6 +19,7 @@ import {
   buildCoverageSystemPrompt,
   buildInitialCoveragePrompt,
 } from '../prompts/increaseCoveragePrompt';
+import type { Guideline } from '../testingGuidelines';
 import { meetsGoal, type CoverageSnapshot, type TestCoverageOptions, type TrackedFile } from '../TrackedFile';
 import { measureFileCoverage, type TestMetadata } from './measureFileCoverage';
 
@@ -26,6 +27,7 @@ export async function increaseFileCoverage({
   file,
   metadata,
   options,
+  guidelines,
   provider,
   workspaceRoot,
   logger,
@@ -34,13 +36,14 @@ export async function increaseFileCoverage({
   file: TrackedFile;
   metadata: TestMetadata;
   options: TestCoverageOptions;
+  guidelines: Guideline[];
   provider: AgentProvider;
   workspaceRoot: string;
   logger: Logger;
   run: RunArtifacts;
 }): Promise<TrackedFile> {
   const session = file.agentSession ?? createAgentSession();
-  const systemPrompt = buildCoverageSystemPrompt();
+  const systemPrompt = buildCoverageSystemPrompt({ guidelines });
   const progress = {
     latestCoverage: file.latestCoverage!,
     latestEditProblems: [] as string[],

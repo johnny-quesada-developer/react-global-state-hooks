@@ -8,6 +8,11 @@
       "executor": "nx:run-commands",
       "options": { "command": "yarn review", "cwd": "libs/code-review" }
     },
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/dist"],
+      "options": { "command": "yarn build", "cwd": "libs/code-review" }
+    },
     "test": {
       "executor": "nx:run-commands",
       "options": { "command": "yarn test", "cwd": "libs/code-review" }

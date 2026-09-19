@@ -22,51 +22,59 @@ import {
   buildQualityScoreUserPrompt,
   type QualityReview,
 } from '../prompts/testQualityPrompts';
+import type { Guideline } from '../testingGuidelines';
 import { meetsGoal, type TestCoverageOptions, type TrackedFile } from '../TrackedFile';
 import { flagSignals, inspectTestFile, type SignalFlag } from './inspectTestFile';
 import { measureFileCoverage, type TestMetadata } from './measureFileCoverage';
 
-export const MINIMUM_ACCEPTABLE_SCORE = 7;
+export type AdditionalQualityCheck = (params: {
+  sourcePath: string;
+  testPath: string;
+  content: string;
+}) => SignalFlag[] | Promise<SignalFlag[]>;
 
-const score = z.number().min(0).max(10);
+export const buildQualityReviewSchema = (scoredCriteria: string[]) => {
+  const score = z.number().min(0).max(10);
+  return z.object({
+    scores: z.object(Object.fromEntries(scoredCriteria.map((criterion) => [criterion, score]))),
+    flags: z.array(z.string()),
+    evidence: z.array(z.string()),
+    suggestedFixes: z.array(z.string()),
+  });
+};
 
-export const QualityReviewSchema = z.object({
-  scores: z.object({
-    overMocking: score,
-    isolation: score,
-    globalsAvoidance: score,
-    density: score,
-    selfContainment: score,
-  }),
-  flags: z.array(z.string()),
-  evidence: z.array(z.string()),
-  suggestedFixes: z.array(z.string()),
-});
-
-export const readBlockingFlags = (testPath: string): SignalFlag[] =>
-  flagSignals(inspectTestFile(fs.readFileSync(testPath, 'utf8'))).filter(({ isBlocking }) => isBlocking);
+export async function readBlockingFlags({
+  testPath,
+  additionalQualityChecks,
+}: {
+  testPath: string;
+  additionalQualityChecks?: AdditionalQualityCheck;
+}): Promise<SignalFlag[]> {
+  const content = fs.readFileSync(testPath, 'utf8');
+  const staticFlags = flagSignals(inspectTestFile(content)).filter(({ isBlocking }) => isBlocking);
+  const customFlags = additionalQualityChecks ? await additionalQualityChecks({ sourcePath: testPath, testPath, content }) : [];
+  return [...staticFlags, ...customFlags];
+}
 
 export function judgeQuality({
   review,
   blockingFlags,
+  qualityPassThreshold,
 }: {
   review: QualityReview | undefined;
   blockingFlags: SignalFlag[];
+  qualityPassThreshold: number;
 }) {
-  const lowScores = Object.entries(review?.scores ?? {}).filter(
-    ([, value]) => value < MINIMUM_ACCEPTABLE_SCORE,
-  );
+  const lowScores = Object.entries(review?.scores ?? {}).filter(([, value]) => value < qualityPassThreshold);
   const hasOnlyAcceptableScores = review !== undefined && lowScores.length === 0;
   const hasNoBlockingFlags = blockingFlags.length === 0;
   const feedback = [
     review === undefined
       ? 'AI scoring skipped: deterministic blocking problems must be fixed first'
       : hasOnlyAcceptableScores
-        ? `all scores ≥ ${MINIMUM_ACCEPTABLE_SCORE}`
+        ? `all scores ≥ ${qualityPassThreshold}`
         : `low scores: ${lowScores.map(([name, value]) => `${name} ${value}`).join(', ')}`,
-    hasNoBlockingFlags
-      ? undefined
-      : `blocking: ${blockingFlags.map(({ explanation }) => explanation).join('; ')}`,
+    hasNoBlockingFlags ? undefined : `blocking: ${blockingFlags.map(({ explanation }) => explanation).join('; ')}`,
   ].filter(Boolean);
   return { passed: hasOnlyAcceptableScores && hasNoBlockingFlags, feedback: feedback.join(' · ') };
 }
@@ -75,6 +83,10 @@ export async function reviewTestQuality({
   file,
   metadata,
   options,
+  guidelines,
+  scoredCriteria,
+  qualityPassThreshold,
+  additionalQualityChecks,
   provider,
   workspaceRoot,
   logger,
@@ -83,12 +95,18 @@ export async function reviewTestQuality({
   file: TrackedFile;
   metadata: TestMetadata;
   options: TestCoverageOptions;
+  guidelines: Guideline[];
+  scoredCriteria: string[];
+  qualityPassThreshold: number;
+  additionalQualityChecks?: AdditionalQualityCheck;
   provider: AgentProvider;
   workspaceRoot: string;
   logger: Logger;
   run: RunArtifacts;
 }): Promise<TrackedFile> {
   const session = file.agentSession ?? createAgentSession();
+  const reviewSchema = buildQualityReviewSchema(scoredCriteria);
+  const scoreSystemPrompt = buildQualityScoreSystemPrompt({ guidelines, scoredCriteria });
   const progress = {
     latestCoverage: file.latestCoverage!,
     latestReview: undefined as QualityReview | undefined,
@@ -102,14 +120,14 @@ export async function reviewTestQuality({
     analyzeStructured({
       provider,
       task: 'score-test-quality',
-      systemPrompt: buildQualityScoreSystemPrompt(),
+      systemPrompt: scoreSystemPrompt,
       prompt: buildQualityScoreUserPrompt({
         workspaceRoot,
         sourcePath: file.sourcePath,
         testPath: file.testPath!,
         signals: inspectTestFile(fs.readFileSync(file.testPath!, 'utf8')),
       }),
-      schema: QualityReviewSchema,
+      schema: reviewSchema,
       cwd: workspaceRoot,
       logger,
     });
@@ -136,14 +154,7 @@ export async function reviewTestQuality({
         blockingFlags: progress.blockingFlags,
         history,
       });
-      const edit = await runAgentEdit({
-        provider,
-        task: 'fix-test-quality',
-        prompt,
-        session,
-        workspaceRoot,
-        logger,
-      });
+      const edit = await runAgentEdit({ provider, task: 'fix-test-quality', prompt, session, workspaceRoot, logger });
       progress.usage = addUsage(progress.usage, edit.outcome.usage);
       return edit;
     },
@@ -162,11 +173,11 @@ export async function reviewTestQuality({
         }
       }
 
-      progress.blockingFlags = readBlockingFlags(file.testPath!);
+      progress.blockingFlags = await readBlockingFlags({ testPath: file.testPath!, additionalQualityChecks });
       const canSkipAiScoring = progress.blockingFlags.length > 0;
       progress.latestReview = canSkipAiScoring ? undefined : await takePendingOrScore();
 
-      const verdict = judgeQuality({ review: progress.latestReview, blockingFlags: progress.blockingFlags });
+      const verdict = judgeQuality({ review: progress.latestReview, blockingFlags: progress.blockingFlags, qualityPassThreshold });
       return {
         passed: verdict.passed,
         feedback: [verdict.feedback, ...editProblems].join(' · '),
