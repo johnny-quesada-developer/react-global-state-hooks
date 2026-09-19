@@ -1,7 +1,7 @@
 // Public API. Everything a consumer's `settings.ts` or `rules/**/*.rule.ts` may import.
 // Importing from here must be side-effect-free — it never starts the CLI.
 
-export { defineSettings, type Settings, type SettingsInput } from './shared/settings';
+export { defineProvider, defineSettings, type Settings, type SettingsInput } from './shared/settings';
 
 export { createTestCoverageRule } from './rules/testCoverage/testCoverageRule';
 export type { TestCoverageRuleOptions, TestPlacementParams } from './rules/testCoverage/testCoverageRule';
@@ -32,7 +32,18 @@ export type { RetryAssessment, RetryCheck } from './graph/retryChecks';
 
 export { analyzeStructured, StructuredOutputError } from './providers/analyzeStructured';
 export type { AgentProvider, AgentUsage, EditOutcome } from './providers/AgentProvider';
-export type { AgentSession, PermissionGrant, PermissionScope } from './providers/ProviderDefinition';
+export type {
+  AgentEvent,
+  AgentLimits,
+  AgentSession,
+  AuthStatus,
+  CommandSpec,
+  KnownProviderId,
+  PermissionGrant,
+  PermissionScope,
+  ProviderDefinition,
+  ProviderId,
+} from './providers/ProviderDefinition';
 
 export {
   agentEditRetryChecks,
@@ -45,3 +56,6 @@ export {
 export type { AgentEditResult } from './segments/rules/agentEdit';
 export { scoreInBatches } from './segments/rules/scoring';
 export type { ScoringItem } from './segments/rules/scoring';
+
+export { runCommand } from './shared/exec';
+export type { CommandResult, OutputMode, RunCommandParams } from './shared/exec';

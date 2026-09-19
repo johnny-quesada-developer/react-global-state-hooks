@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { z } from 'zod';
+import type { ProviderDefinition } from '../providers/ProviderDefinition';
 import { loadConsumerModule } from './loadConsumerModule';
 
 const ModelTiers = z.object({ fast: z.string().optional(), capable: z.string().optional() });
@@ -40,6 +41,12 @@ export type SettingsInput = z.input<typeof SettingsSchema>;
 
 /** Identity helper so a consumer's settings.ts gets type-checking/autocomplete; no transformation. */
 export const defineSettings = (settings: SettingsInput): SettingsInput => settings;
+
+/**
+ * Identity helper so a consumer's `providers/<id>.provider.ts` gets type-checking/autocomplete
+ * against the full `ProviderDefinition` shape; no transformation — mirrors `defineSettings`.
+ */
+export const defineProvider = (definition: ProviderDefinition): ProviderDefinition => definition;
 
 const SETTINGS_FILE_CANDIDATES = ['settings.ts', 'settings.js', 'settings.mjs'];
 

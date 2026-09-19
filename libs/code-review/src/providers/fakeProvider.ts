@@ -86,6 +86,7 @@ export function createFakeProvider({
     models: { fast: 'none', capable: 'none' },
     grant: fakeGrant,
     supportsSessions: true,
+    reportsPermissionDenials: true,
 
     async analyze({ task, prompt, systemPrompt, cwd }) {
       const responder = analyzeResponders[task] ?? fallbackResponderFor(task);

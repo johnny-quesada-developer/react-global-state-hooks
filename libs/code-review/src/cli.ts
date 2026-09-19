@@ -8,10 +8,12 @@ import type { PermissionScope } from './providers/ProviderDefinition';
 import { loadRules } from './segments/rules/loadRules';
 import { createAsk } from './shared/ask';
 import { describeMissingConnectorError, resolveConnector } from './shared/connector';
+import { discoverProviderFiles } from './shared/discoverProviders';
 import { findRepositoryRoot } from './shared/git';
 import { createLogger } from './shared/logger';
 import { createRunArtifacts } from './shared/runArtifacts';
 import { loadSettings, resolveWorkspaceRoot } from './shared/settings';
+import { createProviderWizard } from './wizard/createProviderWizard';
 import { createRuleWizard } from './wizard/createRuleWizard';
 import { type LegacyDefaults, runInitWizard } from './wizard/initWizard';
 
@@ -19,12 +21,14 @@ const USAGE = `review [target...] [options]           review files with every ru
 review init [options]                  scaffold a connector + settings + rules in this repo
 review rule create [options]           wizard: create a prompt-based rule (JSON or TS)
 review rule list                       list the rules the current connector would run
+review provider create [options]       wizard: draft an adapter for a new AI CLI, proven live before it's saved
+review provider list                   list built-in and custom providers
 
 target: one or more of: file, folder, glob, project name, commit sha or "changes" (asked when omitted)
 
 options:
   --config <path>                        explicit connector file (skips upward discovery)
-  --provider <claude|codex|kiro>         skip provider selection
+  --provider <id>                        skip provider selection (claude, codex, kiro, copilot, or a custom provider id)
   --model <model>                        capable model for agent edits
   --fast-model <model>                   fast model for metadata and scoring
   --permissions <workspace|projects>     skip the permissions question
@@ -68,7 +72,7 @@ function parseCliOptions(argv: string[]): { options: CliOptions; command: string
   });
   if (values.help) return undefined;
 
-  const isCommand = positionals[0] === 'rule' || positionals[0] === 'init';
+  const isCommand = positionals[0] === 'rule' || positionals[0] === 'provider' || positionals[0] === 'init';
   return {
     command: isCommand ? positionals : [],
     options: {
@@ -108,6 +112,7 @@ async function buildContext(options: CliOptions): Promise<ReviewContext> {
     connectorPath: resolved.connectorPath,
     configurationDirectory: resolved.configurationDirectory,
     rulesDirectory: path.join(resolved.configurationDirectory, 'rules'),
+    providersDirectory: path.join(resolved.configurationDirectory, 'providers'),
     workspaceRoot,
     settings,
     options,
@@ -204,6 +209,19 @@ async function main() {
     const rules = await loadRules({ context });
     if (!rules.length) context.logger.warn(`no rules found in ${path.relative(context.workspaceRoot, context.rulesDirectory)}`);
     rules.forEach((rule) => context.logger.info(`${rule.id} — ${rule.title}\n    ${rule.description}`));
+    return;
+  }
+
+  if (command === 'provider' && subcommand === 'create') {
+    prompts.intro('create a review provider');
+    await createProviderWizard(context);
+    prompts.outro('provider created');
+    return;
+  }
+
+  if (command === 'provider' && subcommand === 'list') {
+    const providers = await discoverProviderFiles(context.providersDirectory);
+    providers.forEach((provider) => context.logger.info(`${provider.id} — ${provider.label}`));
     return;
   }
 
