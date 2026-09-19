@@ -3,10 +3,8 @@ import os from 'node:os';
 import path from 'node:path';
 import type { ReviewContext } from '../../pipeline/ReviewContext';
 import { scriptedAsk } from '../../shared/ask';
-import { silentLogger } from '../../shared/logger';
-import { defaultProjectConfig } from '../../shared/projectConfig';
 import { describeLocalState, loadLocalState, rememberChoices } from '../../shared/reviewConfig';
-import { createRunArtifacts } from '../../shared/runArtifacts';
+import { createTestContext } from '../../testSupport/createTestContext';
 import { applySavedConfiguration, chooseConfiguration } from './chooseConfiguration';
 
 const temporaryDirectories: string[] = [];
@@ -23,15 +21,7 @@ const createContext = (
 ): ReviewContext => {
   const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'review-config-'));
   temporaryDirectories.push(workspaceRoot);
-  return {
-    workspaceRoot,
-    invocationDirectory: workspaceRoot,
-    options: { targets: [], acceptDefaults: false, verbose: false, ...options },
-    projectConfig: defaultProjectConfig(),
-    ask: scriptedAsk(answers),
-    logger: silentLogger(),
-    run: createRunArtifacts({ workspaceRoot }),
-  };
+  return createTestContext({ workspaceRoot, answers, options: { acceptDefaults: false, ...options } });
 };
 
 describe('configuration reuse', () => {

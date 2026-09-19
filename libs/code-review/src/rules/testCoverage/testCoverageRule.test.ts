@@ -8,12 +8,8 @@ import {
   defaultFakeAnalyzeResponders,
   type FakeEditCall,
 } from '../../providers/fakeProvider';
-import type { ReviewContext } from '../../pipeline/ReviewContext';
-import { scriptedAsk } from '../../shared/ask';
-import { silentLogger } from '../../shared/logger';
-import { defaultProjectConfig } from '../../shared/projectConfig';
-import { createRunArtifacts } from '../../shared/runArtifacts';
-import { testCoverageRule } from './testCoverageRule';
+import { createTestContext } from '../../testSupport/createTestContext';
+import { createTestCoverageRule } from './testCoverageRule';
 
 const workspaceNodeModules = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -115,22 +111,11 @@ describe('testCoverageRule', () => {
       },
     });
 
-    const context: ReviewContext = {
+    const context = createTestContext({
       workspaceRoot: workspace.root,
-      invocationDirectory: workspace.root,
-      options: {
-        targets: [],
-        acceptDefaults: true,
-        verbose: false,
-        goal: 90,
-        maxCoverageAttempts: 3,
-        maxQualityAttempts: 1,
-      },
-      projectConfig: defaultProjectConfig(),
-      ask: scriptedAsk(),
-      logger: silentLogger(),
-      run: createRunArtifacts({ workspaceRoot: workspace.root }),
-    };
+      options: { goal: 90, maxCoverageAttempts: 3, maxQualityAttempts: 1 },
+    });
+    const testCoverageRule = createTestCoverageRule();
 
     const report = await testCoverageRule.run({
       context,
@@ -210,5 +195,48 @@ describe('testCoverageRule', () => {
     });
     expect(secondRun.fileResults[0]).toMatchObject({ status: 'alreadyCovered' });
     expect(metadataCalls).toBe(1);
+  });
+
+  it('lets a factory option narrow the rule: colocated layout leaves the source path untouched and a rule id/scope filter both apply', async () => {
+    const workspace = createVitestWorkspace({
+      'app/package.json': '{ "name": "app", "type": "module" }',
+      'app/vitest.config.ts':
+        "import { defineConfig } from 'vitest/config';\nexport default defineConfig({ test: { include: ['src/**/*.{test,spec}.{ts,tsx}'] } });\n",
+      'app/src/util.ts': 'export const double = (value: number) => value * 2;\n',
+      'app/src/ignored.ts': 'export const ignored = (value: number) => value + 1;\n',
+    });
+    const provider = createFakeProvider({
+      analyzeResponders: defaultFakeAnalyzeResponders,
+      editResponder: ({ prompt }) => {
+        if (prompt.includes('app/src/util.ts')) {
+          fs.writeFileSync(
+            workspace.at('app/src/util.test.ts'),
+            "import { expect, it } from 'vitest';\nimport { double } from './util';\nit('doubles', () => { expect(double(2)).toBe(4); });\n",
+          );
+        }
+      },
+    });
+    const context = createTestContext({ workspaceRoot: workspace.root, options: { goal: 90, maxCoverageAttempts: 1, maxQualityAttempts: 1 } });
+    const customRule = createTestCoverageRule({
+      id: 'coverage-src-only',
+      testLayout: 'colocated',
+      scope: { include: ['app/src/util.ts'] },
+    });
+
+    const report = await customRule.run({
+      context,
+      provider,
+      files: ['app/src/util.ts', 'app/src/ignored.ts'].map(workspace.at),
+      logger: context.logger,
+    });
+
+    expect(report.ruleId).toBe('coverage-src-only');
+    const byFile = Object.fromEntries(report.fileResults.map((result) => [result.file, result]));
+    expect(byFile['app/src/ignored.ts']).toMatchObject({ status: 'outOfScope', outcome: 'skipped' });
+    expect(byFile['app/src/util.ts']).toMatchObject({ status: 'improved', outcome: 'passed' });
+    // Colocated layout never moves the source or creates a domain folder.
+    expect(fs.existsSync(workspace.at('app/src/util/util.ts'))).toBe(false);
+    expect(workspace.read('app/src/util.ts')).toBe('export const double = (value: number) => value * 2;\n');
+    expect(fs.existsSync(workspace.at('app/src/util.test.ts'))).toBe(true);
   });
 });

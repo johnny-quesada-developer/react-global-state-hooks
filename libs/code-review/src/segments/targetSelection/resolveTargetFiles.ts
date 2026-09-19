@@ -8,16 +8,15 @@ import type { Target } from './detectTarget';
 export async function resolveTargetFiles({
   target,
   workspaceRoot,
+  repositoryRoot,
 }: {
   target: Target;
   workspaceRoot: string;
+  repositoryRoot: string | undefined;
 }): Promise<string[]> {
-  const candidates = await listCandidates({ target, workspaceRoot });
+  const candidates = await listCandidates({ target, workspaceRoot, repositoryRoot });
   const reviewableFiles = candidates.filter(
-    (file) =>
-      fs.existsSync(file) &&
-      isSourceFile(file) &&
-      !isInsideIgnoredDirectory(path.relative(workspaceRoot, file)),
+    (file) => fs.existsSync(file) && isSourceFile(file) && !isInsideIgnoredDirectory(path.relative(workspaceRoot, file)),
   );
   return [...new Set(reviewableFiles)].sort();
 }
@@ -25,24 +24,32 @@ export async function resolveTargetFiles({
 async function listCandidates({
   target,
   workspaceRoot,
+  repositoryRoot,
 }: {
   target: Target;
   workspaceRoot: string;
+  repositoryRoot: string | undefined;
 }): Promise<string[]> {
   switch (target.kind) {
     case 'file':
       return [target.path];
     case 'folder':
       return walkFiles(target.path);
-    case 'nxProject':
+    case 'project':
       return walkFiles(target.project.sourceRoot);
     case 'commit':
-      return listCommitFiles({ cwd: workspaceRoot, commit: target.commit });
+      requireRepository(repositoryRoot, 'a commit target');
+      return listCommitFiles({ cwd: repositoryRoot!, commit: target.commit, workspaceRoot });
     case 'workingChanges':
-      return listWorkingChanges({ cwd: workspaceRoot });
+      requireRepository(repositoryRoot, 'the "changes" target');
+      return listWorkingChanges({ cwd: repositoryRoot!, workspaceRoot });
     case 'glob':
       return walkFiles(target.baseDirectory).filter((file) =>
         minimatch(path.relative(target.baseDirectory, file), target.pattern, { dot: false }),
       );
   }
+}
+
+function requireRepository(repositoryRoot: string | undefined, targetLabel: string): void {
+  if (!repositoryRoot) throw new Error(`${targetLabel} needs a git repository, and none was found above the workspace root`);
 }

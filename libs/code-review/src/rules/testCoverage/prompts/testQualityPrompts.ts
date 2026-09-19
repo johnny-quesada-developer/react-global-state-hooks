@@ -3,7 +3,7 @@ import { describeHistory, type AttemptRecord } from '../../../graph/attemptHisto
 import { summarizeExports } from '../../../shared/sourceSummary';
 import { readIfExists } from '../../../shared/workspace';
 import type { SignalFlag, TestFileSignals } from '../steps/inspectTestFile';
-import { describeGuidelines } from '../testingGuidelines';
+import { describeGuidelines, type Guideline } from '../testingGuidelines';
 
 export interface QualityReview {
   scores: Record<string, number>;
@@ -12,14 +12,20 @@ export interface QualityReview {
   suggestedFixes: string[];
 }
 
-export function buildQualityScoreSystemPrompt(): string {
+export function buildQualityScoreSystemPrompt({
+  guidelines,
+  scoredCriteria,
+}: {
+  guidelines: Guideline[];
+  scoredCriteria: string[];
+}): string {
   return `You score how well a test file follows these testing guidelines. You never modify anything.
 
 Guidelines:
-${describeGuidelines()}
+${describeGuidelines(guidelines)}
 
 Score each guideline from 0 (ignores it) to 10 (exemplary). For overMocking and globalsAvoidance a HIGH score means the file AVOIDS the problem.
-Keys of "scores" must be exactly: overMocking, isolation, globalsAvoidance, density, selfContainment.
+Keys of "scores" must be exactly: ${scoredCriteria.join(', ')}.
 flags: short camelCase names of concrete violations (empty when none).
 evidence: quotes or line references that justify low scores.
 suggestedFixes: concrete, actionable changes.

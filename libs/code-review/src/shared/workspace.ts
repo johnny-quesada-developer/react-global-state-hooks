@@ -4,24 +4,27 @@ import path from 'node:path';
 export const SOURCE_EXTENSIONS = ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs'];
 export const IGNORED_DIRECTORIES = ['node_modules', 'dist', 'coverage', '.git', '.nx', '.review'];
 
-export interface NxProject {
+export interface WorkspaceProject {
   name: string;
   root: string;
   sourceRoot: string;
 }
 
-export function findWorkspaceRoot(startDirectory: string): string {
-  let current = path.resolve(startDirectory);
-  while (current !== path.dirname(current)) {
-    const isNxWorkspace = fs.existsSync(path.join(current, 'nx.json'));
-    if (isNxWorkspace) return current;
-    current = path.dirname(current);
-  }
-  return path.resolve(startDirectory);
-}
+/**
+ * Optional, Nx-only project discovery — used solely as a fallback source for the `project`
+ * target kind when the consumer's settings don't declare `projects` explicitly. Never required:
+ * a plain, non-Nx consumer either lists `projects` in settings.ts or simply doesn't use that
+ * target kind. Reads `nx.json`'s `workspaceLayout` for the folder names when present, defaulting
+ * to the common `libs`/`apps` pair otherwise.
+ */
+export function discoverNxProjects(workspaceRoot: string): WorkspaceProject[] {
+  const nxConfigFile = path.join(workspaceRoot, 'nx.json');
+  if (!fs.existsSync(nxConfigFile)) return [];
 
-export function listNxProjects(workspaceRoot: string): NxProject[] {
-  return ['libs', 'apps']
+  const nxConfig = readJsonSafely(nxConfigFile) as { workspaceLayout?: { libsDir?: string; appsDir?: string } };
+  const groupDirectories = [nxConfig.workspaceLayout?.libsDir ?? 'libs', nxConfig.workspaceLayout?.appsDir ?? 'apps'];
+
+  return groupDirectories
     .map((group) => path.join(workspaceRoot, group))
     .filter((groupDirectory) => fs.existsSync(groupDirectory))
     .flatMap((groupDirectory) =>
@@ -32,28 +35,27 @@ export function listNxProjects(workspaceRoot: string): NxProject[] {
     );
 }
 
-function readNxProject(root: string): NxProject {
+function readNxProject(root: string): WorkspaceProject {
   const projectJsonPath = path.join(root, 'project.json');
-  const fallback = { name: path.basename(root), root, sourceRoot: root };
-  if (!fs.existsSync(projectJsonPath)) return fallback;
+  const fallback: WorkspaceProject = { name: path.basename(root), root, sourceRoot: root };
+  const projectJson = readJsonSafely(projectJsonPath) as { name?: string; sourceRoot?: string } | undefined;
+  if (!projectJson) return fallback;
 
+  const workspaceRoot = path.dirname(path.dirname(root));
+  const sourceRoot = projectJson.sourceRoot ? path.join(workspaceRoot, projectJson.sourceRoot) : root;
+  return { name: projectJson.name ?? fallback.name, root, sourceRoot };
+}
+
+function readJsonSafely(file: string): unknown {
+  if (!fs.existsSync(file)) return undefined;
   try {
-    const projectJson = JSON.parse(fs.readFileSync(projectJsonPath, 'utf8'));
-    const workspaceRoot = path.dirname(path.dirname(root));
-    const sourceRoot = projectJson.sourceRoot ? path.join(workspaceRoot, projectJson.sourceRoot) : root;
-    return { name: projectJson.name ?? fallback.name, root, sourceRoot };
+    return JSON.parse(fs.readFileSync(file, 'utf8'));
   } catch {
-    return fallback;
+    return undefined;
   }
 }
 
-export function findOwningPackageRoot({
-  file,
-  workspaceRoot,
-}: {
-  file: string;
-  workspaceRoot: string;
-}): string {
+export function findOwningPackageRoot({ file, workspaceRoot }: { file: string; workspaceRoot: string }): string {
   let current = path.dirname(file);
   while (current.startsWith(workspaceRoot) && current !== workspaceRoot) {
     const hasPackageJson = fs.existsSync(path.join(current, 'package.json'));

@@ -1,7 +1,8 @@
-import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { runCommand } from './exec';
+import { isPathInside } from './isPathInside';
 
 export type WorkingTreeSnapshot = Map<string, string>;
 
@@ -10,21 +11,54 @@ const git = async ({ cwd, args }: { cwd: string; args: string[] }) => {
   return { ...result, lines: result.stdout.split('\n').filter(Boolean) };
 };
 
+/**
+ * Every git command below runs from the REPOSITORY root (not the caller's `cwd`) and joins
+ * returned paths to that same root. Git's own path-relativization (relative to the invoking
+ * cwd by default) would otherwise silently break once `cwd` is a workspace nested inside a
+ * larger repository — running from the true root and filtering afterwards is what keeps a
+ * nested workspace root correct.
+ */
+export async function findRepositoryRoot({ cwd }: { cwd: string }): Promise<string | undefined> {
+  const result = await git({ cwd, args: ['rev-parse', '--show-toplevel'] });
+  return result.exitCode === 0 ? result.lines[0] : undefined;
+}
+
 export async function isCommit({ cwd, reference }: { cwd: string; reference: string }): Promise<boolean> {
   const result = await git({ cwd, args: ['cat-file', '-t', reference] });
   return result.exitCode === 0 && result.stdout.trim() === 'commit';
 }
 
-export async function listCommitFiles({ cwd, commit }: { cwd: string; commit: string }): Promise<string[]> {
-  const result = await git({ cwd, args: ['show', '--name-only', '--pretty=format:', commit] });
-  return result.lines.map((file) => path.join(cwd, file));
+const filterToWorkspace = ({ files, workspaceRoot }: { files: string[]; workspaceRoot: string }) =>
+  files.filter((file) => isPathInside({ child: file, parent: workspaceRoot }));
+
+export async function listCommitFiles({
+  cwd,
+  commit,
+  workspaceRoot,
+}: {
+  cwd: string;
+  commit: string;
+  workspaceRoot: string;
+}): Promise<string[]> {
+  const repositoryRoot = (await findRepositoryRoot({ cwd })) ?? cwd;
+  const result = await git({ cwd: repositoryRoot, args: ['show', '--name-only', '--pretty=format:', commit] });
+  const files = result.lines.map((file) => path.join(repositoryRoot, file));
+  return filterToWorkspace({ files, workspaceRoot });
 }
 
-export async function listWorkingChanges({ cwd }: { cwd: string }): Promise<string[]> {
-  const tracked = await git({ cwd, args: ['diff', '--name-only', 'HEAD'] });
-  const untracked = await git({ cwd, args: ['ls-files', '--others', '--exclude-standard'] });
+export async function listWorkingChanges({
+  cwd,
+  workspaceRoot,
+}: {
+  cwd: string;
+  workspaceRoot: string;
+}): Promise<string[]> {
+  const repositoryRoot = (await findRepositoryRoot({ cwd })) ?? cwd;
+  const tracked = await git({ cwd: repositoryRoot, args: ['diff', '--name-only', 'HEAD'] });
+  const untracked = await git({ cwd: repositoryRoot, args: ['ls-files', '--others', '--exclude-standard'] });
   const uniqueFiles = new Set([...tracked.lines, ...untracked.lines]);
-  return [...uniqueFiles].map((file) => path.join(cwd, file));
+  const files = [...uniqueFiles].map((file) => path.join(repositoryRoot, file));
+  return filterToWorkspace({ files, workspaceRoot });
 }
 
 export async function isWorkingTreeDirty({ cwd }: { cwd: string }): Promise<boolean> {
@@ -33,7 +67,7 @@ export async function isWorkingTreeDirty({ cwd }: { cwd: string }): Promise<bool
 }
 
 export async function snapshotWorkingTree({ cwd }: { cwd: string }): Promise<WorkingTreeSnapshot> {
-  const changedFiles = await listWorkingChanges({ cwd });
+  const changedFiles = await listWorkingChanges({ cwd, workspaceRoot: cwd });
   return new Map(changedFiles.map((file) => [file, hashFile(file)]));
 }
 
