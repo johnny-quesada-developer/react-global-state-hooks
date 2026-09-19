@@ -1,9 +1,9 @@
 import { Annotation, END, START, StateGraph } from '@langchain/langgraph';
 import { createCliProvider, type AgentProvider } from '../../providers/AgentProvider';
 import { createFakeProvider } from '../../providers/fakeProvider';
-import { providerCatalog } from '../../providers/providerCatalog';
 import type { ModelTiers, PermissionGrant, ProviderId } from '../../providers/ProviderDefinition';
 import type { ReviewContext } from '../../pipeline/ReviewContext';
+import { discoverProviderFiles } from '../../shared/discoverProviders';
 import { loadLocalState, rememberChoices, type LocalState } from '../../shared/reviewConfig';
 import { detectInstalledProviders, type DetectedProvider } from './detectInstalledProviders';
 import { rankInstalledProviders, type RankedProvider } from './recommendProvider';
@@ -40,8 +40,9 @@ const useFakeProvider = ({ context }: State) => {
 
 const detectProviders = async ({ context }: State) => {
   context.logger.step('detecting installed AI CLIs (no AI involved)');
+  const catalog = await discoverProviderFiles(context.providersDirectory);
   const detected = await detectInstalledProviders({
-    catalog: providerCatalog,
+    catalog,
     workspaceRoot: context.workspaceRoot,
   });
   detected.forEach(({ definition, isInstalled, binary, auth }) => {

@@ -48,6 +48,8 @@ export interface AgentProvider {
   models: ModelTiers;
   grant: PermissionGrant;
   supportsSessions: boolean;
+  /** See `ProviderDefinition.reportsPermissionDenials` — whether `edit`'s `deniedActions` can ever be trusted as exhaustive. */
+  reportsPermissionDenials: boolean;
   analyze: (params: AnalyzeParams) => Promise<string>;
   edit: (params: EditParams) => Promise<EditOutcome>;
 }
@@ -90,6 +92,7 @@ export function createCliProvider({
     models,
     grant,
     supportsSessions: definition.supportsSessions,
+    reportsPermissionDenials: definition.reportsPermissionDenials,
 
     async analyze({ task, prompt, systemPrompt, jsonSchema, cwd }) {
       const startedAt = Date.now();

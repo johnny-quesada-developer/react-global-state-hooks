@@ -33,6 +33,7 @@ export interface ReviewContext {
   /** `<configurationDirectory>` from the connector — where settings.ts and rules/ live. */
   configurationDirectory: string;
   rulesDirectory: string;
+  providersDirectory: string;
   /** The consumer-configured review scope (`settings.workspace.root`, resolved to an absolute path). Distinct from the connector directory and from the git repository root. */
   workspaceRoot: string;
   settings: Settings;

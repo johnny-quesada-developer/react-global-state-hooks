@@ -29,6 +29,7 @@ export function createTestContext({
     connectorPath: path.join(workspaceRoot, 'review.config.json'),
     configurationDirectory,
     rulesDirectory: path.join(configurationDirectory, 'rules'),
+    providersDirectory: path.join(configurationDirectory, 'providers'),
     workspaceRoot,
     settings,
     options: { targets: [], acceptDefaults: true, verbose: false, ...options },

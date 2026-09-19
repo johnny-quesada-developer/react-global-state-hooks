@@ -70,6 +70,7 @@ export const claudeProvider: ProviderDefinition = {
   loginHint: 'claude auth login',
   models: { fast: 'haiku', capable: 'sonnet' },
   supportsSessions: true,
+  reportsPermissionDenials: true,
 
   async checkAuthentication({ binary, workspaceRoot }) {
     const result = await runCommand({

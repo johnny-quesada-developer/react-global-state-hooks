@@ -1,4 +1,6 @@
-export type ProviderId = 'claude' | 'codex' | 'kiro' | 'fake';
+/** A provider id is any string a `ProviderDefinition` chooses — built-ins use `KnownProviderId`, a custom adapter picks its own. */
+export type ProviderId = string;
+export type KnownProviderId = 'claude' | 'codex' | 'kiro' | 'copilot' | 'fake';
 export type AuthStatus = 'authenticated' | 'unauthenticated' | 'unknown';
 
 export interface ModelTiers {
@@ -49,6 +51,14 @@ export interface ProviderDefinition {
   loginHint: string;
   models: ModelTiers;
   supportsSessions: boolean;
+  /**
+   * Whether `parseEditLine` can ever produce a `result` event with a populated `deniedActions`
+   * list — i.e. whether this CLI's output actually exposes which edits its own permission model
+   * blocked. `false` means the pipeline must not treat "no denials reported" as "nothing was
+   * denied" (see `stopWhenBlockedByPermissions` in `segments/rules/agentEdit.ts`): it genuinely
+   * doesn't know, rather than knowing the answer is "none".
+   */
+  reportsPermissionDenials: boolean;
   checkAuthentication: (params: { binary: string; workspaceRoot: string }) => Promise<AuthStatus>;
   describeGrant: (params: { grant: PermissionGrant; workspaceRoot: string }) => string[];
   analyzeCommand: (params: {

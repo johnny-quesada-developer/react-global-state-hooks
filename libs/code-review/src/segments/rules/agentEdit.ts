@@ -44,6 +44,18 @@ export async function runAgentEdit({
   const changedFiles = await listChangedSince({ cwd: workspaceRoot, snapshot: before });
   const changedLabels = changedFiles.map((file) => path.relative(workspaceRoot, file)).join(', ') || 'none';
   logger.detail(`agent changed ${changedFiles.length} file(s): ${changedLabels}`);
+
+  const cannotTellWhyNothingChanged =
+    outcome.exitCode === 0 &&
+    changedFiles.length === 0 &&
+    outcome.deniedActions.length === 0 &&
+    !provider.reportsPermissionDenials;
+  if (cannotTellWhyNothingChanged) {
+    logger.warn(
+      `${provider.label} changed nothing and can't report whether permissions blocked the edit — if this repeats, check the granted permission scope`,
+    );
+  }
+
   return { outcome, changedFiles };
 }
 
