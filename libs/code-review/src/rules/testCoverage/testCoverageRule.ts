@@ -45,6 +45,8 @@ export interface TestCoverageRuleOptions {
   id?: string;
   title?: string;
   description?: string;
+  /** Keeps the rule file in place but skips the rule at run time. */
+  disabled?: boolean;
   goal?: number;
   maxCoverageAttempts?: number;
   maxQualityAttempts?: number;
@@ -535,6 +537,7 @@ export function createTestCoverageRule(options: TestCoverageRuleOptions = {}): R
     id: ruleOptions.ruleId,
     title: ruleOptions.title,
     description: ruleOptions.description,
+    disabled: options.disabled,
     async run(params) {
       const { report } = await testCoverageGraph.invoke({ params, ruleOptions, files: [] });
       return report!;

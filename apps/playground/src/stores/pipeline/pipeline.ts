@@ -1,13 +1,7 @@
 import { createGlobalState } from 'react-hooks-global-states';
 
 export type PipelineStage =
-  | 'idle'
-  | 'validating'
-  | 'uploading'
-  | 'processing'
-  | 'finalizing'
-  | 'done'
-  | 'failed';
+  'idle' | 'validating' | 'uploading' | 'processing' | 'finalizing' | 'done' | 'failed';
 
 export type PipelineState = {
   stage: PipelineStage;

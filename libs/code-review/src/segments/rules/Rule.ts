@@ -34,5 +34,7 @@ export interface Rule {
   id: string;
   title: string;
   description: string;
+  /** A disabled rule is loaded and listed but never runs (not even when requested with --rule). */
+  disabled?: boolean;
   run: (params: RuleRunParams) => Promise<RuleReport>;
 }

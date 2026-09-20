@@ -4,7 +4,6 @@ import { cn } from '@src/shared/tools/cn';
 import { throttle } from '@src/shared/tools';
 import type { GlobalStateId } from '@src/shared/schema/GlobalStateJson';
 import { stateMetaDevTools$ } from '../../../../hooks/globalStates';
-import { assertIsNonNullable } from '@src/shared/asserts/asserts';
 
 export type UnseenBadgeProps = {
   globalStateId: GlobalStateId;
@@ -37,11 +36,7 @@ export const UnseenBadge: React.FC<UnseenBadgeProps> = React.memo(({ globalState
     }, 400);
 
     const unsubscribe = stateMetaDevTools$.subscribe(
-      (state) => {
-        const meta = state.get(globalStateId);
-        assertIsNonNullable(meta, `Unable to find state meta for globalStateId: ${globalStateId}`);
-        return meta.unseenLength;
-      },
+      (state) => state.get(globalStateId)?.unseenLength ?? 0,
       (unseenLength) => {
         if (unseenLength <= 0) {
           element.style.display = 'none';

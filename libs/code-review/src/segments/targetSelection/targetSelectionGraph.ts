@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { Annotation, END, START, StateGraph } from '@langchain/langgraph';
 import type { ReviewContext } from '../../pipeline/ReviewContext';
-import { isWorkingTreeDirty } from '../../shared/git';
+import { listWorkingChanges } from '../../shared/git';
 import { isPathInside } from '../../shared/isPathInside';
 import { discoverNxProjects, type WorkspaceProject } from '../../shared/workspace';
 import { describeTargets, detectTarget, type Target, type TargetKind } from './detectTarget';
@@ -109,6 +109,10 @@ const resolveFiles = async ({ context, targets }: State) => {
     ),
   );
   const files = [...new Set(perTarget.flat())].sort();
+  const { maxFiles } = context.options;
+  if (maxFiles !== undefined && files.length > maxFiles) {
+    throw new Error(`the target resolves to ${files.length} files, above --max-files ${maxFiles}; narrow the target or raise the limit`);
+  }
   context.logger.step(`target: ${describeTargets(targets, context.workspaceRoot)} → ${files.length} source file(s)`);
   return { files };
 };
@@ -123,8 +127,15 @@ const confirmFiles = async ({ context, files }: State) => {
   files.slice(0, MAX_LISTED_FILES).forEach((file) => logger.detail(path.relative(workspaceRoot, file)));
   if (files.length > MAX_LISTED_FILES) logger.detail(`…and ${files.length - MAX_LISTED_FILES} more`);
 
-  if (repositoryRoot && (await isWorkingTreeDirty({ cwd: repositoryRoot }))) {
-    logger.warn('the git working tree has uncommitted changes; agent edits will be mixed with them');
+  if (repositoryRoot && !context.options.allowDirty) {
+    const pending = (await listWorkingChanges({ cwd: repositoryRoot, workspaceRoot })).filter(
+      (file) => !isPathInside({ child: file, parent: context.run.reviewDirectory }),
+    );
+    if (pending.length) {
+      throw new Error(
+        `the git working tree has ${pending.length} uncommitted change(s) (e.g. ${path.relative(workspaceRoot, pending[0])}); commit or stash them so agent edits stay separable, or pass --allow-dirty`,
+      );
+    }
   }
 
   const confirmed = await ask.confirm({ message: `Review these ${files.length} file(s)?`, defaultValue: true });

@@ -12,6 +12,9 @@ export interface CliOptions {
   fastModel?: string;
   permissions?: PermissionScope;
   verbose: boolean;
+  allowDirty: boolean;
+  failOnIssues: boolean;
+  maxFiles?: number;
   concurrency?: number;
   acceptDefaults: boolean;
   configuration?: 'reuse' | 'stepByStep';

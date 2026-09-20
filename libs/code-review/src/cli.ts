@@ -39,6 +39,9 @@ options:
   --rule <id>                            run only this rule (repeatable)
   --concurrency <n>                      files processed in parallel (default from settings.ts: 1)
   --verbose                              show the agent's tool calls even for multi-file runs
+  --max-files <n>                        abort when the target resolves to more than n files
+  --allow-dirty                          run even with uncommitted changes (default: refuse, so agent edits stay separable)
+  --fail-on-issues                       exit with code 1 when any file fails or a rule crashes (CI)
   --reuse / --fresh                      reuse the last saved configuration, or configure step by step
   --yes                                  accept defaults for every question (reuses the last configuration when there is one)
   --help
@@ -66,6 +69,9 @@ function parseCliOptions(argv: string[]): { options: CliOptions; command: string
       reuse: { type: 'boolean', default: false },
       fresh: { type: 'boolean', default: false },
       verbose: { type: 'boolean', default: false },
+      'max-files': { type: 'string' },
+      'allow-dirty': { type: 'boolean', default: false },
+      'fail-on-issues': { type: 'boolean', default: false },
       yes: { type: 'boolean', default: false },
       help: { type: 'boolean', default: false },
     },
@@ -89,6 +95,9 @@ function parseCliOptions(argv: string[]): { options: CliOptions; command: string
       testSuffix: values['test-suffix'],
       rules: values.rule,
       verbose: values.verbose,
+      maxFiles: toNumber(values['max-files']),
+      allowDirty: values['allow-dirty'],
+      failOnIssues: values['fail-on-issues'],
       configuration: values.fresh ? 'stepByStep' : values.reuse ? 'reuse' : undefined,
       acceptDefaults: values.yes,
     },
@@ -208,7 +217,9 @@ async function main() {
   if (command === 'rule' && subcommand === 'list') {
     const rules = await loadRules({ context });
     if (!rules.length) context.logger.warn(`no rules found in ${path.relative(context.workspaceRoot, context.rulesDirectory)}`);
-    rules.forEach((rule) => context.logger.info(`${rule.id} — ${rule.title}\n    ${rule.description}`));
+    rules.forEach((rule) =>
+      context.logger.info(`${rule.id}${rule.disabled ? ' (disabled)' : ''} — ${rule.title}\n    ${rule.description}`),
+    );
     return;
   }
 
@@ -228,8 +239,12 @@ async function main() {
   if (parsed.command.length) throw new Error(`unknown command "${parsed.command.join(' ')}". Try: review rule create`);
 
   prompts.intro('code review pipeline');
-  await runReviewPipeline({ context });
+  const { reports = [] } = await runReviewPipeline({ context });
   prompts.outro('review finished');
+  const hasIssues = reports.some(
+    (report) => report.crashReason || report.fileResults.some(({ outcome }) => outcome === 'failed'),
+  );
+  if (context.options.failOnIssues && hasIssues) process.exitCode = 1;
 }
 
 main().catch((error: unknown) => {

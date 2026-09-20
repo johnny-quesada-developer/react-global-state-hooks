@@ -44,7 +44,10 @@ const grantAgentPermissions = async ({ context, choice, files }: State) => {
 const selectRules = async ({ context, rules }: State) => {
   const availableRules = rules.length ? rules : await loadRules({ context });
   const requestedRuleIds = context.options.rules;
-  if (!requestedRuleIds?.length) return { rules: availableRules };
+  const disabledIds = availableRules.filter(({ disabled }) => disabled).map(({ id }) => id);
+  const enabledRules = availableRules.filter(({ disabled }) => !disabled);
+  if (disabledIds.length) context.logger.detail(`skipping disabled rule(s): ${disabledIds.join(', ')}`);
+  if (!requestedRuleIds?.length) return { rules: enabledRules };
 
   const unknownRuleIds = requestedRuleIds.filter((id) => !availableRules.some((rule) => rule.id === id));
   if (unknownRuleIds.length) {
@@ -52,7 +55,9 @@ const selectRules = async ({ context, rules }: State) => {
       `unknown rule(s): ${unknownRuleIds.join(', ')}. Available: ${availableRules.map(({ id }) => id).join(', ')}`,
     );
   }
-  return { rules: availableRules.filter((rule) => requestedRuleIds.includes(rule.id)) };
+  const requestedDisabled = requestedRuleIds.filter((id) => disabledIds.includes(id));
+  if (requestedDisabled.length) throw new Error(`rule(s) disabled in their rule file: ${requestedDisabled.join(', ')}`);
+  return { rules: enabledRules.filter((rule) => requestedRuleIds.includes(rule.id)) };
 };
 
 const executeRules = async ({ context, rules, provider, files }: State) => ({

@@ -10,6 +10,9 @@ yarn review                                   # asks for everything
 yarn review apps/playground/src/stores/todos.ts
 yarn review playground --goal 85 --yes        # nx project, accept defaults
 yarn review changes --concurrency 3           # staged + unstaged + untracked files, 3 files at a time
+yarn review playground --max-files 20         # abort if the target resolves to more files
+yarn review playground --allow-dirty          # run despite uncommitted changes (refused by default)
+yarn review playground --fail-on-issues       # exit code 1 when a file fails or a rule crashes (CI)
 yarn review rule create                       # wizard: new prompt-based rule
 yarn review rule list
 yarn review provider create                   # wizard: adapt a new AI CLI, proven live before it's saved
@@ -56,6 +59,11 @@ Everything runs headless. Single-file runs (or `--verbose`) stream the agent's t
 **The review target is not an edit boundary.** The agent may change any file the work needs
 (inside the granted scope). Files that still fail after every attempt keep the agent's changes and get a
 `// [TODO] code-review(<rule>): <reason>` comment at the top so they're easy to find.
+
+**Pipeline guards:** a dirty working tree (outside `.review/`) is refused unless `--allow-dirty`, so agent edits stay
+separable in source control; `--max-files <n>` aborts oversized targets; `--fail-on-issues` sets exit code 1 when any
+file fails or a rule crashes. A rule can be switched off without deleting its file: `createTestCoverageRule({ disabled: true })`
+(it stays listed by `rule list`, is skipped at run time, and errors if requested with `--rule`).
 
 **Previewing a run before you keep it:** there's no `--dry-run` flag — commit or stash first, run for
 real, then `git diff` to see what the agent did and `git checkout -- . && git clean -fd` (or `git stash`)

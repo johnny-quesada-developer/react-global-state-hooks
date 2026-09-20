@@ -32,7 +32,7 @@ export function createTestContext({
     providersDirectory: path.join(configurationDirectory, 'providers'),
     workspaceRoot,
     settings,
-    options: { targets: [], acceptDefaults: true, verbose: false, ...options },
+    options: { targets: [], acceptDefaults: true, verbose: false, allowDirty: true, failOnIssues: false, ...options },
     ask: ask ?? scriptedAsk(answers),
     logger: silentLogger(),
     run: createRunArtifacts({ workspaceRoot }),
