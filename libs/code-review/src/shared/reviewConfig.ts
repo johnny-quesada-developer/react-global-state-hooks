@@ -3,7 +3,11 @@ import path from 'node:path';
 import { z } from 'zod';
 
 const LocalStateSchema = z.object({
-  provider: z.enum(['claude', 'codex', 'kiro']).optional(),
+  // Any provider id, not a fixed list — built-ins or a custom `providers/*.provider.ts`. A closed
+  // enum here would make `loadLocalState` silently discard the ENTIRE saved state (not just this
+  // field) the moment someone picked a provider outside it, since `rememberChoices` writes without
+  // validating but `loadLocalState` re-validates on read.
+  provider: z.string().optional(),
   models: z.object({ fast: z.string(), capable: z.string() }).optional(),
   permissions: z.enum(['workspace', 'projects']).optional(),
   concurrency: z.number().int().min(1).optional(),

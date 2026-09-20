@@ -57,6 +57,12 @@ Everything runs headless. Single-file runs (or `--verbose`) stream the agent's t
 (inside the granted scope). Files that still fail after every attempt keep the agent's changes and get a
 `// [TODO] code-review(<rule>): <reason>` comment at the top so they're easy to find.
 
+**Previewing a run before you keep it:** there's no `--dry-run` flag — commit or stash first, run for
+real, then `git diff` to see what the agent did and `git checkout -- . && git clean -fd` (or `git stash`)
+to discard it if you don't want it. That's exactly as precise as an automated revert (the working tree
+was clean going in, so `HEAD` already is the "before" state) but lets you actually look at the result
+before deciding, instead of a flag that force-discards unconditionally.
+
 ## How the pipeline keeps AI work cheap and fast
 
 | Mechanism | Where | Effect |
