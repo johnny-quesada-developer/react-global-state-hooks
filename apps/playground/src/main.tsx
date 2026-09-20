@@ -6,7 +6,7 @@
 // guarantees the hook is installed before any store module loads and before any
 // store is created. Move it below your store imports and nothing will be tracked.
 // ---------------------------------------------------------------------------
-import 'react-hooks-global-states-debug';
+import 'react-hooks-global-states/debug';
 
 import { createRoot } from 'react-dom/client';
 import { App } from './App';
