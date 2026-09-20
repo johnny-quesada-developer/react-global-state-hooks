@@ -36,3 +36,5 @@ openapi.json
 .nx/workspace-data
 .claude/settings.local.json
 /brag-output
+/brag-output-landscape
+.DS_Store
