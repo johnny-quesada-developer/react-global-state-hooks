@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@src/shared/tools/cn';
 import { GoGear } from 'react-icons/go';
-import { FiDownload, FiUpload } from 'react-icons/fi';
+import { FiDownload, FiTerminal, FiUpload } from 'react-icons/fi';
 import { MdDarkMode, MdLightMode } from 'react-icons/md';
 import theme$ from '../../hooks/theme';
+import { AgentConnectionModal } from '../AgentConnectionModal';
 import {
   downloadGlobalStatesSnapshot,
   promptLoadGlobalStatesFromFile,
@@ -16,6 +17,7 @@ export type SettingsMenuProps = React.HTMLAttributes<HTMLDivElement>;
  *  - Toggle theme (light/dark)
  *  - Load a states snapshot from a JSON file
  *  - Download the current states as a JSON snapshot
+ *  - Configure the terminal / agent connection (port and how to connect)
  */
 export const SettingsMenu: React.FC<SettingsMenuProps> = ({
   className = '',
@@ -24,6 +26,7 @@ export const SettingsMenu: React.FC<SettingsMenuProps> = ({
   const [theme] = theme$();
   const isLight = theme === 'light';
   const [open, setOpen] = useState(false);
+  const [agentOpen, setAgentOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(
@@ -107,8 +110,20 @@ export const SettingsMenu: React.FC<SettingsMenuProps> = ({
             <FiDownload />
             Download snapshot
           </button>
+
+          <button
+            type="button"
+            role="menuitem"
+            className={itemClassName}
+            onClick={runAndClose(() => setAgentOpen(true))}
+          >
+            <FiTerminal />
+            Terminal connection
+          </button>
         </div>
       )}
+
+      <AgentConnectionModal open={agentOpen} onClose={() => setAgentOpen(false)} />
     </div>
   );
 };

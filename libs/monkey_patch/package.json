@@ -14,8 +14,8 @@
   "scripts": {
     "build": "yarn ts-check && yarn clean && tsx esbuild.config.ts && tsx scripts/prepare-dist.ts",
     "validate": "yarn lint && yarn test && yarn build",
-    "npm-publish": "cd dist && npm publish --tag latest --registry https://registry.npmjs.org/ ${NPM_OTP:+--otp=$NPM_OTP} ${NPM_DRY_RUN:+--dry-run}",
-    "npm-publish:beta": "cd dist && npm publish --tag beta --registry https://registry.npmjs.org/ ${NPM_OTP:+--otp=$NPM_OTP} ${NPM_DRY_RUN:+--dry-run}",
+    "npm-publish": "node ../../scripts/assert-publish-version.mjs latest && cd dist && npm publish --tag latest --registry https://registry.npmjs.org/ ${NPM_OTP:+--otp=$NPM_OTP} ${NPM_DRY_RUN:+--dry-run}",
+    "npm-publish:beta": "node ../../scripts/assert-publish-version.mjs beta && cd dist && npm publish --tag beta --registry https://registry.npmjs.org/ ${NPM_OTP:+--otp=$NPM_OTP} ${NPM_DRY_RUN:+--dry-run}",
     "publish:pkg": "yarn npm-publish",
     "publish:beta": "yarn npm-publish:beta",
     "test": "yarn ts-check:tests && vitest run && yarn test:no-patch",

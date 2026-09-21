@@ -42,5 +42,5 @@
     "allowSyntheticDefaultImports": true
   },
   "include": ["src"],
-  "exclude": ["src/__tests__", "**/__tests__", "**/*.test.ts", "**/*.test.tsx", "node_modules"]
+  "exclude": ["src/cli", "src/__tests__", "**/__tests__", "**/*.test.ts", "**/*.test.tsx", "node_modules"]
 }

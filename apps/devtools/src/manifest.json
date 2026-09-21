@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "react-hooks-global-states-dev-tools",
+  "name": "react-global-state-hooks",
   "version": "1.0.1",
   "permissions": [],
   "background": {

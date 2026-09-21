@@ -9,20 +9,21 @@
     "build:lib:dev": "webpack --config webpack.config.cjs --mode development --env no-watch",
     "build:vite": "vite build --mode production",
     "build:vite:dev": "vite build --mode development",
-    "build": "yarn ts-check && rm -rf dist && yarn copy:static && concurrently --kill-others-on-fail 'yarn build:lib' 'yarn build:vite'",
+    "build": "yarn ts-check && rm -rf dist && yarn copy:static && concurrently --kill-others-on-fail 'yarn build:lib' 'yarn build:vite' 'yarn build:cli'",
     "build:dev": "rm -rf dist && yarn copy:static && concurrently --kill-others-on-fail 'yarn build:lib:dev' 'yarn build:vite:dev'",
     "dev": "rm -rf dist && yarn copy:static && concurrently --kill-others --names 'LIB,VITE' 'webpack --config webpack.config.cjs --mode development' 'vite build --mode development --watch'",
     "start": "vite dev --mode development",
     "preview:dev": "node scripts/preview-dev.mjs",
     "zip": "yarn build && cd dist && zip -r ../react-hooks-global-states-dev-tools.zip . && cd ..",
-    "ts-check": "tsc -b",
+    "ts-check": "tsc -b && tsc -p tsconfig.cli.json",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix --max-warnings=0",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "clean": "rm -rf dist coverage react-hooks-global-states-dev-tools.zip",
-    "make:icons": "node scripts/make-icons.mjs"
+    "clean": "rm -rf dist dist-cli coverage react-hooks-global-states-dev-tools.zip",
+    "make:icons": "node scripts/make-icons.mjs",
+    "build:cli": "node scripts/build-cli.mjs"
   },
   "dependencies": {
     "@codemirror/lang-javascript": "^6.2.2",
@@ -33,11 +34,13 @@
     "react-icons": "^5.3.0",
     "react-json-view": "^1.21.3",
     "tailwind-merge": "^3.7.0",
+    "ws": "^8.18.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.270",
     "@types/diff": "^7.0.1",
+    "@types/ws": "^8.5.12",
     "autoprefixer": "^10.4.20",
     "concurrently": "^8.2.2",
     "postcss": "^8.4.44",
@@ -48,5 +51,8 @@
     "vite-plugin-checker": "^0.11.0",
     "webpack": "^5.94.0",
     "webpack-cli": "^5.1.4"
+  },
+  "bin": {
+    "rgsh": "./bin/rgsh.mjs"
   }
 }

@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "skipLibCheck": true,
+    "noEmit": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "esModuleInterop": true,
+    "types": ["node"]
+  },
+  // The Node CLI and the wire protocol it shares with the panel. No DOM, no chrome types.
+  "include": ["src/cli", "src/shared/agent"],
+  "exclude": ["**/__tests__"]
+}

@@ -5,6 +5,8 @@ import formatFromStore from 'json-storage-formatter/formatFromStore';
 import messagesLogs$ from '../hooks/messagesLog';
 import globalStates$, { ContentScriptMessage, isGlobalStateAction } from '../hooks/globalStates/globalStates';
 import { createBudgetedQueue } from './createBudgetedQueue';
+import { agentTracker, registerPageDispatcher } from '../agentBridge/agentBridge';
+import { uniqueId } from 'react-global-state-hooks/uniqueId';
 
 /**
  * Panel side of the transport.
@@ -39,7 +41,9 @@ const messageQueue = createBudgetedQueue(function processMessage(rawMessage: Con
     console.log(action, message.payload);
   }
 
-  const { error } = tryCatch(() => globalStates$.actions[action](message));
+  const { error } = tryCatch(() =>
+    agentTracker.observe(action, message, () => globalStates$.actions[action](message)),
+  );
 
   if (error) {
     console.error(`[error] ${action}`, error);
@@ -94,3 +98,13 @@ connectToWorker();
 export const getContentScriptPort = () => {
   return workerPort!;
 };
+
+// Same message shape as useSendMessagesToContentScript, for requests that come from a terminal.
+registerPageDispatcher((action, payload) => {
+  workerPort?.postMessage({
+    id: uniqueId('devtools-request:'),
+    timestamp: performance.now(),
+    action: `devtools-request/${action}`,
+    payload,
+  });
+});

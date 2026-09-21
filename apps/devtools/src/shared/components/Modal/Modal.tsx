@@ -10,6 +10,11 @@ export type ModalProps = {
   title?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
+  /**
+   * Dims the page behind the dialog (default). Turn it off for a dialog that is only a panel of
+   * settings: with no dimming it is obvious that the page is still there and a click outside closes it.
+   */
+  dimmed?: boolean;
 };
 
 /**
@@ -23,6 +28,7 @@ export const Modal: React.FC<ModalProps> = ({
   title,
   children,
   className = '',
+  dimmed = true,
 }: ModalProps) => {
   const dialogRef = useRef<HTMLDialogElement | null>(null);
 
@@ -52,7 +58,8 @@ export const Modal: React.FC<ModalProps> = ({
         if (event.target === dialogRef.current) onClose();
       }}
       className={cn(
-        'm-auto w-[28rem] max-w-[calc(100vw_-_2rem)] overflow-hidden rounded-lg border p-0 shadow-xl backdrop:bg-black/40',
+        'm-auto w-[28rem] max-w-[calc(100vw_-_2rem)] overflow-hidden rounded-lg border p-0',
+        dimmed ? 'shadow-xl backdrop:bg-black/40' : 'shadow-2xl backdrop:bg-transparent',
         'bg-white text-gray-900 border-gray-300',
         'dark:bg-eighties dark:text-gray-100 dark:border-gray-600',
         className,
