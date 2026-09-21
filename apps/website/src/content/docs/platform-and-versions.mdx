@@ -6,7 +6,7 @@ order: 1
 ---
 
 import { Callout } from '../../ui/Callout';
-import { DOCUMENTED_VERSION, STABLE_VERSION } from '../../lib/site';
+import { PACKAGE_VERSION } from '../../lib/site';
 
 ## Packages
 
@@ -24,17 +24,13 @@ The web and React Native packages build on the core package and re-export its AP
 - The web package needs `json-storage-formatter` ^4 (installed with it).
 - React Native: `react-native >= 0.69` and, for persistence, `@react-native-async-storage/async-storage >= 1.17.11`.
 
-## Release channels
+## Version
 
-<Callout type="note" title="What is on npm">
-  These docs cover <strong>{DOCUMENTED_VERSION}</strong>. On npm, `react-global-state-hooks` has
-  `latest` = <strong>{STABLE_VERSION}</strong> and `beta` = <strong>16.0.4-beta</strong>. The runtime API is
-  the same in both. The beta adds the <code>react-global-state-hooks/debug</code> entry for DevTools.
-  `react-native-global-state-hooks` currently has `latest` = 15.0.3, and version 16 is available on the
-  `beta` tag.
+<Callout type="note" title="One version at a time">
+  These docs describe <strong>{PACKAGE_VERSION}</strong>. To match them exactly, install that version:
+  <code>npm install react-global-state-hooks@{PACKAGE_VERSION}</code>. Behaviour in other releases can differ, so
+  check the repository's release notes when you are on an older or newer one.
 </Callout>
-
-Install a channel explicitly with `npm install react-global-state-hooks@beta`.
 
 ## Server rendering
 

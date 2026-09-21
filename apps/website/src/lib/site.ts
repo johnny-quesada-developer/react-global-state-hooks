@@ -10,13 +10,8 @@ const required = (name: string, value: string | undefined): string => {
 
 export const SITE_NAME = required('PUBLIC_SITE_NAME', import.meta.env.PUBLIC_SITE_NAME);
 
-/** Library version these docs and examples are written and tested against (workspace source). */
-export const DOCUMENTED_VERSION = required(
-  'PUBLIC_DOCUMENTED_VERSION',
-  import.meta.env.PUBLIC_DOCUMENTED_VERSION,
-);
-/** What `npm install react-global-state-hooks` resolves to today (npm `latest` tag). */
-export const STABLE_VERSION = required('PUBLIC_STABLE_VERSION', import.meta.env.PUBLIC_STABLE_VERSION);
+/** The library version these docs and examples describe (workspace source). Set by `yarn version-bump`. */
+export const PACKAGE_VERSION = required('PUBLIC_PACKAGE_VERSION', import.meta.env.PUBLIC_PACKAGE_VERSION);
 
 /** Prefix an internal path with the deployment base path (`/react-global-state-hooks`). */
 export function withBase(path = ''): string {

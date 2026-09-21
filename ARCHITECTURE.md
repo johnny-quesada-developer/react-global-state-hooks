@@ -340,6 +340,8 @@ yarn nx run website:ts-check    # astro check
 yarn nx run website:lint
 ```
 
+- **One version at a time.** `apps/website/.env` holds `PUBLIC_PACKAGE_VERSION`, the library version the docs describe.
+  `yarn version-bump` writes it whenever the web package's version changes; do not edit it by hand.
 - **Deployment** is `.github/workflows/deploy-website.yml` (GitHub Pages, base path
   `/react-global-state-hooks/`). It is independent of library publishing.
 - **Library source, not a build.** The site resolves `react-global-state-hooks` and

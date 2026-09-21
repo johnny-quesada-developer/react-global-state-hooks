@@ -10,7 +10,7 @@ const docs = defineCollection({
     description: z.string(),
     section: z.enum(DOC_SECTIONS),
     order: z.number(),
-    /** `beta` marks pages that describe features not yet on the npm `latest` tag. */
+    /** `beta` marks pages that describe features that are still in beta. */
     status: z.enum(['stable', 'beta']).default('stable'),
   }),
 });

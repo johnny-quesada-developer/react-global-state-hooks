@@ -1,6 +1,6 @@
 {
   "name": "code-review",
-  "version": "0.1.0",
+  "version": "1.0.0-beta-1",
   "description": "Deterministic LangGraph review pipelines: provider setup, target selection, a reusable configurable coverage rule and a prompt-rule engine, driven by a settings.ts + rules/ folder you own and commit in your own repository.",
   "type": "module",
   "bin": {

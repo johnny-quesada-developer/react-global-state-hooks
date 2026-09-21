@@ -16,7 +16,9 @@ import { DevToolsShowcase } from '../../ui/DevToolsShowcase';
 
 The DevTools extension connects to your stores in development so you can see what changes and when.
 
-<a href={links.chromeStore} rel="noopener">Install the extension for Chrome</a>
+<a href={links.chromeStore} rel="noopener">
+  Install the extension for Chrome
+</a>
 
 ## What it does
 
@@ -38,10 +40,9 @@ import { createRoot } from 'react-dom/client';
 import { App } from './App';
 ```
 
-<Callout type="warning" title="Development only, and beta today">
-  Never ship this import in a production build. The `react-global-state-hooks/debug` entry is available in
-  the <strong>16.0.4-beta</strong> release of the web package. The base package `react-hooks-global-states`
-  has a `react-hooks-global-states/debug` entry from 16.0.4. Both load the same debug package.
+<Callout type="warning" title="Development only">
+  Never ship this import in a production build. The `react-global-state-hooks/debug` entry exists from 16.0.4
+  of the package.
 </Callout>
 
 ## Open the panel

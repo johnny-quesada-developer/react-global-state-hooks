@@ -4,8 +4,7 @@ interface ImportMetaEnv {
   readonly PUBLIC_SITE_URL: string;
   readonly PUBLIC_BASE_PATH: string;
   readonly PUBLIC_SITE_NAME: string;
-  readonly PUBLIC_DOCUMENTED_VERSION: string;
-  readonly PUBLIC_STABLE_VERSION: string;
+  readonly PUBLIC_PACKAGE_VERSION: string;
   readonly PUBLIC_REPO_URL: string;
   readonly PUBLIC_NPM_URL: string;
   readonly PUBLIC_CHROME_STORE_URL: string;

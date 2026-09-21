@@ -1,7 +1,7 @@
 {
   "name": "react-global-state-hooks-website",
   "private": true,
-  "version": "0.1.0",
+  "version": "16.0.5",
   "type": "module",
   "description": "Documentation, examples and learning site for react-global-state-hooks. Deployed to GitHub Pages; never published to npm.",
   "scripts": {

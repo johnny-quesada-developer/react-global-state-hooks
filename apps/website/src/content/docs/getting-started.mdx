@@ -5,7 +5,7 @@ section: Getting started
 order: 1
 ---
 
-import { DOCUMENTED_VERSION, STABLE_VERSION, links } from '../../lib/site';
+import { PACKAGE_VERSION, links } from '../../lib/site';
 import { CodeBlock } from '../../ui/CodeBlock';
 import { Callout } from '../../ui/Callout';
 import { InstallCommand } from '../../ui/InstallCommand';
@@ -26,11 +26,8 @@ The package needs React 18 or newer and ships its own TypeScript types. It has n
 and no build plugin to configure.
 
 <Callout type="note" title="Version documented here">
-  These pages are written against <strong>{DOCUMENTED_VERSION}</strong> and every snippet is executed by the
-  site's test suite against that source. The npm `latest` tag currently resolves to
-  <strong>{STABLE_VERSION}</strong>. The two builds have the same runtime API; the only difference is the
-  opt-in `react-global-state-hooks/debug` entry used by
-  <a href={`${links.repo}/blob/master/DEVTOOLS.md`}>DevTools</a>, which is available in the beta.
+  These pages are written against <strong>{PACKAGE_VERSION}</strong>, and every snippet is executed by the site's
+  test suite against that source.
 </Callout>
 
 ## Create a store
@@ -124,4 +121,4 @@ explicitly with `reset(state, metadata)`.
 ## Where to go next
 
 - Watch the <a href={links.videoTutorial}>video tutorial</a> or try the <a href={links.liveDemo}>live demo</a>.
-- Browse the <a href={`${links.repo}#readme`}>README</a> for the full feature list while the rest of these docs are written.
+- Continue with [Stores and hooks](../stores-and-hooks/) and [Selectors and derived state](../selectors-and-derived-state/), or browse the [examples](../../examples/).

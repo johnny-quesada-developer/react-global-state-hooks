@@ -17,6 +17,14 @@
  *    (transitively) has its dependency range updated to the new version (preserving the ^/~/exact
  *    operator) and its own version bumped by a minor.
  *
+ * Independently versioned packages (INDEPENDENT_FOLDERS, currently libs/code-review) are NOT part of the
+ * lockstep: sync-all skips them, they are never bumped as dependents, and no range that points at them is
+ * rewritten. Bump one deliberately with the targeted mode (`node scripts/version-bump.mjs code-review <type>`).
+ *
+ * The website documents ONE version at a time: after computing the new versions the script also writes the
+ * (new) version of the web package, react-global-state-hooks, to PUBLIC_PACKAGE_VERSION in apps/website/.env.
+ * It changes only when the web package's version changes, so a targeted bump of `mobile` leaves it alone.
+ *
  * Arguments:
  *   <package>      Folder name (e.g. "universal") or npm name (e.g. "react-hooks-global-states").
  *   <releaseType>  patch | minor | major | premajor | preminor | prepatch | prerelease.
@@ -51,6 +59,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const workspaceRoot = path.resolve(__dirname, '..');
 const projectDirs = [path.join(workspaceRoot, 'libs'), path.join(workspaceRoot, 'apps')];
 
+// Packages released on their own schedule. They keep their own version and are skipped by the lockstep bump.
+const INDEPENDENT_FOLDERS = new Set(['code-review']);
+const isIndependent = (pkg) => INDEPENDENT_FOLDERS.has(pkg.folder);
+
 const DEP_FIELDS = ['dependencies', 'peerDependencies', 'optionalDependencies', 'devDependencies'];
 const DEPENDENT_RELEASE_TYPE = 'minor';
 const VALID_TYPES = ['patch', 'minor', 'major', 'premajor', 'preminor', 'prepatch', 'prerelease'];
@@ -84,6 +96,44 @@ function loadWorkspacePackages() {
 /** The private root monorepo package. */
 function loadRootPackage() {
   return loadPackage('.', path.join(workspaceRoot, 'package.json'));
+}
+
+const WEBSITE_ENV_PATH = path.join(workspaceRoot, 'apps', 'website', '.env');
+const WEBSITE_ENV_KEY = 'PUBLIC_PACKAGE_VERSION';
+const WEB_PACKAGE_JSON = path.join(workspaceRoot, 'libs', 'web', 'package.json');
+
+/**
+ * Plan the website .env change: PUBLIC_PACKAGE_VERSION follows the web package (react-global-state-hooks).
+ * Returns null when nothing changes (the web package is not bumped, or the value is already current).
+ */
+function planWebsiteEnv(versionByName) {
+  if (!fs.existsSync(WEBSITE_ENV_PATH) || !fs.existsSync(WEB_PACKAGE_JSON)) return null;
+
+  const webName = JSON.parse(fs.readFileSync(WEB_PACKAGE_JSON, 'utf8')).name;
+  const nextVersion = versionByName.get(webName);
+  if (!nextVersion) return null;
+
+  const text = fs.readFileSync(WEBSITE_ENV_PATH, 'utf8');
+  const pattern = new RegExp(`^${WEBSITE_ENV_KEY}=(.*)$`, 'm');
+  const match = pattern.exec(text);
+  if (!match) fail(`${path.relative(workspaceRoot, WEBSITE_ENV_PATH)} has no ${WEBSITE_ENV_KEY} line.`);
+  if (match[1].trim() === nextVersion) return null;
+
+  return {
+    from: match[1].trim(),
+    to: nextVersion,
+    text: text.replace(pattern, `${WEBSITE_ENV_KEY}=${nextVersion}`),
+  };
+}
+
+function reportWebsiteEnv(envEdit) {
+  if (!envEdit) return;
+  console.log(`  ${path.relative(workspaceRoot, WEBSITE_ENV_PATH)}`);
+  console.log(`    ${WEBSITE_ENV_KEY}: ${envEdit.from} -> ${envEdit.to}`);
+}
+
+function applyWebsiteEnv(envEdit) {
+  if (envEdit) fs.writeFileSync(WEBSITE_ENV_PATH, envEdit.text);
 }
 
 /** Resolve the target package by folder name or npm name. */
@@ -133,6 +183,8 @@ function computeEdits(allPackages, versionByPath, versionByName) {
       if (!deps) continue;
       for (const [name, range] of Object.entries(deps)) {
         if (!versionByName.has(name)) continue;
+        // a wildcard (or workspace:) range means "whatever the workspace has": leave it alone
+        if (range.trim() === '*' || range.startsWith('workspace:')) continue;
         const { operator } = splitRange(range);
         const nextRange = `${operator || '^'}${versionByName.get(name)}`;
         if (nextRange !== range) rangeChanges.push({ field, name, from: range, to: nextRange });
@@ -179,7 +231,7 @@ function applyEdits(edits) {
  */
 function runSyncAll(versionOrType, dryRun) {
   const root = loadRootPackage();
-  const workspacePackages = loadWorkspacePackages();
+  const workspacePackages = loadWorkspacePackages().filter((pkg) => !isIndependent(pkg));
   const allPackages = [root, ...workspacePackages];
 
   const explicitVersion = semver.valid(versionOrType);
@@ -194,18 +246,23 @@ function runSyncAll(versionOrType, dryRun) {
   }
 
   const edits = computeEdits(allPackages, versionByPath, versionByName);
+  const envEdit = planWebsiteEnv(versionByName);
 
   console.log('\n[version-bump] mode: SYNC-ALL (root + all workspace packages in lockstep)');
   console.log(`[version-bump] ${explicitVersion ? 'explicit version' : 'release'}: ${versionOrType}`);
   console.log(`[version-bump] all packages -> ${targetVersion}`);
   report(edits);
+  reportWebsiteEnv(envEdit);
 
   if (dryRun) {
     console.log('\n[version-bump] dry run: no files written.');
     return;
   }
   applyEdits(edits);
-  console.log(`\n[version-bump] updated ${edits.length} package.json file(s).`);
+  applyWebsiteEnv(envEdit);
+  console.log(
+    `\n[version-bump] updated ${edits.length} package.json file(s)${envEdit ? ' and the website .env' : ''}.`,
+  );
 }
 
 /** TARGETED: bump one package and cascade a minor to its dependents (transitive). */
@@ -232,6 +289,7 @@ function runTargeted(query, releaseType, dryRun) {
     const changedName = queue.shift();
     for (const pkg of packages) {
       if (pkg.json.name === changedName || changedNames.has(pkg.json.name)) continue;
+      if (isIndependent(pkg)) continue; // released on its own schedule, never bumped as a dependent
       const references = DEP_FIELDS.some((field) => pkg.json[field]?.[changedName]);
       if (!references) continue;
 
@@ -248,6 +306,7 @@ function runTargeted(query, releaseType, dryRun) {
   // Include the root so any dependency range it declares on a changed package is updated too.
   // The root's own version is NOT bumped in targeted mode (it's keyed by path, not in the map).
   const edits = computeEdits([root, ...packages], versionByPath, versionByName);
+  const envEdit = planWebsiteEnv(versionByName);
 
   console.log(`\n[version-bump] mode: TARGETED`);
   console.log(`[version-bump] target: ${target.json.name} (${target.folder})`);
@@ -262,13 +321,17 @@ function runTargeted(query, releaseType, dryRun) {
     console.log('[version-bump] no workspace dependents.');
   }
   report(edits);
+  reportWebsiteEnv(envEdit);
 
   if (dryRun) {
     console.log('\n[version-bump] dry run: no files written.');
     return;
   }
   applyEdits(edits);
-  console.log(`\n[version-bump] updated ${edits.length} package.json file(s).`);
+  applyWebsiteEnv(envEdit);
+  console.log(
+    `\n[version-bump] updated ${edits.length} package.json file(s)${envEdit ? ' and the website .env' : ''}.`,
+  );
 }
 
 function main() {

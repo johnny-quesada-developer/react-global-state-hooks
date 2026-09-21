@@ -1,6 +1,6 @@
 {
   "name": "react-global-state-hooks",
-  "version": "16.0.4-beta",
+  "version": "16.0.5",
   "private": true,
   "description": "Monorepo for the react-global-state-hooks family of packages (universal, web, react-native).",
   "workspaces": [
@@ -81,7 +81,7 @@
     "@typescript-eslint/parser": "^4.9.1",
     "@vitejs/plugin-react": "^4.3.1",
     "@vitest/coverage-v8": "^2.1.9",
-    "code-review": "*",
+    "code-review": "^1.0.0-beta-1",
     "easy-cancelable-promise": "^1.0.1",
     "esbuild": "^0.24.0",
     "eslint": "^9.39.1",
