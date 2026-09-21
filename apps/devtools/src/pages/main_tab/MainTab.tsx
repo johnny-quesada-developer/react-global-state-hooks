@@ -7,6 +7,8 @@ import {
   TabsContainer,
   LoadMismatchModal,
   PageConnectionOverlay,
+  PageFallback,
+  ReactDevToolsNotice,
 } from '@main_tab/components';
 import { Resizable } from '@shared/components/Resizable';
 import { useBuildType } from '@main_tab/context';
@@ -49,6 +51,10 @@ export const MainTab: React.FC<MainTabProps> = ({ className = '', ...props }: Ma
       <LoadMismatchModal />
 
       <PageConnectionOverlay />
+
+      <ReactDevToolsNotice />
+
+      <PageFallback />
     </div>
   );
 };

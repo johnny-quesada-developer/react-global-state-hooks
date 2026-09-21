@@ -108,7 +108,8 @@ export const startAgentBridge = ({ retryMs = DEFAULT_RETRY_MS }: { retryMs?: num
         send({
           type: 'HELLO',
           version: 1,
-          tabId: (typeof chrome === 'undefined' ? undefined : chrome.devtools?.inspectedWindow?.tabId) ?? null,
+          tabId:
+            (typeof chrome === 'undefined' ? undefined : chrome.devtools?.inspectedWindow?.tabId) ?? null,
           page,
         }),
       );
