@@ -35,7 +35,7 @@ delete pkg.scripts;
 fs.writeFileSync(path.join(dist, 'package.json'), `${JSON.stringify(pkg, null, 2)}\n`);
 
 // --- static files ---
-for (const file of ['README.md', 'LICENSE']) {
+for (const file of ['README.md', 'LICENSE', 'rgsh.mjs']) {
   const from = path.join(root, file);
   if (fs.existsSync(from)) {
     fs.copyFileSync(from, path.join(dist, file));

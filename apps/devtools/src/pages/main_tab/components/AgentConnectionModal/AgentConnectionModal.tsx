@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FiCheck, FiCopy } from 'react-icons/fi';
 import { Modal } from '@shared/components/Modal';
 import { cn } from '@src/shared/tools/cn';
-import { AGENT_DEFAULT_PORT } from '@src/shared/agent/protocol';
+import { AGENT_DEFAULT_PORT } from 'react-hooks-global-states-debug/agent/protocol';
 import {
   agentSettings$,
   agentStatus$,
@@ -143,27 +143,30 @@ export const AgentConnectionModal: React.FC<AgentConnectionModalProps> = ({
         </div>
 
         <div className="flex flex-col gap-2">
-          <h3 className="font-semibold">Run in the repo root</h3>
-          <CommandLine command={'yarn rgsh --help'} hint="Everything rgsh can do, and how to read its output." />
-          <CommandLine command={`yarn rgsh --list${portFlag}`} hint="See the stores DevTools knows about." />
-          <CommandLine command={`yarn rgsh${portFlag}`} hint="Pick stores interactively." />
+          <h3 className="font-semibold">Run in your app's project</h3>
+          <p className="text-xs text-gray-600 dark:text-gray-400">
+            rgsh is installed with your state library. It also needs the ws package: <code>npm i -D ws</code>
+          </p>
+          <CommandLine command={'npx rgsh --help'} hint="Everything rgsh can do, and how to read its output." />
+          <CommandLine command={`npx rgsh --list${portFlag}`} hint="See the stores DevTools knows about." />
+          <CommandLine command={`npx rgsh${portFlag}`} hint="Pick stores interactively." />
           <CommandLine
-            command={`yarn rgsh --store todos,auth${portFlag}`}
+            command={`npx rgsh --store todos,auth${portFlag}`}
             hint='Stream named stores (use "*" for all: slower and noisier).'
           />
-          <CommandLine command={`yarn rgsh state todos${portFlag}`} hint="Read a store's state and metadata." />
+          <CommandLine command={`npx rgsh state todos${portFlag}`} hint="Read a store's state and metadata." />
           {settings.allowControl && (
             <>
               <CommandLine
-                command={`yarn rgsh action todos add "Write the docs"${portFlag}`}
+                command={`npx rgsh action todos add "Write the docs"${portFlag}`}
                 hint="Run an action and print what it did."
               />
               <CommandLine
-                command={`yarn rgsh patch todos '{"filter":"done"}'${portFlag}`}
+                command={`npx rgsh patch todos '{"filter":"done"}'${portFlag}`}
                 hint="Merge JSON into the state (primitives replace)."
               />
               <CommandLine
-                command={`yarn rgsh set counter 5${portFlag}`}
+                command={`npx rgsh set counter 5${portFlag}`}
                 hint="Replace the whole state with JSON."
               />
             </>

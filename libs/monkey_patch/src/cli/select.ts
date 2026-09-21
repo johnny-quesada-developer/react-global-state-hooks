@@ -1,4 +1,4 @@
-import type { AgentStoreInfo } from '../shared/agent/protocol';
+import type { AgentStoreInfo } from '../agent/protocol';
 import { storeTitle } from './format';
 
 /** Result of the interactive pick: explicit selectors, or every store. */

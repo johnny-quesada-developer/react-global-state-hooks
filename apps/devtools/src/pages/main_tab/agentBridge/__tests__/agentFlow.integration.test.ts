@@ -2,9 +2,9 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest
 import { createServer } from 'node:net';
 import WsClient from 'ws';
 import * as stateDiff from '@src/shared/agent/stateDiff';
-import { run, EXIT, type Io } from '../../../../cli/run';
-import { parseArgs } from '../../../../cli/args';
-import type { Selection } from '../../../../cli/select';
+import { run, EXIT, type Io } from 'react-hooks-global-states-debug/cli/run';
+import { parseArgs } from 'react-hooks-global-states-debug/cli/args';
+import type { Selection } from 'react-hooks-global-states-debug/cli/select';
 
 /**
  * Real path, minus Chrome: the real debug patch instruments real stores and emits the real

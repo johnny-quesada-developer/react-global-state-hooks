@@ -146,5 +146,8 @@
   },
   "dependencies": {
     "react-hooks-global-states": "^16.0.5"
+  },
+  "bin": {
+    "rgsh": "./rgsh.mjs"
   }
 }

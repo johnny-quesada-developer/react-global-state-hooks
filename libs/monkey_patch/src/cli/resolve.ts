@@ -1,4 +1,4 @@
-import type { AgentStoreInfo } from '../shared/agent/protocol';
+import type { AgentStoreInfo } from '../agent/protocol';
 import { storeLabel } from './format';
 
 export type ResolvedTargets = {

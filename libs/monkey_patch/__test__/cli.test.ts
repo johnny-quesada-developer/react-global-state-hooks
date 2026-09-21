@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { HELP, parseArgs, UsageError } from '../args';
-import { formatEvent, formatStoreList } from '../format';
-import { resolveTargets } from '../resolve';
-import { renderSelector } from '../select';
-import type { AgentStoreInfo } from '../../shared/agent/protocol';
+import { HELP, parseArgs, UsageError } from '../src/cli/args';
+import { formatEvent, formatStoreList } from '../src/cli/format';
+import { resolveTargets } from '../src/cli/resolve';
+import { renderSelector } from '../src/cli/select';
+import type { AgentStoreInfo } from '../src/agent/protocol';
 
 const store = (overrides: Partial<AgentStoreInfo>): AgentStoreInfo => ({
   selector: 'n:todos',

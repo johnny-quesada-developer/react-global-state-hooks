@@ -10,7 +10,7 @@ import {
   type AgentValue,
   type CliToPanel,
   type PanelToCli,
-} from '@src/shared/agent/protocol';
+} from 'react-hooks-global-states-debug/agent/protocol';
 import { diffState, PREVIEW_VALUE_LIMITS, READ_VALUE_LIMITS, toAgentValue } from '@src/shared/agent/stateDiff';
 import { mergePatch, readPath } from '@src/shared/agent/stateOps';
 import { getStoreLabel, getStoreLocation, getStoreSelector, isUnnamedStore } from '@src/shared/agent/storeInfo';

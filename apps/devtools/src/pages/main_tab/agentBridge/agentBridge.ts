@@ -3,7 +3,7 @@ import {
   AGENT_CLOSE_SUPERSEDED,
   type CliToPanel,
   type PanelToCli,
-} from '@src/shared/agent/protocol';
+} from 'react-hooks-global-states-debug/agent/protocol';
 import { AgentTracker } from './agentTracker';
 import { agentSettings$, agentStatus$ } from './agentSettings';
 

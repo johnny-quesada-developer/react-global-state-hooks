@@ -62,6 +62,9 @@
       "import": "./debug.mjs",
       "require": "./debug.cjs"
     },
+    "./rgsh": {
+      "import": "./rgsh.mjs"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -125,5 +128,8 @@
     "react": {
       "optional": false
     }
+  },
+  "bin": {
+    "rgsh": "./rgsh.mjs"
   }
 }

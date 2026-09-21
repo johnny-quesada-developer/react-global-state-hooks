@@ -11,7 +11,6 @@ node_modules/
 
 # build output
 dist/
-dist-cli/
 *.tsbuildinfo
 
 # test / coverage output

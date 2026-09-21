@@ -9,6 +9,7 @@
   "sideEffects": true,
   "files": [
     "debug.js",
+    "cli.mjs",
     "index.d.ts"
   ],
   "scripts": {
@@ -55,9 +56,29 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
     "@types/chrome": "^0.0.270",
+    "@types/ws": "^8.5.12",
     "@vitest/coverage-v8": "^2.1.9",
     "easy-cancelable-promise": "^1.0.2",
     "vitest": "^2.1.9",
+    "ws": "^8.18.0",
     "zod": "^4.3.6"
+  },
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./debug.js",
+      "default": "./debug.js"
+    },
+    "./debug.js": "./debug.js",
+    "./cli": "./cli.mjs",
+    "./package.json": "./package.json"
+  },
+  "peerDependencies": {
+    "ws": ">=7.0.0"
+  },
+  "peerDependenciesMeta": {
+    "ws": {
+      "optional": true
+    }
   }
 }

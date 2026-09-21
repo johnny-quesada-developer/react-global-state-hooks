@@ -41,6 +41,16 @@ See every action that changes state
 </tr>
 </table>
 
+## 💻 Terminal (`rgsh`)
+
+The state libraries install an `rgsh` command that talks to the panel: watch actions, read state and, if you allow it, run actions or change state from a terminal.
+
+```bash
+npm i -D ws
+npx rgsh --list
+npx rgsh --help
+```
+
 ## 📸 Screenshots
 
 | Track State Changes                                                                                                                       | Modify State                                                                                                                    |

@@ -32,6 +32,7 @@
     "version:check": "node scripts/versions-remote.mjs",
     "coverage": "node scripts/coverage-report.mjs",
     "review": "review",
+    "rgsh": "tsx libs/monkey_patch/src/cli/main.ts",
     "graph": "nx graph",
     "preview:dev": "nx preview:dev devtools"
   },

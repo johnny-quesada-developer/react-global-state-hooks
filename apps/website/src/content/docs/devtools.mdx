@@ -55,6 +55,30 @@ import { App } from './App';
 
 Give stores a `name` option so they are easy to find in the panel.
 
+## Drive it from a terminal
+
+`react-global-state-hooks`, `react-hooks-global-states` and `react-native-global-state-hooks` each install an
+`rgsh` command. It talks to the panel, so you can watch actions, read state and (if you allow it) change state
+without leaving the terminal.
+
+```bash
+npm i -D ws        # rgsh needs it to talk to the extension
+npx rgsh --list    # every store DevTools knows about
+npx rgsh --help    # everything rgsh can do
+```
+
+Your app must import the debug entry and the panel must be open on the app's tab. The port is `7787` by default
+and has to match the panel under gear > Terminal connection.
+
+```bash
+npx rgsh --store todos                        # stream one store's actions and state changes
+npx rgsh state todos                          # read a store's state and metadata
+npx rgsh action todos add "Write the docs"    # run an action (needs "Allow the terminal to change state")
+npx rgsh patch todos '{"filter":"done"}'      # merge JSON into the state
+```
+
+If `ws` is missing, rgsh tells you and prints the install command.
+
 ## A tour of the panel
 
 The whole window first, then each section on its own. These are real captures of this repository's playground and

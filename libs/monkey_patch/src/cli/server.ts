@@ -1,11 +1,11 @@
 import type { AddressInfo } from 'node:net';
-import { WebSocketServer, type WebSocket } from 'ws';
+import type { WebSocket } from 'ws';
 import {
   AGENT_CLOSE_SUPERSEDED,
   type AgentEvent,
   type CliToPanel,
   type PanelToCli,
-} from '../shared/agent/protocol';
+} from '../agent/protocol';
 
 type Hello = Extract<PanelToCli, { type: 'HELLO' }>;
 type Reply<T extends PanelToCli['type']> = Extract<PanelToCli, { type: T }>;
@@ -97,8 +97,35 @@ export type AgentServer = {
 /** Browsers always send an Origin on WebSocket handshakes: only the extension may connect. */
 const isAllowedOrigin = (origin: string | undefined) => origin === undefined || origin.startsWith('chrome-extension://');
 
-export const startServer = (port: number): Promise<AgentServer> =>
-  new Promise((resolve, reject) => {
+export class MissingWsError extends Error {
+  constructor() {
+    super(
+      [
+        "rgsh needs the 'ws' package to talk to the DevTools extension, and it is not installed in this project.",
+        'Install it as a dev dependency:',
+        '  yarn add -D ws',
+        '  npm install -D ws',
+        '  pnpm add -D ws',
+      ].join('\n'),
+    );
+    this.name = 'MissingWsError';
+  }
+}
+
+const loadWebSocketServer = async () => {
+  try {
+    const ws = await import('ws');
+    return ws.WebSocketServer ?? (ws.default as unknown as { Server: typeof ws.WebSocketServer }).Server;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ERR_MODULE_NOT_FOUND') throw new MissingWsError();
+    throw error;
+  }
+};
+
+export const startServer = async (port: number): Promise<AgentServer> => {
+  const WebSocketServer = await loadWebSocketServer();
+
+  return new Promise((resolve, reject) => {
     const panelListeners: ((panel: PanelSession) => void)[] = [];
     let current: WebSocket | null = null;
 
@@ -148,3 +175,4 @@ export const startServer = (port: number): Promise<AgentServer> =>
       });
     });
   });
+};

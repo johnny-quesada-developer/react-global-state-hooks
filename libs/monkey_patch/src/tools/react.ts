@@ -250,6 +250,8 @@ export const {
   };
 
   const connectReactDevTools = () => {
+    if (typeof window === 'undefined') return;
+
     const global = getGlobalThis(window);
 
     if (isNil(global.__REACT_DEVTOOLS_GLOBAL_HOOK__?.listeners?.operations)) {

@@ -2,7 +2,7 @@ import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { AgentConnectionModal } from '../AgentConnectionModal';
 import { agentSettings$, agentStatus$ } from '@main_tab/agentBridge/agentSettings';
-import { AGENT_DEFAULT_PORT } from '@src/shared/agent/protocol';
+import { AGENT_DEFAULT_PORT } from 'react-hooks-global-states-debug/agent/protocol';
 
 beforeAll(() => {
   // jsdom has no modal <dialog> support.
@@ -26,8 +26,9 @@ describe('AgentConnectionModal', () => {
     render(<AgentConnectionModal open onClose={() => undefined} />);
 
     expect(screen.getByRole('status').textContent).toContain('Waiting for rgsh');
-    expect(screen.getByText('yarn rgsh --list')).toBeTruthy();
-    expect(screen.getByText('yarn rgsh --store todos,auth')).toBeTruthy();
+    expect(screen.getByText('npx rgsh --list')).toBeTruthy();
+    expect(screen.getByText(/npm i -D ws/)).toBeTruthy();
+    expect(screen.getByText('npx rgsh --store todos,auth')).toBeTruthy();
 
     act(() => agentStatus$.setState('connected'));
     expect(screen.getByRole('status').textContent).toContain('Connected to rgsh');
@@ -59,8 +60,8 @@ describe('AgentConnectionModal', () => {
     fireEvent.blur(input);
 
     expect(agentSettings$.getState().port).toBe(8123);
-    expect(screen.getByText('yarn rgsh --list --port 8123')).toBeTruthy();
-    expect(screen.getByText('yarn rgsh --port 8123')).toBeTruthy();
+    expect(screen.getByText('npx rgsh --list --port 8123')).toBeTruthy();
+    expect(screen.getByText('npx rgsh --port 8123')).toBeTruthy();
   });
 
   it('rejects an invalid port and keeps the saved one', () => {
@@ -86,12 +87,12 @@ describe('AgentConnectionModal', () => {
     render(<AgentConnectionModal open onClose={() => undefined} />);
 
     expect(agentSettings$.getState().allowControl).toBe(false);
-    expect(screen.queryByText(/yarn rgsh set counter/)).toBeNull();
+    expect(screen.queryByText(/npx rgsh set counter/)).toBeNull();
 
     fireEvent.click(screen.getByLabelText(/Allow the terminal to change state and run actions/));
 
     expect(agentSettings$.getState().allowControl).toBe(true);
-    expect(screen.getByText('yarn rgsh set counter 5')).toBeTruthy();
-    expect(screen.getByText('yarn rgsh action todos add "Write the docs"')).toBeTruthy();
+    expect(screen.getByText('npx rgsh set counter 5')).toBeTruthy();
+    expect(screen.getByText('npx rgsh action todos add "Write the docs"')).toBeTruthy();
   });
 });

@@ -27,20 +27,28 @@ import { tryCatch } from 'easy-cancelable-promise/tryCatch';
 import type { AnyFunction } from 'react-global-state-hooks';
 
 const global = getGlobalThis(globalThis);
+const isBrowser = typeof window !== 'undefined';
+
+const observeRejection = <T>(value: T): T => {
+  if (isPromise(value)) value.catch(() => undefined);
+  return value;
+};
 
 // The devtools panel does not reload with the page. On every page load the patch re-executes, so
 // we clear everything the panel held for the previous load and start fresh. '*' means "clear all".
 // Guarded so a load-time environment without a usable messaging channel (SSR, tests importing
 // helpers) cannot throw during module eval.
-tryCatch(() =>
-  sendMessageFromMonkeyPath({
-    id: uniqueId('cleanup:'),
-    action: 'CLEAR_GLOBAL_STATES',
-    payload: {
-      globalStatePath: '*',
-    },
-  }),
-);
+if (isBrowser) {
+  tryCatch(() =>
+    sendMessageFromMonkeyPath({
+      id: uniqueId('cleanup:'),
+      action: 'CLEAR_GLOBAL_STATES',
+      payload: {
+        globalStatePath: '*',
+      },
+    }),
+  );
+}
 
 type RegisteredStore = { store: GlobalStoreParameter; args: unknown; storePath: string };
 
@@ -162,7 +170,7 @@ onReactDevToolsConnect(() => {
 });
 
 // connector function, extends the instances of GlobalStore to add devtool capabilities
-global.REACT_GLOBAL_STATE_HOOK_DEBUG = (store, args, rawStorePath) => {
+const debugHook: NonNullable<typeof global.REACT_GLOBAL_STATE_HOOK_DEBUG> = (store, args, rawStorePath) => {
   const storeId = uniqueId('store-id:');
 
   // Strip bundler cache-bust query strings (Vite's `?v=`/`?t=`) from the creation-stack path so it
@@ -303,6 +311,8 @@ global.REACT_GLOBAL_STATE_HOOK_DEBUG = (store, args, rawStorePath) => {
 
   return store;
 };
+
+if (isBrowser) global.REACT_GLOBAL_STATE_HOOK_DEBUG = debugHook;
 
 export function makeSetStateWrapper(
   args: {
@@ -639,7 +649,7 @@ export function addDevtoolsListeners() {
           actionName,
         )?.value;
 
-        return actionFunction.apply(globalState.actions, args);
+        return observeRejection(actionFunction.apply(globalState.actions, args));
       }
 
       if (action === 'SET_STATE') {
@@ -683,4 +693,4 @@ export function addDevtoolsListeners() {
   );
 }
 
-addDevtoolsListeners();
+if (isBrowser) addDevtoolsListeners();

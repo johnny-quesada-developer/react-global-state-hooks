@@ -137,5 +137,8 @@
     "json-storage-formatter": {
       "optional": false
     }
+  },
+  "bin": {
+    "rgsh": "./rgsh.mjs"
   }
 }

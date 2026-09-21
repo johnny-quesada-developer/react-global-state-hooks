@@ -127,7 +127,6 @@ export const useManualDomList = (config: ManualDomListConfig) => {
       unsubscribe();
       itemRoots.unmountAll();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, config.dependencies);
 
   return { mainListRef, recordsCountRef, emptyLegendRef };

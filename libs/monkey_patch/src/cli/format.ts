@@ -6,7 +6,7 @@ import type {
   AgentStoreRef,
   AgentValue,
   PanelToCli,
-} from '../shared/agent/protocol';
+} from '../agent/protocol';
 
 const INLINE_MAX = 100;
 

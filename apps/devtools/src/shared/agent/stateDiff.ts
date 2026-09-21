@@ -1,4 +1,4 @@
-import type { AgentChange, AgentValue } from './protocol';
+import type { AgentChange, AgentValue } from 'react-hooks-global-states-debug/agent/protocol';
 
 /**
  * Structural, path-based diff for agent output.

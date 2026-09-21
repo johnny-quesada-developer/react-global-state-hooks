@@ -864,6 +864,50 @@ describe('monkey_patch.ts - Integration Tests', () => {
       expect(mockIncrementAction).toHaveBeenCalled();
     });
 
+    it('does not leak an unhandled rejection when an executed async action fails', async () => {
+      vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      vi.spyOn(console, 'trace').mockImplementation(() => undefined);
+      const unhandled = vi.fn();
+      process.on('unhandledRejection', unhandled);
+
+      let called = false;
+      const mockActions = {
+        fail: async () => {
+          called = true;
+          throw new Error('boom');
+        },
+      };
+      const mockStore: Any = {
+        state: { count: 0 },
+        setState: vi.fn(),
+        getMainHook: vi.fn(() => ({ state: { count: 0 }, setState: vi.fn() })),
+        dispose: vi.fn(),
+        getStoreActionsMap: vi.fn(() => ({
+          actions: mockActions,
+          storeTools: { state: { count: 0 }, setState: vi.fn() },
+        })),
+        createSelectorHook: vi.fn(() => vi.fn()),
+        actions: mockActions,
+      };
+
+      const wrappedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/failing.ts');
+
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          data: {
+            action: 'devtools-request/EXECUTE_ACTION',
+            payload: { actionName: 'fail', globalStateId: wrappedStore._DEV_TOOLS_STORE_ID, parameters: '' },
+          },
+          source: window,
+        }),
+      );
+      await new Promise((resolve) => setTimeout(resolve, 20));
+      process.off('unhandledRejection', unhandled);
+
+      expect(called).toBe(true);
+      expect(unhandled).not.toHaveBeenCalled();
+    });
+
     it('should handle EXECUTE_ACTION with parameters', () => {
       const mockAddAction = vi.fn((n: number) => `added ${n}`);
       const mockActions = {

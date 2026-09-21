@@ -1,9 +1,9 @@
-import { ALL_STORES, type AgentEvent, type AgentStoreInfo, type AgentStoreRef, type PanelToCli } from '../shared/agent/protocol';
+import { ALL_STORES, type AgentEvent, type AgentStoreInfo, type AgentStoreRef, type PanelToCli } from '../agent/protocol';
 import { type CliOptions, type ControlCommand } from './args';
 import { formatEvent, formatState, formatStoreList, formatStoreRef } from './format';
 import { resolveTargets } from './resolve';
 import type { Selection } from './select';
-import { PanelSession, startServer } from './server';
+import { MissingWsError, PanelSession, startServer } from './server';
 
 export type Io = {
   out: (text: string) => void;
@@ -38,9 +38,11 @@ export const run = async (options: CliOptions, io: Io, signal: AbortSignal): Pro
   } catch (error) {
     const { code } = error as { code?: string };
     io.err(
-      code === 'EADDRINUSE'
-        ? `Port ${options.port} is already in use. Is another rgsh running? Stop it or pass --port.`
-        : `Could not start the listener on port ${options.port}: ${(error as Error).message}`,
+      error instanceof MissingWsError
+        ? error.message
+        : code === 'EADDRINUSE'
+          ? `Port ${options.port} is already in use. Is another rgsh running? Stop it or pass --port.`
+          : `Could not start the listener on port ${options.port}: ${(error as Error).message}`,
     );
     return EXIT.failed;
   }

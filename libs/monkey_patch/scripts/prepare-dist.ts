@@ -13,9 +13,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
 const dist = path.resolve(root, 'dist');
 
-if (!fs.existsSync(path.join(dist, 'debug.js'))) {
-  console.error('dist/debug.js not found. Run the esbuild build first.');
-  process.exit(1);
+for (const built of ['debug.js', 'cli.mjs']) {
+  if (!fs.existsSync(path.join(dist, built))) {
+    console.error(`dist/${built} not found. Run the esbuild build first.`);
+    process.exit(1);
+  }
 }
 
 // package.json (strip dev-only fields; the published paths already sit next to debug.js).

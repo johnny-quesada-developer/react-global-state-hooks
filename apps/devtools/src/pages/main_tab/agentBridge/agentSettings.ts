@@ -1,5 +1,5 @@
 import { createGlobalState } from 'react-global-state-hooks/createGlobalState';
-import { AGENT_DEFAULT_PORT } from '@src/shared/agent/protocol';
+import { AGENT_DEFAULT_PORT } from 'react-hooks-global-states-debug/agent/protocol';
 
 export type AgentSettings = {
   enabled: boolean;

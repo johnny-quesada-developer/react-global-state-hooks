@@ -1,4 +1,4 @@
-import { AGENT_DEFAULT_PORT, ALL_STORES } from '../shared/agent/protocol';
+import { AGENT_DEFAULT_PORT, ALL_STORES } from '../agent/protocol';
 
 const DEFAULT_TIMEOUT_SECONDS = 10;
 
