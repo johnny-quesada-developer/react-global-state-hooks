@@ -6,8 +6,9 @@
   "description": "Documentation, examples and learning site for react-global-state-hooks. Deployed to GitHub Pages; never published to npm.",
   "scripts": {
     "sync:media": "node scripts/sync-media.mjs",
-    "dev": "yarn sync:media && astro dev",
-    "build": "yarn sync:media && astro build && pagefind --site dist --output-subdir pagefind",
+    "search:index": "node scripts/dev-search-index.mjs",
+    "dev": "yarn sync:media && yarn search:index && astro dev",
+    "build": "yarn sync:media && rm -rf public/pagefind && astro build && pagefind --site dist --output-subdir pagefind",
     "preview": "astro preview",
     "test": "vitest run",
     "test:watch": "vitest",

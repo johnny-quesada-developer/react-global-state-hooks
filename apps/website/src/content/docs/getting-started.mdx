@@ -33,7 +33,7 @@ and no build plugin to configure.
 ## Create a store
 
 A store is created with one call. The value you get back is a React hook, and the same function also
-carries the store's API (`getState`, `setState`, `subscribe`, `reset` and more).
+carries the store's API (`getState`, `setState`, `subscribe` and more).
 
 <CodeBlock code={createStore} lang="ts" title="counter-store.ts" />
 
@@ -104,19 +104,6 @@ Persistence is skipped when `localStorage` is not available, for example while r
 If you render on the server, read the persistence section of the
 <a href={`${links.repo}#readme`}>README</a> before shipping;
 restored values can differ from the server-rendered HTML.
-
-## Reset a store
-
-`store.reset()` restores the store to its initial state, but only when the store was created from a function
-initializer:
-
-```ts
-const useCounter = createGlobalState(() => ({ count: 0 }));
-useCounter.reset(); // back to { count: 0 }
-```
-
-With a plain object, `reset()` with no arguments keeps the current state. You can always pass the values
-explicitly with `reset(state, metadata)`.
 
 ## Where to go next
 

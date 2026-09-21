@@ -60,9 +60,7 @@ describe('MiniMe', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Hide' }));
     expect(screen.queryByRole('button', { name: 'Play' })).toBeNull();
-    expect(JSON.parse(window.localStorage.getItem('rgsh:site-preferences') ?? 'null').s.miniMeHidden).toBe(
-      true,
-    );
+    expect(JSON.parse(window.localStorage.getItem('user-preferences') ?? 'null').s.miniMeHidden).toBe(true);
 
     act(() => fireEvent.click(screen.getByRole('button', { name: 'Show the walking character' })));
     expect(screen.getByRole('button', { name: 'Hide' })).toBeTruthy();

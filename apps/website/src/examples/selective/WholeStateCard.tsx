@@ -8,7 +8,7 @@ export function WholeStateCard() {
   return (
     <section className="demo-card demo-card--whole" aria-label="Whole state card">
       <RenderCount />
-      <span>Whole state (no selector)</span>
+      <span>Whole state</span>
       <pre className="demo-json">{JSON.stringify(profile, null, 2)}</pre>
     </section>
   );

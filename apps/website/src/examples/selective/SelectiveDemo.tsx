@@ -4,14 +4,14 @@ import { ClicksCard } from './ClicksCard';
 import { NameCard } from './NameCard';
 import { RoleCard } from './RoleCard';
 import { WholeStateCard } from './WholeStateCard';
-import { useProfile } from './store';
+import { initialProfile, useProfile } from './store';
 
 export function SelectiveDemo() {
   // Changing the key remounts the cards, which also restarts their render counters.
   const [epoch, setEpoch] = useState(0);
 
   const reset = () => {
-    useProfile.reset();
+    useProfile.setState(initialProfile());
     setEpoch((current) => current + 1);
   };
 

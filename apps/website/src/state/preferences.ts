@@ -16,8 +16,9 @@ const defaults: Preferences = { packageManager: 'npm', miniMeHidden: false };
  * Saved to localStorage; anything unexpected in storage falls back to the defaults.
  */
 export const usePreferences = createGlobalState(defaults, {
+  name: 'sitePreferences',
   localStorage: {
-    key: 'rgsh:site-preferences',
+    key: 'user-preferences',
     validator: ({ restored, initial }) => {
       if (typeof restored !== 'object' || restored === null) return initial;
 

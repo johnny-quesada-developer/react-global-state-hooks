@@ -42,22 +42,18 @@ The function you get back carries the whole store API, so the same import works 
 | `createSelectorHook(selector, options?)` | A reusable, shared derived hook. |
 | `createObservable(selector, options?)` | A subscribable slice of the state. |
 | `metadata`, `getMetadata()`, `setMetadata()` | Non-reactive side data. |
-| `reset()` | Restore the initial state (see below). |
+| `reset()` | A test helper: restore the initial state (see [Testing](../testing/)). |
 | `dispose()` | Remove subscriptions and run cleanup. |
 | `actions` | The actions object, when actions are configured. |
 
 ## Initial state
 
 Pass a value, or a function that returns one. Use the function form when the initial state should be created
-fresh each time, for example in tests, because `reset()` calls it again:
+fresh each time. It is also what lets a test restore the store with `reset()` (see [Testing](../testing/)).
 
 ```ts
 const useSession = createGlobalState(() => ({ user: null as string | null }));
-useSession.reset(); // back to { user: null }
 ```
-
-With a plain value, `reset()` with no arguments keeps the current state. You can always pass the values
-explicitly: `reset(state, metadata)`.
 
 ## What to watch for
 

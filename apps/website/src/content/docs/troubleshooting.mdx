@@ -39,7 +39,7 @@ value first and switch to the stored one after hydration. See [Persistence](../p
 
 Annotate the initial value instead of passing a type argument. See [TypeScript](../typescript/).
 
-## `reset()` does not restore the initial state
+## `reset()` does not restore the initial state in a test
 
 The store was created from a plain value, so `reset()` keeps the current one. Use a function initializer, or
 call `reset(state, metadata)`.

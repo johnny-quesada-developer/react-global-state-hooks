@@ -12,9 +12,15 @@ const initialTasks = (): Task[] => [
   { id: 3, text: 'Review feedback', done: false },
 ];
 
-// A function initializer lets `useTasks.reset()` restore the seed data.
-export const useTasks = createGlobalState(() => ({ tasks: initialTasks(), nextId: 4 }), {
+const seed = () => ({ tasks: initialTasks(), nextId: 4 });
+
+export const useTasks = createGlobalState(seed, {
+  name: 'tasks',
   actions: {
+    restore() {
+      return ({ setState }) => setState(seed());
+    },
+
     add(text: string) {
       return ({ setState }) => {
         const trimmed = text.trim();
@@ -51,9 +57,9 @@ export const useTasks = createGlobalState(() => ({ tasks: initialTasks(), nextId
 });
 
 // Derived values are computed once per change and shared by every component that uses them.
-export const useOpenCount = useTasks.createSelectorHook(
-  (state) => state.tasks.filter((task) => !task.done).length,
-);
-export const useDoneCount = useTasks.createSelectorHook(
-  (state) => state.tasks.filter((task) => task.done).length,
-);
+export const useOpenCount = useTasks.createSelectorHook((state) => state.tasks.filter((task) => !task.done).length, {
+  name: 'openCount',
+});
+export const useDoneCount = useTasks.createSelectorHook((state) => state.tasks.filter((task) => task.done).length, {
+  name: 'doneCount',
+});

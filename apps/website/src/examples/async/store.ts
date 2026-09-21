@@ -19,10 +19,19 @@ const initial: UsersState = { status: 'idle', users: [], error: null, attempts: 
 /** The fetcher is injected, so tests (and the demo) control what the "server" does. */
 export function createUsersStore(fetchUsers: FetchUsers) {
   return createGlobalState(initial, {
+    name: 'users',
+
     // Bookkeeping that no component displays belongs in metadata: changing it never renders anything.
     metadata: { latestRequest: 0 },
 
     actions: {
+      restore() {
+        return ({ setState, setMetadata }) => {
+          setState(initial);
+          setMetadata({ latestRequest: 0 });
+        };
+      },
+
       load() {
         // Keep `tools` whole: `tools.metadata` is a live getter, but destructuring it copies the object as it
         // is right now, which would be out of date after setMetadata.

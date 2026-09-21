@@ -15,8 +15,8 @@ export const defaults: Preferences = { accent: 'mint', size: 'medium', compact: 
 
 export const STORAGE_KEY = 'examples:preferences';
 
-// A function initializer so `reset()` can restore the defaults.
 export const usePreferences = createGlobalState(() => ({ ...defaults }), {
+  name: 'persistedPreferences',
   localStorage: {
     key: STORAGE_KEY,
 

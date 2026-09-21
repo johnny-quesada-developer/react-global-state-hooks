@@ -58,6 +58,6 @@ value as `legacy` and must return the new state. The `validator` then runs on th
 
 - Persistence is skipped when `localStorage` is unavailable, for example during server rendering.
 - A stored value that is not a valid envelope is reported and the store falls back to its initial state.
-- `reset()` with no arguments clears the stored value first. Combine it with a function initializer to get the
-  original state back.
+- In tests, `reset()` with no arguments clears the stored value first. Combine it with a function initializer to
+  get the original state back.
 - Storage can throw (private windows, quota). Provide `onError` if you need to react.

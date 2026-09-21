@@ -104,7 +104,7 @@ export function PreferencesDemo() {
       <p className="section__lede">
         Change something, then reload this page: the saved values come back and the draft does not.
       </p>
-      <button type="button" className="demo-reset" onClick={() => usePreferences.reset()}>
+      <button type="button" className="demo-reset" onClick={() => usePreferences.setState({ ...defaults })}>
         Clear saved data
       </button>
     </div>

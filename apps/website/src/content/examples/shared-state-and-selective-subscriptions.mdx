@@ -35,7 +35,7 @@ button, and watch which counters move.
 
 ## The code
 
-One store, created once. The function initializer lets the demo's reset button call `useProfile.reset()`.
+One store, created once. The demo's reset button writes the initial profile back with `useProfile.setState(initialProfile())`.
 
 <CodeBlock code={store} lang="ts" title="store.ts" />
 

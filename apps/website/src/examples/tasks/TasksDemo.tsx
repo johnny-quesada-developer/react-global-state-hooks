@@ -10,7 +10,7 @@ export function TasksDemo() {
   const [epoch, setEpoch] = useState(0);
 
   const reset = () => {
-    useTasks.reset();
+    useTasks.actions.restore();
     setEpoch((current) => current + 1);
   };
 

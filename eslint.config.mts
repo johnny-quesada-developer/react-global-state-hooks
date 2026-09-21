@@ -18,7 +18,7 @@ export default defineConfig([
     // no-unused-expressions, etc.). '**.js' does not reliably match nested paths in flat config.
     // Globs are prefixed with '**/' so they match build output in every workspace project
     // (libs/web/dist, libs/universal/dist, ...) now that eslint runs per-project from libs/*.
-    ignores: ['**/dist/**', '**/*.d.ts', '**/coverage/**', '**/node_modules/**'],
+    ignores: ['**/dist/**', '**/public/pagefind/**', '**/*.d.ts', '**/coverage/**', '**/node_modules/**'],
   },
   {
     files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],

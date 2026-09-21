@@ -147,6 +147,10 @@ kbd {
 
 /* prose (MDX documentation) */
 .prose {
+  max-width: none;
+}
+
+.prose > :where(p, ul, ol, dl, blockquote) {
   max-width: 46rem;
 }
 
@@ -195,6 +199,7 @@ kbd {
 
 /* code blocks: white surface, hairline border */
 .code-block {
+  margin-inline: 0;
   border: 1px solid var(--color-line);
   border-radius: var(--radius-md);
   background: var(--color-bg);

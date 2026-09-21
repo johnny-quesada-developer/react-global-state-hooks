@@ -102,7 +102,7 @@ export function Search() {
         ref={dialog}
         className="search-dialog"
         aria-label="Search documentation"
-        onClose={() => actions.hide()}
+        onClose={() => useSearchDialog.getState().open && actions.hide()}
         onClick={(event) => {
           const target = event.target as HTMLElement;
           // backdrop click, or a result link (which navigates away): close first
@@ -118,8 +118,7 @@ export function Search() {
         <div ref={mount} />
         {unavailable && (
           <p className="search-dialog__status">
-            The search index is created by the production build (yarn build). It is not available in the dev
-            server.
+            The search index was not found. Run yarn search:index (yarn dev and yarn build also create it).
           </p>
         )}
       </dialog>

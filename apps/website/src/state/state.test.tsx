@@ -17,7 +17,7 @@ describe('preferences store', () => {
   it('persists changes under its localStorage key', () => {
     usePreferences.setState((current) => ({ ...current, packageManager: 'pnpm' }));
 
-    const saved = JSON.parse(window.localStorage.getItem('rgsh:site-preferences') ?? 'null');
+    const saved = JSON.parse(window.localStorage.getItem('user-preferences') ?? 'null');
     expect(saved.s).toEqual({ packageManager: 'pnpm', miniMeHidden: false });
   });
 

@@ -15,6 +15,24 @@ const BASE = env.PUBLIC_BASE_PATH;
 
 if (!SITE || !BASE) throw new Error('PUBLIC_SITE_URL and PUBLIC_BASE_PATH must be set in apps/website/.env');
 
+const webIndex = `${libs('web/src')}/index.ts`;
+const debugLibrary = here('./src/lib/debugLibrary.ts');
+
+const debugEntry = /[\\/]libs[\\/](web|universal)[\\/]src[\\/]debug(\.ts)?$/;
+
+const debugEverywhere = {
+  name: 'debug-everywhere',
+  enforce: 'pre',
+  async resolveId(id, importer, options) {
+    if (options?.ssr) return null;
+    if (id === webIndex && importer !== debugLibrary) return debugLibrary;
+    if (!debugEntry.test(id)) return null;
+
+    const resolved = await this.resolve(id, importer, { ...options, skipSelf: true });
+    return resolved && { ...resolved, moduleSideEffects: true };
+  },
+};
+
 export default defineConfig({
   site: SITE,
   base: BASE,
@@ -28,6 +46,7 @@ export default defineConfig({
     shikiConfig: { theme: 'github-light' },
   },
   vite: {
+    plugins: [debugEverywhere],
     // Examples run against monorepo SOURCE (same convention as apps/playground), so the site
     // always documents the version in this workspace. Subpath aliases precede bare-name aliases.
     resolve: {
@@ -36,6 +55,8 @@ export default defineConfig({
         { find: /^@examples\/(.*)$/, replacement: `${here('./src/examples')}/$1` },
         { find: /^react-global-state-hooks\/(.*)$/, replacement: `${libs('web/src')}/$1` },
         { find: /^react-global-state-hooks$/, replacement: `${libs('web/src')}/index.ts` },
+        { find: /^react-hooks-global-states-debug$/, replacement: `${libs('monkey_patch/src')}/debug.ts` },
+        { find: /^react-hooks-global-states-debug\/(.*)$/, replacement: `${libs('monkey_patch/src')}/$1` },
         { find: /^react-hooks-global-states\/(.*)$/, replacement: `${libs('universal/src')}/$1` },
         { find: /^react-hooks-global-states$/, replacement: `${libs('universal/src')}/index.ts` },
       ],

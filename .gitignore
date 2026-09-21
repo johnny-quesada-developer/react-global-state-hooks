@@ -38,3 +38,4 @@ openapi.json
 /brag-output
 /brag-output-landscape
 .DS_Store
+apps/website/public/pagefind/

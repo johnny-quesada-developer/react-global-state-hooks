@@ -54,8 +54,8 @@ export function AsyncDemo() {
   const [epoch, setEpoch] = useState(0);
 
   const reset = () => {
-    useUsers.reset({ status: 'idle', users: [], error: null, attempts: 0 }, { latestRequest: 0 });
-    useServer.reset({ failing: false }, {});
+    useUsers.actions.restore();
+    useServer.setState({ failing: false });
     setEpoch((current) => current + 1);
   };
 

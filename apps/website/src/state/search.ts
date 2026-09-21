@@ -4,6 +4,7 @@ import { createGlobalState } from 'react-global-state-hooks';
 export const useSearchDialog = createGlobalState(
   { open: false },
   {
+    name: 'searchDialog',
     actions: {
       show() {
         return ({ setState }) => setState({ open: true });

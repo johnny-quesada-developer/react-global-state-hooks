@@ -838,7 +838,7 @@
 }
 
 .prose--wide {
-  max-width: 60rem;
+  max-width: none;
 }
 
 .example__related {

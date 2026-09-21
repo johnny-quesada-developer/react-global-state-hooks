@@ -2,7 +2,7 @@ import { createGlobalState } from 'react-global-state-hooks';
 import { createUsersStore, type FetchUsers } from './store';
 
 // The demo's "server" switch. It is a store too, so the checkbox and the fetcher share it.
-export const useServer = createGlobalState({ failing: false });
+export const useServer = createGlobalState({ failing: false }, { name: 'fakeServer' });
 
 export const fetchUsers: FetchUsers = () =>
   new Promise((resolve, reject) => {

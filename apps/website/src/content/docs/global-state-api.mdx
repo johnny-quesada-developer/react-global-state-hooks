@@ -61,7 +61,7 @@ createGlobalState(initialState, options?) => hook
 | `createObservable` | `(selector, { isEqual?, isEqualRoot?, name? }?) => observable` | Subscribable and chainable. |
 | `metadata` | `Metadata` (getter) | |
 | `getMetadata` / `setMetadata` | `() => Metadata` / `(valueOrUpdater) => void` | `getMetadata` is deprecated in favour of `metadata`. |
-| `reset` | `() => void` or `(state, metadata) => void` | Restores the initial state and re-runs `onInit`. Function initializers are re-evaluated. |
+| `reset` | `() => void` or `(state, metadata) => void` | A test helper: restores the initial state and re-runs `onInit`. Function initializers are re-evaluated. |
 | `dispose` | `() => void` | Removes subscriptions and runs cleanup. |
 | `actions` | object or `null` | The actions object. |
 | `use` | hook | The same function as the hook. |

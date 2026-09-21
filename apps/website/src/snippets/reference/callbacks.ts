@@ -8,7 +8,7 @@ export const useGuarded = createGlobalState(
     name: 'guarded-counter',
     metadata: { changes: 0 },
     callbacks: {
-      // Runs when the store is created (and again after reset()). May return a cleanup function.
+      // Runs when the store is created. May return a cleanup function.
       onInit: ({ getState }) => {
         log.push(`init:${getState().count}`);
 
