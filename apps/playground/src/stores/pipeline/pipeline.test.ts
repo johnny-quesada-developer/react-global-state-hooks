@@ -2,10 +2,11 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import React from 'react';
 import { render } from '@testing-library/react';
 import { usePipeline } from './pipeline';
+import type { Any } from 'react-global-state-hooks/types';
 
 describe('pipeline', () => {
-  let capturedState: any;
-  let capturedActions: any;
+  let capturedState: Any;
+  let capturedActions: Any;
 
   const TestComponent = () => {
     const [state, actions] = usePipeline();
@@ -50,11 +51,7 @@ describe('pipeline', () => {
     // After runSync completes, should be in 'done' stage with progress 100
     expect(capturedState.stage).toBe('done');
     expect(capturedState.progress).toBe(100);
-    expect(capturedState.steps).toEqual([
-      'sync: validating',
-      'sync: processing',
-      'sync: done',
-    ]);
+    expect(capturedState.steps).toEqual(['sync: validating', 'sync: processing', 'sync: done']);
     expect(capturedState.lastError).toBeNull();
   });
 
@@ -87,11 +84,7 @@ describe('pipeline', () => {
       await vi.advanceTimersByTimeAsync(500);
       expect(capturedState.stage).toBe('processing');
       expect(capturedState.progress).toBe(75);
-      expect(capturedState.steps).toEqual([
-        'async: validating',
-        'async: uploading',
-        'async: processing',
-      ]);
+      expect(capturedState.steps).toEqual(['async: validating', 'async: uploading', 'async: processing']);
 
       // Fast-forward third wait (500ms)
       await vi.advanceTimersByTimeAsync(500);
@@ -122,7 +115,7 @@ describe('pipeline', () => {
 
       vi.useRealTimers();
     },
-    { timeout: 10000 }
+    { timeout: 10000 },
   );
 
   it(
@@ -168,7 +161,7 @@ describe('pipeline', () => {
 
       vi.useRealTimers();
     },
-    { timeout: 10000 }
+    { timeout: 10000 },
   );
 
   it('reset action restores initial state', async () => {

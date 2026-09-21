@@ -1,7 +1,13 @@
 import React from 'react';
 import { cn } from '@src/shared/tools/cn';
 import styles from './MainTab.module.scss';
-import { NavBar, GlobalStateList, TabsContainer, LoadMismatchModal } from '@main_tab/components';
+import {
+  NavBar,
+  GlobalStateList,
+  TabsContainer,
+  LoadMismatchModal,
+  PageConnectionOverlay,
+} from '@main_tab/components';
 import { Resizable } from '@shared/components/Resizable';
 import { useBuildType } from '@main_tab/context';
 import panelIcon from '@src/assets/devtools_page_icon-28px.ico';
@@ -41,6 +47,8 @@ export const MainTab: React.FC<MainTabProps> = ({ className = '', ...props }: Ma
       </Resizable>
 
       <LoadMismatchModal />
+
+      <PageConnectionOverlay />
     </div>
   );
 };
