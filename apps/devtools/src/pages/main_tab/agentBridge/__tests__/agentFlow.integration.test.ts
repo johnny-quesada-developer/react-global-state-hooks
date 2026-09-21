@@ -158,7 +158,7 @@ beforeAll(async () => {
   port = await getFreePort();
   // Started once: the bridge keeps redialing the port, so every CLI run below is picked up.
   agentSettings$.setState({ enabled: true, port });
-  startAgentBridge({ retryMs: RETRY_MS });
+  startAgentBridge({ retryMs: RETRY_MS, maxFailedDials: Infinity });
 });
 
 afterAll(() => {

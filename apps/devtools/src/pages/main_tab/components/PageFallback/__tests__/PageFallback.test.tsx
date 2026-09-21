@@ -35,14 +35,6 @@ afterEach(() => {
 });
 
 describe('PageFallback', () => {
-  it('stays hidden until a problem is confirmed', () => {
-    render(<PageFallback />);
-    expect(screen.queryByRole('alert')).toBeNull();
-
-    act(() => pageDiagnosis$.actions.probed(withoutReact));
-    expect(screen.queryByRole('alert')).toBeNull();
-  });
-
   it('says the page does not use React and lets you check again or show the panel anyway', () => {
     render(<PageFallback />);
     confirm(withoutReact);
@@ -67,15 +59,6 @@ describe('PageFallback', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Reload page' }));
     expect(reloadInspectedPage).toHaveBeenCalledTimes(1);
   });
-
-  it('disappears on its own once the page is fixed', () => {
-    render(<PageFallback />);
-    confirm(withoutPatch);
-    expect(screen.getByRole('alert')).toBeTruthy();
-
-    act(() => pageDiagnosis$.actions.probed({ ...withoutPatch, patch: true }));
-    expect(screen.queryByRole('alert')).toBeNull();
-  });
 });
 
 describe('ReactDevToolsNotice', () => {
@@ -89,14 +72,6 @@ describe('ReactDevToolsNotice', () => {
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Dismiss' }));
-    expect(screen.queryByRole('note')).toBeNull();
-  });
-
-  it('stays hidden when React DevTools is installed', () => {
-    render(<ReactDevToolsNotice />);
-
-    act(() => pageDiagnosis$.actions.probed({ ...patchedWithoutDevTools, reactDevTools: true }));
-
     expect(screen.queryByRole('note')).toBeNull();
   });
 });

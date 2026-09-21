@@ -18,6 +18,7 @@ export type AgentConnectionModalProps = { open: boolean; onClose: () => void };
 const STATUS: Record<AgentStatus, { dot: string; text: string }> = {
   off: { dot: 'bg-gray-400', text: 'Off. No connection is attempted.' },
   waiting: { dot: 'bg-amber-400', text: 'Waiting for rgsh. Run one of the commands below.' },
+  idle: { dot: 'bg-amber-400', text: 'Nothing is listening. Run one of the commands below, then focus this panel.' },
   connected: { dot: 'bg-green-500', text: 'Connected to rgsh.' },
   replaced: { dot: 'bg-red-500', text: 'Another DevTools panel took over the connection.' },
 };
@@ -135,9 +136,9 @@ export const AgentConnectionModal: React.FC<AgentConnectionModalProps> = ({
         <div className="flex items-center gap-2" role="status">
           <span className={cn('inline-block h-2 w-2 rounded-full', STATUS[status].dot)} />
           <span>{STATUS[status].text}</span>
-          {status === 'replaced' && (
+          {(status === 'replaced' || status === 'idle') && (
             <button type="button" className="underline" onClick={reconnectAgentBridge}>
-              Reconnect
+              {status === 'idle' ? 'Check now' : 'Reconnect'}
             </button>
           )}
         </div>

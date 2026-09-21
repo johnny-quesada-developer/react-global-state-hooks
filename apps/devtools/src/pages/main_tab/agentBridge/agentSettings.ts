@@ -8,8 +8,8 @@ export type AgentSettings = {
   allowControl: boolean;
 };
 
-/** `off` disabled in settings, `waiting` dialing the port, `connected` an `rgsh` answered, `replaced` a newer panel took over. */
-export type AgentStatus = 'off' | 'waiting' | 'connected' | 'replaced';
+/** `off` disabled in settings, `waiting` dialing the port, `idle` nobody answered so dialing paused, `connected` an `rgsh` answered, `replaced` a newer panel took over. */
+export type AgentStatus = 'off' | 'waiting' | 'idle' | 'connected' | 'replaced';
 
 export const MIN_AGENT_PORT = 1024;
 export const MAX_AGENT_PORT = 65535;

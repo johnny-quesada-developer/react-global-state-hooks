@@ -105,7 +105,7 @@ export type GlobalStatesContextApi = InferStateApi<typeof globalStates$>;
 const globalStates$ = createGlobalState(new EntityAdapter<GlobalStateId, GlobalStateMetaExtended>({}), {
   name: 'globalStates',
   metadata: {
-    logMessages: true,
+    logMessages: false,
   },
   actions: {
     SET_REACT_BUILD_TYPE: (

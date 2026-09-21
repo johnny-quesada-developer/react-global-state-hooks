@@ -11,12 +11,14 @@ import { agentSettings$, agentStatus$ } from './agentSettings';
  * Panel side of the agent channel.
  *
  * The `rgsh` CLI runs a WebSocket server on loopback and this panel dials it: an extension page
- * cannot listen. While no CLI is running the only cost is one refused loopback connection every
- * few seconds. When a CLI connects the panel answers its requests from the model it already
- * keeps; when it disconnects the subscription is dropped and agent work returns to zero.
+ * cannot listen. Chrome prints every refused loopback connection in the console and a page cannot
+ * silence it, so the panel dials a couple of times and then goes idle: it dials again when the panel
+ * regains focus or the user asks. When a CLI connects the panel answers its requests from the model
+ * it already keeps; when it disconnects the subscription is dropped and agent work returns to zero.
  */
 
 const DEFAULT_RETRY_MS = 2000;
+const DEFAULT_MAX_FAILED_DIALS = 2;
 
 let socket: WebSocket | null = null;
 
@@ -64,14 +66,17 @@ const isCliRequest = (value: unknown): value is CliToPanel =>
 
 let restart: (() => void) | null = null;
 
-/** Dials again with the current settings, e.g. after a newer panel replaced this one. */
+/** Dials again with the current settings, e.g. after a newer panel replaced this one or the bridge went idle. */
 export const reconnectAgentBridge = () => restart?.();
 
 /**
  * Keeps one connection attempt alive for the port in `agentSettings$`. Changing the port or the
  * enabled flag in the settings dialog closes the current socket and starts over.
  */
-export const startAgentBridge = ({ retryMs = DEFAULT_RETRY_MS }: { retryMs?: number } = {}) => {
+export const startAgentBridge = ({
+  retryMs = DEFAULT_RETRY_MS,
+  maxFailedDials = DEFAULT_MAX_FAILED_DIALS,
+}: { retryMs?: number; maxFailedDials?: number } = {}) => {
   if (typeof WebSocket === 'undefined') return;
 
   // Bumped on every restart: callbacks of an older attempt see a different value and stop.
@@ -87,11 +92,30 @@ export const startAgentBridge = ({ retryMs = DEFAULT_RETRY_MS }: { retryMs?: num
     previous?.close();
   };
 
-  const connect = (port: number, current: number) => {
+  let warned = false;
+
+  const connect = (port: number, current: number, failedDials: number) => {
     const retry = () => {
-      retryTimer = setTimeout(() => current === attempt && connect(port, current), retryMs);
+      if (failedDials + 1 >= maxFailedDials) {
+        agentStatus$.setState('idle');
+
+        if (!warned) {
+          warned = true;
+          console.warn(
+            `[agent] no rgsh listening on port ${port}. Chrome logs each refused connection, so the panel stopped dialing: it tries again when focused.`,
+          );
+        }
+
+        return;
+      }
+
+      retryTimer = setTimeout(
+        () => current === attempt && connect(port, current, failedDials + 1),
+        retryMs,
+      );
     };
 
+    let opened = false;
     let ws: WebSocket;
     try {
       ws = new WebSocket(`ws://127.0.0.1:${port}`);
@@ -103,6 +127,8 @@ export const startAgentBridge = ({ retryMs = DEFAULT_RETRY_MS }: { retryMs?: num
       if (current !== attempt) return ws.close();
 
       socket = ws;
+      opened = true;
+      warned = false;
       agentStatus$.setState('connected');
       readInspectedPage((page) =>
         send({
@@ -133,19 +159,33 @@ export const startAgentBridge = ({ retryMs = DEFAULT_RETRY_MS }: { retryMs?: num
       if (event.code === AGENT_CLOSE_SUPERSEDED) return agentStatus$.setState('replaced');
 
       agentStatus$.setState('waiting');
-      retry();
+
+      if (!opened) return retry();
+
+      retryTimer = setTimeout(() => current === attempt && connect(port, current, maxFailedDials - 1), retryMs);
     };
   };
 
-  restart = () => {
+  const dial = (failedDials: number) => {
     stop();
 
     const { enabled, port } = agentSettings$.getState();
     if (!enabled) return agentStatus$.setState('off');
 
     agentStatus$.setState('waiting');
-    connect(port, attempt);
+    connect(port, attempt, failedDials);
   };
+
+  restart = () => dial(0);
+
+  const dialOnce = () => {
+    if (agentStatus$.getState() === 'idle') dial(maxFailedDials - 1);
+  };
+
+  if (typeof window !== 'undefined') {
+    window.addEventListener('focus', dialOnce);
+    document.addEventListener('visibilitychange', () => document.visibilityState === 'visible' && dialOnce());
+  }
 
   // Re-run on real changes only: the store notifies on every write, including equal values.
   let applied = '';

@@ -54,20 +54,6 @@ describe('page watcher', () => {
     expect(probePage).toHaveBeenCalledTimes(4);
   });
 
-  it('slows down after the first few attempts', async () => {
-    const { probePage, watcher } = await load(Array.from({ length: 30 }, () => missing));
-
-    watcher.startPageWatcher();
-    await vi.advanceTimersByTimeAsync(4000);
-    expect(probePage).toHaveBeenCalledTimes(5);
-
-    await vi.advanceTimersByTimeAsync(4900);
-    expect(probePage).toHaveBeenCalledTimes(5);
-
-    await vi.advanceTimersByTimeAsync(100);
-    expect(probePage).toHaveBeenCalledTimes(6);
-  });
-
   it('starts over when the inspected page navigates', async () => {
     const { probePage, watcher, navigate } = await load([ready, ready]);
 

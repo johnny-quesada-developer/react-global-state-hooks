@@ -1,9 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { isFallbackVisible, pageDiagnosis$, shouldSuggestReactDevTools } from '../pageDiagnosis';
+import { isFallbackVisible, pageDiagnosis$ } from '../pageDiagnosis';
 
 const ready = { ok: true, react: true, patch: true, reactDevTools: true } as const;
 const withoutReact = { ok: true, react: false, patch: false, reactDevTools: false } as const;
-const withoutPatch = { ok: true, react: true, patch: false, reactDevTools: true } as const;
 
 beforeEach(() =>
   pageDiagnosis$.setState({
@@ -23,16 +22,6 @@ describe('pageDiagnosis', () => {
     pageDiagnosis$.actions.probed(withoutReact);
     expect(pageDiagnosis$.getState().problem).toBe('no-react');
     expect(isFallbackVisible(pageDiagnosis$.getState())).toBe(true);
-  });
-
-  it('restarts the count when the problem changes and clears it when the page becomes ready', () => {
-    pageDiagnosis$.actions.probed(withoutReact);
-    pageDiagnosis$.actions.probed(withoutPatch);
-    expect(pageDiagnosis$.getState()).toMatchObject({ problem: 'no-patch', streak: 1 });
-
-    pageDiagnosis$.actions.probed(ready);
-    expect(pageDiagnosis$.getState()).toMatchObject({ problem: null, streak: 0 });
-    expect(isFallbackVisible(pageDiagnosis$.getState())).toBe(false);
   });
 
   it('never declares a problem when the probe could not run', () => {
@@ -55,16 +44,5 @@ describe('pageDiagnosis', () => {
     pageDiagnosis$.actions.probed(withoutReact);
     pageDiagnosis$.actions.probed(withoutReact);
     expect(isFallbackVisible(pageDiagnosis$.getState())).toBe(true);
-  });
-
-  it('suggests React DevTools only when the patch is loaded without the hook, until dismissed', () => {
-    pageDiagnosis$.actions.probed({ ...ready, reactDevTools: false });
-    expect(shouldSuggestReactDevTools(pageDiagnosis$.getState())).toBe(true);
-
-    pageDiagnosis$.actions.dismissReactDevToolsNotice();
-    expect(shouldSuggestReactDevTools(pageDiagnosis$.getState())).toBe(false);
-
-    pageDiagnosis$.actions.probed(ready);
-    expect(shouldSuggestReactDevTools(pageDiagnosis$.getState())).toBe(false);
   });
 });

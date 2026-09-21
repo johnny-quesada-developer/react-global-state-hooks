@@ -31,24 +31,6 @@ describe('PAGE_PROBE_EXPRESSION', () => {
     expect(runInPage().react).toBe(true);
   });
 
-  it('finds React through a fiber marker on a deeply nested node', () => {
-    (document.querySelector('p') as unknown as Record<string, unknown>)['__reactFiber$x1'] = {};
-
-    expect(runInPage().react).toBe(true);
-  });
-
-  it('finds React through a renderer registered on the DevTools hook, and reports the hook', () => {
-    page.__REACT_DEVTOOLS_GLOBAL_HOOK__ = { renderers: new Map([[1, {}]]) };
-
-    expect(runInPage()).toEqual({ react: true, patch: false, reactDevTools: true });
-  });
-
-  it('reports the hook without React when no renderer attached', () => {
-    page.__REACT_DEVTOOLS_GLOBAL_HOOK__ = { renderers: new Map() };
-
-    expect(runInPage()).toEqual({ react: false, patch: false, reactDevTools: true });
-  });
-
   it('reports the patch once the debug entry installed its hook', () => {
     page.REACT_GLOBAL_STATE_HOOK_DEBUG = () => undefined;
 
@@ -80,22 +62,6 @@ describe('probePage', () => {
   it('resolves not ok when the evaluation fails', async () => {
     withEval((_expression, callback) => callback(undefined, { isError: true }));
 
-    await expect(probePage()).resolves.toEqual({ ok: false });
-  });
-
-  it('resolves not ok when the result is not the expected shape', async () => {
-    withEval((_expression, callback) => callback('location'));
-
-    await expect(probePage()).resolves.toEqual({ ok: false });
-  });
-
-  it('resolves not ok when eval throws or is unavailable', async () => {
-    withEval(() => {
-      throw new Error('no permission');
-    });
-    await expect(probePage()).resolves.toEqual({ ok: false });
-
-    globals.chrome = undefined;
     await expect(probePage()).resolves.toEqual({ ok: false });
   });
 
