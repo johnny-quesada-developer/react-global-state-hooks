@@ -9,7 +9,7 @@
 
 declare module 'react-hooks-global-states-debug' {
   /**
-   * Side-effect import. Connects your global stores to the React Hooks Global States DevTools
+   * Side-effect import. Connects your global stores to the React Global States Hooks DevTools
    * browser extension. Import once at your app entry point during development only; it must never
    * be shipped in production builds.
    */

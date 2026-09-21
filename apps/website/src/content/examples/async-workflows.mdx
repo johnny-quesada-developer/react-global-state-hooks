@@ -1,0 +1,55 @@
+---
+title: Async workflows
+description: Loading, success, error and retry in one store, with an action that ignores late answers from older requests.
+order: 3
+related:
+  - label: Actions
+    href: ../../docs/actions/
+  - label: Metadata and non-reactive access
+    href: ../../docs/metadata-and-non-reactive-access/
+  - label: Async workflows guide
+    href: ../../docs/async-workflows/
+---
+
+import { CodeBlock } from '../../ui/CodeBlock';
+import { Callout } from '../../ui/Callout';
+import { AsyncDemo } from '@examples/async/AsyncDemo';
+import store from '@examples/async/store.ts?raw';
+import fakeApi from '@examples/async/fakeApi.ts?raw';
+import demo from '@examples/async/AsyncDemo.tsx?raw';
+
+## Try it
+
+The "server" answers after about 700 ms. Turn on **Simulate a failing server**, load the users, then turn it off
+and press **Retry**.
+
+<AsyncDemo client:visible />
+
+## What to look for
+
+- The status moves through idle, loading, success and error. `attempts` counts every request.
+- **Retry** is the same `load` action. A retry clears the previous error.
+- The button is disabled while a request is in flight.
+
+## The code
+
+The store takes the fetch function as an argument. The demo passes a fake one, and the tests pass their own, so
+the workflow is tested without timers or a network.
+
+<CodeBlock code={store} lang="ts" title="store.ts" />
+
+The request counter lives in **metadata**, because no component displays it. When two requests overlap, the
+action compares its id with the latest one and drops the late answer.
+
+<Callout type="warning" title="Keep the tools object whole">
+  Inside an action, read `tools.metadata` when you need the current value. Destructuring
+  `({ metadata }) => ...` copies the object at that moment, and it is out of date after `setMetadata`.
+</Callout>
+
+The fake server, and the switch that makes it fail, which is a small store of its own:
+
+<CodeBlock code={fakeApi} lang="ts" title="fakeApi.ts" />
+
+The component reads the status and calls the action:
+
+<CodeBlock code={demo} lang="tsx" title="AsyncDemo.tsx" />

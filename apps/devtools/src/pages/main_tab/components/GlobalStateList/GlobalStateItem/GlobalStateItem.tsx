@@ -47,6 +47,8 @@ export const GlobalStateItem: React.FC<GlobalStateItemProps> = ({
 
   return (
     <li
+      data-testid="store-item"
+      data-store-name={storeName}
       className={clsx(selectableRow({ selected: isSelected }), className)}
       {...props}
       {...navProps}

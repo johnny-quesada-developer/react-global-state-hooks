@@ -27,6 +27,8 @@ export const LogListItem = ({ className = '', logId, index, ...props }: LogListI
 
   return (
     <li
+      data-testid="log-item"
+      data-log-action={log.parentAction}
       id={logId}
       tabIndex={-1}
       {...(isSelectedLog ? { [DATA_LIST_SELECTED]: true } : {})}

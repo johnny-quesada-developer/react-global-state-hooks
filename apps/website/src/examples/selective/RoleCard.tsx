@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import { RenderCount } from './RenderCount';
+import { RenderCount } from '../shared/RenderCount';
 import { useProfile } from './store';
 
 const roles = ['Engineer', 'Designer', 'Manager'];

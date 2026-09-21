@@ -1,0 +1,72 @@
+---
+title: Stores and hooks
+description: What createGlobalState returns, how the hook doubles as the store API, and why state lives outside React.
+section: Core concepts
+order: 1
+---
+
+import { CodeBlock } from '../../ui/CodeBlock';
+import { Callout } from '../../ui/Callout';
+import cartStore from '@snippets/stores/cart-store.tsx?raw';
+
+## The problem this solves
+
+Some state is not owned by one component: the signed-in user, a shopping cart, a theme. Passing it down
+through props or wrapping the app in providers couples every consumer to the tree. A store keeps that state
+at module scope, and any component can subscribe to it.
+
+## One call, one hook
+
+`createGlobalState(initialState, options?)` returns a hook. Call it inside a component to subscribe.
+
+<CodeBlock code={cartStore} lang="tsx" title="cart-store.tsx" />
+
+The hook returns a tuple:
+
+| Position | Value |
+| --- | --- |
+| 0 | The state, or the result of your selector when you pass one. |
+| 1 | A `setState` function, or the actions object when the store defines actions. |
+| 2 | The store's [metadata](../metadata-and-non-reactive-access/). It is not reactive. |
+
+## The hook is also the store
+
+The function you get back carries the whole store API, so the same import works inside and outside React.
+
+| Member | What it does |
+| --- | --- |
+| `getState()` | Current state. |
+| `setState(valueOrUpdater)` | Replace the state. Skipped when the new value is the same reference. |
+| `subscribe(selector?, callback, options?)` | Listen outside React. Returns an unsubscribe function. |
+| `select(selector, deps?)` | Like the hook, but returns only the selected value. |
+| `createSelectorHook(selector, options?)` | A reusable, shared derived hook. |
+| `createObservable(selector, options?)` | A subscribable slice of the state. |
+| `metadata`, `getMetadata()`, `setMetadata()` | Non-reactive side data. |
+| `reset()` | Restore the initial state (see below). |
+| `dispose()` | Remove subscriptions and run cleanup. |
+| `actions` | The actions object, when actions are configured. |
+
+## Initial state
+
+Pass a value, or a function that returns one. Use the function form when the initial state should be created
+fresh each time, for example in tests, because `reset()` calls it again:
+
+```ts
+const useSession = createGlobalState(() => ({ user: null as string | null }));
+useSession.reset(); // back to { user: null }
+```
+
+With a plain value, `reset()` with no arguments keeps the current state. You can always pass the values
+explicitly: `reset(state, metadata)`.
+
+## What to watch for
+
+<Callout type="warning" title="The store is shared by everything that imports it">
+  A store is a module-level singleton. That is what makes it global, and it means every React root on the
+  page shares it. On a server, the same module instance can serve many requests, so do not put per-request
+  data in a global store. Use [`createContext`](../scoped-state-with-createcontext/) for state that belongs to
+  one tree or one request.
+</Callout>
+
+- Updating with the same reference does nothing. Return a new object or array.
+- The tuple's third item is the metadata object itself; changing metadata does not cause a render.

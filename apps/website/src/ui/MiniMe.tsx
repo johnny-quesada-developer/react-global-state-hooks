@@ -1,9 +1,10 @@
 import { useState } from 'react';
+import { withBase } from '../lib/site';
 import { usePreferences, useMiniMeHidden } from '../state/preferences';
 
 /**
- * A small illustrated character walking along a strip at the end of the page. It is a stylised
- * illustration, not a likeness. The strip is in normal flow (never overlays content), can be paused or
+ * A small illustrated character walking along a strip at the end of the page. Its head is the
+ * author's avatar illustration on a simple body. The strip is in normal flow (never overlays content), can be paused or
  * hidden (the choice is remembered), and stays still when the visitor prefers reduced motion (see
  * site.css).
  */
@@ -44,17 +45,16 @@ export function MiniMe() {
               </g>
               <rect
                 x="14"
-                y="20"
+                y="24"
                 width="20"
-                height="22"
+                height="20"
                 rx="8"
                 fill="#e4f2e8"
                 stroke="#24634b"
                 strokeWidth="2"
               />
-              <circle cx="24" cy="12" r="9" fill="#fff0b8" stroke="#20332d" strokeWidth="2" />
-              <path d="M15 10 Q24 0 33 10 Q24 6 15 10Z" fill="#20332d" />
-              <circle cx="28" cy="13" r="1.4" fill="#20332d" />
+              {/* head: the author's avatar illustration (public/icon.jpeg, converted to a transparent PNG) */}
+              <image href={withBase('img/avatar-head.png')} x="10.5" y="0" width="27" height="27" />
             </svg>
           </div>
         </div>

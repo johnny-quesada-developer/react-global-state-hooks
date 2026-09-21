@@ -1,0 +1,34 @@
+---
+title: Scoped state with context
+description: Independent stores per provider. Add and remove notes, and see that each one keeps its own state.
+order: 5
+related:
+  - label: Scoped state with createContext
+    href: ../../docs/scoped-state-with-createcontext/
+  - label: Testing
+    href: ../../docs/testing/
+---
+
+import { CodeBlock } from '../../ui/CodeBlock';
+import { ScopedDemo } from '@examples/scoped/ScopedDemo';
+import store from '@examples/scoped/store.tsx?raw';
+import demo from '@examples/scoped/ScopedDemo.tsx?raw';
+
+## Try it
+
+<ScopedDemo client:visible />
+
+## What to look for
+
+- Type in one note. The other note does not change: each `Provider` has its own store.
+- The second note starts from a title supplied through the `value` prop.
+- Editing a title renders the title field only. The body and the word count keep their counts.
+- **Remove last note** throws that store away. **Add a note** creates a fresh one.
+
+## The code
+
+<CodeBlock code={store} lang="tsx" title="store.tsx" />
+
+The same selectors and actions API as a global store, scoped to whichever provider is above the component:
+
+<CodeBlock code={demo} lang="tsx" title="ScopedDemo.tsx" />

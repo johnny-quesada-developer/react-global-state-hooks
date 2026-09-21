@@ -9,6 +9,8 @@ interface HeaderProps {
 
 export function Header({ pathname, children }: HeaderProps) {
   const docs = withBase('docs/');
+  const examples = withBase('examples/');
+  const about = withBase('about/');
 
   return (
     <header className="site-header">
@@ -33,6 +35,12 @@ export function Header({ pathname, children }: HeaderProps) {
         <nav className="site-nav" aria-label="Main">
           <a href={docs} aria-current={pathname.startsWith(docs) ? 'page' : undefined}>
             Docs
+          </a>
+          <a href={examples} aria-current={pathname.startsWith(examples) ? 'page' : undefined}>
+            Examples
+          </a>
+          <a href={about} aria-current={pathname.startsWith(about) ? 'page' : undefined}>
+            About
           </a>
           <a href={links.repo} rel="noopener">
             GitHub

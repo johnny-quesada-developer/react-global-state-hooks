@@ -13,7 +13,11 @@
     "test:watch": "vitest",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix --max-warnings=0",
-    "ts-check": "astro check"
+    "ts-check": "astro check",
+    "check:links": "node scripts/check-links.mjs",
+    "make:og": "node scripts/make-og.mjs",
+    "capture:devtools": "node scripts/capture-devtools.mjs",
+    "capture:devtools:showcase": "node scripts/capture-devtools-showcase.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.0.1",
@@ -32,6 +36,8 @@
     "@vitejs/plugin-react": "^4.3.1",
     "jsdom": "^26.1.0",
     "pagefind": "^1.5.2",
+    "playwright-core": "^1.55.0",
+    "sharp": "^0.35.4",
     "typescript": "^5.8.2",
     "vitest": "^2.1.9"
   }

@@ -1,0 +1,67 @@
+---
+title: Selectors and derived state
+description: Subscribe to a slice, derive values, depend on local state, share selector hooks, and control equality.
+section: Core concepts
+order: 2
+---
+
+import { CodeBlock } from '../../ui/CodeBlock';
+import { Callout } from '../../ui/Callout';
+import filterDeps from '@snippets/selectors/filter-with-dependencies.tsx?raw';
+import selectorHooks from '@snippets/selectors/selector-hooks.tsx?raw';
+import observable from '@snippets/selectors/observable.ts?raw';
+
+## The problem this solves
+
+A component that reads the whole state renders on every change, even when it shows one field. A selector
+narrows what the component depends on.
+
+## Select a slice
+
+```tsx
+const [name] = useProfile((profile) => profile.name);
+```
+
+After every store change the selector runs and the result is compared with the previous result using strict
+equality (`===`). The component renders only when they differ. `useProfile.select(selector)` is the same
+without the setter.
+
+## Selections that depend on local state
+
+A selector often depends on something that is not in the store, such as a filter chosen in the component. List
+those values in `dependencies`. When one changes, the selector runs again on the next render.
+
+<CodeBlock code={filterDeps} lang="tsx" title="TodoList.tsx" />
+
+`dependencies` can also be passed as the second argument directly: `useTodos(selector, [showDone])`.
+
+## Equality options
+
+| Option | Default | Use it to |
+| --- | --- | --- |
+| `isEqual(current, next)` | `===` on the selected value | Treat a rebuilt array or object as unchanged. `shallowCompare` is exported for this. |
+| `isEqualRoot(current, next)` | `===` on the whole state | Skip running the selector at all for certain root changes. |
+
+<Callout type="warning" title="Selectors that build new values">
+  `filter`, `map` and object literals return a new reference every time. Without `isEqual` each store change
+  counts as a change for that component. Pass `{ isEqual: shallowCompare }`, or move the derivation into a
+  selector hook, below.
+</Callout>
+
+## Share a derivation with selector hooks
+
+`store.createSelectorHook(selector)` builds a hook once. It computes the derived value once per store change,
+not once per component, and it chains. It returns the selected value directly, not a tuple.
+
+<CodeBlock code={selectorHooks} lang="tsx" title="selector-hooks.tsx" />
+
+Selector hooks are read-only: they have no setter. `getState()` and `subscribe()` work on them too.
+
+## Observe outside React
+
+`createObservable` gives you the same slice as a subscribable object that needs no component. It calls back
+immediately with the current value, then on each change.
+
+<CodeBlock code={observable} lang="ts" title="observable.ts" />
+
+Call `dispose()` on an observable or selector hook you no longer need, so it stops listening to its parent.

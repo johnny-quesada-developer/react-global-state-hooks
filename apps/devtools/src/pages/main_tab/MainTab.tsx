@@ -4,6 +4,7 @@ import styles from './MainTab.module.scss';
 import { NavBar, GlobalStateList, TabsContainer, LoadMismatchModal } from '@main_tab/components';
 import { Resizable } from '@shared/components/Resizable';
 import { useBuildType } from '@main_tab/context';
+import panelIcon from '@src/assets/devtools_page_icon-28px.ico';
 
 export type MainTabProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -20,6 +21,7 @@ export const MainTab: React.FC<MainTabProps> = ({ className = '', ...props }: Ma
       )}
     >
       <h1 className="font-medium text-gray-500 dark:text-gray-300 border-b border-gray-400 align-middle p-2">
+        <img src={panelIcon} alt="" width={24} height={24} className="inline-block mr-2 align-middle" />
         GLOBAL STATES{' '}
         <span className="text-xs">
           {chrome?.devtools?.inspectedWindow?.tabId ?? buildType?.toLowerCase()}

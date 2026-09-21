@@ -56,6 +56,9 @@ jobs:
       - name: Build
         run: yarn nx run website:build
 
+      - name: Check internal links
+        run: yarn --cwd apps/website check:links
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: apps/website/dist

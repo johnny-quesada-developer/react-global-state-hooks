@@ -36,6 +36,7 @@ export const ActionLogListItem: React.FC<ActionLogListItemProps> = ({
 
   return (
     <li
+      data-testid="action-log-item"
       id={actionId}
       tabIndex={-1}
       {...(isSelectedAction ? { [DATA_LIST_SELECTED]: true } : {})}

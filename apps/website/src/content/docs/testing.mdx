@@ -1,0 +1,40 @@
+---
+title: Testing
+description: Reset stores between tests, drive them from tests, and test contexts with makeProviderWrapper.
+section: Testing and troubleshooting
+order: 1
+---
+
+import { CodeBlock } from '../../ui/CodeBlock';
+import { Callout } from '../../ui/Callout';
+import cartTest from '@snippets/testing/cart-store.test.tsx?raw';
+import cartStore from '@snippets/testing/cart-store.ts?raw';
+
+## The problem this solves
+
+Global stores live at module scope, so state from one test can leak into the next. Contexts are created per
+render, so a test needs a way to reach the store that a provider created.
+
+## Reset global stores
+
+Create the store from a function initializer and call `reset()` in `beforeEach`. With a plain value,
+`reset()` keeps the current state; pass the values yourself (`reset(state, metadata)`) if you cannot change the
+initializer. On a persisted store, `reset()` also clears the stored value.
+
+<CodeBlock code={cartStore} lang="ts" title="cart-store.ts" />
+
+## Test with a store or a context
+
+This is the test file that runs in this site's own test suite, shown unchanged.
+
+<CodeBlock code={cartTest} lang="tsx" title="cart-store.test.tsx" />
+
+<Callout type="tip" title="Two levels of testing">
+  Most logic can be tested without React by calling actions and reading `getState()`. Use
+  `renderHook` or a component render only for what depends on subscriptions.
+</Callout>
+
+## Persistence in tests
+
+`localStorage` restores when the store module loads. Set the stored value first, then import the module
+(with `vi.resetModules()` and a dynamic `import()` in Vitest) to test restoring and migrations.

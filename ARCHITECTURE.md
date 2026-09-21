@@ -348,6 +348,10 @@ yarn nx run website:lint
 - **Snippets are real modules.** Code shown in the docs lives in `src/snippets/**` and is imported with
   `?raw`, so the same file is displayed, type-checked and executed by the tests. Live demos live in
   `src/examples/**` and are displayed the same way.
+- **Generated assets are committed.** `scripts/make-og.mjs` (share images in `public/og`, from page
+  frontmatter), `scripts/make-assets.mjs` (posters, portrait sizes) and `apps/devtools/scripts/make-logo.mjs`
+  (DevTools logo and icon sizes) use sharp/ffmpeg locally, so CI never depends on installed fonts or codecs.
+  `yarn --cwd apps/website check:links` verifies every internal link, asset and anchor in `dist/`.
 - **Media.** The large intro videos stay in the repo-root `/public`; `scripts/sync-media.mjs` copies them
   into the (git-ignored) `apps/website/public/media`. `scripts/make-assets.mjs` regenerates the committed
   poster images and portrait variants with ffmpeg.

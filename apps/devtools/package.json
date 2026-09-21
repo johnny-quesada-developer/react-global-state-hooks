@@ -21,7 +21,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "clean": "rm -rf dist coverage react-hooks-global-states-dev-tools.zip"
+    "clean": "rm -rf dist coverage react-hooks-global-states-dev-tools.zip",
+    "make:icons": "node scripts/make-icons.mjs"
   },
   "dependencies": {
     "@codemirror/lang-javascript": "^6.2.2",

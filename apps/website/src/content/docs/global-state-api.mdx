@@ -1,0 +1,67 @@
+---
+title: Global state API
+description: Reference for createGlobalState, its options, lifecycle callbacks and the members of the hook.
+section: API reference
+order: 1
+---
+
+import { CodeBlock } from '../../ui/CodeBlock';
+import callbacks from '@snippets/reference/callbacks.ts?raw';
+
+## createGlobalState
+
+```ts
+createGlobalState(initialState, options?) => hook
+```
+
+`initialState` is a value or a function returning one. Without options, the hook's second tuple item is a
+`setState` function. With `actions`, it is the actions object.
+
+### Options
+
+| Option | Type | Purpose |
+| --- | --- | --- |
+| `name` | `string` | Name shown in DevTools and used for debugging. |
+| `metadata` | value or function | Non-reactive side data. Available as the tuple's third item and as `store.metadata`. |
+| `actions` | `Record<string, (...args) => (tools) => any>` | Named state changes. See [Actions](../actions/). |
+| `callbacks` | object | Lifecycle hooks, below. |
+| `localStorage` | object | Persistence (web package). See [Persistence](../persistence/). |
+
+### Callbacks
+
+<CodeBlock code={callbacks} lang="ts" title="callbacks.ts" />
+
+| Callback | When it runs |
+| --- | --- |
+| `onInit(tools)` | When the store is created and again after `reset()`. Return a cleanup function to run before the next `reset()` or `dispose()`. |
+| `onStateChanged({ previousState, state, ...tools })` | After a state change is applied. |
+| `onSubscribed(tools, subscription)` | Each time a subscription is added. |
+| `computePreventStateChange({ previousState, state, ...tools })` | Before a change is applied. Return `true` to reject it. |
+| `onUnMount(store)` | When a context provider unmounts. Only applies to contexts. |
+
+## The hook
+
+`useStore(selector?, depsOrOptions?)` returns `[selected, setStateOrActions, metadata]`.
+
+| Option | Purpose |
+| --- | --- |
+| `dependencies` | Values the selector reads from outside the store. |
+| `isEqual(current, next)` | Compare the selected value. Default `===`. |
+| `isEqualRoot(current, next)` | Compare the whole state. Default `===`. |
+
+## Store members
+
+| Member | Signature | Notes |
+| --- | --- | --- |
+| `getState` | `() => State` | |
+| `setState` | `(valueOrUpdater, { forceUpdate?, identifier? }?) => void` | `forceUpdate` notifies even when the reference is unchanged. `identifier` labels the change in DevTools. |
+| `subscribe` | `(callback)` or `(selector, callback, options?)` | `options`: `skipFirst`, `isEqual`, `isEqualRoot`. Returns an unsubscribe function. |
+| `select` | `(selector, depsOrOptions?) => Selected` | Hook that returns only the selection. |
+| `createSelectorHook` | `(selector, { isEqual?, isEqualRoot?, name? }?) => hook` | Read-only shared hook that returns the value. Chains. |
+| `createObservable` | `(selector, { isEqual?, isEqualRoot?, name? }?) => observable` | Subscribable and chainable. |
+| `metadata` | `Metadata` (getter) | |
+| `getMetadata` / `setMetadata` | `() => Metadata` / `(valueOrUpdater) => void` | `getMetadata` is deprecated in favour of `metadata`. |
+| `reset` | `() => void` or `(state, metadata) => void` | Restores the initial state and re-runs `onInit`. Function initializers are re-evaluated. |
+| `dispose` | `() => void` | Removes subscriptions and runs cleanup. |
+| `actions` | object or `null` | The actions object. |
+| `use` | hook | The same function as the hook. |

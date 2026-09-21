@@ -1,0 +1,62 @@
+---
+title: DevTools
+description: Inspect stores, edit state, time travel and follow actions with the Chrome extension.
+section: DevTools
+order: 1
+status: beta
+---
+
+import { CodeBlock } from '../../ui/CodeBlock';
+import { Callout } from '../../ui/Callout';
+import { links } from '../../lib/site';
+import { DevToolsLockup } from '../../ui/DevToolsLockup';
+import { DevToolsShowcase } from '../../ui/DevToolsShowcase';
+
+<DevToolsLockup />
+
+The DevTools extension connects to your stores in development so you can see what changes and when.
+
+<a href={links.chromeStore} rel="noopener">Install the extension for Chrome</a>
+
+## What it does
+
+- **Inspect** every global store and context in real time.
+- **Edit** state from the panel and watch the app respond.
+- **Time travel** to an earlier state.
+- **Track actions** to see which one changed the state.
+
+## Connect your app
+
+Import the debug entry once, at the very top of your entry file, before React and before any module that
+creates a store. It patches the library as stores are created, so stores created before it are not tracked.
+
+```ts
+// main.tsx
+import 'react-global-state-hooks/debug';
+
+import { createRoot } from 'react-dom/client';
+import { App } from './App';
+```
+
+<Callout type="warning" title="Development only, and beta today">
+  Never ship this import in a production build. The `react-global-state-hooks/debug` entry is available in
+  the <strong>16.0.4-beta</strong> release of the web package. The base package `react-hooks-global-states`
+  has a `react-hooks-global-states/debug` entry from 16.0.4. Both load the same debug package.
+</Callout>
+
+## Open the panel
+
+1. Run your app in development.
+2. Open Chrome DevTools and select the extension's panel for your tab.
+3. **Reload the page with the panel open.** Reloading after the panel exists avoids initial synchronization
+   problems.
+4. Your stores appear with their names and current state.
+
+Give stores a `name` option so they are easy to find in the panel.
+
+## A tour of the panel
+
+The whole window first, then each section on its own. These are real captures of this repository's playground and
+the extension, not mock-ups.
+
+<DevToolsShowcase />

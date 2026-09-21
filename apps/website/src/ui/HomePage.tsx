@@ -61,8 +61,8 @@ export function HomePage({ storeSource, nameCardSource, install, video, demo }: 
               <a className="button button--primary" href={gettingStarted}>
                 Get started
               </a>
-              <a className="button button--secondary" href="#demo">
-                See it live
+              <a className="button button--secondary" href={withBase('examples/')}>
+                Explore examples
               </a>
             </p>
 
@@ -117,6 +117,10 @@ export function HomePage({ storeSource, nameCardSource, install, video, demo }: 
             <a href={gettingStarted}>Getting started</a> Install, create a store, select, act, persist.
           </li>
           <li>
+            <a href={withBase('examples/')}>Examples</a> Task list, async loading and retry, persistence and
+            scoped state, each with live source.
+          </li>
+          <li>
             <a href={links.videoTutorial} rel="noopener">
               Video tutorial
             </a>{' '}
@@ -144,6 +148,10 @@ export function HomePage({ storeSource, nameCardSource, install, video, demo }: 
             easy-web-worker
           </a>{' '}
           runs functions in Web Workers without separate worker files. It lives in its own repository.
+        </p>
+        <p>
+          <a href={withBase('easy-code-review/')}>easy-code-review</a> (beta, not published yet) runs an AI
+          coding agent in small, verified steps.
         </p>
       </section>
     </>

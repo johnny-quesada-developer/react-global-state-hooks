@@ -10,10 +10,10 @@ export function App() {
   return (
     <div style={styles.page}>
       <header style={styles.header}>
-        <h1 style={{ margin: 0 }}>React Hooks Global States — Debug Playground</h1>
+        <h1 style={{ margin: 0 }}>React Global States Hooks — Debug Playground</h1>
         <p style={styles.subtitle}>
-          Open the "🐵 React Hooks Global States Dev Tools" panel in Chrome DevTools, then interact
-          with the widgets below. Every state change, action, and derived value should show up.
+          Open the "react-global-state-hooks" panel in Chrome DevTools, then interact with the widgets below.
+          Every state change, action, and derived value should show up.
         </p>
       </header>
 

@@ -1,4 +1,4 @@
-import { RenderCount } from './RenderCount';
+import { RenderCount } from '../shared/RenderCount';
 import { useProfile } from './store';
 
 export function ClicksCard() {

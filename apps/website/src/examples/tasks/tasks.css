@@ -1,0 +1,60 @@
+.demo-grid--wide {
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  align-items: start;
+}
+
+.demo-stack {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.task-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.task-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+}
+
+.task-row label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 400;
+  flex-direction: row;
+}
+
+.task-row .render-count {
+  align-self: center;
+}
+
+.task-row__text--done {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+}
+
+.task-row button {
+  font: inherit;
+  font-size: var(--text-sm);
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.task-empty {
+  margin: 0;
+  color: var(--color-text-muted);
+}

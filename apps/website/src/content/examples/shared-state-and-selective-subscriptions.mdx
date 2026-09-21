@@ -1,0 +1,58 @@
+---
+title: Shared state and selective subscriptions
+description: Four components share one store. See which of them render when a single field changes.
+order: 1
+related:
+  - label: Getting started
+    href: ../../docs/getting-started/
+  - label: Selectors and derived state
+    href: ../../docs/selectors-and-derived-state/
+  - label: Stores and hooks
+    href: ../../docs/stores-and-hooks/
+---
+
+import { CodeBlock } from '../../ui/CodeBlock';
+import { Callout } from '../../ui/Callout';
+import { SelectiveDemo } from '@examples/selective/SelectiveDemo';
+import store from '@examples/selective/store.ts?raw';
+import nameCard from '@examples/selective/NameCard.tsx?raw';
+import wholeState from '@examples/selective/WholeStateCard.tsx?raw';
+import renderCount from '@examples/shared/RenderCount.tsx?raw';
+
+## Try it
+
+Each card shows how many times it has rendered. Type in **Name**, pick a **Role**, press the **Clicks**
+button, and watch which counters move.
+
+<SelectiveDemo client:visible />
+
+## What to look for
+
+- Typing a name renders the Name card and the whole-state card. Role and Clicks stay at their count.
+- The whole-state card has no selector, so it renders for every change. That is the cost every component would
+  pay if it subscribed to the whole store.
+- Setting the state to the same object again renders nothing.
+
+## The code
+
+One store, created once. The function initializer lets the demo's reset button call `useProfile.reset()`.
+
+<CodeBlock code={store} lang="ts" title="store.ts" />
+
+A component subscribes to just the field it shows:
+
+<CodeBlock code={nameCard} lang="tsx" title="NameCard.tsx" />
+
+The component without a selector:
+
+<CodeBlock code={wholeState} lang="tsx" title="WholeStateCard.tsx" />
+
+## How the counters work
+
+<Callout type="note" title="Counting renders under Strict Mode">
+  React Strict Mode renders every component twice in development, which would double naive counters. The
+  counter here counts commits in an effect, skips React's simulated remount, and updates its own element
+  directly so counting never causes a render. The tests run the demo both with and without Strict Mode.
+</Callout>
+
+<CodeBlock code={renderCount} lang="tsx" title="RenderCount.tsx" />

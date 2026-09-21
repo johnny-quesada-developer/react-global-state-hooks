@@ -1,14 +1,9 @@
-import { links, withBase } from '../lib/site';
+import { withBase } from '../lib/site';
 
 export function AuthorChip() {
   return (
     <div className="author">
-      <a
-        className="author__photo"
-        href={links.githubProfile}
-        rel="noopener"
-        aria-label="Johnny Quesada on GitHub"
-      >
+      <a className="author__photo" href={withBase('about/')} aria-label="About Johnny Quesada">
         <img
           src={withBase('img/johnny-256.png')}
           srcSet={`${withBase('img/johnny-256.png')} 256w, ${withBase('img/johnny-512.png')} 512w`}
@@ -20,7 +15,9 @@ export function AuthorChip() {
         />
       </a>
       <p className="author__text">
-        <strong>Johnny Quesada</strong>
+        <strong>
+          <a href={withBase('about/')}>Johnny Quesada</a>
+        </strong>
         <span>Senior product engineer at Vonage. Author and maintainer of this library.</span>
       </p>
     </div>

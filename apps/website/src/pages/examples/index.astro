@@ -1,0 +1,21 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { ExamplesIndex } from '../../ui/ExamplesIndex';
+
+const examples = (await getCollection('examples')).sort((a, b) => a.data.order - b.data.order);
+const cards = examples.map((example) => ({
+  id: example.id,
+  title: example.data.title,
+  description: example.data.description,
+}));
+---
+
+<BaseLayout
+  image="og/examples.png"
+  imageAlt="react-global-state-hooks examples"
+  title="Examples"
+  description="Working react-global-state-hooks examples with live demos and tested source: selective subscriptions, derived state, async workflows, persistence and scoped state."
+>
+  <ExamplesIndex examples={cards} />
+</BaseLayout>

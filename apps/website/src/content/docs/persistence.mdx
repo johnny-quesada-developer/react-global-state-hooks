@@ -1,0 +1,63 @@
+---
+title: Persistence
+description: Save a store to localStorage, restore it safely, migrate old data, save only part of the state, and avoid hydration mismatches.
+section: Core concepts
+order: 5
+---
+
+import { CodeBlock } from '../../ui/CodeBlock';
+import { Callout } from '../../ui/Callout';
+import preferences from '@snippets/persistence/preferences.ts?raw';
+import versioned from '@snippets/persistence/versioned.ts?raw';
+
+## The problem this solves
+
+Preferences, drafts and sessions should survive a reload. The web package can persist a global store with one
+option: `localStorage: { key }`.
+
+## What is stored
+
+The store writes its initial state when nothing is stored yet, and rewrites on every change. The stored value
+is a small JSON envelope `{ "s": <state>, "v": <version> }`. Treat the format as an implementation detail and
+read the store through its API. Values such as `Date`, `Map` and `Set` are serialised and restored for you.
+
+## Validate and select
+
+`validator` runs after every restore. Return the state to use. Return `initial` to discard bad data. Return
+nothing to accept the restored value as is. `selector` saves only part of the state; the rest comes from the
+initial state.
+
+<CodeBlock code={preferences} lang="ts" title="preferences.ts" />
+
+## Migrate old data
+
+Set `versioning.version` and a `migrator`. When the stored version differs, the migrator receives the old
+value as `legacy` and must return the new state. The `validator` then runs on the result.
+
+<CodeBlock code={versioned} lang="ts" title="settings.ts" />
+
+## Options at a glance
+
+| Option | Purpose |
+| --- | --- |
+| `key` | The `localStorage` key. Required. |
+| `validator({ restored, initial })` | Check or transform restored data. |
+| `selector(state)` | Choose what to save. |
+| `versioning: { version, migrator }` | Upgrade data saved by older code. |
+| `onError(error, tools)` | Handle storage errors. Without it, errors are logged with `console.error`. |
+| `adapter: { getItem, setItem }` | Take over reading and writing. This disables versioning, migration and `selector`. |
+
+## What to watch for
+
+<Callout type="warning" title="Hydration">
+  When `localStorage` exists (in the browser) the store restores when its module loads, which is before React
+  hydrates server-rendered HTML. If a component renders the restored value during hydration it will not match
+  the server HTML. Render the default first and switch after hydration. This site does exactly that with a
+  small `useHydrated` hook built on `useSyncExternalStore` (see `src/state` in the repository).
+</Callout>
+
+- Persistence is skipped when `localStorage` is unavailable, for example during server rendering.
+- A stored value that is not a valid envelope is reported and the store falls back to its initial state.
+- `reset()` with no arguments clears the stored value first. Combine it with a function initializer to get the
+  original state back.
+- Storage can throw (private windows, quota). Provide `onError` if you need to react.

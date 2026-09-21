@@ -45,6 +45,7 @@ export const NavBar: React.FC<NavBarProps> = ({ className = '', ...props }: NavB
           })}
         >
           <button
+            data-testid={`tab-${value}`}
             className={cn('px-4', {
               'cursor-not-allowed': !selectedStore,
             })}

@@ -11,20 +11,20 @@ export function Footer({ children }: FooterProps) {
     <footer className="site-footer">
       <div className="container site-footer__inner">
         <p>
-          react-global-state-hooks by{' '}
-          <a href={links.githubProfile} rel="noopener">
-            Johnny Quesada
-          </a>
-          . MIT licensed. Documentation covers version {DOCUMENTED_VERSION}.
+          react-global-state-hooks by <a href={withBase('about/')}>Johnny Quesada</a>. MIT licensed.
+          Documentation covers version {DOCUMENTED_VERSION}.
         </p>
         <nav aria-label="Footer">
           <a href={withBase('docs/')}>Docs</a>
+          <a href={withBase('examples/')}>Examples</a>
+          <a href={withBase('about/')}>About</a>
           <a href={links.repo} rel="noopener">
             GitHub
           </a>
           <a href={links.npm} rel="noopener">
             npm
           </a>
+          <a href={withBase('easy-code-review/')}>easy-code-review</a>
           <a href={links.easyWebWorker} rel="noopener">
             easy-web-worker
           </a>

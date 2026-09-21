@@ -1,0 +1,55 @@
+---
+title: Troubleshooting
+description: Causes and fixes for missing updates, extra renders, context errors, persistence mismatches and debug counts.
+section: Testing and troubleshooting
+order: 2
+---
+
+import { Callout } from '../../ui/Callout';
+
+## The component does not update
+
+- **You changed the state in place.** Subscribers are notified only for a new reference. Return a new object
+  or array from the updater.
+- **You changed metadata.** Metadata never triggers a render. Put displayed values in the state.
+- **The selector reads something outside the store.** List it in `dependencies` so the selector runs again.
+
+## The component renders too often
+
+- **The selector builds a new array or object.** Strict equality sees a change every time. Pass
+  `isEqual: shallowCompare`, or derive the value once with `createSelectorHook`.
+- **There is no selector.** `useStore()` subscribes to the whole state.
+
+## `use hook must be used within a ContextProvider`
+
+A context hook ran outside its `Provider`. Wrap the component, or in tests pass the wrapper from
+`Ctx.Provider.makeProviderWrapper()`.
+
+## An action throws "Every key inside the storeActionsConfig must be a higher order function"
+
+An action returned something other than a function. Each action must look like
+`name(args) { return (tools) => { ... } }`.
+
+## Hydration mismatch with persisted state
+
+The store restores from `localStorage` when its module loads, which is before hydration. Render the default
+value first and switch to the stored one after hydration. See [Persistence](../persistence/).
+
+## `createGlobalState<State>(initial, options)` does not compile
+
+Annotate the initial value instead of passing a type argument. See [TypeScript](../typescript/).
+
+## `reset()` does not restore the initial state
+
+The store was created from a plain value, so `reset()` keeps the current one. Use a function initializer, or
+call `reset(state, metadata)`.
+
+## Render counts double in development
+
+React Strict Mode renders components twice in development. Counting in effects avoids it; the demos on this
+site do that.
+
+<Callout type="note" title="Storage errors">
+  When reading or writing `localStorage` fails, the error is logged with `console.error` unless you provide
+  `localStorage.onError`.
+</Callout>

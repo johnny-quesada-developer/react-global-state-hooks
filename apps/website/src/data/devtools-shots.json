@@ -1,0 +1,70 @@
+{
+  "capturedWith": {
+    "libraryVersion": "16.0.4-beta",
+    "commit": "e78d4f1",
+    "chrome": "153.0.8010.52",
+    "theme": "light"
+  },
+  "shots": [
+    {
+      "id": "track-state-changes",
+      "title": "Track state changes",
+      "scenarioData": "counter store: initial 0, three clicks on +1 -> 3. Panel: Logs tab, \"counter\" selected, 4 records.",
+      "app": {
+        "file": "track-state-changes-app.png",
+        "width": 402,
+        "height": 232
+      },
+      "panel": {
+        "file": "track-state-changes-panel.png",
+        "width": 1342,
+        "height": 1055
+      }
+    },
+    {
+      "id": "restore-the-state",
+      "title": "Restore a previous state",
+      "scenarioData": "counter store: restored from the second log entry (value 1) back from 3.",
+      "app": {
+        "file": "restore-the-state-app.png",
+        "width": 402,
+        "height": 232
+      },
+      "panel": {
+        "file": "restore-the-state-panel.png",
+        "width": 1342,
+        "height": 1055
+      }
+    },
+    {
+      "id": "modify-the-state",
+      "title": "Edit the state",
+      "scenarioData": "counter store: value 42 typed into the State tab editor and applied with Set State.",
+      "app": {
+        "file": "modify-the-state-app.png",
+        "width": 402,
+        "height": 232
+      },
+      "panel": {
+        "file": "modify-the-state-panel.png",
+        "width": 1342,
+        "height": 1055
+      }
+    },
+    {
+      "id": "custom-actions-granularity",
+      "title": "Action details",
+      "scenarioData": "todos store (actions): \"Write the docs\" added with the add action. Panel: Logs tab, add action selected.",
+      "app": {
+        "file": "custom-actions-granularity-app.png",
+        "width": 402,
+        "height": 393
+      },
+      "panel": {
+        "file": "custom-actions-granularity-panel.png",
+        "width": 1342,
+        "height": 1055
+      }
+    }
+  ]
+}

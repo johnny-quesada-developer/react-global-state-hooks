@@ -15,4 +15,15 @@ const docs = defineCollection({
   }),
 });
 
-export const collections = { docs };
+const examples = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/examples' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    order: z.number(),
+    /** Documentation pages that explain the APIs this example uses. */
+    related: z.array(z.object({ label: z.string(), href: z.string() })).default([]),
+  }),
+});
+
+export const collections = { docs, examples };

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './demo.css';
+import '../shared/demo.css';
 import { ClicksCard } from './ClicksCard';
 import { NameCard } from './NameCard';
 import { RoleCard } from './RoleCard';
