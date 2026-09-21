@@ -322,6 +322,36 @@ settings. A few small, behavior-preserving null-safety edits in `libs/mobile/src
 AI output is made predictable through structure: deterministic checks after every agent step and
 retry loops that feed earlier attempts back into the prompt. See `libs/code-review/README.md`.
 
+## Website (`apps/website`)
+
+`apps/website` is the documentation, examples and learning site. The UI is React (`src/ui`, `src/examples`)
+and the site's own shared state (search dialog, install-tab and mini-me preferences in `src/state`) runs on
+this library. [Astro](https://astro.build) is only the static generator: it renders the React components to
+HTML at build time, compiles the MDX docs, and hydrates just the interactive islands. Astro files are
+limited to pages, the `<head>` layout and content config. It is an Nx project (`website`) and is **never published to npm**; `scripts/publish-all.mjs`
+uses an explicit package list that does not include it.
+
+```bash
+yarn nx run website:dev         # dev server (copies the intro videos from /public first)
+yarn nx run website:build       # static site in apps/website/dist + Pagefind search index
+yarn nx run website:preview     # serve dist/ locally
+yarn nx run website:test        # vitest: docs snippets, example logic, colour contrast
+yarn nx run website:ts-check    # astro check
+yarn nx run website:lint
+```
+
+- **Deployment** is `.github/workflows/deploy-website.yml` (GitHub Pages, base path
+  `/react-global-state-hooks/`). It is independent of library publishing.
+- **Library source, not a build.** The site resolves `react-global-state-hooks` and
+  `react-hooks-global-states` to `libs/web/src` and `libs/universal/src` (Vite alias + tsconfig paths, the
+  same convention as `apps/playground`), so the site documents the version in this workspace.
+- **Snippets are real modules.** Code shown in the docs lives in `src/snippets/**` and is imported with
+  `?raw`, so the same file is displayed, type-checked and executed by the tests. Live demos live in
+  `src/examples/**` and are displayed the same way.
+- **Media.** The large intro videos stay in the repo-root `/public`; `scripts/sync-media.mjs` copies them
+  into the (git-ignored) `apps/website/public/media`. `scripts/make-assets.mjs` regenerates the committed
+  poster images and portrait variants with ffmpeg.
+
 ## Adding a new library
 
 1. Create `libs/<name>/` with its own `package.json`, `tsconfig.json` (extending

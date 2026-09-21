@@ -1,0 +1,67 @@
+---
+import '../styles/global.css';
+import '../styles/site.css';
+import { Header } from '../ui/Header';
+import { Footer } from '../ui/Footer';
+import { Search } from '../ui/Search';
+import { MiniMe } from '../ui/MiniMe';
+import { SITE_NAME, withBase } from '../lib/site';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Path under public/ (for example `og/home.png`), resolved to an absolute URL. */
+  image?: string;
+  imageAlt?: string;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+}
+
+const { title, description, image, imageAlt, ogType = 'website', noindex = false } = Astro.props;
+
+const fullTitle = title === SITE_NAME ? title : `${title} · ${SITE_NAME}`;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const imageUrl = image ? new URL(withBase(image), Astro.site).href : undefined;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href={withBase('favicon.svg')} />
+    {noindex && <meta name="robots" content="noindex" />}
+
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content={imageUrl ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    {
+      imageUrl && (
+        <>
+          <meta property="og:image" content={imageUrl} />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          {imageAlt && <meta property="og:image:alt" content={imageAlt} />}
+          <meta name="twitter:image" content={imageUrl} />
+        </>
+      )
+    }
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header pathname={Astro.url.pathname}><Search client:idle /></Header>
+    <main id="main">
+      <slot />
+    </main>
+    <Footer><MiniMe client:idle /></Footer>
+  </body>
+</html>

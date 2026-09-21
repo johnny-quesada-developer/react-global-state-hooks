@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { HomePage } from '../ui/HomePage';
+import { InstallCommand } from '../ui/InstallCommand';
+import { IntroVideo } from '../ui/IntroVideo';
+import { SelectiveDemo } from '@examples/selective/SelectiveDemo';
+import storeSource from '@examples/selective/store.ts?raw';
+import nameCardSource from '@examples/selective/NameCard.tsx?raw';
+---
+
+<BaseLayout
+  title="react-global-state-hooks"
+  description="Shared React state that works like useState. Create a store in one call, select slices, add actions, persist to localStorage, and inspect it with DevTools."
+>
+  <HomePage storeSource={storeSource} nameCardSource={nameCardSource}>
+    <InstallCommand slot="install" client:idle />
+    <IntroVideo slot="video" client:idle />
+    <SelectiveDemo slot="demo" client:visible />
+  </HomePage>
+</BaseLayout>
