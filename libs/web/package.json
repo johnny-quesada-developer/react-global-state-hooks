@@ -1,6 +1,6 @@
 {
   "name": "react-global-state-hooks",
-  "version": "16.0.5",
+  "version": "16.0.5-beta.0",
   "description": "Shared React state with a useState-style API, selective subscriptions, actions, localStorage persistence and DevTools.",
   "main": "./bundle.cjs",
   "module": "./bundle.mjs",
@@ -124,7 +124,7 @@
   "homepage": "https://github.com/johnny-quesada-developer/react-global-state-hooks#readme",
   "dependencies": {
     "json-storage-formatter": "^4.0.0",
-    "react-hooks-global-states": "^16.0.5"
+    "react-hooks-global-states": "^16.0.5-beta.0"
   },
   "peerDependencies": {
     "json-storage-formatter": "^4.0.0",

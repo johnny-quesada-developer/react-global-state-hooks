@@ -1,6 +1,6 @@
 {
   "name": "react-hooks-global-states",
-  "version": "16.0.5",
+  "version": "16.0.5-beta.0",
   "description": "The shared state engine for React and React Native: selective subscriptions, derived state, actions and scoped stores.",
   "main": "./bundle.cjs",
   "module": "./bundle.mjs",
@@ -118,7 +118,7 @@
   "homepage": "https://github.com/johnny-quesada-developer/react-hooks-global-states#readme",
   "dependencies": {
     "json-storage-formatter": "^4.0.0",
-    "react-hooks-global-states-debug": "^16.0.5"
+    "react-hooks-global-states-debug": "^16.0.5-beta.0"
   },
   "peerDependencies": {
     "react": ">=18.0.0",

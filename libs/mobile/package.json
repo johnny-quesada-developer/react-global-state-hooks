@@ -1,6 +1,6 @@
 {
   "name": "react-native-global-state-hooks",
-  "version": "16.0.5",
+  "version": "16.0.5-beta.0",
   "description": "Shared React Native state with a useState-style API, selective subscriptions, actions and async persistence with optional AsyncStorage.",
   "main": "./bundle.cjs",
   "module": "./bundle.mjs",
@@ -145,7 +145,7 @@
     }
   },
   "dependencies": {
-    "react-hooks-global-states": "^16.0.5"
+    "react-hooks-global-states": "^16.0.5-beta.0"
   },
   "bin": {
     "rgsh": "./rgsh.mjs"
