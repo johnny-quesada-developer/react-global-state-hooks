@@ -191,7 +191,7 @@
   border-radius: var(--radius-md);
   background: var(--color-bg);
   overflow: hidden;
-  max-width: 30rem;
+  max-width: min(30rem, 100%);
 }
 
 .install__tabs {
@@ -226,11 +226,29 @@
 }
 
 .install__command {
+  min-width: 0;
   font-size: 0.9rem;
   background: transparent;
   padding: 0;
   overflow-x: auto;
   white-space: nowrap;
+}
+
+@media (max-width: 30rem) {
+  .install__row {
+    flex-wrap: wrap;
+    padding-inline: var(--space-3);
+  }
+
+  .install__command {
+    flex: 1 1 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .install__copy {
+    margin-inline-start: auto;
+  }
 }
 
 .install__copy {

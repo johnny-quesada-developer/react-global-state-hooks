@@ -7,6 +7,58 @@ family of packages. All packages share a single root `node_modules`, one set of 
 > The root `README.md` introduces the web library. The package README in `libs/web/` is published to npm.
 > This file documents the repo/monorepo itself and is not part of any published package.
 
+## Code navigation
+
+CodeGraphContext 0.6.13 provides a local MCP graph for this entire monorepo.
+One index preserves relationships across packages; file paths distinguish their
+symbols. Separate indexes per Nx project would lose that shared context.
+The graph is a navigation aid, not a TypeScript compiler: workspace aliases,
+re-exports and dynamic calls still need source verification. Astro templates
+are not parsed. Tests are included so agents can find existing coverage.
+
+The project launcher always runs from the repository root and selects a database
+under `~/.local/share/codegraphcontext/graphs/<checkout-path-hash>/`. Each checkout
+has its own graph. Neither the Python installation nor generated indexes enter
+the repository or its npm packages. The root `.gitignore` is respected;
+`.cgcignore` also excludes nested website output and media without modifying them.
+
+Install on another Mac with Python 3.12 or newer (this installation uses 3.14):
+
+```sh
+python3 -m venv "$HOME/.local/share/codegraphcontext/venv"
+"$HOME/.local/share/codegraphcontext/venv/bin/pip" install 'codegraphcontext==0.6.13'
+sh scripts/codegraph.sh index . --no-progress
+```
+
+Use `sh scripts/codegraph.sh stats` to inspect the graph and
+`sh scripts/codegraph.sh update .` after source changes. For continuous updates,
+run `sh scripts/codegraph.sh watch .` in a terminal while working.
+`CGC_BIN` can override the executable location.
+
+Codex uses `.codex/config.toml`; Claude Code uses `.mcp.json` and requests its
+normal project-server approval on first use. Start a new session to load the
+server. Both configurations resolve the checkout root rather than hard-coding
+this computer's path. Kiro's `.kiro/settings/mcp.json` is Git-ignored here and is
+intentionally untouched; its `mcpServers` entry can use the same command and args
+as `.mcp.json` when configuring Kiro on another machine.
+
+For compact discovery, call the MCP tool `execute_cypher_query` with:
+
+```cypher
+MATCH (n:Class)
+WHERE n.name = 'GlobalStore' AND n.path CONTAINS '/libs/web/src/'
+RETURN n.name, n.path, n.line_number
+LIMIT 10
+```
+
+For callers/callees, pass the returned absolute file path as `context` to
+`analyze_code_relationships`. Broad `find_code` queries include source text and
+can consume more tokens. `repo_path` refers to the monorepo; use path predicates
+to narrow results to an Nx project. Read the package map below before deciding
+which project owns a change. The debug library lives in `libs/monkey_patch`,
+the extension in `apps/devtools`, documentation in `apps/website`, and the demo
+in `apps/playground`. Shared tests live in `libs/test`.
+
 ## Packages
 
 | Project     | Path             | Published name              | Role                                               |

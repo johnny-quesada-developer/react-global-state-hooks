@@ -1,0 +1,4 @@
+[mcp_servers.codegraphcontext]
+command = "/bin/sh"
+args = ["-c", 'exec sh "$(git rev-parse --show-toplevel)/scripts/codegraph.sh" mcp start']
+startup_timeout_sec = 60

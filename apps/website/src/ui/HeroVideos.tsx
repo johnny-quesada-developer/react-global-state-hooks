@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import { heroVideos } from '../data/heroVideos';
 import type { HeroVideo } from '../data/heroVideos';
@@ -30,7 +30,7 @@ export function HeroVideos({ videos = heroVideos }: HeroVideosProps) {
   const file = wide === false && current.mobile ? current.mobile : current.landscape;
   const source = wide === null ? undefined : file.src;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setReducedMotion(window.matchMedia(REDUCED_MOTION).matches);
 
     const query = window.matchMedia(WIDE);
@@ -127,7 +127,7 @@ export function HeroVideos({ videos = heroVideos }: HeroVideosProps) {
     <div className="hero-videos" ref={root}>
       <div
         className="hero-videos__frame"
-        data-mobile={current.mobile ? 'yes' : 'no'}
+        data-mobile={wide === false && current.mobile ? 'yes' : 'no'}
         role="tabpanel"
         id={PANEL_ID}
         aria-labelledby={tabId(current.id)}

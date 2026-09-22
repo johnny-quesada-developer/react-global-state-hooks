@@ -1,0 +1,12 @@
+# CGC reads the root .gitignore; mirror nested exclusions here.
+apps/website/public/media/
+apps/website/.astro/
+
+# Media and generated metadata do not help symbol navigation.
+brag-output*
+public/
+apps/website/public/
+yarn.lock
+package-lock.json
+pnpm-lock.yaml
+.codegraphcontext/

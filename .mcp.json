@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "codegraphcontext": {
+      "command": "/bin/sh",
+      "args": [
+        "-c",
+        "exec sh \"$(git rev-parse --show-toplevel)/scripts/codegraph.sh\" mcp start"
+      ]
+    }
+  }
+}
