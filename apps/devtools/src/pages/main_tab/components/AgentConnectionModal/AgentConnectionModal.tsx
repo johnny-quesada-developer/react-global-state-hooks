@@ -58,10 +58,13 @@ export const AgentConnectionModal: React.FC<AgentConnectionModalProps> = ({
   const [status] = agentStatus$();
   const [draft, setDraft] = useState(String(settings.port));
 
-  // Re-sync the field each time the dialog opens.
+  // Re-sync the field each time the dialog opens. Opening this modal is the intent to connect,
+  // so there is no separate on/off toggle: make sure the bridge is enabled.
   useEffect(() => {
-    if (open) setDraft(String(settings.port));
-  }, [open, settings.port]);
+    if (!open) return;
+    setDraft(String(settings.port));
+    if (!settings.enabled) agentSettings$.actions.setEnabled(true);
+  }, [open, settings.port, settings.enabled]);
 
   const draftPort = Number(draft);
   const isValid = isValidAgentPort(draftPort);
@@ -69,8 +72,6 @@ export const AgentConnectionModal: React.FC<AgentConnectionModalProps> = ({
   const applyPort = () => {
     if (isValid && draftPort !== settings.port) agentSettings$.actions.setPort(draftPort);
   };
-
-  const portFlag = settings.port === AGENT_DEFAULT_PORT ? '' : ` --port ${settings.port}`;
 
   return (
     <Modal open={open} onClose={onClose} dimmed={false} title="Connect a terminal or coding agent">
@@ -81,15 +82,6 @@ export const AgentConnectionModal: React.FC<AgentConnectionModalProps> = ({
         </p>
 
         <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={settings.enabled}
-            onChange={(event) => agentSettings$.actions.setEnabled(event.target.checked)}
-          />
-          Allow a terminal to connect
-        </label>
-
-        <label className="flex items-center gap-2">
           Port
           <input
             type="number"
@@ -97,7 +89,6 @@ export const AgentConnectionModal: React.FC<AgentConnectionModalProps> = ({
             min={MIN_AGENT_PORT}
             max={MAX_AGENT_PORT}
             value={draft}
-            disabled={!settings.enabled}
             aria-invalid={!isValid}
             onChange={(event) => setDraft(event.target.value)}
             onBlur={applyPort}
@@ -132,23 +123,7 @@ export const AgentConnectionModal: React.FC<AgentConnectionModalProps> = ({
           <p className="text-xs text-gray-600 dark:text-gray-400">
             rgsh is installed with your state library. It also needs the ws package: <code>npm i -D ws</code>
           </p>
-          <CommandLine command={'npx rgsh --help'} hint="Everything rgsh can do, and how to read its output." />
-          <CommandLine command={`npx rgsh --list${portFlag}`} hint="See the stores DevTools knows about." />
-          <CommandLine command={`npx rgsh${portFlag}`} hint="Pick stores interactively." />
-          <CommandLine
-            command={`npx rgsh --store todos,auth${portFlag}`}
-            hint='Stream named stores (use "*" for all: slower and noisier).'
-          />
-          <CommandLine command={`npx rgsh state todos${portFlag}`} hint="Read a store's state and metadata." />
-          <CommandLine
-            command={`npx rgsh action todos add "Write the docs"${portFlag}`}
-            hint="Run an action and print what it did."
-          />
-          <CommandLine
-            command={`npx rgsh patch todos '{"filter":"done"}'${portFlag}`}
-            hint="Merge JSON into the state (primitives replace)."
-          />
-          <CommandLine command={`npx rgsh set counter 5${portFlag}`} hint="Replace the whole state with JSON." />
+          <CommandLine command="npx rgsh --help" hint="Everything rgsh can do, and how to read its output." />
         </div>
 
         <p className="text-xs text-gray-500 dark:text-gray-400">Click outside or press Esc to close.</p>

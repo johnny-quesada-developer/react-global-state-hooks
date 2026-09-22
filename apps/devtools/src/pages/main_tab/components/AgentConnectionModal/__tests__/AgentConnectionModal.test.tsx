@@ -22,13 +22,12 @@ afterEach(() => {
 });
 
 describe('AgentConnectionModal', () => {
-  it('shows the connection status and the default commands', () => {
+  it('shows the connection status and the help command', () => {
     render(<AgentConnectionModal open onClose={() => undefined} />);
 
     expect(screen.getByRole('status').textContent).toContain('Waiting for rgsh');
-    expect(screen.getByText('npx rgsh --list')).toBeTruthy();
+    expect(screen.getByText('npx rgsh --help')).toBeTruthy();
     expect(screen.getByText(/npm i -D ws/)).toBeTruthy();
-    expect(screen.getByText('npx rgsh --store todos,auth')).toBeTruthy();
 
     act(() => agentStatus$.setState('connected'));
     expect(screen.getByRole('status').textContent).toContain('Connected to rgsh');
@@ -52,7 +51,7 @@ describe('AgentConnectionModal', () => {
     expect(closed).toBe(true);
   });
 
-  it('saves a valid port and puts it in every command', () => {
+  it('saves a valid port', () => {
     render(<AgentConnectionModal open onClose={() => undefined} />);
 
     const input = screen.getByRole('spinbutton');
@@ -60,8 +59,6 @@ describe('AgentConnectionModal', () => {
     fireEvent.blur(input);
 
     expect(agentSettings$.getState().port).toBe(8123);
-    expect(screen.getByText('npx rgsh --list --port 8123')).toBeTruthy();
-    expect(screen.getByText('npx rgsh --port 8123')).toBeTruthy();
   });
 
   it('rejects an invalid port and keeps the saved one', () => {
@@ -75,18 +72,12 @@ describe('AgentConnectionModal', () => {
     expect(agentSettings$.getState().port).toBe(AGENT_DEFAULT_PORT);
   });
 
-  it('turns the connection off from the checkbox', () => {
+  it('has no on/off toggle: opening the modal enables the bridge', () => {
+    act(() => agentSettings$.setState({ enabled: false, port: AGENT_DEFAULT_PORT }));
+
     render(<AgentConnectionModal open onClose={() => undefined} />);
 
-    fireEvent.click(screen.getByLabelText('Allow a terminal to connect'));
-
-    expect(agentSettings$.getState().enabled).toBe(false);
-  });
-
-  it('always shows the control commands: changing state is not gated behind a setting', () => {
-    render(<AgentConnectionModal open onClose={() => undefined} />);
-
-    expect(screen.getByText('npx rgsh set counter 5')).toBeTruthy();
-    expect(screen.getByText('npx rgsh action todos add "Write the docs"')).toBeTruthy();
+    expect(screen.queryByLabelText('Allow a terminal to connect')).toBeNull();
+    expect(agentSettings$.getState().enabled).toBe(true);
   });
 });
