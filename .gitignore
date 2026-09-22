@@ -17,6 +17,9 @@ dist/
 coverage/
 .vitest-reports/
 
+# code-review pipeline config and run artifacts
+.review/
+
 # generated artifacts
 openapi.json
 
@@ -31,3 +34,15 @@ openapi.json
 # Nx cache and workspace data
 .nx/cache
 .nx/workspace-data
+.claude/settings.local.json
+/brag-output
+/brag-output-landscape
+/brag-output-agentic
+/brag-output-runtime-debugging
+/brag-output-verify-fix
+.DS_Store
+apps/website/public/pagefind/
+.playwright-mcp/
+
+# Generated extension release archive
+/apps/devtools/react-hooks-global-states-dev-tools.zip
