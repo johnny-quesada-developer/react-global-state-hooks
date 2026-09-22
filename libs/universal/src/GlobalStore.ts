@@ -260,7 +260,7 @@ export class GlobalStore<
   }
 
   /**
-   * Set the value of the metadata property, this is no reactive and will not trigger a re-render
+   * Set the value of the metadata property, this is non-reactive and will not trigger a re-render
    * @param {MetadataSetter<Metadata>} setter - The setter function or the value to set
    * */
   public setMetadata(setter: Parameters<MetadataSetter<Metadata>>[0]) {

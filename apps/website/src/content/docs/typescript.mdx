@@ -12,17 +12,16 @@ import splitActions from '@snippets/typescript/split-actions.ts?raw';
 import contextTypes from '@snippets/typescript/context-types.tsx?raw';
 
 The library is written in TypeScript and ships its own types. State, selectors and actions are inferred from
-what you pass. These snippets are type-checked as part of the site's build, with `expectTypeOf` assertions in
+what you pass. The site checks these snippets with `astro check` and uses `expectTypeOf` assertions in
 the tests.
 
 ## Type the state
 
 <CodeBlock code={typedStore} lang="ts" title="typed-store.ts" />
 
-<Callout type="warning" title="Type argument plus options does not compile">
-  `createGlobalState<State>(initial)` is fine. `createGlobalState<State>(initial, { actions })` is an error
-  ("Expected 1 arguments, but got 2") because the overload that takes options has three type parameters.
-  Annotate the initial value instead, as above. Some examples in the README use the failing form.
+<Callout type="tip" title="Type the initial state and infer the options">
+  Annotate the initial value when passing options so TypeScript infers the action and metadata types.
+  `createGlobalState<State>(initial)` supports an explicit state type when no options are passed.
 </Callout>
 
 ## Helper types

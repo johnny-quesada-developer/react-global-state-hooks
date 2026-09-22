@@ -52,4 +52,5 @@ objects by property. Nested objects are compared by reference. Use it as `isEqua
 
 ## isRecord
 
-`isRecord(value)` is `true` for plain objects and `false` for arrays, `null` and primitives.
+`isRecord(value)` accepts non-null objects other than arrays, `Map`, `Set` and `Date`. It also accepts class
+instances, so use a separate check when you need to restrict a value to plain objects.

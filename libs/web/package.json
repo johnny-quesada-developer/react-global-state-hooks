@@ -1,7 +1,7 @@
 {
   "name": "react-global-state-hooks",
   "version": "16.0.5",
-  "description": "This is a package to easily handling global-state across your react components",
+  "description": "Shared React state with a useState-style API, selective subscriptions, actions, localStorage persistence and DevTools.",
   "main": "./bundle.cjs",
   "module": "./bundle.mjs",
   "types": "./index.d.ts",

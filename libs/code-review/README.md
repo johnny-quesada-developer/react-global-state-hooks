@@ -1,9 +1,9 @@
 # code-review
 
-Private tool of this monorepo. `yarn review <target>` runs a LangGraph.js pipeline that turns
-probabilistic AI work into a deterministic flow: small segments, checks without AI after every agent
-step, and retry loops that pass earlier results back into the prompt and stop when another attempt
-cannot change the outcome.
+The `code-review` workspace package powers easy-code-review. `yarn review <target>` runs a LangGraph.js pipeline that turns
+AI-assisted reviews into a repeatable workflow: focused edits, measured coverage, rubric scoring and
+retry loops that feed previous results into the next attempt. Runs stop on repeated failures, stalled
+progress or configured limits.
 
 ```
 yarn review                                   # asks for everything
@@ -22,10 +22,14 @@ yarn review --help
 
 ## Configuration
 
+Run `yarn review init` to create a connector and configuration folder in a new workspace. In this repository,
+settings live in `qa/settings.ts` and review rules in `qa/rules/`.
+
 | File | Committed | Holds |
 | --- | --- | --- |
-| `review.config.json` (workspace root) | yes | `rulesDirectory`, per-provider `models` (`fast`, `capable`), `permissions.bash`, `agent` limits (`maxBudgetUsdPerAttempt`, `attemptTimeoutMinutes`, `scoreBatchSize`, `concurrency`) |
-| `libs/code-review/rules/*.rule.{json,ts}` | yes | custom rules (see below) |
+| `review.config.json` (workspace root) | yes | Connector with `schemaVersion: 1` and `configurationDirectory` (this repository uses `./qa`). |
+| `<configurationDirectory>/settings.ts` | yes | Workspace and project settings, per-provider models (`fast`, `capable`), `permissions.bash` and `agent` limits. |
+| `<configurationDirectory>/rules/*.rule.{json,ts}` | yes | custom rules (see below) |
 | `.review/config.json` | no | the last configuration (provider, models, permission scope, coverage options, test naming, concurrency); the next run offers to reuse it |
 | `.review/cache/metadata/` | no | per-project test metadata, reused while the project's config files are unchanged |
 | `.review/cache/results/<rule>/` | no | files that passed a rule, keyed by content hash; unchanged files are skipped next run |
@@ -47,10 +51,10 @@ decideConfiguration ─► configureProvider ─► chooseTarget ─► grantPer
 
 | Segment | AI | What it does |
 | --- | --- | --- |
-| Provider setup | no | Finds `claude`, `codex`, `kiro-cli` or `copilot` (PATH + known install locations), plus any custom provider dropped in `providersDirectory` (see [Adding a provider](#adding-a-provider)), checks version and auth, recommends one. Models come in two tiers: **fast** (metadata, scoring, rubric drafting) and **capable** (edits); defaults per provider, overridable in `review.config.json` or with `--model` / `--fast-model`. |
+| Provider setup | no | Finds `claude`, `codex`, `kiro-cli` or `copilot` (PATH + known install locations), plus any custom provider dropped in `<configurationDirectory>/providers/` (see [Adding a provider](#adding-a-provider)), checks version and auth, recommends one. Models come in two tiers: **fast** (metadata, scoring, rubric drafting) and **capable** (edits); defaults per provider, overridable in `settings.ts` or with `--model` / `--fast-model`. |
 | Target selection | no | Detects a file, folder, glob, Nx project, commit or `changes`, then resolves it to source files. |
-| Permissions | no | Asks every run which edit scope to grant (**whole workspace**, recommended, or only the target projects) and passes it through the provider's own mechanism: `--allowedTools Edit,Write,Bash(yarn vitest *),…` for Claude, `--sandbox workspace-write` for Codex, `--trust-tools` for Kiro, `--allow-tool write,shell(…)` for Copilot. Nothing is bypassed and no settings file is written. Not every provider can scope writes to a folder (Kiro and Copilot can't yet — `describeGrant` says so up front) or report which edits its own permissions blocked (`reportsPermissionDenials`; only Claude does today) — the pipeline degrades honestly rather than assuming either. |
-| Rules | per rule | Built-in rules plus the ones in `rulesDirectory`; each rule is its own graph. |
+| Permissions | no | Asks every run which edit scope to grant (**whole workspace**, recommended, or only the target projects) and passes it through the provider's own mechanism: `--allowedTools Edit,Write,Bash(yarn vitest *),…` for Claude, `--sandbox workspace-write` for Codex, `--trust-tools` for Kiro, `--allow-tool write,shell(…)` for Copilot. Nothing is bypassed and no settings file is written. Not every provider can scope writes to a folder (Kiro and Copilot can't yet — `describeGrant` says so up front) or report which edits its own permissions blocked (`reportsPermissionDenials`; only Claude does today) — the pipeline uses the permission and retry controls supported by each adapter. |
+| Rules | per rule | Built-in rules plus the ones in `<configurationDirectory>/rules/`; each rule is its own graph. |
 | Summary | no | Terminal tables (cost and time per file) plus the run folder, and the run's AI usage totals (calls, cost, time) for agent edits and fast-model analysis. Lists every file changed outside the review targets. |
 
 Everything runs headless. Single-file runs (or `--verbose`) stream the agent's tool calls
@@ -153,13 +157,12 @@ generated adapter is intentionally minimal (no sessions, no permission scoping, 
 proven to work for one prompt, meant to be extended by hand once you've confirmed the CLI's fuller behavior.
 
 **By hand:** implement `ProviderDefinition` (exported from `code-review`, optionally wrapped in `defineProvider(...)`
-for autocomplete — same pattern as `defineSettings`) and drop it at `providersDirectory/<id>.provider.ts`
-(`<configurationDirectory>/providers/` by default). It's discovered purely by being present — no registry to edit —
+for autocomplete — same pattern as `defineSettings`) and drop it at `<configurationDirectory>/providers/<id>.provider.ts`. It's discovered purely by being present — no registry to edit —
 and merged with the built-in catalog; a custom id can't shadow a built-in one. `runCommand` is exported from
 `code-review` for `checkAuthentication` and anything else that needs to shell out directly.
 
 Set `reportsPermissionDenials: true` only if the CLI's output genuinely exposes which edits its own permission
-model blocked (today, only Claude's does) — leaving it `false` is honest and safe; the pipeline falls back to
+model blocked (today, only Claude's does); otherwise leave it `false` and the pipeline falls back to
 "stop retrying once two attempts changed nothing" instead of wrongly concluding nothing was ever denied.
 
 ## Development

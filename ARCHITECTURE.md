@@ -4,7 +4,7 @@ This repository is an [Nx](https://nx.dev) monorepo that hosts the `react-global
 family of packages. All packages share a single root `node_modules`, one set of tooling
 (TypeScript, ESLint, Prettier, esbuild, Vitest), and a common `tsconfig.base.json`.
 
-> The root `README.md` is the published `react-global-state-hooks` (web) library documentation.
+> The root `README.md` introduces the web library. The package README in `libs/web/` is published to npm.
 > This file documents the repo/monorepo itself and is not part of any published package.
 
 ## Packages
@@ -307,20 +307,20 @@ settings. A few small, behavior-preserving null-safety edits in `libs/mobile/src
 
 ## Code review pipeline (`libs/code-review`)
 
-`libs/code-review` is a private tool, not a published package. `yarn review <target>` runs a
+`libs/code-review` is the workspace package behind easy-code-review. `yarn review <target>` runs a
 [LangGraph.js](https://langchain-ai.github.io/langgraphjs/) pipeline over the files of a target
 (file, folder, glob, Nx project, commit or `changes`):
 
-1. **Provider setup** (no AI): detects the installed `claude`, `codex` or `kiro-cli`, recommends one and
-   picks a fast model for scoring/metadata and a capable model for edits (`review.config.json`).
+1. **Provider setup** (no AI): detects the installed `claude`, `codex`, `kiro-cli` or `copilot`, recommends one and
+   picks a fast model for scoring/metadata and a capable model for edits (`qa/settings.ts`).
 2. **Target selection**: resolves the target into source files.
 3. **Permissions**: asks which edit scope to grant and passes it through the provider's own flags (headless, never bypassed).
 4. **Rules**: one rule at a time — built-ins from `src/segments/rules/ruleRegistry.ts` plus prompt-based rules from
-   `libs/code-review/rules/` (created with `yarn review rule create`); each rule is its own graph.
+   `<configurationDirectory>/rules/` (created with `yarn review rule create`); each rule is its own graph.
 5. **Summary**: terminal tables plus `.review/runs/<timestamp>/summary.md` (git-ignored).
 
-AI output is made predictable through structure: deterministic checks after every agent step and
-retry loops that feed earlier attempts back into the prompt. See `libs/code-review/README.md`.
+The pipeline combines measured coverage, rubric scoring and retry loops that feed earlier results
+back into the next attempt. See `libs/code-review/README.md`.
 
 ## Website (`apps/website`)
 

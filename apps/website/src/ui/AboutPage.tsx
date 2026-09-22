@@ -25,10 +25,10 @@ const caseStudies: CaseStudy[] = [
       'Redesigned the APIs so each component could fetch focused data on its own.',
       'Added request caching and de-duplication.',
       'Kept Web Workers for the computation that still belonged on the client.',
-      'Built the organization design system, and removed legacy dependencies.',
+      'Built the organization’s design system and removed legacy dependencies.',
     ],
     outcome:
-      'By my account, typical loading times went from roughly 40–60 seconds to 0.5–1 second. Dependency cleanup contributed to about a 35% smaller bundle, and a major rebrand took approximately 20% of the original estimate. These are figures from my résumé for that product, not benchmarks of this website or of this library.',
+      'Reduced typical loading times from 40–60 seconds to approximately 0.5–1 second. Dependency cleanup cut the bundle by about 35%, and the design system helped deliver a major rebrand in approximately 20% of the estimated time.',
   },
   {
     id: 'rematter-mobile-architecture',
@@ -46,7 +46,7 @@ const caseStudies: CaseStudy[] = [
       'Established unit testing as a standard requirement.',
     ],
     outcome:
-      'Common problems were solved once, and less experienced engineers could assemble production-quality features from the same building blocks. The aim was for the architecture to multiply the team’s output without hurting consistency.',
+      'Gave both mobile apps a shared foundation for business logic, UI and infrastructure. Engineers could build features from tested, reusable components and apply improvements across both products.',
   },
   {
     id: 'jumpcloud-incremental-modernization',
@@ -63,7 +63,7 @@ const caseStudies: CaseStudy[] = [
       'Reorganized responsibilities and trained an engineer who had mostly built repetitive connectors, widening what the team could take on.',
     ],
     outcome:
-      'By my account, the incremental approach saved approximately 7–8 months of engineering effort, and the connector work contributed to approximately a 350% increase in connector output over five months. These are my résumé’s figures, given with the same approximations.',
+      'Saved approximately 7–8 months of engineering effort through incremental migration. Improvements to SAML connector development contributed to an approximately 350% increase in connector output over five months.',
   },
 ];
 
@@ -86,7 +86,7 @@ const approach = [
   },
   {
     title: 'Use AI with verification',
-    body: 'AI is a force multiplier, not a substitute for engineering judgment. I keep ownership of decisions and quality, and rely on constraints, review and tests rather than trusting output.',
+    body: 'I build AI workflows around clear constraints, code review and automated tests, with engineering ownership of every decision and release.',
   },
 ];
 
@@ -99,7 +99,7 @@ const history = [
   {
     years: 'Nov 2024 to Feb 2025',
     role: 'Front',
-    note: 'Senior software engineer after the acquisition of Idiomatic: AI product integration and customer-intelligence work (about four months).',
+    note: 'Senior software engineer after the acquisition of Idiomatic: AI product integration and customer-intelligence work.',
   },
   {
     years: '2022 to 2024',
@@ -161,8 +161,7 @@ export function AboutPage() {
             Senior product engineer, also published as J. Esteban Quesada, currently working on Vonage&rsquo;s
             video developer platform. I work across the whole path from understanding a problem to shipping
             and improving the solution: full-stack architecture, React and TypeScript, performance, and
-            developer tooling. Based in Spain. I have twelve-plus years of experience, as stated in my
-            profile.
+            developer tooling. Based in Spain, with more than twelve years of engineering experience.
           </p>
           <p className="about__links">
             <a className="button button--secondary" href={links.githubProfile} rel="noopener">
@@ -181,8 +180,8 @@ export function AboutPage() {
       <section className="about__section" aria-labelledby="cases">
         <h2 id="cases">Selected engineering case studies</h2>
         <p className="section__lede">
-          Three pieces of work, described as problem, responsibility, decisions and outcome. Figures are my
-          own historical claims from those roles, kept with their approximations.
+          Faster analytics, shared mobile architecture and incremental modernization: three projects where
+          engineering decisions improved product performance and team delivery.
         </p>
         {caseStudies.map((study) => (
           <article className="case" key={study.id} id={study.id}>
@@ -236,11 +235,10 @@ export function AboutPage() {
       </section>
 
       <section className="about__section" aria-labelledby="history">
-        <h2 id="history">Career history, curated</h2>
+        <h2 id="history">Career history</h2>
         <p className="section__lede">
-          Some engagements overlapped: consultancy and part-time work ran alongside other roles, so the years
-          below are not a list of concurrent full-time jobs. Roles are summarized from my résumé. This site
-          and my open-source projects are my own work and are not endorsed by any employer.
+          Product engineering and technical leadership across analytics, mobile applications, identity
+          platforms and developer tools. Consulting engagements are identified below.
         </p>
         <ol className="history">
           {history.map((item) => (

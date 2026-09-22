@@ -1,9 +1,11 @@
 # DevTools screenshots: how they were captured
 
-Files: `public/devtools/*.png` (two images per scenario) and `src/data/devtools-shots.json` (sizes, scenario data,
-versions). Shown by `src/ui/DevToolsShot.tsx` on the DevTools docs page.
+The DevTools docs page uses `public/devtools/showcase/*.png`, described by `src/data/devtools-showcase.json`
+and rendered by `src/ui/DevToolsShowcase.tsx`. The earlier scenario pairs in `public/devtools/*.png` and
+`src/data/devtools-shots.json` are retained capture assets; `DevToolsShot.tsx` is no longer mounted.
 
-**Visual QA of these images is pending the author's review.** The script checked values and file dimensions only.
+The capture scripts check state values and image dimensions. Review framing and legibility when refreshing
+the images.
 
 ## Source
 

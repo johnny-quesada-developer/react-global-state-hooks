@@ -48,7 +48,7 @@ interface CreateGlobalState {
    * @param args.name optional name for debugging purposes
    * @param args.metadata optional non-reactive metadata associated with the state
    * @param args.callbacks optional lifecycle callbacks for the global state
-   * @param args.actions optional actions to restrict state mutations [if provided `setState` will be nullified]
+   * @param args.actions Optional actions returned as the hook’s second item; `setState` remains available on the store API
    * @param args.asyncStorage optional configuration to persist the state in local storage
    * @returns a state hook that you can use in your components
    *
@@ -117,7 +117,7 @@ interface CreateGlobalState {
    * @param args.name optional name for debugging purposes
    * @param args.metadata optional non-reactive metadata associated with the state
    * @param args.callbacks optional lifecycle callbacks for the global state
-   * @param args.actions optional actions to restrict state mutations [if provided `setState` will be nullified]
+   * @param args.actions Optional actions returned as the hook’s second item; `setState` remains available on the store API
    * @param args.asyncStorage optional configuration to persist the state in local storage
    * @returns a state hook that you can use in your components
    *

@@ -1,7 +1,7 @@
 {
   "name": "react-hooks-global-states",
   "version": "16.0.5",
-  "description": "A package to easily handle global state across your React components using hooks.",
+  "description": "The shared state engine for React and React Native: selective subscriptions, derived state, actions and scoped stores.",
   "main": "./bundle.cjs",
   "module": "./bundle.mjs",
   "types": "./index.d.ts",

@@ -70,7 +70,7 @@ export type StateApi<State, StateMutator, Metadata extends BaseMetadata> = {
 
   /**
    * Sets the metadata value
-   * The metadata value is not reactive and wont trigger re-renders
+   * The metadata value is not reactive and won’t trigger re-renders
    */
   setMetadata: MetadataSetter<Metadata>;
 
@@ -100,10 +100,9 @@ export type StateApi<State, StateMutator, Metadata extends BaseMetadata> = {
   subscribe: SubscribeToState<State>;
 
   /***
-   * @description Creates a new hooks that returns the result of the selector passed as a parameter
-   * Your can create selector hooks of other selectors hooks and extract as many derived states as or fragments of the state as you want
-   * The selector hook will be evaluated only if the result of the selector changes and the equality function returns false
-   * you can customize the equality function by passing the isEqualRoot and isEqual parameters
+   * @description Creates a read-only hook that returns the selected value directly.
+   * Selector hooks can be chained to derive further values.
+   * `isEqualRoot` controls recomputation; `isEqual` controls updates to the derived value.
    */
   createSelectorHook: <Selection>(
     selector: (state: State) => Selection,
@@ -137,7 +136,7 @@ export type StateApi<State, StateMutator, Metadata extends BaseMetadata> = {
 
   /**
    * @description Sugared hook to use the global state in React components
-   * Allows you to tread the global hook as an store, with better semantics
+   * Access the hook through the store’s `use` property
    *
    * @example
    * ```tsx
@@ -240,7 +239,7 @@ export interface StateHook<State, StateMutator, Metadata extends BaseMetadata>
 
 /**
  * @description Function to set the metadata value
- * The metadata value is not reactive and wont trigger re-renders
+ * The metadata value is not reactive and won’t trigger re-renders
  */
 export type MetadataSetter<Metadata extends BaseMetadata> = (
   setter: Metadata | ((metadata: Metadata) => Metadata),
@@ -817,35 +816,25 @@ export type ContextPublicApi<State, StateMutator, Metadata extends BaseMetadata>
    *  - isEqual: A function to compare the current and next selected fragment for equality.
    *  - isEqualRoot: A function to compare the entire state for equality.
    *  - name: An optional name for debugging purposes.
-   * @returns A new context hook that provides access to the selected fragment of the state,
-   * along with the state mutator and metadata.
+   * @returns A read-only context hook that returns the selected value directly.
    *
    * @example
    * ```tsx
-   * const useTodos = createContext({
-   *   todos: [],
-   *   filter: '',
-   * }, {
-   * actions: {
-   *   setFilter(filter: string) {
-   *   ...
+   * const todos = createContext({ filter: '' }, {
+   *   actions: {
+   *     setFilter(filter: string) {
+   *       return ({ setState }) => setState({ filter });
+   *     },
+   *   },
    * });
    *
-   * const useFilter = useTodos.createSelectorHook((state) => {
-   *   return state.filter;
-   * });
+   * const useFilter = todos.use.createSelectorHook((state) => state.filter);
    *
    * function FilterComponent() {
-   *   // The selector only listen to the selected fragment (filter)
-   *   // But has access to the full actions collection
-   *   const [filter, { setFilter }] = useFilter();
+   *   const filter = useFilter();
+   *   const { setFilter } = todos.use.actions();
    *
-   *   return (
-   *     <input
-   *       value={filter}
-   *       onChange={(e) => setFilter(e.target.value)}
-   *     />
-   *   );
+   *   return <input value={filter} onChange={(event) => setFilter(event.target.value)} />;
    * }
    * ```
    */
@@ -953,10 +942,10 @@ export interface CreateContext {
      *
      * There are two ways to use the hook
      * @example
-     * The more simple and familiar way is to use it as a regular hook
+     * Destructure `use` to name the context hook:
      *
      * ```tsx
-     * const { Context, Provider, user: useUser} = createContext({ name: 'John', age: 30 });
+     * const { Context, Provider, use: useUser} = createContext({ name: 'John', age: 30 });
      *
      * function UserProfile() {
      *  const [state, setState, metadata] = useUser();
@@ -966,7 +955,7 @@ export interface CreateContext {
      * ```
      *
      * @example
-     * The recommended, more sematic and easier to read way:
+     * Access the hook and provider through the context object:
      *
      * ```tsx
      * const user = createContext({ name: 'John', age: 30 });
@@ -1002,7 +991,7 @@ export interface CreateContext {
    * @param args.name Optional name for debugging purposes.
    * @param args.metadata Optional non-reactive metadata associated with the state.
    * @param args.callbacks Optional lifecycle callbacks for the context.
-   * @param args.actions Optional actions to restrict state mutations [if provided `setState` will be nullified].
+   * @param args.actions Optional actions returned as the hook’s second item; `setState` remains available on the store API.
    * @returns An object containing:
    * - **`use`** — A custom hook to read and mutate the context state.
    *   Supports selectors for granular subscriptions and returns `[state, stateMutator, metadata]`.
@@ -1029,7 +1018,7 @@ export interface CreateContext {
      * @param args.name Optional name for debugging purposes.
      * @param args.metadata Optional non-reactive metadata associated with the state.
      * @param args.callbacks Optional lifecycle callbacks for the context.
-     * @param args.actions Optional actions to restrict state mutations [if provided `setState` will be nullified].
+     * @param args.actions Optional actions returned as the hook’s second item; `setState` remains available on the store API.
      */
     args: {
       name?: string;
@@ -1044,10 +1033,10 @@ export interface CreateContext {
      *
      * There are two ways to use the hook
      * @example
-     * The more simple and familiar way is to use it as a regular hook
+     * Destructure `use` to name the context hook:
      *
      * ```tsx
-     * const { Context, Provider, user: useUser} = createContext({ name: 'John', age: 30 });
+     * const { Context, Provider, use: useUser} = createContext({ name: 'John', age: 30 });
      *
      * function UserProfile() {
      *  const [state, setState, metadata] = useUser();
@@ -1057,7 +1046,7 @@ export interface CreateContext {
      * ```
      *
      * @example
-     * The recommended, more sematic and easier to read way:
+     * Access the hook and provider through the context object:
      *
      * ```tsx
      * const user = createContext({ name: 'John', age: 30 });
@@ -1093,7 +1082,7 @@ export interface CreateContext {
    * @param args.name Optional name for debugging purposes.
    * @param args.metadata Optional non-reactive metadata associated with the state.
    * @param args.callbacks Optional lifecycle callbacks for the context.
-   * @param args.actions Optional actions to restrict state mutations [if provided `setState` will be nullified].
+   * @param args.actions Optional actions returned as the hook’s second item; `setState` remains available on the store API.
    * @returns An object containing:
    * - **`use`** — A custom hook to read and mutate the context state.
    *   Supports selectors for granular subscriptions and returns `[state, stateMutator, metadata]`.
@@ -1117,7 +1106,7 @@ export interface CreateContext {
      * @param args.name Optional name for debugging purposes.
      * @param args.metadata Optional non-reactive metadata associated with the state.
      * @param args.callbacks Optional lifecycle callbacks for the context.
-     * @param args.actions Optional actions to restrict state mutations [if provided `setState` will be nullified].
+     * @param args.actions Optional actions returned as the hook’s second item; `setState` remains available on the store API.
      */
     args: {
       name?: string;
@@ -1132,10 +1121,10 @@ export interface CreateContext {
      *
      * There are two ways to use the hook
      * @example
-     * The more simple and familiar way is to use it as a regular hook
+     * Destructure `use` to name the context hook:
      *
      * ```tsx
-     * const { Context, Provider, user: useUser} = createContext({ name: 'John', age: 30 });
+     * const { Context, Provider, use: useUser} = createContext({ name: 'John', age: 30 });
      *
      * function UserProfile() {
      *  const [state, setState, metadata] = useUser();
@@ -1145,7 +1134,7 @@ export interface CreateContext {
      * ```
      *
      * @example
-     * The recommended, more sematic and easier to read way:
+     * Access the hook and provider through the context object:
      *
      * ```tsx
      * const user = createContext({ name: 'John', age: 30 });
@@ -1278,7 +1267,7 @@ export interface CreateGlobalState {
    * @param args.name optional name for debugging purposes
    * @param args.metadata optional non-reactive metadata associated with the state (can be a value or callback)
    * @param args.callbacks optional lifecycle callbacks for the global state
-   * @param args.actions optional actions to restrict state mutations [if provided `setState` will be nullified]
+   * @param args.actions Optional actions returned as the hook’s second item; `setState` remains available on the store API
    * @returns a state hook that you can use in your components
    *
    * @example
@@ -1354,7 +1343,7 @@ export interface CreateGlobalState {
    * @param args.name optional name for debugging purposes
    * @param args.metadata optional non-reactive metadata associated with the state (can be a value or callback)
    * @param args.callbacks optional lifecycle callbacks for the global state
-   * @param args.actions optional actions to restrict state mutations [if provided `setState` will be nullified]
+   * @param args.actions Optional actions returned as the hook’s second item; `setState` remains available on the store API
    * @returns a state hook that you can use in your components
    *
    * @example

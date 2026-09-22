@@ -11,7 +11,7 @@ const PANEL_ID = 'hero-video-panel';
 
 type PlayMode = 'first' | 'advance' | 'keep';
 
-const tabId = (id: string) => `hero-video-tab-${id}`;
+const tabId = (id: string) => `watch-${id}`;
 
 const play = (element: HTMLVideoElement): Promise<boolean> => {
   try {

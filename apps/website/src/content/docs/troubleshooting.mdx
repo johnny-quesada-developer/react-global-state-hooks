@@ -17,7 +17,8 @@ import { Callout } from '../../ui/Callout';
 ## The component renders too often
 
 - **The selector builds a new array or object.** Strict equality sees a change every time. Pass
-  `isEqual: shallowCompare`, or derive the value once with `createSelectorHook`.
+  `isEqual: shallowCompare`. Use `createSelectorHook` with that equality option to share a derivation across
+  components.
 - **There is no selector.** `useStore()` subscribes to the whole state.
 
 ## `use hook must be used within a ContextProvider`
@@ -46,8 +47,8 @@ call `reset(state, metadata)`.
 
 ## Render counts double in development
 
-React Strict Mode renders components twice in development. Counting in effects avoids it; the demos on this
-site do that.
+React Strict Mode performs extra renders and replays effects in development. The demos count commits in an
+effect and skip the simulated remount so the counters reflect committed updates.
 
 <Callout type="note" title="Storage errors">
   When reading or writing `localStorage` fails, the error is logged with `console.error` unless you provide

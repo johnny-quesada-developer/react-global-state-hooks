@@ -26,8 +26,8 @@ The package needs React 18 or newer and ships its own TypeScript types. It has n
 and no build plugin to configure.
 
 <Callout type="note" title="Version documented here">
-  These pages are written against <strong>{PACKAGE_VERSION}</strong>, and every snippet is executed by the site's
-  test suite against that source.
+  These pages are written against <strong>{PACKAGE_VERSION}</strong>, with executable examples and tests against
+  the workspace source.
 </Callout>
 
 ## Create a store
@@ -48,7 +48,7 @@ value or an updater function.
 
 <Callout type="warning" title="Create new objects">
   Subscribers are notified only when the new state is a different reference from the current one. Mutating the
-  existing object and passing it back changes nothing. Return a new object, as in the updater above.
+  existing object and passing it back does not notify subscribers. Return a new object, as in the updater above.
 </Callout>
 
 ## Select a slice
@@ -101,9 +101,8 @@ The web package can save a store to `localStorage` by adding a key.
 <CodeBlock code={persist} lang="ts" title="preferences.ts" />
 
 Persistence is skipped when `localStorage` is not available, for example while rendering on the server.
-If you render on the server, read the persistence section of the
-<a href={`${links.repo}#readme`}>README</a> before shipping;
-restored values can differ from the server-rendered HTML.
+For server-rendered apps, follow the [hydration guidance](../persistence/#what-to-watch-for) to keep the first
+browser render consistent with the server HTML.
 
 ## Where to go next
 

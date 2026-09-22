@@ -107,9 +107,9 @@ export function HomePage({
     },
     {
       title: 'easy-code-review',
-      body: 'Runs an AI coding agent over your files in small, verified steps, with ordinary code checking every step.',
+      body: 'Automates coverage improvements and custom code reviews with measured results, focused retries and detailed reports.',
       href: withBase('easy-code-review/'),
-      badge: 'Beta, not published',
+      badge: 'Beta',
     },
   ];
 
@@ -183,7 +183,7 @@ export function HomePage({
       <section className="section container" aria-labelledby="code-heading">
         <h2 id="code-heading">A store is one call. A component is one line.</h2>
         <p className="section__lede">
-          These are the exact files behind the render demo above, not a separate illustration.
+          Use the same store and component code that powers the live demo above.
         </p>
         <div className="code-pair">
           <CodeBlock code={storeSource} lang="ts" title="store.ts" />

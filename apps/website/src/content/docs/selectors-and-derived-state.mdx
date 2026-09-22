@@ -44,8 +44,8 @@ those values in `dependencies`. When one changes, the selector runs again on the
 
 <Callout type="warning" title="Selectors that build new values">
   `filter`, `map` and object literals return a new reference every time. Without `isEqual` each store change
-  counts as a change for that component. Pass `{ isEqual: shallowCompare }`, or move the derivation into a
-  selector hook, below.
+  counts as a change for that component. Pass `{ isEqual: shallowCompare }` to compare the items. Shared selector hooks can
+  reuse the computation across components and accept the same equality option.
 </Callout>
 
 ## Share a derivation with selector hooks

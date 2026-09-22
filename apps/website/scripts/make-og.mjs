@@ -117,7 +117,7 @@ const pages = [
     file: 'easy-code-review',
     kicker: 'Beta',
     title: 'easy-code-review',
-    description: 'An AI coding agent run in small, verified steps. What it does today and its limits.',
+    description: 'Automated coverage and custom code reviews, with measured results and focused retries.',
   },
 ];
 
