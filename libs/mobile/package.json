@@ -1,7 +1,7 @@
 {
   "name": "react-native-global-state-hooks",
-  "version": "16.0.4-beta",
-  "description": "This is a package to easily handling global-state across your react-native-components No-redux... The library now includes @react-native-async-storage/async-storage to persist your state across sessions... if you want to keep using the old version without async-storage or react-native dependencies just use version 5.0.15 or user react-hooks-global-states instead",
+  "version": "16.0.5",
+  "description": "Shared React Native state with a useState-style API, selective subscriptions, actions and async persistence with optional AsyncStorage.",
   "main": "./bundle.cjs",
   "module": "./bundle.mjs",
   "types": "./index.d.ts",
@@ -83,10 +83,10 @@
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
     "test:debug:no-watch": "vitest run --inspect-brk --no-file-parallelism",
     "test:coverage": "vitest run --coverage",
-    "build": "yarn ts-check && yarn clean && tsc -p tsconfig.build.json && tsx esbuild.config.ts && tsx scripts/prepare-dist.ts",
+    "build": "yarn ts-check && yarn clean && tsc -p tsconfig.build.json && tsx esbuild.config.ts && tsx ../../scripts/prepare-dist.ts",
     "validate": "yarn lint && yarn test && yarn build",
-    "npm-publish": "cd dist && npm publish --tag latest --registry https://registry.npmjs.org/ ${NPM_OTP:+--otp=$NPM_OTP} ${NPM_DRY_RUN:+--dry-run}",
-    "npm-publish:beta": "cd dist && npm publish --tag beta --registry https://registry.npmjs.org/ ${NPM_OTP:+--otp=$NPM_OTP} ${NPM_DRY_RUN:+--dry-run}",
+    "npm-publish": "node ../../scripts/assert-publish-version.mjs latest && cd dist && npm publish --tag latest --registry https://registry.npmjs.org/ ${NPM_OTP:+--otp=$NPM_OTP} ${NPM_DRY_RUN:+--dry-run}",
+    "npm-publish:beta": "node ../../scripts/assert-publish-version.mjs beta && cd dist && npm publish --tag beta --registry https://registry.npmjs.org/ ${NPM_OTP:+--otp=$NPM_OTP} ${NPM_DRY_RUN:+--dry-run}",
     "publish:pkg": "yarn npm-publish",
     "publish:beta": "yarn npm-publish:beta",
     "lint": "eslint . --max-warnings=0",
@@ -145,6 +145,9 @@
     }
   },
   "dependencies": {
-    "react-hooks-global-states": "^16.0.4-beta"
+    "react-hooks-global-states": "^16.0.5"
+  },
+  "bin": {
+    "rgsh": "./rgsh.mjs"
   }
 }

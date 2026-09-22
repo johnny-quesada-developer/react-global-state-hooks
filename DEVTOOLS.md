@@ -1,8 +1,8 @@
 # 🛠️ DevTools Extension
 
-**Debug like a pro!** Our browser extension gives you superpowers! 🦸‍♂️
+Inspect state, trace actions and reproduce bugs from your browser or terminal.
 
-## 🔗 [Install for Chrome](https://chromewebstore.google.com/detail/bafojplmkpejhglhjpibpdhoblickpee/preview?hl=en&authuser=0)
+## 🔗 [Install for Chrome](https://chromewebstore.google.com/detail/bafojplmkpejhglhjpibpdhoblickpee)
 
 ## ✨ Features
 
@@ -19,7 +19,7 @@ View all global states and contexts in real-time
 
 #### ⏱️ **Time Travel**
 
-Rewind and replay state changes
+Restore a recorded state and inspect the result
 
 </td>
 </tr>
@@ -41,12 +41,22 @@ See every action that changes state
 </tr>
 </table>
 
+## 💻 Terminal (`rgsh`)
+
+The state libraries install an `rgsh` command that talks to the panel: watch actions, read state, and run actions or change state from a terminal.
+
+```bash
+npm i -D ws
+npx rgsh --list
+npx rgsh --help
+```
+
 ## 📸 Screenshots
 
 | Track State Changes                                                                                                                       | Modify State                                                                                                                    |
 | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| ![Track State Changes](https://raw.githubusercontent.com/johnny-quesada-developer/react-global-state-hooks/main/public/track-state-changes.png) | ![Modify State](https://raw.githubusercontent.com/johnny-quesada-developer/react-global-state-hooks/main/public/modify-the-state.png) |
+| ![Track State Changes](https://raw.githubusercontent.com/johnny-quesada-developer/react-global-state-hooks/master/public/track-state-changes.png) | ![Modify State](https://raw.githubusercontent.com/johnny-quesada-developer/react-global-state-hooks/master/public/modify-the-state.png) |
 
 | Restore State                                                                                                                     | Action Granularity                                                                                                                              |
 | --------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| ![Restore State](https://raw.githubusercontent.com/johnny-quesada-developer/react-global-state-hooks/main/public/restore-the-state.png) | ![Action Granularity](https://raw.githubusercontent.com/johnny-quesada-developer/react-global-state-hooks/main/public/custom-actions-granularity.png) |
+| ![Restore State](https://raw.githubusercontent.com/johnny-quesada-developer/react-global-state-hooks/master/public/restore-the-state.png) | ![Action Granularity](https://raw.githubusercontent.com/johnny-quesada-developer/react-global-state-hooks/master/public/custom-actions-granularity.png) |

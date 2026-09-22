@@ -1,5 +1,3 @@
-import { EntityAdapter } from '@src/shared/tools/EntityAdapter';
-
 /**
  * Normalize the top-level action logs of a mock example so they satisfy the
  * ActionLogJson / ActionJson schema and, crucially, render follow-up states.
@@ -50,33 +48,4 @@ export function normalizeExampleLogs<T extends { entities: Record<string, any>; 
   }
 
   return example;
-}
-
-// Helper function to check if an object has both `entities` and `ids` properties
-function isEntityStructure(obj: any): obj is { entities: any; ids: any[] } {
-  return obj && typeof obj === 'object' && 'entities' in obj && 'ids' in obj;
-}
-
-// Recursive function to transform the target object
-export function transformEntities(obj: any): any {
-  if (Array.isArray(obj)) {
-    // If the object is an array, recursively apply the transformation to its elements
-    return obj.map(transformEntities);
-  } else if (obj && typeof obj === 'object') {
-    // Traverse through each key of the object
-    for (const key in obj) {
-      if (obj[key]) {
-        const value = obj[key];
-
-        // If `entities` and `ids` are present, replace it with the EntityAdapter
-        if (isEntityStructure(value)) {
-          obj[key] = new EntityAdapter(value);
-        } else {
-          // Recursively apply the transformation to nested objects
-          obj[key] = transformEntities(value);
-        }
-      }
-    }
-  }
-  return obj; // Return the transformed object
 }

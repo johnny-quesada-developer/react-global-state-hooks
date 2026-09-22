@@ -1,0 +1,58 @@
+---
+title: Scoped state with createContext
+description: Give each part of the tree its own store with the same selector and action API as global state.
+section: Core concepts
+order: 4
+---
+
+import { CodeBlock } from '../../ui/CodeBlock';
+import { Callout } from '../../ui/Callout';
+import counterContext from '@snippets/context/counter-context.tsx?raw';
+
+## The problem this solves
+
+A form, a wizard or a list row needs state that several components share, but that must not leak to the rest
+of the app or to another instance of itself. `createContext` creates a store per `Provider`.
+
+## Create and use a context
+
+<CodeBlock code={counterContext} lang="tsx" title="counter-context.tsx" />
+
+`createContext(initialState, options?)` returns `{ use, Provider, Context }`. It supports the same options as a
+global store except persistence: `actions`, `metadata`, `name` and `callbacks`.
+
+## Provider values
+
+| Provider prop | Result |
+| --- | --- |
+| none | The store starts from the context's initial state. |
+| `value={x}` | The store starts from `x`, and follows `x` when it changes. |
+| `value={(initial) => ...}` | The function runs once to create the initial state. It receives the context's initial state, not the value of a parent provider. |
+
+## Reading from a context
+
+| Call | Returns |
+| --- | --- |
+| `Ctx.use(selector?, deps?)` | The same tuple as a store hook. |
+| `Ctx.use.select(selector)` | Just the selected value. |
+| `Ctx.use.api()` | The store API for the closest provider (`getState`, `setState`, `subscribe`, …). |
+| `Ctx.use.actions()` | The closest provider's actions object. |
+| `Ctx.use.observable(selector)` | A memoised observable for the closest provider. |
+| `Ctx.use.createSelectorHook(selector)` | A shared, chainable selector hook for this context. |
+
+`Ctx.use` throws `use hook must be used within a ContextProvider` when there is no provider above it.
+
+## Lifecycle callbacks
+
+Set `callbacks` on the context or `onCreated` / `onMounted` on a single `Provider`. `onMounted` may return a
+cleanup function that runs on unmount.
+
+## What to watch for
+
+<Callout type="tip" title="Testing a context">
+  `Ctx.Provider.makeProviderWrapper()` returns `{ wrapper, context }`. Pass `wrapper` to your test renderer and
+  use `context.current.actions` or `context.current.setState` to drive the store from the test.
+</Callout>
+
+- Each mounted `Provider` is a new store. Remounting a provider resets its state.
+- Persistence to `localStorage` is a feature of global stores, not of contexts.

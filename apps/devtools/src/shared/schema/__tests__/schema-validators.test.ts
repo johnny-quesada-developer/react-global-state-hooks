@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { isActionJson, assertActionJson } from '../ActionJson';
+import { ActionTypeJsonEnum, isActionTypeJson } from '../ActionTypeJson';
 import { isGlobalStateJson, assertGlobalStateJson } from '../GlobalStateJson';
 
 describe('Schema Validators', () => {
@@ -13,7 +14,7 @@ describe('Schema Validators', () => {
         start: Date.now(),
         timing: 0,
         logs: [],
-        actionType: 'async',
+        actionType: ActionTypeJsonEnum.CUSTOM_ACTION,
       };
 
       expect(isActionJson(validAction)).toBe(true);
@@ -40,14 +41,14 @@ describe('Schema Validators', () => {
             subAction: 'setState',
           },
         ],
-        actionType: 'async',
+        actionType: ActionTypeJsonEnum.CUSTOM_ACTION,
       };
 
       expect(isActionJson(validAction)).toBe(true);
     });
 
     it('should validate different action types', () => {
-      const types = ['async', 'action', 'callback'] as const;
+      const types = Object.values(ActionTypeJsonEnum);
 
       types.forEach((actionType) => {
         const action = {
@@ -64,6 +65,10 @@ describe('Schema Validators', () => {
         expect(isActionJson(action)).toBe(true);
       });
     });
+  });
+
+  it.each(['async', 'action', 'callback'])('rejects the unsupported action type %s', (actionType) => {
+    expect(isActionTypeJson(actionType)).toBe(false);
   });
 
   describe('GlobalStateJson', () => {

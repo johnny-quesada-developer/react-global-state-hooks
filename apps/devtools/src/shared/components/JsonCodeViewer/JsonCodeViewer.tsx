@@ -19,7 +19,7 @@ export type JsonCodeViewerProps = React.HTMLAttributes<HTMLDivElement> & {
 export const JsonCodeViewer: React.FC<JsonCodeViewerProps> = React.memo(
   ({
     className = '',
-    collapsed: collapsedArg = true,
+    collapsed: collapsedArg = 3,
     defaultView = 'code',
     onEdit,
     src,
@@ -55,14 +55,14 @@ export const JsonCodeViewer: React.FC<JsonCodeViewerProps> = React.memo(
       function syncCollapsed() {
         setCollapsed(collapsedArg);
       },
-      [collapsedArg]
+      [collapsedArg],
     );
 
     useEffect(
       function syncViewType() {
         setViewType(defaultView ?? 'json');
       },
-      [defaultView]
+      [defaultView],
     );
 
     const isCollapsed = isNumber(collapsed) ? collapsed > 0 : collapsed;
@@ -116,13 +116,13 @@ export const JsonCodeViewer: React.FC<JsonCodeViewerProps> = React.memo(
           metadata.onEdit = onEdit;
         }}
       >
-        <div className={cn(styles.reactJsonContainer, 'relative pr-5 flex flex-col', className)} {...props}>
+        <div className={cn(styles.reactJsonContainer, 'relative flex flex-col', className)} {...props}>
           {viewType === 'code' && <CodeViewer className="h-full flex-1 min-h-0">{toolbar}</CodeViewer>}
           {viewType === 'json' && <JsonViewer>{toolbar}</JsonViewer>}
         </div>
       </codeViewer$.Provider>
     );
-  }
+  },
 );
 
 export default JsonCodeViewer;

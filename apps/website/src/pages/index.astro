@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { HomePage } from '../ui/HomePage';
+import { InstallCommand } from '../ui/InstallCommand';
+import { HeroVideos } from '../ui/HeroVideos';
+import { SelectiveDemo } from '@examples/selective/SelectiveDemo';
+import storeSource from '@examples/selective/store.ts?raw';
+import nameCardSource from '@examples/selective/NameCard.tsx?raw';
+import oneLinerSource from '@snippets/getting-started/Counter.ts?raw';
+import useItSource from '@snippets/getting-started/read-and-update.tsx?raw';
+import shareItSource from '@snippets/getting-started/Labels.tsx?raw';
+import agenticSession from '../data/agentic-proof.txt?raw';
+---
+
+<BaseLayout
+  image="og/home.png"
+  imageAlt="react-global-state-hooks: shared React state that works like useState"
+  title="react-global-state-hooks"
+  description="Shared React state that works like useState. One-call stores, selected slices, actions, localStorage, DevTools, and terminal access for coding agents."
+>
+  <HomePage
+    storeSource={storeSource}
+    nameCardSource={nameCardSource}
+    oneLinerSource={oneLinerSource}
+    useItSource={useItSource}
+    shareItSource={shareItSource}
+    agenticSession={agenticSession}
+  >
+    <InstallCommand slot="install" client:idle />
+    <HeroVideos slot="video" client:idle />
+    <SelectiveDemo slot="demo" client:visible />
+  </HomePage>
+</BaseLayout>

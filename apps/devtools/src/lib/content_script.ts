@@ -22,6 +22,8 @@ type DevtoolsResponseMessage = {
   let reconnectDelay = 500;
   const maxReconnectDelay = 5000;
 
+  const isExtensionContextValid = () => Boolean(chrome.runtime?.id);
+
   const flushPendingMessages = () => {
     if (!communicationPort || !pendingMessages.length) return;
 
@@ -38,6 +40,8 @@ type DevtoolsResponseMessage = {
   };
 
   const connect = () => {
+    if (!isExtensionContextValid()) return;
+
     const { result: port } = tryCatch(() => {
       const created = chrome.runtime.connect({ name: 'content-script' });
       const lastError = chrome.runtime.lastError;
@@ -79,6 +83,8 @@ type DevtoolsResponseMessage = {
 
   const addMonkeyPatchMessagesListener = () => {
     window.addEventListener('message', (event: MessageEvent<MessageToContentScript>) => {
+      if (!isExtensionContextValid()) return;
+
       const { result } = tryCatch(() => {
         if (event.source !== window) return;
         if (!isString(event?.data?.action)) return;

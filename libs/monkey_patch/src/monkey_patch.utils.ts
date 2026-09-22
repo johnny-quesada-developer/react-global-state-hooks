@@ -44,6 +44,7 @@ export const getGlobalStateMetaPayload = ({
   globalStateId: string;
   args: unknown;
 }): GlobalStateJson => {
+  const isFiber = Boolean(globalState._DEV_TOOLS_FIBER);
   const { metadata } = globalState;
 
   const stateName = (() => {
@@ -54,20 +55,19 @@ export const getGlobalStateMetaPayload = ({
 
   const localStorage = getLocalStorageMetadata({ globalState, args });
 
-  const actions: ActionsCallbackJson = Object.keys((globalState.actionsConfig as Record<string, unknown>) ?? {}).reduce(
-    (acc, key) => {
-      const fn = (globalState.actionsConfig as Record<string, unknown>)[key];
-      if (!isFunction(fn)) return acc;
+  const actions: ActionsCallbackJson = Object.keys(
+    (globalState.actionsConfig as Record<string, unknown>) ?? {},
+  ).reduce((acc, key) => {
+    const fn = (globalState.actionsConfig as Record<string, unknown>)[key];
+    if (!isFunction(fn)) return acc;
 
-      return {
-        ...acc,
-        [key]: {
-          length: fn.length,
-        },
-      };
-    },
-    {}
-  );
+    return {
+      ...acc,
+      [key]: {
+        length: fn.length,
+      },
+    };
+  }, {});
 
   const globalStoreMeta: GlobalStateJson = {
     globalStateId: globalStateId,
@@ -78,7 +78,10 @@ export const getGlobalStateMetaPayload = ({
     callbacks: Object.keys(globalState.callbacks ?? {}),
     initialState: softClone(globalState.state),
     globalStatePath,
-    isContext: Boolean((args as { __devtools_isContextStore?: boolean } | null | undefined)?.__devtools_isContextStore),
+    isContext: Boolean(
+      (args as { __devtools_isContextStore?: boolean } | null | undefined)?.__devtools_isContextStore,
+    ),
+    isFiber,
   };
 
   return globalStoreMeta;

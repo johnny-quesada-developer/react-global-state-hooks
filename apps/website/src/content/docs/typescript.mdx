@@ -1,0 +1,54 @@
+---
+title: TypeScript
+description: Type a store, get the tools and actions types, and split actions across files without circular types.
+section: TypeScript
+order: 1
+---
+
+import { CodeBlock } from '../../ui/CodeBlock';
+import { Callout } from '../../ui/Callout';
+import typedStore from '@snippets/typescript/typed-store.ts?raw';
+import splitActions from '@snippets/typescript/split-actions.ts?raw';
+import contextTypes from '@snippets/typescript/context-types.tsx?raw';
+
+The library is written in TypeScript and ships its own types. State, selectors and actions are inferred from
+what you pass. The site checks these snippets with `astro check` and uses `expectTypeOf` assertions in
+the tests.
+
+## Type the state
+
+<CodeBlock code={typedStore} lang="ts" title="typed-store.ts" />
+
+<Callout type="tip" title="Type the initial state and infer the options">
+  Annotate the initial value when passing options so TypeScript infers the action and metadata types.
+  `createGlobalState<State>(initial)` supports an explicit state type when no options are passed.
+</Callout>
+
+## Helper types
+
+| Type | Gives you |
+| --- | --- |
+| `InferAPI<typeof storeOrContext>` | The store tools type for a global store, a context, or the object returned by `createContext`. |
+| `InferStateApi<typeof useStore>` | The store tools of a global store. |
+| `InferContextApi<typeof Ctx.Context>` | The store tools of a context. |
+| `InferActionsType<typeof useStore>` | The type of the actions object. |
+
+The store tools type contains `getState`, `setState`, `metadata`, `setMetadata`, `subscribe` and `actions`.
+
+## Split actions into templates
+
+Lifecycle callbacks such as `onInit` receive tools whose `actions` are typed loosely, because the actions are
+still being defined. Get the exact type with `InferAPI`, define actions against it, and bind them later.
+
+<CodeBlock code={splitActions} lang="ts" title="split-actions.ts" />
+
+## Contexts
+
+<CodeBlock code={contextTypes} lang="tsx" title="context-types.tsx" />
+
+## What to watch for
+
+- The types do not verify that every action key returns a function. A wrong action fails when it is called,
+  with an error that names the key.
+- Persistence options are typed loosely (`localStorage?: LocalStorageConfig<Any, Any>`). Type your `validator`
+  arguments yourself when you need the state type inside it.

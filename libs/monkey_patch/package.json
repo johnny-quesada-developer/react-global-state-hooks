@@ -1,7 +1,7 @@
 {
   "name": "react-hooks-global-states-debug",
-  "version": "16.0.4-beta",
-  "description": "DevTools debug package for react-hooks-global-states (and react-global-state-hooks). Side-effect import that connects your global stores to the React Hooks Global States DevTools browser extension.",
+  "version": "16.0.5",
+  "description": "DevTools debug package for react-hooks-global-states (and react-global-state-hooks). Side-effect import that connects your global stores to the React Global States Hooks DevTools browser extension.",
   "type": "module",
   "main": "./debug.js",
   "module": "./debug.js",
@@ -9,13 +9,14 @@
   "sideEffects": true,
   "files": [
     "debug.js",
+    "cli.mjs",
     "index.d.ts"
   ],
   "scripts": {
     "build": "yarn ts-check && yarn clean && tsx esbuild.config.ts && tsx scripts/prepare-dist.ts",
     "validate": "yarn lint && yarn test && yarn build",
-    "npm-publish": "cd dist && npm publish --tag latest --registry https://registry.npmjs.org/ ${NPM_OTP:+--otp=$NPM_OTP} ${NPM_DRY_RUN:+--dry-run}",
-    "npm-publish:beta": "cd dist && npm publish --tag beta --registry https://registry.npmjs.org/ ${NPM_OTP:+--otp=$NPM_OTP} ${NPM_DRY_RUN:+--dry-run}",
+    "npm-publish": "node ../../scripts/assert-publish-version.mjs latest && cd dist && npm publish --tag latest --registry https://registry.npmjs.org/ ${NPM_OTP:+--otp=$NPM_OTP} ${NPM_DRY_RUN:+--dry-run}",
+    "npm-publish:beta": "node ../../scripts/assert-publish-version.mjs beta && cd dist && npm publish --tag beta --registry https://registry.npmjs.org/ ${NPM_OTP:+--otp=$NPM_OTP} ${NPM_DRY_RUN:+--dry-run}",
     "publish:pkg": "yarn npm-publish",
     "publish:beta": "yarn npm-publish:beta",
     "test": "yarn ts-check:tests && vitest run && yarn test:no-patch",
@@ -55,9 +56,29 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
     "@types/chrome": "^0.0.270",
+    "@types/ws": "^8.5.12",
     "@vitest/coverage-v8": "^2.1.9",
     "easy-cancelable-promise": "^1.0.2",
     "vitest": "^2.1.9",
+    "ws": "^8.18.0",
     "zod": "^4.3.6"
+  },
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./debug.js",
+      "default": "./debug.js"
+    },
+    "./debug.js": "./debug.js",
+    "./cli": "./cli.mjs",
+    "./package.json": "./package.json"
+  },
+  "peerDependencies": {
+    "ws": ">=7.0.0"
+  },
+  "peerDependenciesMeta": {
+    "ws": {
+      "optional": true
+    }
   }
 }

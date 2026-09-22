@@ -1,0 +1,56 @@
+---
+title: Context, actions and utilities
+description: Reference for createContext, the actions helper, shallowCompare, uniqueId and isRecord.
+section: API reference
+order: 2
+---
+
+## createContext
+
+```ts
+createContext(initialState, options?) => { use, Provider, Context }
+```
+
+Options: `name`, `metadata`, `actions`, `callbacks`. See
+[Scoped state with createContext](../scoped-state-with-createcontext/).
+
+| Member | Notes |
+| --- | --- |
+| `Provider` | Props: `children`, `value`, `onCreated`, `onMounted`, `onRender`. Also `Provider.makeProviderWrapper(options?)`. |
+| `use(selector?, depsOrOptions?)` | Tuple hook, like a global store. Throws outside a provider. |
+| `use.select(selector)` | Returns the selected value. |
+| `use.api()` | The closest provider's store API. |
+| `use.actions()` | The closest provider's actions object. |
+| `use.observable(selector, options?)` | Memoised observable. |
+| `use.createSelectorHook(selector, options?)` | Shared selector hook for this context. |
+| `Context` | The underlying React context. |
+
+## actions
+
+```ts
+actions(store, config)      // bind a group of actions to a store now
+actions<API>()(config)      // define a template, bind it later with template(api)
+```
+
+Actions in one group call each other with `this`. The tools passed to the inner function include
+`actions` (the store's own action object). See [Actions](../actions/).
+
+## shallowCompare
+
+`shallowCompare(a, b)` returns `true` when two values are equal by content one level deep: arrays by item,
+objects by property. Nested objects are compared by reference. Use it as `isEqual`.
+
+## uniqueId
+
+| Call | Result |
+| --- | --- |
+| `uniqueId(prefix?)` | A unique string, optionally prefixed. |
+| `uniqueId.for(prefix)` | A generator of ids with that prefix. TypeScript brands the result type by prefix. |
+| `generator.is(value)` | `true` if `value` is an id from this generator. |
+| `generator.assert(value)` | Throws if it is not. |
+| `uniqueId.for(prefix).strict<Brand>()` | Adds a symbol brand for stricter typing. |
+
+## isRecord
+
+`isRecord(value)` accepts non-null objects other than arrays, `Map`, `Set` and `Date`. It also accepts class
+instances, so use a separate check when you need to restrict a value to plain objects.

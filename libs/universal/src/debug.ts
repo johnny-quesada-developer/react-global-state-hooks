@@ -5,7 +5,7 @@
 //
 // This is a SIDE-EFFECT-ONLY subpath: it simply pulls in the external
 // `react-hooks-global-states-debug` package, which installs the monkey patch connecting your
-// global stores to the React Hooks Global States DevTools browser extension.
+// global stores to the React Global States Hooks DevTools browser extension.
 //
 // It is intentionally NOT re-exported from the barrel (src/index.ts) and the debug package is
 // kept EXTERNAL at build time, so it never affects the base library's bundle size (nor the size

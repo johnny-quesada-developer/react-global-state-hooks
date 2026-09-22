@@ -1,0 +1,46 @@
+---
+title: Metadata and non-reactive access
+description: Read and change state outside components, subscribe to changes, and keep side data that never triggers renders.
+section: Core concepts
+order: 6
+---
+
+import { CodeBlock } from '../../ui/CodeBlock';
+import { Callout } from '../../ui/Callout';
+import metadata from '@snippets/stores/metadata.ts?raw';
+import outsideReact from '@snippets/getting-started/outside-react.ts?raw';
+
+## The problem this solves
+
+Not everything that lives next to state should cause a render: request counters, timestamps, a "last synced"
+label you only read in handlers. And not every reader of state is a component: API clients, WebSocket handlers
+and analytics need it too.
+
+## Non-reactive access
+
+<CodeBlock code={outsideReact} lang="ts" title="session.ts" />
+
+- `getState()` reads the current value.
+- `setState(valueOrUpdater)` writes it and notifies subscribers.
+- `subscribe(selector, callback)` listens to a slice. The callback runs immediately with the current value
+  unless you pass `{ skipFirst: true }`. It returns a function that unsubscribes.
+
+## Metadata
+
+Metadata is a second object stored beside the state. Changing it never re-renders anything.
+
+<CodeBlock code={metadata} lang="ts" title="feed.ts" />
+
+Read it with `store.metadata` (a live getter) or `store.getMetadata()`, and change it with
+`store.setMetadata(valueOrUpdater)`. Actions receive `metadata`, `getMetadata` and `setMetadata` too.
+
+<Callout type="warning" title="Do not destructure metadata inside an action">
+  `tools.metadata` is a live getter, but `({ metadata }) => ...` copies the object as it is at that moment. After
+  a `setMetadata` call the copy is out of date. Keep the whole tools object and read `tools.metadata` when you
+  need the current value, or call `store.metadata`.
+</Callout>
+
+<Callout type="warning" title="Metadata is not for UI state">
+  Because metadata never triggers a render, a loading flag kept there will not update the screen. Keep anything
+  a component displays in the state, and use metadata for values that are only read in code.
+</Callout>

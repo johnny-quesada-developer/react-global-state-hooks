@@ -1,0 +1,41 @@
+---
+title: Platform and versions
+description: Choose the web, React Native or shared core package, check requirements, and configure server rendering.
+section: Platform and version considerations
+order: 1
+---
+
+import { Callout } from '../../ui/Callout';
+import { PACKAGE_VERSION } from '../../lib/site';
+
+## Packages
+
+| Package | Use it for | Persistence |
+| --- | --- | --- |
+| `react-global-state-hooks` | Web apps. | `localStorage` |
+| `react-native-global-state-hooks` | React Native. | Async storage (optional peer dependency) |
+| `react-hooks-global-states` | The shared core, without a storage layer. | None |
+
+The web and React Native packages build on the core package and re-export its API.
+
+## Requirements
+
+- React 18 or newer (`react >= 18`). The core package also lists `react-dom >= 18`.
+- The web package needs `json-storage-formatter` ^4 (installed with it).
+- React Native: `react-native >= 0.69` and, for persistence, `@react-native-async-storage/async-storage >= 1.17.11`.
+
+## Version
+
+<Callout type="note" title="One version at a time">
+  These docs describe <strong>{PACKAGE_VERSION}</strong>. To match them exactly, install that version:
+  <code>npm install react-global-state-hooks@{PACKAGE_VERSION}</code>. Behaviour in other releases can differ, so
+  check the repository's release notes when you are on an older or newer one.
+</Callout>
+
+## Server rendering
+
+- On the server, `localStorage` is not available, so persistence is skipped and stores start from their
+  initial state.
+- A global store is a module singleton. On a server it is shared between requests; keep per-request data in
+  a context instead.
+- Persisted values restore before hydration in the browser. See [Persistence](../persistence/).

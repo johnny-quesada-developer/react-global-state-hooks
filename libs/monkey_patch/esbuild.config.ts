@@ -49,8 +49,7 @@ const baseLibraryAlias: esbuild.Plugin = {
   },
 };
 
-esbuild
-  .build({
+const debugBuild = esbuild.build({
     entryPoints: { debug: path.resolve(__dirname, 'src/debug.ts') },
     outdir: path.resolve(__dirname, 'dist'),
     bundle: true,
@@ -66,8 +65,21 @@ esbuild
     // Resolve bare TS subpath imports (json-storage-formatter/isNil, etc.) with these extensions.
     resolveExtensions: ['.ts', '.tsx', '.js', '.mjs', '.cjs', '.json'],
     plugins: [baseLibraryAlias],
-  })
-  .catch((err) => {
-    console.error(err);
-    process.exit(1);
   });
+
+const cliBuild = esbuild.build({
+  entryPoints: { cli: path.resolve(__dirname, 'src/cli/main.ts') },
+  outdir: path.resolve(__dirname, 'dist'),
+  outExtension: { '.js': '.mjs' },
+  bundle: true,
+  format: 'esm',
+  platform: 'node',
+  target: ['node20'],
+  external: ['ws'],
+  logLevel: 'info',
+});
+
+Promise.all([debugBuild, cliBuild]).catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

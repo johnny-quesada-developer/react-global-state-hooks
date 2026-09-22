@@ -5,11 +5,14 @@ import { createRoot } from 'react-dom/client';
 import { MainTab } from './pages/main_tab/MainTab';
 import '@src/base.css';
 import mainTab$ from './pages/main_tab/context/mainTabContext.ts';
+import { PanelErrorBoundary } from './pages/main_tab/PanelErrorBoundary';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <mainTab$.Provider>
-      <MainTab />
-    </mainTab$.Provider>
+    <PanelErrorBoundary>
+      <mainTab$.Provider>
+        <MainTab />
+      </mainTab$.Provider>
+    </PanelErrorBoundary>
   </StrictMode>
 );

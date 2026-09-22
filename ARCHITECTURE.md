@@ -4,7 +4,7 @@ This repository is an [Nx](https://nx.dev) monorepo that hosts the `react-global
 family of packages. All packages share a single root `node_modules`, one set of tooling
 (TypeScript, ESLint, Prettier, esbuild, Vitest), and a common `tsconfig.base.json`.
 
-> The root `README.md` is the published `react-global-state-hooks` (web) library documentation.
+> The root `README.md` introduces the web library. The package README in `libs/web/` is published to npm.
 > This file documents the repo/monorepo itself and is not part of any published package.
 
 ## Packages
@@ -16,11 +16,12 @@ family of packages. All packages share a single root `node_modules`, one set of 
 | `mobile`    | `libs/mobile`    | `react-native-global-state-hooks`  | React Native bindings (async-storage). Extends the base lib. |
 
 All three packages build with **esbuild** into `dist/` as a clean dual ESM/CJS + `.d.ts` bundle
-(no UMD), via each package's `esbuild.config.ts` + `tsconfig.build.json` + `scripts/prepare-dist.ts`.
+(no UMD), via each package's `esbuild.config.ts` and `tsconfig.build.json`, then the shared
+`scripts/prepare-dist.ts` at the repository root.
 
 Each package keeps its own `package.json`, `README.md`, and build/test configuration. The
 per-package README is what gets published to npm (copied into `dist/` by
-`scripts/prepare-dist.ts`).
+the shared `scripts/prepare-dist.ts`).
 
 ## Shared vs. per-project configuration
 
@@ -39,20 +40,11 @@ Per project, under `libs/<project>/`:
 - `vitest.config.ts`, `vitest.setup.ts`, `esbuild.config.ts`, `scripts/`.
 - `project.json` — Nx targets (delegate to the package's own `yarn` scripts).
 
-### Test runner: Vitest (jsdom)
+### Test runner
 
-Every package uses [Vitest](https://vitest.dev) with the `jsdom` environment and `globals: true`
-(so `describe` / `it` / `expect` / `vi` are ambient). The root pins a single `vitest`,
-`@vitest/coverage-v8`, and `jsdom`. There is no Jest, `ts-jest`, or `jest-environment-jsdom` — a
-prior migration removed them entirely.
-
-Type-checking the tests is a separate step from running them: each package's `test` script is
-`yarn ts-check:tests && vitest run`, where `ts-check:tests` runs `tsc -p __test__/tsconfig.json
---noEmit`. Because the base `tsconfig` restricts `typeRoots` to `@types` (which does not contain
-Vitest's package), each `__test__/tsconfig.json` widens `typeRoots` to include plain
-`node_modules` and sets `module: esnext` + `moduleResolution: bundler` so TS can read Vitest's
-`exports` map and resolve the `vitest/globals` types. These test-only overrides never affect the
-build (`ts-check:tests` is `--noEmit`).
+Vitest resolves the state libraries to their TypeScript source. The reusable suites
+run through each variant's aliases; built ESM/CJS compatibility is checked separately.
+See [Testing Guide](docs/TESTING_GUIDE.md) for commands, assertions and troubleshooting.
 
 ## Running tasks
 
@@ -86,10 +78,11 @@ yarn tarball              # build + `npm pack` each lib into artifacts/, with a 
 yarn tarball web          # a single lib
 ```
 
-- **`yarn prepare-packages`** runs `build` across all libs (via the dispatcher, so `universal`
+- **`yarn prepare-packages`** runs `validate` (lint, tests and build) across all libs (via the dispatcher, so `universal`
   builds first). Each lib's `dist/` ends up publish-ready: a flattened `package.json` (dev-only
   fields stripped, paths pointing next to the emitted files) plus the dual `.mjs`/`.cjs`/`.js`
-  bundles and `.d.ts` declarations. `scripts/prepare-dist.ts` per lib does the flattening.
+  bundles and `.d.ts` declarations. `scripts/prepare-dist.ts` assembles the three state packages; the debug and code-review
+  packages keep their specialized assembly scripts.
 - **`yarn tarball`** (see `scripts/tarball.mjs`) builds each lib, runs `npm pack` from its
   `dist/`, writes the `.tgz` into `artifacts/` (gitignored), and prints, per package: the npm
   `name@version`, tarball path, file count, unpacked size, and the full file list — i.e. the exact
@@ -97,18 +90,17 @@ yarn tarball web          # a single lib
 
 > Naming note: the script is `prepare-packages`, not `prepare`. `prepare` is a reserved
 > npm/yarn lifecycle name that auto-runs on every `yarn install` (and before publish); using it
-> for a full monorepo build would fire on every install. Publish scripts (`publish:pkg`) already
-> run `yarn build` themselves, so the build still happens before an actual publish.
+> for a full monorepo build would fire on every install. Run validation before publishing.
 
 Each wrapper dispatches to `nx run <project>:<task>` (see `scripts/run.mjs`). New libs under
 `libs/*` are discovered automatically — no change to the dispatcher needed.
 
-Tests run against the TypeScript `src/` of each package (Vitest's `resolve.alias` maps the
-package-under-test and the base package to their `src`). This keeps the inner loop fast and lets
-the `useSyncExternalStore` spy intercept React correctly (a bundled `dist` breaks that
-interception). Build-level concerns — minification, dual ESM/CJS emit, `__esModule` interop —
-are exercised separately by `yarn test:interop <project>`, which runs `scripts/test-interop.ts`
-against the built `dist/` artifact.
+ESM entries use `.mjs`; CommonJS entries use `.cjs`, with `.js` copies for legacy deep
+imports. Sibling modules stay external so subpath imports share module instances.
+The former UMD wrapper confused esbuild's export detection; native ESM/CJS avoids its
+phantom exports and non-callable defaults. Package manifests retain relative paths
+that resolve beside the emitted files. The shared assembly script copies each package's
+README, LICENSE and CLI shim and removes development-only manifest fields.
 
 ## Reusable test suite (`libs/test`)
 
@@ -156,97 +148,32 @@ implementation" and each variant's Vitest config injects its own.
   root `eslint.config.mts` scopes `@typescript-eslint/no-empty-object-type: off` to both
   `libs/universal/**` and `libs/test/**`.
 
-**Current variant status**
-
-All three variants run the neutral suite plus their own persistence tests with no exclusions.
-Making `mobile` pass the neutral suite required two kinds of change, both preserving behavior:
-
-- **Mobile type alignment to v16.** `mobile`'s `createGlobalState`/`GlobalStore` now accept lazy
-  initializers (`state: State | (() => State)`, `metadata: Metadata | (() => Metadata)`), its
-  `StoreTools` exposes the `readonly metadata` getter (with `getMetadata()` kept as deprecated),
-  and its action overloads use the base's loose `GlobalStoreCallbacks<Any, AnyActions, Any>` so
-  state literals widen the way the base does.
-- **Variant-aware metadata assertions.** Metadata is asserted with the shared
-  `expectMetadata(received).toMatch(expected)` helper (`libs/test/helpers/expectMetadata.ts`)
-  instead of a raw `toEqual`. It is an EXACT match for variants that add nothing, but tolerates a
-  variant's declared reserved metadata keys as allowed extras — so it stays strict (unexpected
-  keys still fail) while accommodating the react-native variant, which injects
-  `isAsyncStorageReady` / `asyncStorageKey` into every store's metadata. Each variant declares its
-  reserved keys from its `vitest.setup.ts`:
-
-  ```ts
-  // mobile/vitest.setup.ts
-  globalThis.__VARIANT_METADATA_KEYS__ = ['isAsyncStorageReady', 'asyncStorageKey'];
-  // universal / web
-  globalThis.__VARIANT_METADATA_KEYS__ = [];
-  ```
-
-  The helper runs a single underlying `expect().toEqual()` (it strips only the reserved keys the
-  test didn't explicitly expect), so `expect.assertions(n)` counts are unaffected. A couple of
-  example metadata keys in the tests were renamed to neutral names to avoid colliding with a
-  variant's reserved fields.
-
-A variant can skip a file it isn't compatible with via its `vitest.config.ts` `test.exclude`, but
-no variant currently uses it.
-
-Adding a test: put it in the folder for the variant(s) it targets (`test/universal` if it should
-hold for every variant), import the subject via `global-state-hooks-under-test` and helpers via
-`../helpers/*`, assert metadata with `expectMetadata(...).toMatch(...)`, and confirm it passes for
-every variant that runs it.
+All three variants run the neutral suite plus their persistence tests without exclusions.
+`expectMetadata(...).toMatch(...)` permits only the reserved keys declared by the variant;
+all other data is compared exactly. Mobile declares `isAsyncStorageReady` and
+`asyncStorageKey`. The helper performs one assertion, preserving `expect.assertions(n)`.
 
 ## Running the shared suite under the debug patch (`monkey_patch`)
 
-`react-hooks-global-states-debug` (in `libs/monkey_patch`) is a side-effect "monkey patch" that,
-once imported, wraps every store on creation to stream activity to the DevTools extension. A core
-requirement is that installing it does **not** change the libraries' observable behavior. The
-cheapest proof of that is to run the entire reusable suite (`libs/test`) with the patch installed
-and confirm it still passes — reusing the same files the variants run rather than duplicating
-them (the earlier playground harness copy-pasted the suite; this replaces that with alias-based
-reuse).
+The debug package must preserve observable store behavior. Its `vitest.workspace.ts`
+runs the same shared suites through four projects:
 
-`libs/monkey_patch` runs four Vitest projects in one pass, defined in `vitest.workspace.ts`
-(Vitest 2.x multi-project config lives in a `vitest.workspace.ts`, not inline `test.projects`):
+| Project | Tests | Subject |
+| --- | --- | --- |
+| `unit` | Debug implementation and transport | Monkey patch |
+| `patched-universal` | `test/universal` | Universal source |
+| `patched-web` | `test/universal` + `test/web` | Web source |
+| `patched-native` | `test/universal` + `test/native` | Mobile source |
 
-- **unit** — monkey_patch's own tests of the patch internals (`__test__/**`), setup
-  `vitest.setup.ts`.
-- **patched-universal** — `test/universal` with the neutral alias
-  `global-state-hooks-under-test` -> `libs/universal/src`, patch installed.
-- **patched-web** — `test/universal` + `test/web` with the neutral alias -> `libs/web/src`,
-  patch installed.
-- **patched-native** — `test/universal` + `test/native` with the neutral alias ->
-  `libs/mobile/src`, patch installed. This is the mirror of `yarn test mobile`, run under the
-  patch — so all three variants' suites pass on top of a monkey-patched global state.
+`vitest.setup.patched.ts` installs the React DevTools hook before importing the patch,
+then supplies Chrome and `postMessage` stubs. Installing the hook first prevents a
+polling timer from surviving teardown. The native setup adds async-storage stubs.
+`DEBUG_PATCH=off` runs the same projects without the patch; both modes must pass.
 
-The patched projects use `vitest.setup.patched.ts`, which mirrors the playground harness in this
-order: (1) stub `window.__REACT_DEVTOOLS_GLOBAL_HOOK__` BEFORE importing the patch (the patch
-polls for it with a recurring `setTimeout`; without the stub the timer fires after teardown and
-throws); (2) stub a minimal `chrome`; (3) `await import('./src/debug')` gated by
-`DEBUG_PATCH !== 'off'`; (4) polyfill single-arg `window.postMessage` (jsdom requires a
-`targetOrigin`, the patch omits it); (5) declare `__VARIANT_METADATA_KEYS__ = []` and
-`__PATCH_RESERVED_STORE_KEYS__ = ['_DEV_TOOLS_STORE_ID', ...]`; (6) RTL `cleanup` +
-`localStorage.clear()` between tests. The **patched-native** project layers
-`vitest.setup.patched.native.ts` on top, which re-imports that base setup and then adds the
-async-storage mock and overrides `__VARIANT_METADATA_KEYS__` to the mobile variant's reserved
-keys.
-
-Parity baseline: `yarn test:no-patch monkey_patch` (a.k.a. `DEBUG_PATCH=off`) runs the exact same
-four projects WITHOUT installing the patch. Both the patched and unpatched runs must pass the
-same test count — that equivalence is the regression guarantee.
-
-Because the patch wraps store methods (so `setState` / `actions.*` are different function
-references than a plain store) and adds `_DEV_TOOLS_*` bookkeeping keys, one shared assertion that
-compared a captured lifecycle-callback argument against `context.current` by exact object identity
-was too rigid under the patch. It now uses `expectCalledWithStore(spy).toHaveBeenCalledWith(...)`
-(`libs/test/helpers/expectCalledWithStore.ts`): for variants that augment nothing it is an exact
-`toHaveBeenCalledWith`; when `__PATCH_RESERVED_STORE_KEYS__` is set it matches function slots by
-type (tolerating wrappers) and ignores the reserved keys, while still deep-equalling data — the
-same "tolerate declared extras, stay strict on everything else" philosophy as `expectMetadata`.
-
-Type-checking note: monkey_patch's `ts-check:tests` covers only its own harness (src + the Vitest
-config/workspace/setup files + `test/helpers`), not the reusable suites. A single tsconfig can
-bind the neutral alias to only ONE variant, which would wrongly reject the others' variant-
-specific APIs (e.g. the native `asyncStorage` config). The suites are instead type-checked by the
-variant lib that owns each subject (`universal`/`web`/`mobile`'s own `ts-check:tests`).
+`expectCalledWithStore` tolerates declared DevTools bookkeeping fields and wrapped
+function identities while still comparing store data exactly. Test type checking runs
+in each owning variant: one TypeScript configuration cannot bind the neutral alias to
+all three subjects at once.
 
 ## Monorepo linkage (why `web` depends on `universal` locally)
 
@@ -304,6 +231,59 @@ Making this work required aligning `mobile` to strict null checking: `mobile`'s 
 `universal`'s source is authored under strict null checks and cannot be type-checked under looser
 settings. A few small, behavior-preserving null-safety edits in `libs/mobile/src`
 (`asyncStorageWrapper.ts`, `GlobalStore.ts`) were needed to satisfy the stricter check.
+
+## Code review pipeline (`libs/code-review`)
+
+`libs/code-review` is the workspace package behind easy-code-review. `yarn review <target>` runs a
+[LangGraph.js](https://langchain-ai.github.io/langgraphjs/) pipeline over the files of a target
+(file, folder, glob, Nx project, commit or `changes`):
+
+1. **Provider setup** (no AI): detects the installed `claude`, `codex`, `kiro-cli` or `copilot`, recommends one and
+   picks a fast model for scoring/metadata and a capable model for edits (`qa/settings.ts`).
+2. **Target selection**: resolves the target into source files.
+3. **Permissions**: asks which edit scope to grant and passes it through the provider's own flags (headless, never bypassed).
+4. **Rules**: one rule at a time — built-ins from `src/segments/rules/ruleRegistry.ts` plus prompt-based rules from
+   `<configurationDirectory>/rules/` (created with `yarn review rule create`); each rule is its own graph.
+5. **Summary**: terminal tables plus `.review/runs/<timestamp>/summary.md` (git-ignored).
+
+The pipeline combines measured coverage, rubric scoring and retry loops that feed earlier results
+back into the next attempt. See `libs/code-review/README.md`.
+
+## Website (`apps/website`)
+
+`apps/website` is the documentation, examples and learning site. The UI is React (`src/ui`, `src/examples`)
+and the site's own shared state (search dialog, install-tab and mini-me preferences in `src/state`) runs on
+this library. [Astro](https://astro.build) is only the static generator: it renders the React components to
+HTML at build time, compiles the MDX docs, and hydrates just the interactive islands. Astro files are
+limited to pages, the `<head>` layout and content config. It is an Nx project (`website`) and is **never published to npm**; `scripts/publish-all.mjs`
+uses an explicit package list that does not include it.
+
+```bash
+yarn nx run website:dev         # dev server (copies the intro videos from /public first)
+yarn nx run website:build       # static site in apps/website/dist + Pagefind search index
+yarn nx run website:preview     # serve dist/ locally
+yarn nx run website:test        # vitest: docs snippets, example logic, colour contrast
+yarn nx run website:ts-check    # astro check
+yarn nx run website:lint
+```
+
+- **One version at a time.** `apps/website/.env` holds `PUBLIC_PACKAGE_VERSION`, the library version the docs describe.
+  `yarn version-bump` writes it whenever the web package's version changes; do not edit it by hand.
+- **Deployment** is `.github/workflows/deploy-website.yml` (GitHub Pages, base path
+  `/react-global-state-hooks/`). It is independent of library publishing.
+- **Library source, not a build.** The site resolves `react-global-state-hooks` and
+  `react-hooks-global-states` to `libs/web/src` and `libs/universal/src` (Vite alias + tsconfig paths, the
+  same convention as `apps/playground`), so the site documents the version in this workspace.
+- **Snippets are real modules.** Code shown in the docs lives in `src/snippets/**` and is imported with
+  `?raw`, so the same file is displayed, type-checked and executed by the tests. Live demos live in
+  `src/examples/**` and are displayed the same way.
+- **Generated assets are committed.** `scripts/make-og.mjs` (share images in `public/og`, from page
+  frontmatter), `scripts/make-assets.mjs` (posters, portrait sizes) and `apps/devtools/scripts/make-logo.mjs`
+  (DevTools logo and icon sizes) use sharp/ffmpeg locally, so CI never depends on installed fonts or codecs.
+  `yarn --cwd apps/website check:links` verifies every internal link, asset and anchor in `dist/`.
+- **Media.** The large intro videos stay in the repo-root `/public`; `scripts/sync-media.mjs` copies them
+  into the (git-ignored) `apps/website/public/media`. `scripts/make-assets.mjs` regenerates the committed
+  poster images and portrait variants with ffmpeg.
 
 ## Adding a new library
 

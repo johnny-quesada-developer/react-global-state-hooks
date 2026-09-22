@@ -1,29 +1,26 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@src/shared/tools/cn';
 import { GlobalStateItem } from './GlobalStateItem';
 import { GlobalStateListFilter } from './GlobalStateListFilter';
 import { useListNavigation } from '@src/shared/facelessComponents/useListNavigation';
+import { focusLogsList, globalStateListClass } from '@src/pages/main_tab/util/listFocusBridge';
 import selectedGlobalStateId$ from '../../hooks/selectedGlobalStateId';
-import globalStates$ from '../../hooks/globalStates';
-import type { GlobalStateId } from '@src/shared/schema/GlobalStateJson';
+import globalStates$, { stateMetaDevTools$ } from '../../hooks/globalStates';
 import { shallowCompare } from 'react-global-state-hooks';
 import { getOrderedGlobalStates } from '../../hooks/globalStates/helpers/getOrderedGlobalStates';
 
 export type GlobalStateListProps = React.HTMLAttributes<HTMLDivElement>;
 
-type GlobalStateListRow = {
-  globalStateId: GlobalStateId;
-  name: string;
-  sort: number;
-};
-
 /**
  * TODO: Optimize to select only the names and allow the GlobalStateItem to select the rest of the data.
  */
-export const GlobalStateList: React.FC<GlobalStateListProps> = ({ className = '', ...props }: GlobalStateListProps) => {
+export const GlobalStateList: React.FC<GlobalStateListProps> = ({
+  className = '',
+  ...props
+}: GlobalStateListProps) => {
   const [filter, setFilter] = useState('');
 
-  const [globalStates] = globalStates$.use((state) => getOrderedGlobalStates(state) as GlobalStateListRow[], {
+  const [globalStates] = globalStates$.use((state) => getOrderedGlobalStates(state), {
     isEqualRoot: (current, next) => shallowCompare(current.ids, next.ids),
   });
 
@@ -40,13 +37,29 @@ export const GlobalStateList: React.FC<GlobalStateListProps> = ({ className = ''
       },
       onSelect: (item) => {
         selectedGlobalStateId$.setState(item.value.globalStateId);
+        stateMetaDevTools$.actions.markAsTainted(item.value.globalStateId);
       },
     },
-    [filter, globalStates]
+    [filter, globalStates],
   );
 
+  useEffect(() => {
+    const listEl = listRef.current;
+    if (!listEl) return;
+
+    const onKeydown = (event: KeyboardEvent) => {
+      if (event.key !== 'ArrowRight') return;
+
+      event.preventDefault();
+      focusLogsList();
+    };
+
+    listEl.addEventListener('keydown', onKeydown);
+    return () => listEl.removeEventListener('keydown', onKeydown);
+  }, []);
+
   return (
-    <div className={cn('flex flex-col min-h-0', className)} {...props}>
+    <div className={cn(globalStateListClass, 'flex flex-col min-h-0', className)} {...props}>
       <GlobalStateListFilter
         className="sticky top-0 z-10"
         inputProps={{
@@ -67,13 +80,21 @@ export const GlobalStateList: React.FC<GlobalStateListProps> = ({ className = ''
           </li>
         )}
 
-        {navigation.navigationItems.map((navItem) => (
-          <GlobalStateItem
-            key={navItem.key}
-            navProps={navItem.props}
-            globalStateId={navItem.value.globalStateId}
-            className="border-b border-gray-400 last-of-type:border-b-0"
-          />
+        {navigation.navigationItems.map((navItem, index) => (
+          <React.Fragment key={navItem.key}>
+            <li
+              className={cn(
+                { 'first:border-none': index === 0 },
+                'border-b border-gray-400 text-gray-900 dark:border-gray-100',
+              )}
+            />
+
+            <GlobalStateItem
+              key={navItem.key}
+              navProps={navItem.props}
+              globalStateId={navItem.value.globalStateId}
+            />
+          </React.Fragment>
         ))}
       </ul>
     </div>

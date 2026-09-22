@@ -1,0 +1,26 @@
+.async-status {
+  margin: 0;
+  min-height: 1.6em;
+}
+
+.async-users {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.async-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.async-attempts {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.async-switch {
+  flex-direction: row !important;
+  align-items: center;
+  font-weight: 600;
+}

@@ -1,0 +1,19 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", "src", "astro.config.mjs", "vitest.config.ts"],
+  "exclude": ["dist"],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "types": ["vitest/globals"],
+    "baseUrl": ".",
+    "paths": {
+      "@snippets/*": ["src/snippets/*"],
+      "@examples/*": ["src/examples/*"],
+      "react-global-state-hooks": ["../../libs/web/src/index.ts"],
+      "react-global-state-hooks/*": ["../../libs/web/src/*"],
+      "react-hooks-global-states": ["../../libs/universal/src/index.ts"],
+      "react-hooks-global-states/*": ["../../libs/universal/src/*"]
+    }
+  }
+}

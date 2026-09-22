@@ -1,7 +1,7 @@
 {
   "name": "react-hooks-global-states-dev-tools",
   "private": true,
-  "version": "16.0.4-beta",
+  "version": "16.0.5",
   "type": "module",
   "scripts": {
     "copy:static": "mkdir -p dist/assets && cp src/manifest.json dist/manifest.json && cp src/devtools_page.html dist/devtools_page.html && cp src/assets/devtools_page_icon.ico dist/assets/devtools_page_icon.ico && cp src/assets/devtools_page_icon-28px.ico dist/assets/devtools_page_icon-28px.ico",
@@ -21,7 +21,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "clean": "rm -rf dist coverage react-hooks-global-states-dev-tools.zip"
+    "clean": "rm -rf dist coverage react-hooks-global-states-dev-tools.zip",
+    "make:icons": "node scripts/make-icons.mjs"
   },
   "dependencies": {
     "@codemirror/lang-javascript": "^6.2.2",
@@ -37,6 +38,7 @@
   "devDependencies": {
     "@types/chrome": "^0.0.270",
     "@types/diff": "^7.0.1",
+    "@types/ws": "^8.5.12",
     "autoprefixer": "^10.4.20",
     "concurrently": "^8.2.2",
     "postcss": "^8.4.44",
@@ -46,6 +48,7 @@
     "ts-loader": "^9.5.1",
     "vite-plugin-checker": "^0.11.0",
     "webpack": "^5.94.0",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^5.1.4",
+    "ws": "^8.18.0"
   }
 }

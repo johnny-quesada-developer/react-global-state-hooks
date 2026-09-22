@@ -1,70 +1,69 @@
 import React from 'react';
+import clsx from 'clsx';
 import { cn } from '@src/shared/tools/cn';
-import { type ActionHeader } from '@src/pages/main_tab/hooks/globalStates/hooks/useActionsHeaders';
-import { type NavItem } from '@src/shared/facelessComponents/useListNavigation';
+import { actionLabel, selectableRow } from '@src/shared/tools';
+import { toHeader, useActionJson } from '@src/pages/main_tab/hooks/globalStates/hooks';
+import type { ActionId } from '@src/shared/schema';
 import { formatTimeToHHMMSS } from '@src/shared/tools/date';
 import { useIsSelectedHeader } from '../_hooks';
-import { theme$ } from '@src/pages/main_tab/hooks/theme';
+import selectedGlobalStateId$ from '@src/pages/main_tab/hooks/selectedGlobalStateId';
+import { DATA_LIST_SELECTED } from '@src/pages/main_tab/util/listFocusBridge';
 import { DropdownMenuLog } from './components';
 
 export type ActionLogListItemProps = React.HTMLAttributes<HTMLLIElement> & {
-  header: NavItem<ActionHeader>;
+  actionId: ActionId;
+  index: number;
 };
+
+export const actionLogListItemClass = 'ActionLogListItem';
 
 export const ActionLogListItem: React.FC<ActionLogListItemProps> = ({
   className = '',
-  header,
+  actionId,
+  index,
   ...props
 }: ActionLogListItemProps) => {
-  const [isSelectedAction] = useIsSelectedHeader(header.value.actionId);
-  const dateString = formatTimeToHHMMSS(header.value.timestamp);
-  const title = `${dateString} / ${header.value.action}`;
-  const [theme] = theme$();
+  const [selectedStateId] = selectedGlobalStateId$();
+
+  const action = useActionJson({ stateId: selectedStateId, actionId });
+  const [isSelectedAction] = useIsSelectedHeader(actionId);
+
+  if (!action) return null;
+
+  const header = toHeader(action);
+  const dateString = formatTimeToHHMMSS(header.timestamp);
+  const title = `${dateString} / ${header.action}`;
 
   return (
     <li
+      data-testid="action-log-item"
+      id={actionId}
+      tabIndex={-1}
+      {...(isSelectedAction ? { [DATA_LIST_SELECTED]: true } : {})}
       {...props}
       title={title}
-      className={cn(
-        'ListItemLogGroup relative',
-        'w-full gap-2 px-1 py-2 transition-colors duration-300',
-        'flex justify-start items-center select-text cursor-pointer',
-        {
-          '!text-red-500': header.value.hasError,
-          'border-l-4 border-blue-500': isSelectedAction,
-          'text-gray-900': theme === 'light',
-          'text-gray-100': theme !== 'light',
-          'bg-blue-100': isSelectedAction && theme === 'light',
-          'bg-blue-700': isSelectedAction && theme !== 'light',
-          'hover:bg-blue-200': !isSelectedAction && theme === 'light',
-          'hover:bg-blue-600': !isSelectedAction && theme !== 'light',
-        },
-        className
+      className={clsx(
+        actionLogListItemClass,
+        selectableRow({
+          selected: isSelectedAction,
+          error: header.hasError,
+        }),
+        className,
       )}
     >
       <button className="">
-        <span
-          className={cn('text-xxs whitespace-nowrap', 'top-0.5 right-0.5 absolute ', 'text-gray-800 dark:text-white')}
-        >
-          {
-            formatTimeToHHMMSS(header.value.timestamp ?? Date.now())
-          }
+        <span className={actionLabel({ actionType: header.actionType, error: header.hasError })}>
+          <span className={cn('text-xxs', 'text-gray-500 dark:text-white')}>{index}.</span> {header.action}
         </span>
 
-        <span
-          className={cn('font-semibold', {
-            'text-green-500': !header.value.hasError && header.value.actionType === 'LIFE_CYCLE',
-            'text-orange-500': !header.value.hasError && header.value.actionType === 'LIFE_CYCLE_PARAMETER',
-          })}
-        >
-          <span className={cn('text-xxs', 'text-gray-500 dark:text-white')}>{header.props.tabIndex + 1}.</span>{' '}
-          {header.value.action}
-        </span>
-
-        {header.value.hasError && <span className="text-red-500 text-xxs">❌</span>}
+        {header.hasError && <span className="text-red-500 text-xxs">❌</span>}
       </button>
 
-      <DropdownMenuLog header={header.value} />
+      <span className={cn('flex-1 text-xxs whitespace-nowrap text-right text-gray-800 dark:text-white')}>
+        {formatTimeToHHMMSS(header.timestamp ?? Date.now())}
+      </span>
+
+      <DropdownMenuLog header={header} />
     </li>
   );
 };

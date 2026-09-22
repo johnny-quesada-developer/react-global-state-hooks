@@ -1,0 +1,7 @@
+# synced from the repository-root /public by scripts/sync-media.mjs (large videos, not duplicated in git)
+public/media/
+.astro/
+dist/
+
+# the root .gitignore ignores .env; this one holds only public site configuration and is committed
+!.env

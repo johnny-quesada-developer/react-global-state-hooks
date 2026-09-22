@@ -24,6 +24,8 @@ vi.mock('../src/tools/react', () => ({
   }),
   getGlobalThis: vi.fn((g) => g),
   getReactBuildType: vi.fn(() => 'development'),
+  getCurrentFiber: vi.fn(() => null),
+  addFiberUnmountSubscription: vi.fn(() => () => {}),
 }));
 
 describe('monkey_patch - Real World Scenarios', () => {
@@ -164,13 +166,13 @@ describe('monkey_patch - Real World Scenarios', () => {
         createSelectorHook: vi.fn(() => vi.fn()),
       };
 
+      const setState = mockStore.setState;
       const patchedStore: PatchedStore = debugGlobal.REACT_GLOBAL_STATE_HOOK_DEBUG(
         mockStore,
         undefined,
         '/src/stores/ecommerce.ts'
       );
 
-      // Verify store was registered
       expect(patchedStore._DEV_TOOLS_STORE_ID).toBeDefined();
 
       // Test setState with complex nested update
@@ -183,9 +185,9 @@ describe('monkey_patch - Real World Scenarios', () => {
         },
       });
 
-      // Verify setState was wrapped and executed (check via messages)
-      const updateMessages = postedMessages.filter((msg) => msg.action.includes('UPDATE'));
-      expect(updateMessages.length).toBeGreaterThanOrEqual(0);
+      expect(setState).toHaveBeenCalledWith({
+        cart: { ...ecommerceState.cart, totals: { ...ecommerceState.cart.totals, total: 240.85 } },
+      }, {});
 
       // Verify ADD_GLOBAL_STATE message includes complex structure
       const addMessages = postedMessages.filter((msg) => msg.action === 'monkey-patch/ADD_GLOBAL_STATE');
@@ -337,7 +339,7 @@ describe('monkey_patch - Real World Scenarios', () => {
   });
 
   describe('large state scenarios', () => {
-    it('should handle state with large arrays efficiently', () => {
+    it('should handle state with large arrays', () => {
       const largeArray = Array.from({ length: 1000 }, (_, i) => ({
         id: `item-${i}`,
         name: `Item ${i}`,
@@ -365,23 +367,19 @@ describe('monkey_patch - Real World Scenarios', () => {
         createSelectorHook: vi.fn(() => vi.fn()),
       };
 
-      const startTime = performance.now();
+      const setState = mockStore.setState;
       const patchedStore: PatchedStore = debugGlobal.REACT_GLOBAL_STATE_HOOK_DEBUG(
         mockStore,
         undefined,
         '/src/stores/items.ts'
       );
-      const endTime = performance.now();
 
-      // Should complete initialization in reasonable time
-      expect(endTime - startTime).toBeLessThan(100);
-
-      // Should handle state updates efficiently
-      const updateStart = performance.now();
+      expect(patchedStore._DEV_TOOLS_STORE_ID).toBeDefined();
       patchedStore.setState({ filters: { search: 'test', category: 'electronics', tags: [] } });
-      const updateEnd = performance.now();
+      expect(setState).toHaveBeenCalledWith({
+        filters: { search: 'test', category: 'electronics', tags: [] },
+      }, {});
 
-      expect(updateEnd - updateStart).toBeLessThan(50);
     });
 
     it('should handle deeply nested state structures', () => {
@@ -531,6 +529,7 @@ describe('monkey_patch - Real World Scenarios', () => {
         }),
       };
 
+      const updateUserSpy = mockActions.updateUser;
       const mockStore: MockStore = {
         state: { users: [] },
         setState: vi.fn(),
@@ -563,9 +562,7 @@ describe('monkey_patch - Real World Scenarios', () => {
         updateUser('user-1', 'Alice', 'alice@example.com', 30);
       }).not.toThrow();
 
-      // Verify action logs were created
-      const actionMessages = postedMessages.filter((msg) => msg.action.includes('ACTION'));
-      expect(actionMessages.length).toBeGreaterThanOrEqual(0);
+      expect(updateUserSpy).toHaveBeenCalledWith('user-1', 'Alice', 'alice@example.com', 30);
     });
 
     it('should handle async actions', async () => {

@@ -1,5 +1,6 @@
 export * from './Badge';
-export * from './JsonViewer';
+export * from './DropdownMenu';
+export * from './Modal';
 export * from './SimpleFilter';
 export * from './Tooltip';
 export * from './Resizable';

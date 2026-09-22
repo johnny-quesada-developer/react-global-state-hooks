@@ -1,0 +1,45 @@
+---
+title: Derived state and selectors
+description: A filterable task list with actions, a filter that lives outside the store, and derived counts shared through selector hooks.
+order: 2
+related:
+  - label: Selectors and derived state
+    href: ../../docs/selectors-and-derived-state/
+  - label: Actions
+    href: ../../docs/actions/
+  - label: Global state API
+    href: ../../docs/global-state-api/
+---
+
+import { CodeBlock } from '../../ui/CodeBlock';
+import { TasksDemo } from '@examples/tasks/TasksDemo';
+import store from '@examples/tasks/store.ts?raw';
+import taskList from '@examples/tasks/TaskList.tsx?raw';
+import taskStats from '@examples/tasks/TaskStats.tsx?raw';
+
+## Try it
+
+<TasksDemo client:visible />
+
+## What to look for
+
+- Toggle a task. The list and the stats render again, and so does only the row you toggled. The other rows and
+  the add form keep their counts.
+- Type in the add form. Nothing else renders, because the form uses the actions and never subscribes to the
+  tasks.
+- Change the **Show** filter. The list re-selects without touching the store: the filter is component state
+  passed to the selector through `dependencies`.
+
+## The code
+
+The store has the data and four actions. The two counts are selector hooks: each computes once per change and
+every component that uses them shares the result.
+
+<CodeBlock code={store} lang="ts" title="store.ts" />
+
+The list filters with a value that is not in the store. `isEqual: shallowCompare` keeps the filtered array from
+looking new when its items did not change, and `memo` on the row stops unchanged rows from rendering.
+
+<CodeBlock code={taskList} lang="tsx" title="TaskList.tsx" />
+
+<CodeBlock code={taskStats} lang="tsx" title="TaskStats.tsx" />

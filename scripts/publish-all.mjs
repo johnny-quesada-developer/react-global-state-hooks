@@ -20,17 +20,19 @@
  * completes the remaining packages.
  *
  * Usage:
- *   node scripts/publish-all.mjs <otp> [--beta] [--dry-run] [--plan]
+ *   node scripts/publish-all.mjs [package...] [<otp>] [--beta] [--dry-run] [--plan]
  *
+ *   [package...] Publish only the named packages (npm name, folder or Nx project name). Required
+ *                for `code-review`, which is never part of the bulk run.
  *   <otp>        The npm one-time password (2FA). Optional: omit to let npm prompt.
- *   --beta       Publish to the `beta` tag. Before publishing, every package whose version lacks a
- *                `-beta` prerelease is bumped to `x.y.z-beta.0` (written to source + dist
- *                package.json), so betas never burn a plain x.y.z version.
+ *   --beta       Publish to the `beta` tag. Every version must look like `x.y.z-beta.N`, and without
+ *                --beta every version must be a plain release; a mismatch aborts before any upload.
  *   --dry-run    `npm publish --dry-run` for each (packs, no upload). Requires dist/ to exist.
  *   --plan       Print the publish order and exit. Uploads nothing.
  *
  * Examples:
  *   yarn prepare-packages && yarn publish:pkg 123456
+ *   yarn publish:pkg code-review 123456
  *   node scripts/publish-all.mjs 123456 --beta
  *   node scripts/publish-all.mjs --dry-run
  */
@@ -38,15 +40,10 @@ import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createRequire } from 'node:module';
-
-const require = createRequire(import.meta.url);
-const semver = require('semver');
+import { assertVersionMatchesTag } from './assert-publish-version.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const workspaceRoot = path.resolve(__dirname, '..');
-
-const BETA_ID = 'beta';
 
 // Ordered so each package is published after its workspace dependencies.
 const PUBLISH_ORDER = [
@@ -56,46 +53,32 @@ const PUBLISH_ORDER = [
   { name: 'react-native-global-state-hooks', cwd: 'libs/mobile' },
 ];
 
+const ON_DEMAND = [{ name: 'code-review', cwd: 'libs/code-review' }];
+
+function aliasesOf({ name, cwd }) {
+  const projectJson = path.join(workspaceRoot, cwd, 'project.json');
+  const projectName = fs.existsSync(projectJson) ? JSON.parse(fs.readFileSync(projectJson, 'utf8')).name : undefined;
+  return [name, path.basename(cwd), projectName].filter(Boolean);
+}
+
 /** npm's error text when a version already exists on the registry. */
 const ALREADY_PUBLISHED = /cannot publish over the previously published versions/i;
-
-/** Rewrite only the `version` field of a package.json, preserving formatting/order. */
-function writeVersion(pkgPath, version) {
-  const json = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
-  json.version = version;
-  fs.writeFileSync(pkgPath, `${JSON.stringify(json, null, 2)}\n`);
-}
-
-/**
- * Ensure a package's version carries a `-beta` prerelease. Returns the (possibly new) version.
- * A stable version like 16.0.4 becomes 16.0.4-beta.0; a version already on a `-beta` prerelease is
- * left untouched. The new version is written to BOTH the source package.json and the built
- * dist/package.json (npm publishes from dist/), so no rebuild is needed.
- */
-function ensureBetaVersion(cwd) {
-  const srcPath = path.join(workspaceRoot, cwd, 'package.json');
-  const distPath = path.join(workspaceRoot, cwd, 'dist', 'package.json');
-  const current = JSON.parse(fs.readFileSync(srcPath, 'utf8')).version;
-  const pre = semver.prerelease(current); // e.g. ['beta', 0] or null
-
-  // Already a -beta prerelease -> leave it.
-  if (pre && pre[0] === BETA_ID) return { version: current, changed: false };
-
-  // Non-beta prerelease (e.g. -rc.1) or stable -> move to a fresh -beta.0 of the base version.
-  const base = pre ? `${semver.major(current)}.${semver.minor(current)}.${semver.patch(current)}` : current;
-  const next = `${base}-${BETA_ID}.0`;
-
-  writeVersion(srcPath, next);
-  if (fs.existsSync(distPath)) writeVersion(distPath, next);
-  return { version: next, changed: true, from: current };
-}
 
 function main() {
   const args = process.argv.slice(2);
   const beta = args.includes('--beta');
   const dryRun = args.includes('--dry-run');
   const planOnly = args.includes('--plan');
-  const otp = args.find((a) => !a.startsWith('-'));
+  const catalog = [...PUBLISH_ORDER, ...ON_DEMAND];
+  const selected = new Set();
+  const otpCandidates = [];
+  for (const arg of args.filter((a) => !a.startsWith('-'))) {
+    const match = catalog.find((pkg) => aliasesOf(pkg).includes(arg));
+    if (match) selected.add(match);
+    else otpCandidates.push(arg);
+  }
+  const otp = otpCandidates[0];
+  const targets = selected.size ? catalog.filter((pkg) => selected.has(pkg)) : PUBLISH_ORDER;
 
   const script = beta ? 'npm-publish:beta' : 'npm-publish';
 
@@ -103,7 +86,7 @@ function main() {
   console.log(`[publish-all] mode: ${planOnly ? 'plan (upload nothing)' : dryRun ? 'dry-run (pack, no upload)' : 'publish'}`);
   console.log(`[publish-all] otp: ${otp ? 'provided' : '(none — npm will prompt if required)'}`);
   console.log('[publish-all] order:');
-  PUBLISH_ORDER.forEach((p, i) => console.log(`  ${i + 1}. ${p.name} (${p.cwd})`));
+  targets.forEach((p, i) => console.log(`  ${i + 1}. ${p.name} (${p.cwd})`));
 
   if (planOnly) {
     console.log('\n[publish-all] plan only: nothing uploaded.');
@@ -111,25 +94,18 @@ function main() {
   }
 
   // Guard: dist/ must exist (i.e. `yarn prepare-packages` was run). Publish-only never builds.
-  const missing = PUBLISH_ORDER.filter((p) => !fs.existsSync(path.join(workspaceRoot, p.cwd, 'dist')));
+  const missing = targets.filter((p) => !fs.existsSync(path.join(workspaceRoot, p.cwd, 'dist')));
   if (missing.length) {
     console.error(`\n[publish-all] missing dist/ for: ${missing.map((p) => p.name).join(', ')}`);
     console.error('[publish-all] Run `yarn prepare-packages` first to validate + build all packages.');
     process.exit(1);
   }
 
-  // Beta guard: publishing to the `beta` tag must ship a `-beta` prerelease VERSION (so the plain
-  // x.y.z stays free for the eventual stable release). Add `-beta.0` to any package that lacks it.
-  if (beta) {
-    console.log('\n[publish-all] beta: ensuring every package version carries a -beta prerelease...');
-    for (const pkg of PUBLISH_ORDER) {
-      const res = ensureBetaVersion(pkg.cwd);
-      console.log(
-        res.changed
-          ? `  ${pkg.name}: ${res.from} -> ${res.version}  (added -beta)`
-          : `  ${pkg.name}: ${res.version}  (already beta)`,
-      );
-    }
+  try {
+    targets.forEach((pkg) => assertVersionMatchesTag(path.join(workspaceRoot, pkg.cwd), beta ? 'beta' : 'latest'));
+  } catch (error) {
+    console.error(`\n[publish-all] ${error.message}`);
+    process.exit(1);
   }
 
   // NPM_OTP -> ${NPM_OTP:+--otp=$NPM_OTP}; NPM_DRY_RUN -> ${NPM_DRY_RUN:+--dry-run}.
@@ -140,7 +116,7 @@ function main() {
   const published = [];
   const skipped = [];
 
-  for (const pkg of PUBLISH_ORDER) {
+  for (const pkg of targets) {
     console.log(`\n[publish-all] ==> ${pkg.name}: yarn ${script}${dryRun ? ' (npm --dry-run)' : ''}`);
     // Capture output so we can detect "already published" and treat it as a skip.
     const result = spawnSync('yarn', [script], {

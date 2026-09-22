@@ -1,4 +1,5 @@
 import isNil from 'json-storage-formatter/isNil';
+import * as React from 'react';
 import { assertIsNonNullable } from '../asserts/asserts';
 import { BuildTypeJsonEnum } from '../schema/BuildTypeJson';
 import type GlobalStore from 'react-global-state-hooks/GlobalStore';
@@ -11,6 +12,11 @@ export type GlobalStoreParameter = GlobalStore<unknown, BaseMetadata, unknown> &
   _DEV_TOOLS_STORE_ID: string;
   _DEV_TOOLS_PARENT_STORE_ID: string;
   _DEV_TOOLS_IS_CONTEXT?: boolean;
+  /** True when the store was created during a React render (has a fiber lifecycle). */
+  _DEV_TOOLS_FIBER?: boolean;
+  /** Creation args + path, stashed so an untracked non-fiber store can re-announce itself. */
+  _DEV_TOOLS_ARGS?: unknown;
+  _DEV_TOOLS_PATH?: string;
 
   __onUnMountContext?: () => void;
 
@@ -27,6 +33,13 @@ type Renderer = {
   };
 };
 
+/**
+ * A React Fiber node. We only rely on object identity (as a WeakMap key) and its `alternate`
+ * back-pointer (React double-buffers a component's fiber; the render-phase fiber and the one passed
+ * to onCommitFiberUnmount can be either half of that pair).
+ */
+export type Fiber = { alternate: Fiber | null } & Record<string, unknown>;
+
 // export type GlobalStateExtraArgs = {
 //   localStorage?: LocalStorageConfig<unknown>;
 // };
@@ -34,6 +47,9 @@ type Renderer = {
 interface GlobalThis {
   __REACT_DEVTOOLS_GLOBAL_HOOK__?: {
     renderers: Map<number, Renderer>;
+    // Direct method React (react-dom) calls imperatively as each fiber is deleted during commit.
+    // Unlike `listeners.*` (arrays), this is a single function on the hook, so we wrap it.
+    onCommitFiberUnmount?: (rendererID: number, fiber: Fiber) => void;
     listeners?: {
       'devtools-backend-installed': [(event: unknown) => void];
       'renderer-attached': [(event: unknown) => void];
@@ -58,6 +74,36 @@ interface GlobalThis {
 
 export const getGlobalThis = (global: Window | typeof globalThis): GlobalThis => {
   return global as unknown as GlobalThis;
+};
+
+/**
+ * The fiber currently rendering, or null when not inside a render (e.g. a store created at module
+ * scope). Reads React's shared internals, tolerating both React 18 and 19 shapes:
+ *  - React 18: ReactCurrentOwner.current
+ *  - React 19: renamed internals, owner exposed via A.getOwner()
+ * Any missing field / throw is treated as "no current fiber".
+ */
+export const getCurrentFiber = (): Fiber | null => {
+  try {
+    const react = React as unknown as {
+      __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED?: {
+        ReactCurrentOwner?: { current: Fiber | null };
+      };
+      __CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE?: {
+        A?: { getOwner?: () => Fiber | null } | null;
+      };
+    };
+
+    // React 18
+    const owner18 = react.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED?.ReactCurrentOwner?.current;
+    if (owner18) return owner18;
+
+    // React 19
+    const owner19 = react.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE?.A?.getOwner?.();
+    return owner19 ?? null;
+  } catch {
+    return null;
+  }
 };
 
 export const getReactBuildType = () => {
@@ -173,12 +219,39 @@ export const getReactBuildType = () => {
   return devRenderer ? BuildTypeJsonEnum.development : BuildTypeJsonEnum.production;
 };
 
-export const { addFastRefreshSubscription, addOperationsSubscriptions, onReactDevToolsConnect } = (() => {
+export const {
+  addFastRefreshSubscription,
+  addOperationsSubscriptions,
+  addFiberUnmountSubscription,
+  onReactDevToolsConnect,
+} = (() => {
   const fastRefreshSubscriptions = new Set<(event: unknown) => void>();
   const operationsSubscriptions = new Set<(event: unknown) => void>();
+  const fiberUnmountSubscriptions = new Set<(fiber: Fiber) => void>();
   const connectSubscriptions = new Set<(event: unknown) => void>();
 
+  // Marker so we never double-wrap onCommitFiberUnmount (the backend may re-run our connect).
+  const WRAPPED = '__rghs_devtools_unmount_wrapped__';
+
+  const wrapCommitFiberUnmount = (hook: NonNullable<GlobalThis['__REACT_DEVTOOLS_GLOBAL_HOOK__']>) => {
+    const current = hook.onCommitFiberUnmount as
+      (((rendererID: number, fiber: Fiber) => void) & { [WRAPPED]?: boolean }) | undefined;
+
+    if (current?.[WRAPPED]) return;
+
+    const wrapped = ((rendererID: number, fiber: Fiber) => {
+      // Preserve the DevTools backend's own handler first.
+      current?.(rendererID, fiber);
+      fiberUnmountSubscriptions.forEach((callback) => callback(fiber));
+    }) as ((rendererID: number, fiber: Fiber) => void) & { [WRAPPED]?: boolean };
+
+    wrapped[WRAPPED] = true;
+    hook.onCommitFiberUnmount = wrapped;
+  };
+
   const connectReactDevTools = () => {
+    if (typeof window === 'undefined') return;
+
     const global = getGlobalThis(window);
 
     if (isNil(global.__REACT_DEVTOOLS_GLOBAL_HOOK__?.listeners?.operations)) {
@@ -204,6 +277,10 @@ export const { addFastRefreshSubscription, addOperationsSubscriptions, onReactDe
     fastRefreshScheduled.push((event) => {
       fastRefreshSubscriptions.forEach((callback) => callback(event));
     });
+
+    // onCommitFiberUnmount is a method (not a listeners array): wrap it so we get the live fiber
+    // object on every unmount. This is the one surface that hands us the actual fiber reference.
+    wrapCommitFiberUnmount(__REACT_DEVTOOLS_GLOBAL_HOOK__);
   };
 
   /**
@@ -233,11 +310,20 @@ export const { addFastRefreshSubscription, addOperationsSubscriptions, onReactDe
     };
   };
 
+  const addFiberUnmountSubscription = (callback: (fiber: Fiber) => void) => {
+    fiberUnmountSubscriptions.add(callback);
+
+    return () => {
+      fiberUnmountSubscriptions.delete(callback);
+    };
+  };
+
   connectReactDevTools();
 
   return {
     addFastRefreshSubscription,
     addOperationsSubscriptions,
+    addFiberUnmountSubscription,
     onReactDevToolsConnect,
   };
 })();

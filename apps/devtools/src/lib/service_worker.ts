@@ -23,6 +23,9 @@
 type Ports = {
   contentScript: chrome.runtime.Port | null;
   devtools: chrome.runtime.Port | null;
+  // A devtools-request (e.g. REQUEST_SNAPSHOT) that arrived before the content script was connected.
+  // Delivered once the content script (re)connects, so the initial snapshot is never lost to a race.
+  pendingRequest: unknown | null;
 };
 
 // One entry per inspected tab.
@@ -31,7 +34,7 @@ const portsByTabId = new Map<number, Ports>();
 const getEntry = (tabId: number): Ports => {
   let entry = portsByTabId.get(tabId);
   if (!entry) {
-    entry = { contentScript: null, devtools: null };
+    entry = { contentScript: null, devtools: null, pendingRequest: null };
     portsByTabId.set(tabId, entry);
   }
   return entry;
@@ -40,7 +43,7 @@ const getEntry = (tabId: number): Ports => {
 const cleanupEntry = (tabId: number) => {
   const entry = portsByTabId.get(tabId);
   if (!entry) return;
-  if (!entry.contentScript && !entry.devtools) {
+  if (!entry.contentScript && !entry.devtools && entry.pendingRequest === null) {
     portsByTabId.delete(tabId);
   }
 };
@@ -52,6 +55,13 @@ chrome.runtime.onConnect.addListener((port) => {
 
     const entry = getEntry(tabId);
     entry.contentScript = port;
+
+    // If a panel already asked for a snapshot before this content script connected (MV3 worker
+    // teardown / late connect race), deliver it now so the panel syncs without a manual reload.
+    if (entry.pendingRequest !== null) {
+      port.postMessage(entry.pendingRequest);
+      entry.pendingRequest = null;
+    }
 
     port.onMessage.addListener((message) => {
       // Forward monkey-patch events to the panel inspecting this tab.
@@ -80,10 +90,16 @@ chrome.runtime.onConnect.addListener((port) => {
       }
 
       // Any other message from the panel (devtools-request/...) is forwarded to
-      // the content script of the bound tab.
+      // the content script of the bound tab. If the content script isn't connected yet, stash the
+      // request and deliver it when it connects (fixes the late-open / worker-respawn race where
+      // REQUEST_SNAPSHOT was dropped and the panel stayed empty until a manual reload).
       if (boundTabId === null) return;
-      const entry = portsByTabId.get(boundTabId);
-      entry?.contentScript?.postMessage(message);
+      const entry = getEntry(boundTabId);
+      if (entry.contentScript) {
+        entry.contentScript.postMessage(message);
+      } else {
+        entry.pendingRequest = message;
+      }
     });
 
     port.onDisconnect.addListener(() => {

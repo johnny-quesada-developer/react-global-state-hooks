@@ -1,11 +1,13 @@
-import React, { useRef } from 'react';
-import { cn } from '@src/shared/tools/cn';
+import React from 'react';
+import type { ActionId } from '@src/shared/schema';
 import { logsFilter$, selectedActionHeader$ } from '../_hooks';
-import { useListNavigation } from '@src/shared/facelessComponents/useListNavigation';
-import { LogsFilter } from '../LogsFilter';
-import { RecordsCount } from '../RecordsCount';
-import { ActionLogListItem } from '../ActionLogListItem';
-import { useActionsHeaders } from '@src/pages/main_tab/hooks/globalStates/hooks/useActionsHeaders';
+import { focusActionStepsList, logsPerActionListClass } from '@src/pages/main_tab/util/listFocusBridge';
+import { ActionLogListItem, actionLogListItemClass } from '../ActionLogListItem';
+import { isEqualRoot } from '@src/pages/main_tab/hooks/globalStates/hooks/useActionsHeaders';
+import selectedGlobalStateId$ from '@src/pages/main_tab/hooks/selectedGlobalStateId';
+import { UnsubscribeCallback } from 'react-hooks-global-states';
+import { actionIdsByStateId$, actionsById$ } from '@src/pages/main_tab/hooks/globalStates';
+import { ManualDomListShell, ManualDomRow, useManualDomList } from '../_manualDomList';
 
 export type LogsPerActionListProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -14,57 +16,100 @@ export const LogsPerActionList: React.FC<LogsPerActionListProps> = ({
   ...props
 }: LogsPerActionListProps) => {
   const [logsFilter] = logsFilter$();
-  const actionsHeaders = useActionsHeaders();
-  const mainListRef = useRef<HTMLUListElement | null>(null);
+  const filter = logsFilter?.trim().toLowerCase() ?? '';
 
-  const navigation = useListNavigation(
-    {
-      name: 'logs-per-action-list',
-      items: actionsHeaders,
-      containerRef: mainListRef,
-      filter: (item) => {
-        if (!logsFilter) return false;
+  const { mainListRef, recordsCountRef, emptyLegendRef } = useManualDomList({
+    rowClass: actionLogListItemClass,
+    dependencies: [logsFilter],
 
-        return !item.action.toLowerCase().includes(logsFilter.toLowerCase());
-      },
-      onSelect: (item) => {
-        if (!item) return;
+    getSelectedId: () => selectedActionHeader$.getState(),
+    selectById: (actionId) => selectedActionHeader$.setState(actionId as ActionId),
+    onArrowRight: focusActionStepsList,
 
-        selectedActionHeader$.setState(item.value.actionId);
-      },
+    subscribe: (controller) => {
+      let isFirstRender = true;
+      let previousLastActionId: ActionId | null = null;
+      let totalCount = 0;
+      let renderedCount = 0;
+      let unsubscribeActions: UnsubscribeCallback | undefined;
+
+      const reset = () => {
+        controller.dropAll();
+        totalCount = 0;
+        renderedCount = 0;
+        isFirstRender = true;
+        previousLastActionId = null;
+        controller.updateCounts({ total: 0, rendered: 0, hasFilter: filter !== '' });
+      };
+
+      const appendAction = (actionId: ActionId, parent: Node) => {
+        const action = actionsById$.getState().get(actionId);
+        if (!action) return;
+
+        totalCount += 1;
+        if (filter && !action.action.toLowerCase().includes(filter)) return;
+
+        renderedCount += 1;
+        controller.appendItem(
+          <ManualDomRow isFirst={renderedCount === 1}>
+            <ActionLogListItem actionId={actionId} index={renderedCount} />
+          </ManualDomRow>,
+          parent,
+        );
+      };
+
+      reset();
+
+      // The selected store changing drops the whole list; actions are only ever
+      // appended within a store, never deleted individually.
+      const unsubscribeSelected = selectedGlobalStateId$.subscribe((selectedStateId) => {
+        unsubscribeActions?.();
+        reset();
+
+        if (!selectedStateId) return;
+
+        unsubscribeActions = actionIdsByStateId$.subscribe(
+          (actionIdsByStateId) => {
+            const actionIds = actionIdsByStateId.get(selectedStateId);
+            if (!actionIds?.size) return reset();
+
+            const lastActionId = Array.from(actionIds).at(-1)!;
+            if (lastActionId === previousLastActionId) return;
+            previousLastActionId = lastActionId;
+
+            if (isFirstRender) {
+              isFirstRender = false;
+              const fragment = document.createDocumentFragment();
+              for (const actionId of actionIds) appendAction(actionId, fragment);
+              controller.listEl.appendChild(fragment);
+            } else {
+              appendAction(lastActionId, controller.listEl);
+            }
+
+            controller.updateCounts({ total: totalCount, rendered: renderedCount, hasFilter: filter !== '' });
+          },
+          {
+            isEqualRoot: isEqualRoot(selectedStateId),
+          },
+        );
+      });
+
+      return () => {
+        unsubscribeActions?.();
+        unsubscribeSelected?.();
+      };
     },
-    [actionsHeaders, logsFilter]
-  );
+  });
 
   return (
-    <div className={cn('LogsPerActionList flex flex-col', className)} {...props}>
-      <div className="sticky top-0 z-10">
-        <RecordsCount
-          className="border-b border-gray-400"
-          count={navigation.navigationItems.length}
-          total={actionsHeaders.length}
-        />
-
-        <LogsFilter className="border-b border-gray-400 w-full" />
-
-        {!navigation.navigationItems.length && (
-          <p className="flex gap-4 p-2 transition-colors duration-300 text-gray-400">No logs match the query...</p>
-        )}
-      </div>
-
-      <ul ref={mainListRef} className="flex-1 min-h-0 flex flex-col overflow-y-scroll">
-        {navigation.navigationItems.map((action) => {
-          return (
-            <ActionLogListItem
-              key={action.key}
-              header={action}
-              {...action.props}
-              className="border-b border-gray-400 last-of-type:border-none"
-            />
-          );
-        })}
-      </ul>
-    </div>
+    <ManualDomListShell
+      className={className}
+      containerClass={logsPerActionListClass}
+      mainListRef={mainListRef}
+      recordsCountRef={recordsCountRef}
+      emptyLegendRef={emptyLegendRef}
+      {...props}
+    />
   );
 };
 

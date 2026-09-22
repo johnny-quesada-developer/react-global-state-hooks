@@ -16,7 +16,7 @@ export const ShowChangesSummary: React.FC<ShowChangesSummaryProps> = ({
   isDifferent,
   isInitialLog,
   currentLog,
-  collapsed = 4,
+  collapsed = 3,
 }: ShowChangesSummaryProps) => {
   if (!currentLog) return null;
 

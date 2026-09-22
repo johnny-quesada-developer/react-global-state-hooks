@@ -8,7 +8,7 @@
 
 <div align="center">
 
-**Zero setup. Native persistence. Maximum performance.** 🚀
+**Shared React Native state. Precise subscriptions. Async persistence.** 🚀
 
 _The simplicity of `useState`, shared across your React Native app._ ✨
 
@@ -16,7 +16,7 @@ _The simplicity of `useState`, shared across your React Native app._ ✨
 [![Downloads](https://img.shields.io/npm/dm/react-native-global-state-hooks.svg)](https://www.npmjs.com/package/react-native-global-state-hooks)
 [![License](https://img.shields.io/npm/l/react-native-global-state-hooks.svg)](https://github.com/johnny-quesada-developer/react-native-global-state-hooks/blob/master/LICENSE)
 
-[**NPM**](https://www.npmjs.com/package/react-native-global-state-hooks) • [**GitHub**](https://github.com/johnny-quesada-developer/react-native-global-state-hooks) • [**Core API Demo**](https://johnny-quesada-developer.github.io/global-hooks-example/) • [**Video Tutorial**](https://www.youtube.com/watch?v=1UBqXk2MH8I/)
+[**NPM**](https://www.npmjs.com/package/react-native-global-state-hooks) • [**GitHub**](https://github.com/johnny-quesada-developer/react-native-global-state-hooks) • [**Core API Demo**](https://johnny-quesada-developer.github.io/global-hooks-example/) • [**Video Tutorial**](https://www.youtube.com/watch?v=1UBqXk2MH8I)
 
 </div>
 
@@ -44,9 +44,9 @@ function Counter() {
 
 ---
 
-## 🚀 Why Developers Love This Library
+## 🚀 Built for React applications
 
-### 🎓 **Zero Learning Curve**
+### 🎓 **Familiar React API**
 
 If you know `useState`, the basic API already feels familiar:
 
@@ -203,7 +203,7 @@ function ThemeToggle() {
 }
 ```
 
-### 60 Seconds to Production-Ready
+### Actions with async persistence
 
 A persisted React Native store initializes **asynchronously**, so the hook also exposes storage readiness through metadata.
 
@@ -424,9 +424,9 @@ const useActiveAdmins = useActiveUsers.createSelectorHook((users) =>
 );
 
 function UserStats() {
-  const [users] = useUsers();
-  const [activeUsers] = useActiveUsers();
-  const [activeAdmins] = useActiveAdmins();
+  const users = useUsers();
+  const activeUsers = useActiveUsers();
+  const activeAdmins = useActiveAdmins();
 
   return (
     <View>
@@ -594,7 +594,7 @@ useFeed.setMetadata((metadata) => ({
   isLoading: true,
 }));
 
-const metadata = useFeed.getMetadata();
+const metadata = useFeed.metadata;
 
 console.log(metadata.isLoading);
 ```
@@ -1023,7 +1023,7 @@ const useUsers = Data.use.createSelectorHook((state) => state.users);
 const useActiveUsers = useUsers.createSelectorHook((users) => users.filter((user) => user.active));
 
 function ActiveUsers() {
-  const [users] = useActiveUsers();
+  const users = useActiveUsers();
 
   return (
     <View>
@@ -1323,7 +1323,7 @@ const useApp = createGlobalState({
 | 📦 [**NPM Package**](https://www.npmjs.com/package/react-native-global-state-hooks)                     | Published React Native package                       |
 | 💻 [**GitHub Repository**](https://github.com/johnny-quesada-developer/react-native-global-state-hooks) | Source, tests, and issues                            |
 | 🎮 [**Core API Demo**](https://johnny-quesada-developer.github.io/global-hooks-example/)                | Browser demo of the shared state-management concepts |
-| 🎥 [**Video Tutorial**](https://www.youtube.com/watch?v=1UBqXk2MH8I/)                                   | State-management walkthrough                         |
+| 🎥 [**Video Tutorial**](https://www.youtube.com/watch?v=1UBqXk2MH8I)                                   | State-management walkthrough                         |
 | 📚 [**Core Package**](https://www.npmjs.com/package/react-hooks-global-states)                          | Shared state engine used by the platform packages    |
 
 ---
@@ -1342,7 +1342,7 @@ The state-management concepts are intentionally similar across the packages, but
 
 ## 🎉 Why Developers Choose This
 
-### The Bottom Line
+### At a glance
 
 | What You Get                        | What You Avoid                     |
 | ----------------------------------- | ---------------------------------- |

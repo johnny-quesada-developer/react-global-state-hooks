@@ -1,20 +1,15 @@
-import uniqueId from 'global-state-hooks-under-test/uniqueId';
-import * as uniqueIdNs from 'global-state-hooks-under-test/uniqueId';
+import uniqueId, { uniqueId as namedUniqueId } from 'global-state-hooks-under-test/uniqueId';
+import * as uniqueIdNamespace from 'global-state-hooks-under-test/uniqueId';
 
-describe('uniqueId default export (packaging regression)', () => {
-  it('exposes a callable default export', () => {
+// Source exports; built ESM/CJS and packed-package checks live in scripts/test-interop.ts.
+describe('uniqueId source exports', () => {
+  it('exposes the same callable function as default and named exports', () => {
     expect(typeof uniqueId).toBe('function');
-
-    const id = uniqueId();
-    expect(typeof id).toBe('string');
-    expect(id.length).toBeGreaterThan(0);
+    expect(namedUniqueId).toBe(uniqueId);
+    expect(uniqueId('test:')).toMatch(/^test:.+/);
   });
 
-  it('exposes both default and named export without phantom keys', () => {
-    expect(typeof uniqueIdNs.uniqueId).toBe('function');
-    expect(typeof uniqueIdNs.default).toBe('function');
-
-    const phantom = Object.keys(uniqueIdNs).filter((k) => k === 'module.exports' || k.includes('react-'));
-    expect(phantom).toEqual([]);
+  it('exports only default and uniqueId', () => {
+    expect(Object.keys(uniqueIdNamespace).sort()).toEqual(['default', 'uniqueId']);
   });
 });

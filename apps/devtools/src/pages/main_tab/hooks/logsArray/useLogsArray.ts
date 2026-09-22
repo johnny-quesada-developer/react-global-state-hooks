@@ -35,7 +35,7 @@ export const logsArray$ = createGlobalState([] as StateLog[], {
             actions: grouped.values(),
             selectedStateKey: stateId,
             globalStates: globalStates$.getState(),
-          })
+          }),
         );
       };
 
@@ -63,11 +63,20 @@ export const logsArray$ = createGlobalState([] as StateLog[], {
         },
         {
           skipFirst: true,
-        }
+        },
       );
     },
   },
 });
+
+export const useLog = (logId: string | null): StateLog | null => {
+  return logsArray$.use.select((logs) => (logId ? (logs.find((log) => log.logId === logId) ?? null) : null), {
+    dependencies: [logId],
+    // logsArray$ rebuilds new objects on every emission, so compare by content:
+    // a row only re-renders when its own log actually changes.
+    isEqual: (current, next) => shallowCompare(current, next),
+  });
+};
 
 export const extendedLogsById$ = logsArray$.createObservable((logs) => {
   return logs.reduce(
@@ -75,7 +84,7 @@ export const extendedLogsById$ = logsArray$.createObservable((logs) => {
       acc[log.logId] = log;
       return acc;
     },
-    Object.create(null) as Record<string, StateLog>
+    Object.create(null) as Record<string, StateLog>,
   );
 });
 

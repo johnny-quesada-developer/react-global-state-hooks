@@ -2,21 +2,21 @@
 
 <div align="center">
 
-![Image John Avatar](https://raw.githubusercontent.com/johnny-quesada-developer/global-hooks-example/main/public/avatar2.jpeg)
+![Johnny Quesada](https://raw.githubusercontent.com/johnny-quesada-developer/global-hooks-example/main/public/avatar2.jpeg)
 
 </div>
 
 <div align="center">
 
-**Zero setup. Zero complexity. Maximum performance.** 🚀
+**Shared React state. Precise subscriptions. Built-in DevTools.** 🚀
 
-_One line of code. Infinite possibilities._ ✨
+_The familiarity of `useState`, with the power of a shared store._
 
 [![npm version](https://img.shields.io/npm/v/react-global-state-hooks.svg)](https://www.npmjs.com/package/react-global-state-hooks)
 [![Downloads](https://img.shields.io/npm/dm/react-global-state-hooks.svg)](https://www.npmjs.com/package/react-global-state-hooks)
-[![License](https://img.shields.io/npm/l/react-global-state-hooks.svg)](https://github.com/johnny-quesada-developer/react-global-state-hooks/blob/main/LICENSE)
+[![License](https://img.shields.io/npm/l/react-global-state-hooks.svg)](https://github.com/johnny-quesada-developer/react-global-state-hooks/blob/master/LICENSE)
 
-[**Live Demo**](https://johnny-quesada-developer.github.io/global-hooks-example/) • [**Video Tutorial**](https://www.youtube.com/watch?v=1UBqXk2MH8I/) • [**CodePen**](https://codepen.io/johnnynabetes/pen/WNmeGwb?editors=0010)
+[**Live Demo**](https://johnny-quesada-developer.github.io/global-hooks-example/) • [**Video Tutorial**](https://www.youtube.com/watch?v=1UBqXk2MH8I) • [**CodePen**](https://codepen.io/johnnynabetes/pen/WNmeGwb?editors=0010)
 
 </div>
 
@@ -30,7 +30,7 @@ import { createGlobalState } from 'react-global-state-hooks';
 export const useCounter = createGlobalState(0);
 ```
 
-**That's it.** No providers. No context boilerplate. No configuration files. Just pure, beautiful state management. 🎨
+**That's it.** No providers. No context boilerplate. No configuration files. Shared state with a familiar React API.
 
 ```tsx
 // Use it anywhere, instantly
@@ -46,15 +46,15 @@ function Counter() {
 
 Inspect, time-travel, and live-edit your global state right from the browser. See the full guide in **[DEVTOOLS.md](./DEVTOOLS.md)**.
 
-[**🔗 Install for Chrome**](https://chromewebstore.google.com/detail/bafojplmkpejhglhjpibpdhoblickpee/preview?hl=en&authuser=0)
+[**🔗 Install for Chrome**](https://chromewebstore.google.com/detail/bafojplmkpejhglhjpibpdhoblickpee)
 
-![DevTools — Track State Changes](https://raw.githubusercontent.com/johnny-quesada-developer/react-global-state-hooks/main/public/track-state-changes.png)
+![DevTools — Track State Changes](https://raw.githubusercontent.com/johnny-quesada-developer/react-global-state-hooks/master/public/track-state-changes.png)
 
 ---
 
-## 🚀 Why Developers Love This Library
+## 🚀 Built for React applications
 
-### 🎓 **Zero Learning Curve**
+### 🎓 **Familiar React API**
 
 ```tsx
 // If you know this...
@@ -64,9 +64,9 @@ const [state, setState] = useState(0);
 const [state, setState] = useGlobalState();
 ```
 
-### ⚡ **Blazing Fast**
+### ⚡ **Precise subscriptions**
 
-Only components that care about a slice re-render. Surgical precision, maximum performance.
+Subscribe to a slice so unrelated store changes do not trigger component updates.
 
 ```tsx
 // Only re-renders when name changes
@@ -76,7 +76,7 @@ const [name] = useStore((s) => s.user.name);
 ### 🔗 **Chainable Selectors**
 
 ```tsx
-const useUsers = store.createSelectorHook((s) => s.users);
+const useUsers = useStore.createSelectorHook((s) => s.users);
 const useAdmins = useUsers.createSelectorHook((users) => users.filter((u) => u.isAdmin));
 ```
 
@@ -152,64 +152,53 @@ function ThemedComponent() {
 }
 ```
 
-### 60 Seconds to Production-Ready
+### Async state with actions
+
+Keep loading and error values in state so components update throughout the request.
 
 ```tsx
 import { createGlobalState } from 'react-global-state-hooks';
 
+type User = { id: string; name: string };
+
 const useAuth = createGlobalState(
-  { user: null, token: null },
+  () => ({ user: null as User | null, isLoading: false, error: null as string | null }),
   {
-    // Non-reactive metadata
-    metadata: { isLoading: false },
-
-    // Persist to localStorage automatically!
-    localStorage: {
-      key: 'auth-token',
-    },
-
-    // Type-safe actions
     actions: {
-      login(email, password) {
-        return async ({ setState, setMetadata }) => {
-          setMetadata({ isLoading: true });
+      login(authenticate: () => Promise<User>) {
+        return async ({ setState }) => {
+          setState((state) => ({ ...state, isLoading: true, error: null }));
           try {
-            const { user, token } = await api.login(email, password);
-            setState({ user, token });
-            return { success: true };
+            const user = await authenticate();
+            setState({ user, isLoading: false, error: null });
           } catch (error) {
-            return { success: false, error };
-          } finally {
-            setMetadata({ isLoading: false });
+            setState((state) => ({
+              ...state,
+              isLoading: false,
+              error: error instanceof Error ? error.message : 'Sign-in failed',
+            }));
           }
         };
       },
-
       logout() {
         return ({ setState }) => {
-          setState({ user: null, token: null });
+          setState({ user: null, isLoading: false, error: null });
         };
       },
     },
   },
 );
 
-// Usage
-function LoginForm() {
-  const [auth, actions] = useAuth();
-  const { isLoading } = useAuth.getMetadata();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const result = await actions.login(email, password);
-    if (!result.success) toast.error(result.error);
-  };
+function LoginButton({ authenticate }: { authenticate: () => Promise<User> }) {
+  const [{ isLoading, error }, actions] = useAuth();
 
   return (
-    <form onSubmit={handleSubmit}>
-      {/* ... */}
-      <button disabled={isLoading}>{isLoading ? 'Logging in...' : 'Login'}</button>
-    </form>
+    <div>
+      <button disabled={isLoading} onClick={() => void actions.login(authenticate)}>
+        {isLoading ? 'Signing in…' : 'Sign in'}
+      </button>
+      {error && <p role="alert">{error}</p>}
+    </div>
   );
 }
 ```
@@ -247,7 +236,7 @@ const useExpensiveState = createGlobalState(() => {
 
 #### 🎯 Surgical Re-renders with Selectors
 
-The secret sauce: components only re-render when _their specific slice_ changes!
+Selectors keep components subscribed to the state they use.
 
 ```tsx
 const useStore = createGlobalState({
@@ -287,16 +276,16 @@ function NotificationCount() {
 }
 ```
 
-**Performance comparison:**
+**Subscription behavior:**
 
-| Approach        | Re-renders when ANY state changes? |
-| --------------- | ---------------------------------- |
-| Context (naive) | ✅ YES (performance killer)        |
-| This library    | ❌ NO (only selected slices)       |
+| Subscription | What triggers an update |
+| --- | --- |
+| `useStore()` | Any store value change |
+| `useStore(selector)` | A change to the selected value |
 
 #### ⚡ Computed Values with Dependencies
 
-Derive values efficiently with automatic recomputation control! - selectors can depend on external state (like `useState`)!
+Derive values from both store state and component-local values, with explicit dependencies.
 
 ```tsx
 const useStore = createGlobalState({
@@ -372,9 +361,9 @@ function AdvancedFiltered() {
 }
 ```
 
-#### 🔗 Reusable Selector Hooks (The Game Changer!)
+#### 🔗 Reusable Selector Hooks
 
-Create hooks from hooks! Chain them! Compose them! This is where it gets fun! 🎉
+Compose reusable selector hooks. Each hook returns its selected value directly.
 
 ```tsx
 const useStore = createGlobalState({
@@ -402,9 +391,9 @@ const useCurrentUser = useStore.createSelectorHook((state) => {
 
 // Now use them anywhere!
 function UserStats() {
-  const [totalUsers] = useUsers();
-  const [activeUsers] = useActiveUsers();
-  const [activeAdmins] = useActiveAdmins();
+  const totalUsers = useUsers();
+  const activeUsers = useActiveUsers();
+  const activeAdmins = useActiveAdmins();
 
   return (
     <div>
@@ -416,19 +405,24 @@ function UserStats() {
 }
 
 function CurrentUserProfile() {
-  const [user] = useCurrentUser();
+  const user = useCurrentUser();
   return <div>{user?.name}</div>;
 }
 
-// 🎯 Key insight: All these hooks share the SAME setState!
-function AnyComponent() {
-  const [, setFromUsers] = useUsers();
-  const [, setFromAdmins] = useActiveAdmins();
-  const [, setFromStore] = useStore();
-
-  console.log(setFromUsers === setFromAdmins); // true!
-  console.log(setFromUsers === setFromStore); // true!
-  console.log(setFromUsers === useStore.setState); // true!
+// Selector hooks return values. Update the source store through its API.
+function ActivateAll() {
+  return (
+    <button
+      onClick={() =>
+        useStore.setState((state) => ({
+          ...state,
+          users: state.users.map((user) => ({ ...user, active: true })),
+        }))
+      }
+    >
+      Activate all users
+    </button>
+  );
 }
 ```
 
@@ -585,7 +579,7 @@ const unsubscribe = useAuth.subscribe(
 );
 ```
 
-#### 🔭 Observable Fragments (RxJS-style)
+#### 🔭 Observable Fragments
 
 Create observable slices of your state for reactive programming!
 
@@ -615,46 +609,23 @@ const doubledObservable = countObservable.createObservable((count) => count * 2)
 
 #### 📋 Metadata - Non-Reactive Side Info
 
-Store data that doesn't need to trigger re-renders!
+Keep request counters and timestamps in metadata when they are read only by handlers or background work.
+Put loading indicators and displayed errors in state so components subscribe to their changes.
 
 ```tsx
 const useStore = createGlobalState(
-  { items: [] },
-  {
-    metadata: {
-      isLoading: false,
-      lastFetch: null,
-      error: null,
-      retryCount: 0,
-    },
-  },
+  { items: [] as string[] },
+  { metadata: { requests: 0, lastFetchedAt: null as number | null } },
 );
 
-// Metadata changes don't trigger re-renders!
-useStore.setMetadata({ isLoading: true });
+// Metadata is replaced, so preserve the fields you are not updating.
+useStore.setMetadata((metadata) => ({ ...metadata, requests: metadata.requests + 1 }));
 
-// But you can access it anytime
-const meta = useStore.getMetadata();
-console.log(meta.isLoading); // true
+console.log(useStore.metadata.requests); // 1
 
-// Perfect for loading states, error tracking, etc.
-async function fetchData() {
-  useStore.setMetadata({ isLoading: true, error: null });
-
-  try {
-    const items = await api.fetch();
-    useStore.setState({ items });
-    useStore.setMetadata({
-      isLoading: false,
-      lastFetch: new Date(),
-    });
-  } catch (error) {
-    useStore.setMetadata({
-      isLoading: false,
-      error: error.message,
-      retryCount: useStore.getMetadata().retryCount + 1,
-    });
-  }
+function recordFetchedItems(items: string[]) {
+  useStore.setMetadata((metadata) => ({ ...metadata, lastFetchedAt: Date.now() }));
+  useStore.setState({ items });
 }
 ```
 
@@ -786,12 +757,14 @@ type AppState = {
   sessionData: { temp: string }; // Don't persist this!
 };
 
-const useAppState = createGlobalState<AppState>(
-  {
-    user: { name: 'Guest', email: '' },
-    settings: { theme: 'light' },
-    sessionData: { temp: 'session-123' },
-  },
+const initialAppState: AppState = {
+  user: { name: 'Guest', email: '' },
+  settings: { theme: 'light' },
+  sessionData: { temp: 'session-123' },
+};
+
+const useAppState = createGlobalState(
+  initialAppState,
   {
     localStorage: {
       key: 'app-state',
@@ -890,7 +863,7 @@ function App() {
 
 #### 🎯 Context + Selectors = ❤️
 
-Everything that works with `createGlobalState` works with `createContext`!
+Use the same selectors, actions and metadata with state scoped to each provider.
 
 ```tsx
 const FormContext = createContext({
@@ -986,7 +959,7 @@ function App() {
 }
 
 function UserList() {
-  const [activeUsers] = useActiveUsers();
+  const activeUsers = useActiveUsers();
   return (
     <ul>
       {activeUsers.map((u) => (
@@ -1153,7 +1126,7 @@ const SessionContext = createContext(
   },
 );
 
-// Internal actions are not expose through the context
+// Internal actions are not exposed through the context
 const { loadData } = SessionContext.use.actions();
 console.log(loadData); // undefined
 ```
@@ -1479,9 +1452,9 @@ function TodoApp() {
 }
 ```
 
-**Why this pattern rocks:**
+**Benefits of this structure:**
 
-- ✅ **KISS** - Keep It Simple, Stupid! Easy to navigate
+- ✅ **Focused modules** - Keep related state, actions and selectors easy to navigate
 - ✅ **Type-safe** - Everything is strongly typed
 - ✅ **Public/Private APIs** - Internal actions don't pollute public interface
 - ✅ **Namespace pattern** - Everything bundled: `todos$.useActiveTodos()`, `todos$.activeTodos$`
@@ -1685,7 +1658,7 @@ actions.addTodo('Build feature', userId);
 | Resource                                                                             | Description                       |
 | ------------------------------------------------------------------------------------ | --------------------------------- |
 | 🎮 [**Live Demo**](https://johnny-quesada-developer.github.io/global-hooks-example/) | Interactive examples              |
-| 🎥 [**Video Tutorial**](https://www.youtube.com/watch?v=1UBqXk2MH8I/)                | Full walkthrough                  |
+| 🎥 [**Video Tutorial**](https://www.youtube.com/watch?v=1UBqXk2MH8I)                | Full walkthrough                  |
 | 💻 [**CodePen**](https://codepen.io/johnnynabetes/pen/WNmeGwb?editors=0010)          | Try it online                     |
 | 📚 **400+ Tests**                                                                    | Check the test suite for patterns |
 
@@ -1695,7 +1668,7 @@ actions.addTodo('Build feature', userId);
 
 | Package                                                                                            | Platform             | Special Feature          |
 | -------------------------------------------------------------------------------------------------- | -------------------- | ------------------------ |
-| [`react-global-state-hooks`](https://www.npmjs.com/package/react-global-state-hooks)               | React / React Native | Core library             |
+| [`react-hooks-global-states`](https://www.npmjs.com/package/react-hooks-global-states)               | React / React Native | Core library             |
 | [`react-global-state-hooks`](https://www.npmjs.com/package/react-global-state-hooks)               | Web                  | localStorage integration |
 | [`react-native-global-state-hooks`](https://www.npmjs.com/package/react-native-global-state-hooks) | React Native         | AsyncStorage integration |
 
@@ -1703,18 +1676,7 @@ actions.addTodo('Build feature', userId);
 
 ## 🎉 Why Developers Choose This
 
-```tsx
-"I replaced 500 lines of Redux with 50 lines of this. Mind blown." 🤯
-  - Every developer who tries it
-
-"The useState I always wanted." ❤️
-  - React developers everywhere
-
-"Finally, state management that doesn't fight me." 🥊
-  - Tired developers worldwide
-```
-
-### The Bottom Line
+### At a glance
 
 | What You Get                | What You Don't        |
 | --------------------------- | --------------------- |
@@ -1724,7 +1686,7 @@ actions.addTodo('Build feature', userId);
 | ✅ TypeScript inference     | ❌ Manual typing      |
 | ✅ Global + Context         | ❌ Either/or choice   |
 | ✅ Actions (optional)       | ❌ Required structure |
-| ✅ 30-second learning curve | ❌ Week-long training |
+| ✅ Familiar hook syntax     | ❌ New component APIs |
 
 ---
 

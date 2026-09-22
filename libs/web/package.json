@@ -1,7 +1,7 @@
 {
   "name": "react-global-state-hooks",
-  "version": "16.0.4-beta",
-  "description": "This is a package to easily handling global-state across your react components",
+  "version": "16.0.5",
+  "description": "Shared React state with a useState-style API, selective subscriptions, actions, localStorage persistence and DevTools.",
   "main": "./bundle.cjs",
   "module": "./bundle.mjs",
   "types": "./index.d.ts",
@@ -79,10 +79,10 @@
     "test:debug:no-watch": "vitest run --inspect-brk --no-file-parallelism",
     "test:coverage": "vitest run --coverage",
     "test:interop": "yarn build && tsx scripts/test-interop.ts",
-    "build": "yarn ts-check && yarn clean && tsc -p tsconfig.build.json && tsx esbuild.config.ts && tsx scripts/prepare-dist.ts",
+    "build": "yarn ts-check && yarn clean && tsc -p tsconfig.build.json && tsx esbuild.config.ts && tsx ../../scripts/prepare-dist.ts",
     "validate": "yarn lint && yarn test && yarn build",
-    "npm-publish": "cd dist && npm publish --tag latest --registry https://registry.npmjs.org/ ${NPM_OTP:+--otp=$NPM_OTP} ${NPM_DRY_RUN:+--dry-run}",
-    "npm-publish:beta": "cd dist && npm publish --tag beta --registry https://registry.npmjs.org/ ${NPM_OTP:+--otp=$NPM_OTP} ${NPM_DRY_RUN:+--dry-run}",
+    "npm-publish": "node ../../scripts/assert-publish-version.mjs latest && cd dist && npm publish --tag latest --registry https://registry.npmjs.org/ ${NPM_OTP:+--otp=$NPM_OTP} ${NPM_DRY_RUN:+--dry-run}",
+    "npm-publish:beta": "node ../../scripts/assert-publish-version.mjs beta && cd dist && npm publish --tag beta --registry https://registry.npmjs.org/ ${NPM_OTP:+--otp=$NPM_OTP} ${NPM_DRY_RUN:+--dry-run}",
     "publish:pkg": "yarn npm-publish",
     "publish:beta": "yarn npm-publish:beta",
     "lint": "eslint . --max-warnings=0",
@@ -124,7 +124,7 @@
   "homepage": "https://github.com/johnny-quesada-developer/react-global-state-hooks#readme",
   "dependencies": {
     "json-storage-formatter": "^4.0.0",
-    "react-hooks-global-states": "^16.0.4-beta"
+    "react-hooks-global-states": "^16.0.5"
   },
   "peerDependencies": {
     "json-storage-formatter": "^4.0.0",
@@ -137,5 +137,8 @@
     "json-storage-formatter": {
       "optional": false
     }
+  },
+  "bin": {
+    "rgsh": "./rgsh.mjs"
   }
 }

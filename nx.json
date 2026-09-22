@@ -1,5 +1,5 @@
 {
-  "//": "parallel:1 runs tasks serially. Builds emit into libs/<project>/dist and the web/mobile builds type-check against libs/universal/dist; running universal:build concurrently with a dependent's build let universal's `clean` (rm -rf dist) briefly empty that dir mid-read, causing intermittent 'Cannot find module' failures. Serializing removes the race; the dependsOn graph still orders universal:build before its dependents.",
+  "//": "Serialize builds: web/mobile declarations read universal/dist, which its build replaces.",
   "parallel": 1,
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
@@ -19,11 +19,11 @@
   "targetDefaults": {
     "build": {
       "cache": true,
-      "inputs": ["production", "^production"],
+      "inputs": ["production", "^production", "{workspaceRoot}/scripts/prepare-dist.ts"],
       "outputs": ["{projectRoot}/dist"]
     },
     "test": {
-      "//": "Tests run against TypeScript source (vitest resolves the base package + own alias to libs/*/src). No build is required, so this target has no build dependency. Built-artifact / CJS-shape correctness is covered separately by each lib's `test:interop`.",
+      "//": "Tests resolve source; built-package compatibility is checked by test:interop.",
       "cache": true,
       "inputs": ["default", "^default"]
     },

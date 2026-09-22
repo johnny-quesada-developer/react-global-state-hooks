@@ -1,0 +1,263 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import type { Ask } from '../shared/ask';
+import {
+  CONNECTOR_FILE_NAME,
+  findConnectorPath,
+  resolveConnector,
+  writeConnector,
+  type ResolvedConnector,
+} from '../shared/connector';
+import type { Logger } from '../shared/logger';
+import { PACKAGE_NAME } from '../shared/packageName';
+import { findSettingsFile } from '../shared/settings';
+
+export interface LegacyDefaults {
+  provider?: 'claude' | 'codex' | 'kiro';
+  models?: { fast?: string; capable?: string };
+  permissions?: 'workspace' | 'projects';
+  concurrency?: number;
+  bashPatterns?: string[];
+  goal?: number;
+  maxCoverageAttempts?: number;
+  maxQualityAttempts?: number;
+  maxBudgetUsdPerAttempt?: number;
+  attemptTimeoutMinutes?: number;
+  scoreBatchSize?: number;
+}
+
+export interface InitAnswers {
+  configurationDirectoryName: string;
+  workspaceRoot: string;
+  includeCoverageRule: boolean;
+  goal: number;
+  maxCoverageAttempts: number;
+  maxQualityAttempts: number;
+  provider?: 'claude' | 'codex' | 'kiro';
+  fastModel?: string;
+  capableModel?: string;
+  permissions?: 'workspace' | 'projects';
+  concurrency: number;
+  maxBudgetUsdPerAttempt: number;
+  attemptTimeoutMinutes: number;
+  scoreBatchSize: number;
+  bashPatterns?: string[];
+}
+
+export async function askInitQuestions({
+  ask,
+  existing,
+  legacyDefaults = {},
+}: {
+  ask: Ask;
+  existing: ResolvedConnector | undefined;
+  legacyDefaults?: LegacyDefaults;
+}): Promise<InitAnswers> {
+  const configurationDirectoryName = existing
+    ? path.basename(existing.configurationDirectory)
+    : await ask.text({ message: 'Configuration folder name (settings.ts + rules/)', defaultValue: 'qa' });
+
+  const workspaceRoot = existing
+    ? existing.connector.configurationDirectory
+    : await ask.text({ message: 'Workspace root, relative to the repository root', defaultValue: '.' });
+
+  const includeCoverageRule = await ask.confirm({ message: 'Enable the built-in test-coverage rule?', defaultValue: true });
+  const goal = includeCoverageRule
+    ? await ask.number({ message: 'Desired line coverage per file (%)', defaultValue: legacyDefaults.goal ?? 80, min: 1, max: 100 })
+    : 80;
+  const maxCoverageAttempts = includeCoverageRule
+    ? await ask.number({ message: 'Max agent attempts to reach coverage', defaultValue: legacyDefaults.maxCoverageAttempts ?? 3, min: 1, max: 10 })
+    : 3;
+  const maxQualityAttempts = includeCoverageRule
+    ? await ask.number({ message: 'Max agent attempts to fix test quality', defaultValue: legacyDefaults.maxQualityAttempts ?? 2, min: 0, max: 10 })
+    : 2;
+
+  const provider = await ask.select<'claude' | 'codex' | 'kiro'>({
+    message: 'Default provider (can still be changed per run)',
+    defaultValue: legacyDefaults.provider ?? 'claude',
+    choices: [
+      { value: 'claude', label: 'Claude Code' },
+      { value: 'codex', label: 'OpenAI Codex CLI' },
+      { value: 'kiro', label: 'Kiro CLI' },
+    ],
+  });
+  const permissions = await ask.select<'workspace' | 'projects'>({
+    message: 'Default edit permission scope',
+    defaultValue: legacyDefaults.permissions ?? 'workspace',
+    choices: [
+      { value: 'workspace', label: 'Whole workspace (recommended)' },
+      { value: 'projects', label: 'Only the target project(s)' },
+    ],
+  });
+  const concurrency = await ask.number({ message: 'Files processed in parallel', defaultValue: legacyDefaults.concurrency ?? 1, min: 1, max: 8 });
+
+  // Not asked interactively — rarely tuned on first setup — but carried over verbatim from any
+  // existing configuration so migrating never silently drops an operational limit that was set.
+  const maxBudgetUsdPerAttempt = legacyDefaults.maxBudgetUsdPerAttempt ?? 1;
+  const attemptTimeoutMinutes = legacyDefaults.attemptTimeoutMinutes ?? 10;
+  const scoreBatchSize = legacyDefaults.scoreBatchSize ?? 4;
+
+  return {
+    configurationDirectoryName,
+    workspaceRoot,
+    includeCoverageRule,
+    goal,
+    maxCoverageAttempts,
+    maxQualityAttempts,
+    provider,
+    fastModel: legacyDefaults.models?.fast,
+    capableModel: legacyDefaults.models?.capable,
+    permissions,
+    concurrency,
+    maxBudgetUsdPerAttempt,
+    attemptTimeoutMinutes,
+    scoreBatchSize,
+    bashPatterns: legacyDefaults.bashPatterns,
+  };
+}
+
+const renderSettingsTs = (answers: InitAnswers): string => {
+  const modelsLine =
+    answers.fastModel || answers.capableModel
+      ? `\n    ${answers.provider}: { models: { ${[
+          answers.fastModel ? `fast: '${answers.fastModel}'` : undefined,
+          answers.capableModel ? `capable: '${answers.capableModel}'` : undefined,
+        ]
+          .filter(Boolean)
+          .join(', ')} } },`
+      : '';
+  const bashLine = answers.bashPatterns
+    ? `\n    bash: [${answers.bashPatterns.map((pattern) => `'${pattern}'`).join(', ')}],`
+    : '';
+
+  return `import { defineSettings } from '${PACKAGE_NAME}';
+
+// Generated by \`review init\`. Committed configuration for this workspace — package upgrades
+// never rewrite this file. Tune anything here; see the ${PACKAGE_NAME} README for every field.
+export default defineSettings({
+  workspace: { root: '${answers.workspaceRoot}' },
+  providers: {${modelsLine}
+  },
+  permissions: {${bashLine}
+  },
+  agent: {
+    maxBudgetUsdPerAttempt: ${answers.maxBudgetUsdPerAttempt},
+    attemptTimeoutMinutes: ${answers.attemptTimeoutMinutes},
+    scoreBatchSize: ${answers.scoreBatchSize},
+    concurrency: ${answers.concurrency},
+  },
+});
+`;
+};
+
+const renderCoverageRuleTs = (answers: InitAnswers): string => `import { createTestCoverageRule } from '${PACKAGE_NAME}';
+
+// Generated by \`review init\`. Options: createTestCoverageRule. Set \`disabled: true\` to turn it off.
+export default createTestCoverageRule({
+  goal: ${answers.goal},
+  maxCoverageAttempts: ${answers.maxCoverageAttempts},
+  maxQualityAttempts: ${answers.maxQualityAttempts},
+});
+`;
+
+export interface InitResult {
+  connectorPath: string;
+  configurationDirectory: string;
+  created: string[];
+  skipped: string[];
+}
+
+/** Never overwrites a file that already exists — repeated `init` only fills in what's missing. */
+function writeIfMissing({ file, content, created, skipped }: { file: string; content: string; created: string[]; skipped: string[] }): void {
+  if (fs.existsSync(file)) {
+    skipped.push(file);
+    return;
+  }
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, content);
+  created.push(file);
+}
+
+export function generateConnectorAndFiles({
+  invocationDirectory,
+  answers,
+  existing,
+}: {
+  invocationDirectory: string;
+  answers: InitAnswers;
+  existing: ResolvedConnector | undefined;
+}): InitResult {
+  const created: string[] = [];
+  const skipped: string[] = [];
+
+  const connectorPath = existing?.connectorPath ?? findConnectorPath({ startDirectory: invocationDirectory }) ?? path.join(invocationDirectory, CONNECTOR_FILE_NAME);
+  const configurationDirectory =
+    existing?.configurationDirectory ?? path.join(path.dirname(connectorPath), answers.configurationDirectoryName);
+
+  if (!fs.existsSync(connectorPath)) {
+    writeConnector({ connectorPath, configurationDirectory });
+    created.push(connectorPath);
+  } else {
+    skipped.push(connectorPath);
+  }
+
+  if (!findSettingsFile(configurationDirectory)) {
+    writeIfMissing({ file: path.join(configurationDirectory, 'settings.ts'), content: renderSettingsTs(answers), created, skipped });
+  } else {
+    skipped.push(path.join(configurationDirectory, 'settings.ts'));
+  }
+
+  if (answers.includeCoverageRule) {
+    writeIfMissing({
+      file: path.join(configurationDirectory, 'rules', 'coverage.rule.ts'),
+      content: renderCoverageRuleTs(answers),
+      created,
+      skipped,
+    });
+  }
+
+  return { connectorPath, configurationDirectory, created, skipped };
+}
+
+/** Adds a `review` script to the consumer's package.json only when one isn't already defined. */
+export function addReviewScriptIfMissing({ packageJsonPath, logger }: { packageJsonPath: string; logger: Logger }): void {
+  if (!fs.existsSync(packageJsonPath)) return;
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+  packageJson.scripts ??= {};
+
+  if (packageJson.scripts.review) {
+    if (packageJson.scripts.review !== 'review') {
+      logger.warn(`${path.relative(path.dirname(packageJsonPath), packageJsonPath)} already has a "review" script (${JSON.stringify(packageJson.scripts.review)}); left it as is`);
+    }
+    return;
+  }
+  packageJson.scripts.review = 'review';
+  fs.writeFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
+  logger.success(`added a "review" script to ${path.relative(path.dirname(packageJsonPath), packageJsonPath)}`);
+}
+
+export async function runInitWizard({
+  invocationDirectory,
+  ask,
+  logger,
+  configPath,
+  legacyDefaults,
+}: {
+  invocationDirectory: string;
+  ask: Ask;
+  logger: Logger;
+  configPath?: string;
+  legacyDefaults?: LegacyDefaults;
+}): Promise<InitResult> {
+  const existing = resolveConnector({ invocationDirectory, explicitConnectorPath: configPath });
+  if (existing) logger.detail(`found an existing connector at ${existing.connectorPath}; only missing files are added`);
+
+  const answers = await askInitQuestions({ ask, existing, legacyDefaults });
+  const result = generateConnectorAndFiles({ invocationDirectory, answers, existing });
+
+  result.created.forEach((file) => logger.success(`created ${path.relative(invocationDirectory, file)}`));
+  result.skipped.forEach((file) => logger.detail(`already exists, left as is: ${path.relative(invocationDirectory, file)}`));
+
+  addReviewScriptIfMissing({ packageJsonPath: path.join(path.dirname(result.connectorPath), 'package.json'), logger });
+  return result;
+}

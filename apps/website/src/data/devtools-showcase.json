@@ -1,0 +1,80 @@
+{
+  "capturedWith": {
+    "libraryVersion": "16.0.4-beta",
+    "commit": "e78d4f1",
+    "chrome": "153.0.8010.52",
+    "theme": "light"
+  },
+  "shots": [
+    {
+      "id": "app",
+      "title": "The playground app",
+      "file": "app.png",
+      "width": 801,
+      "height": 1352
+    },
+    {
+      "id": "whole-screen",
+      "title": "The whole DevTools window",
+      "file": "whole-screen.png",
+      "width": 2048,
+      "height": 1082
+    },
+    {
+      "id": "store-list",
+      "title": "Store list",
+      "file": "store-list.png",
+      "width": 351,
+      "height": 1014
+    },
+    {
+      "id": "logs-list",
+      "title": "Logs list",
+      "file": "logs-list.png",
+      "width": 315,
+      "height": 969
+    },
+    {
+      "id": "state-changes",
+      "title": "State changes for the selected log",
+      "file": "state-changes.png",
+      "width": 734,
+      "height": 979
+    },
+    {
+      "id": "time-logs",
+      "title": "Logs in time order",
+      "file": "time-logs.png",
+      "width": 1052,
+      "height": 1014
+    },
+    {
+      "id": "restore-dialog",
+      "title": "Restore confirmation",
+      "file": "restore-dialog.png",
+      "width": 448,
+      "height": 173
+    },
+    {
+      "id": "state-tab",
+      "title": "State tab",
+      "file": "state-tab.png",
+      "width": 1052,
+      "height": 1014
+    },
+    {
+      "id": "action-groups",
+      "title": "Actions grouped by name",
+      "file": "action-groups.png",
+      "width": 1052,
+      "height": 1014
+    },
+    {
+      "id": "actions-tab",
+      "title": "Actions tab",
+      "file": "actions-tab.png",
+      "width": 1052,
+      "height": 1014
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "react-hooks-global-states-dev-tools",
-  "version": "1.0.1",
+  "name": "react-global-state-hooks",
+  "version": "1.0.3",
   "permissions": [],
   "background": {
     "service_worker": "lib/service_worker.js"

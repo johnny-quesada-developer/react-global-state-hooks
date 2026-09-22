@@ -1,6 +1,6 @@
 {
   "name": "react-global-state-hooks",
-  "version": "16.0.4-beta",
+  "version": "16.0.5",
   "private": true,
   "description": "Monorepo for the react-global-state-hooks family of packages (universal, web, react-native).",
   "workspaces": [
@@ -31,7 +31,10 @@
     "version-bump": "node scripts/version-bump.mjs",
     "version:check": "node scripts/versions-remote.mjs",
     "coverage": "node scripts/coverage-report.mjs",
-    "graph": "nx graph"
+    "review": "review",
+    "rgsh": "tsx libs/monkey_patch/src/cli/main.ts",
+    "graph": "nx graph",
+    "preview:dev": "nx preview:dev devtools"
   },
   "scriptsInfo": {
     "test": "--reporter=verbose"
@@ -77,10 +80,11 @@
     "@types/react-dom": "^18.2.18",
     "@typescript-eslint/eslint-plugin": "^4.9.1",
     "@typescript-eslint/parser": "^4.9.1",
+    "@vitejs/plugin-react": "^4.3.1",
+    "@vitest/coverage-v8": "^2.1.9",
+    "code-review": "^1.0.0-beta-1",
     "easy-cancelable-promise": "^1.0.1",
     "esbuild": "^0.24.0",
-    "@vitejs/plugin-react": "^4.3.1",
-    "vite": "^5.4.1",
     "eslint": "^9.39.1",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-plugin-import": "^2.22.1",
@@ -88,10 +92,11 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^4.2.0",
     "globals": "^14.0.0",
+    "istanbul-lib-coverage": "^3.2.2",
+    "istanbul-lib-report": "^3.0.1",
+    "istanbul-reports": "^3.1.7",
     "jiti": "^2.6.1",
     "jsdom": "^26.1.0",
-    "vitest": "^2.1.9",
-    "@vitest/coverage-v8": "^2.1.9",
     "nx": "^23.0.0",
     "prettier": "^3.6.2",
     "react": "^18.2.0",
@@ -99,6 +104,11 @@
     "tslib": "^2.6.2",
     "tsx": "^4.19.0",
     "typescript": "^5.8.2",
-    "typescript-eslint": "^8.46.3"
+    "typescript-eslint": "^8.46.3",
+    "vite": "^5.4.1",
+    "vitest": "^2.1.9"
+  },
+  "dependencies": {
+    "tailwind-variants": "^3.3.1"
   }
 }

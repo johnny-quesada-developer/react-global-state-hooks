@@ -11,6 +11,8 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./vitest.setup.ts'],
+    // Minimal per-test output: with this many tests the default verbose reporter dominates runtime.
+    reporters: ['dot'],
     // The universal variant is the base behavior; it runs the neutral suite (test/universal) and
     // has no persistence-specific tests of its own.
     include: ['../test/universal/**/*.{test,spec}.{ts,tsx}'],

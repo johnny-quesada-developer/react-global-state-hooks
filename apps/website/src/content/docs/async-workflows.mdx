@@ -1,0 +1,41 @@
+---
+title: Async workflows
+description: Model loading, error and retry in state, keep bookkeeping in metadata, and ignore stale responses.
+section: Guides and recipes
+order: 1
+---
+
+import { CodeBlock } from '../../ui/CodeBlock';
+import { Callout } from '../../ui/Callout';
+import store from '@examples/async/store.ts?raw';
+import { links, withBase } from '../../lib/site';
+
+## The problem this solves
+
+A request has more than a result. The screen needs to know it is loading, that it failed, and what to do
+next. And when a user triggers two requests, the older answer must not overwrite the newer one.
+
+## Put every displayed state in the store
+
+Keep `status`, the data and the error in the state. Components subscribe to what they show and re-render when
+it changes. An async action returns a promise, so callers can also await it.
+
+<CodeBlock code={store} lang="ts" title="store.ts" />
+
+## Steps
+
+1. **Start.** Set `status: 'loading'` and clear the previous error. A retry is the same action.
+2. **Guard against stale answers.** Give each request an id. Keep the latest id in metadata, since nothing
+   displays it, and drop an answer whose id is no longer the latest.
+3. **Finish.** Set `success` with the data, or `error` with a message.
+4. **Inject the fetcher.** Passing the fetch function into a store factory lets tests control timing without a
+   network.
+
+<Callout type="warning" title="Metadata is for values components never show">
+  If a component displays it, it belongs in the state. Changing metadata does not re-render anything.
+</Callout>
+
+## See it run
+
+The [Async workflows example](../../examples/async-workflows/) runs this store with a simulated failing
+server, and its tests cover success, error with retry, and the stale-answer case.

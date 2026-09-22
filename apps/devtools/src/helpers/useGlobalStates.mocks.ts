@@ -1,4 +1,4 @@
-import { transformEntities, normalizeExampleLogs } from './useGlobalStates.mocks.tools';
+import { normalizeExampleLogs } from './useGlobalStates.mocks.tools';
 
 const devToolsExampleRaw = {
   entities: {
@@ -2280,6 +2280,3 @@ export const todoListExample = {
   },
   ids: ['m1mkagw98kfas', 'm1mkagwabml8h'],
 };
-
-export const initialValueMock = transformEntities(devToolsExample);
-//export const initialValueMock = transformEntities(devToolsExample);

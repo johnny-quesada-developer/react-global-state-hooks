@@ -1,0 +1,74 @@
+# Builds apps/website and publishes it to GitHub Pages:
+#   https://johnny-quesada-developer.github.io/react-global-state-hooks/
+#
+# This workflow only deploys the website. Publishing the npm packages is a separate, manual process
+# (scripts/publish-all.mjs) and is never triggered from here.
+#
+# One-time setup: repository Settings -> Pages -> Build and deployment -> Source: "GitHub Actions".
+name: Deploy website
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'apps/website/**'
+      - 'public/**'
+      - 'libs/web/src/**'
+      - 'libs/universal/src/**'
+      - '.github/workflows/deploy-website.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  ASTRO_TELEMETRY_DISABLED: '1'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile --ignore-scripts
+
+      - name: Test
+        run: yarn nx run website:test
+
+      - name: Type-check
+        run: yarn nx run website:ts-check
+
+      - name: Lint
+        run: yarn nx run website:lint
+
+      - name: Build
+        run: yarn nx run website:build
+
+      - name: Check internal links
+        run: yarn --cwd apps/website check:links
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/website/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

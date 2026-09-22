@@ -9,6 +9,8 @@ export default mergeConfig(
     test: {
       globals: true,
       environment: 'jsdom',
+      // Minimal per-test output: with this many tests the default verbose reporter dominates runtime.
+      reporters: ['dot'],
       include: ['src/**/*.{test,spec}.{ts,tsx}'],
     },
   }),

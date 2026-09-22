@@ -1,0 +1,44 @@
+{
+  "name": "react-global-state-hooks-website",
+  "private": true,
+  "version": "16.0.5",
+  "type": "module",
+  "description": "Documentation, examples and learning site for react-global-state-hooks. Deployed to GitHub Pages; never published to npm.",
+  "scripts": {
+    "sync:media": "node scripts/sync-media.mjs",
+    "search:index": "node scripts/dev-search-index.mjs",
+    "dev": "yarn sync:media && yarn search:index && astro dev",
+    "build": "yarn sync:media && rm -rf public/pagefind && astro build && pagefind --site dist --output-subdir pagefind",
+    "preview": "astro preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --fix --max-warnings=0",
+    "ts-check": "astro check",
+    "check:links": "node scripts/check-links.mjs",
+    "make:og": "node scripts/make-og.mjs",
+    "capture:devtools:showcase": "node scripts/capture-devtools-showcase.mjs"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^8.0.1",
+    "@astrojs/react": "^6.0.6",
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.3.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "shiki": "^4.4.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@emnapi/runtime": "^1.7.1",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/react": "^16.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "jsdom": "^26.1.0",
+    "pagefind": "^1.5.2",
+    "playwright-core": "^1.55.0",
+    "sharp": "^0.35.4",
+    "typescript": "^5.8.2",
+    "vitest": "^2.1.9"
+  }
+}

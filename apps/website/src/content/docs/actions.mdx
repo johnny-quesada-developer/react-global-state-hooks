@@ -1,0 +1,57 @@
+---
+title: Actions
+description: Group state changes behind named functions, return values, call other actions, and extend a store from outside.
+section: Core concepts
+order: 3
+---
+
+import { CodeBlock } from '../../ui/CodeBlock';
+import { Callout } from '../../ui/Callout';
+import todoActions from '@snippets/actions/todo-actions.ts?raw';
+import externalActions from '@snippets/actions/external-actions.ts?raw';
+
+## The problem this solves
+
+Free-form `setState` calls scatter the rules for changing state across components. Actions give each change a
+name and keep the rules in one place. They are optional.
+
+## Define actions on a store
+
+Each action is a function that returns a function. The outer function takes your arguments. The inner one
+receives the store tools.
+
+<CodeBlock code={todoActions} lang="ts" title="todo-actions.ts" />
+
+The tools passed to the inner function are `setState`, `getState`, `setMetadata`, `metadata`, `getMetadata`,
+`subscribe` and `actions` (the store's own action object).
+
+In components, the hook's second item is the actions object:
+
+```tsx
+const [todos, actions] = useTodos((state) => state.todos);
+actions.add('Write docs');
+```
+
+Outside React use `useTodos.actions.add(...)`. Whatever an action returns is returned to the caller, so an async
+action returns a promise.
+
+<Callout type="note" title="setState is still on the hook">
+  Defining actions changes what the tuple's second item is. `useTodos.setState` still exists on the hook for
+  code that needs to bypass the actions, but the type of the second tuple item is the actions object.
+</Callout>
+
+## Extend a store from outside
+
+`actions(store, config)` binds an extra group of actions to a store you did not define, or to keep a file
+small. Actions in the same group call each other with `this`.
+
+<CodeBlock code={externalActions} lang="ts" title="external-actions.ts" />
+
+`actions<API>()({...})` (a template) lets you define actions before the store exists and bind them later with
+`template(api)`. That is how you attach internal actions in `onInit`. See the
+[TypeScript](../typescript/) page for how to get `API`.
+
+<Callout type="warning" title="Every key must return a function">
+  If an action returns something other than a function, the store throws an error that names the key when the
+  action is called. The types do not catch this, so it surfaces at runtime.
+</Callout>

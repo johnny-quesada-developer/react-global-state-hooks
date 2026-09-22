@@ -1,0 +1,44 @@
+{
+  "name": "website",
+  "sourceRoot": "apps/website/src",
+  "projectType": "application",
+  "tags": ["scope:website", "type:app"],
+  "//": "Deployed to GitHub Pages by .github/workflows/deploy-website.yml. Never published to npm; scripts/publish-all.mjs uses an explicit package list that does not include this project.",
+  "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn dev", "cwd": "apps/website" }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "inputs": [
+        "production",
+        "{workspaceRoot}/public/**/*",
+        "{workspaceRoot}/libs/web/src/**/*",
+        "{workspaceRoot}/libs/universal/src/**/*"
+      ],
+      "outputs": ["{projectRoot}/dist"],
+      "options": { "command": "yarn build", "cwd": "apps/website" }
+    },
+    "preview": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn preview", "cwd": "apps/website" }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn test", "cwd": "apps/website" }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn lint", "cwd": "apps/website" }
+    },
+    "lint:fix": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn lint:fix", "cwd": "apps/website" }
+    },
+    "ts-check": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn ts-check", "cwd": "apps/website" }
+    }
+  }
+}

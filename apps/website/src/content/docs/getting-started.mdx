@@ -1,0 +1,110 @@
+---
+title: Getting started
+description: Install react-global-state-hooks, create a store, read and update it, select slices, add actions, and use state outside React.
+section: Getting started
+order: 1
+---
+
+import { PACKAGE_VERSION, links } from '../../lib/site';
+import { CodeBlock } from '../../ui/CodeBlock';
+import { Callout } from '../../ui/Callout';
+import { InstallCommand } from '../../ui/InstallCommand';
+import createStore from '@snippets/getting-started/Counter.ts?raw';
+import readAndUpdate from '@snippets/getting-started/read-and-update.tsx?raw';
+import selectSlice from '@snippets/getting-started/Labels.tsx?raw';
+import selectDerived from '@snippets/getting-started/select-derived.tsx?raw';
+import actionsStore from '@snippets/getting-started/actions.ts?raw';
+import useActions from '@snippets/getting-started/use-actions.tsx?raw';
+import outsideReact from '@snippets/getting-started/outside-react.ts?raw';
+import persist from '@snippets/getting-started/persist.ts?raw';
+
+## Install
+
+<InstallCommand client:idle />
+
+The package needs React 18 or newer and ships its own TypeScript types. It has no provider to mount
+and no build plugin to configure.
+
+<Callout type="note" title="Version documented here">
+  These pages are written against <strong>{PACKAGE_VERSION}</strong>, with executable examples and tests against
+  the workspace source.
+</Callout>
+
+## Create a store
+
+A store is created with one call. The value you get back is a React hook, and the same function also
+carries the store's API (`getState`, `setState`, `subscribe` and more).
+
+<CodeBlock code={createStore} lang="ts" title="counter-store.ts" />
+
+The store lives at module scope, outside the React tree. Any component that imports the hook shares it.
+
+## Read and update state
+
+Inside a component the hook looks like `useState`: it returns the value and a setter. The setter takes a new
+value or an updater function.
+
+<CodeBlock code={readAndUpdate} lang="tsx" title="CounterButton.tsx" />
+
+<Callout type="warning" title="Create new objects">
+  Subscribers are notified only when the new state is a different reference from the current one. Mutating the
+  existing object and passing it back does not notify subscribers. Return a new object, as in the updater above.
+</Callout>
+
+## Select a slice
+
+Passing a selector subscribes the component to just that part of the state. The selector runs when the
+store changes, and the component re-renders only if the result is different.
+
+<CodeBlock code={selectSlice} lang="tsx" title="Labels.tsx" />
+
+A component that reads only `count` is not re-rendered when `step` changes. The
+[homepage demo](../../) shows this with live render counters.
+
+### Selectors that build new values
+
+The comparison between the previous and the next selected value is strict equality (`===`). A selector such
+as `filter` or `map` returns a new array every time it runs, so by default it looks like a change on every
+store update. Pass `isEqual` to compare the result by content:
+
+<CodeBlock code={selectDerived} lang="tsx" title="OpenTodos.tsx" />
+
+`shallowCompare` is exported by the package. You can also pass your own `(current, next) => boolean`.
+
+## Add actions
+
+Actions group your updates behind names. An action is a function that returns a function; the inner
+function receives the store tools such as `setState` and `getState`.
+
+<CodeBlock code={actionsStore} lang="ts" title="counter-actions.ts" />
+
+When a store has actions, the second item returned by the hook is the actions object instead of a setter.
+
+<CodeBlock code={useActions} lang="tsx" title="Counter.tsx" />
+
+`setState` is still available on the hook (`useCounter.setState`) when you need to update outside the actions.
+
+## Use state outside React
+
+The hook function also works as a plain store object. This is useful in API clients, event handlers and
+anything else that is not a component.
+
+<CodeBlock code={outsideReact} lang="ts" title="session.ts" />
+
+`subscribe` calls your callback immediately with the current value. Pass `{ skipFirst: true }` as the last
+argument to wait for the first change instead.
+
+## Persist to localStorage
+
+The web package can save a store to `localStorage` by adding a key.
+
+<CodeBlock code={persist} lang="ts" title="preferences.ts" />
+
+Persistence is skipped when `localStorage` is not available, for example while rendering on the server.
+For server-rendered apps, follow the [hydration guidance](../persistence/#what-to-watch-for) to keep the first
+browser render consistent with the server HTML.
+
+## Where to go next
+
+- Watch the <a href={links.videoTutorial}>video tutorial</a> or try the <a href={links.liveDemo}>live demo</a>.
+- Continue with [Stores and hooks](../stores-and-hooks/) and [Selectors and derived state](../selectors-and-derived-state/), or browse the [examples](../../examples/).

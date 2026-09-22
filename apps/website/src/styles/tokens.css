@@ -1,0 +1,58 @@
+/*
+ * Design tokens. White pages; pastel colour lives on surfaces, strong colour on text and actions.
+ * Text/surface pairs are contrast-checked by src/lib/contrast.test.ts, which parses this file.
+ */
+:root {
+  /* palette */
+  --color-bg: #ffffff;
+  --color-text: #20332d;
+  --color-text-muted: #4a5f57;
+  --color-primary: #24634b;
+  --color-primary-hover: #1b4e3b;
+  --color-on-primary: #ffffff;
+  --color-mint: #e4f2e8;
+  --color-sky: #e5f2fa;
+  --color-sky-text: #1d5578;
+  --color-yellow: #fff0b8;
+  --color-line: #d3dfd9;
+  --color-line-strong: #7c9488;
+  --color-focus: #1d5578;
+
+  /* type */
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: clamp(2rem, 4.2vw, 2.75rem);
+
+  /* spacing scale (4px base) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4.5rem;
+
+  /* shape */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --shadow-sm: 0 1px 2px rgb(32 51 45 / 0.06);
+  --shadow-md: 0 2px 10px rgb(32 51 45 / 0.08);
+
+  /* layout */
+  --gutter: 1rem;
+  --page-max: 90rem;
+  --header-height: 3.5rem;
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --gutter: 1.5rem;
+  }
+}

@@ -7,8 +7,15 @@ import sendMessageFromMonkeyPath from './sendMessageFromMonkeyPath';
 import { SubActionJsonEnum } from './schema/SubActionJson';
 import { softClone } from './tools/softClone';
 import { EntityAdapter } from './tools/EntityAdapter';
-import { onReactDevToolsConnect, getGlobalThis, getReactBuildType } from './tools/react';
-import { deletePreviousSessionStacks, maybeCleanupPreviousStateMetadata } from './maybeCleanupPreviousStateMetadata';
+import { normalizeStorePath } from './tools/normalizeStorePath';
+import {
+  onReactDevToolsConnect,
+  getGlobalThis,
+  getReactBuildType,
+  getCurrentFiber,
+  addFiberUnmountSubscription,
+  type Fiber,
+} from './tools/react';
 import { mergeState } from './mergeState';
 import formatFromStore from 'json-storage-formatter/formatFromStore';
 import isFunction from 'json-storage-formatter/isFunction';
@@ -20,17 +27,76 @@ import { tryCatch } from 'easy-cancelable-promise/tryCatch';
 import type { AnyFunction } from 'react-global-state-hooks';
 
 const global = getGlobalThis(globalThis);
+const isBrowser = typeof window !== 'undefined';
 
-// devtools panel do not refresh with the page reload, so we need to cleanup previous session data on reload
-const previousSessionId = sessionStorage.getItem('REACT_GLOBAL_STATE_HOOK_DEBUG');
-deletePreviousSessionStacks(previousSessionId);
+const observeRejection = <T>(value: T): T => {
+  if (isPromise(value)) value.catch(() => undefined);
+  return value;
+};
 
-const sessionId = uniqueId('session:');
-sessionStorage.setItem('REACT_GLOBAL_STATE_HOOK_DEBUG', sessionId);
+// The devtools panel does not reload with the page. On every page load the patch re-executes, so
+// we clear everything the panel held for the previous load and start fresh. '*' means "clear all".
+// Guarded so a load-time environment without a usable messaging channel (SSR, tests importing
+// helpers) cannot throw during module eval.
+if (isBrowser) {
+  tryCatch(() =>
+    sendMessageFromMonkeyPath({
+      id: uniqueId('cleanup:'),
+      action: 'CLEAR_GLOBAL_STATES',
+      payload: {
+        globalStatePath: '*',
+      },
+    }),
+  );
+}
 
 type RegisteredStore = { store: GlobalStoreParameter; args: unknown; storePath: string };
 
 const globalStatesById = new EntityAdapter<string, RegisteredStore>();
+
+/**
+ * Fiber-based lifecycle cleanup.
+ *
+ * When a store is created during a React render (context providers, or a store created inside a
+ * component via useState/useMemo), we associate its storeId with the currently-rendering fiber.
+ * When React unmounts that fiber, we delete those stores. Stores created at module scope have no
+ * current fiber and are left alone (they live for the page's lifetime).
+ *
+ * React double-buffers a component's fiber (current <-> alternate), and the object passed to
+ * onCommitFiberUnmount may be either half of that pair, so we key BOTH the fiber and its alternate
+ * and union-lookup on unmount.
+ */
+const storeIdsByFiber = new WeakMap<Fiber, Set<string>>();
+
+const addStoreIdToFiber = (fiber: Fiber, storeId: string) => {
+  const ids = storeIdsByFiber.get(fiber) ?? new Set<string>();
+  ids.add(storeId);
+  storeIdsByFiber.set(fiber, ids);
+};
+
+/** Associate a store with the fiber that created it (if any). No-op at module scope. */
+const registerStoreForFiber = (storeId: string): boolean => {
+  const fiber = getCurrentFiber();
+  if (!fiber) return false;
+
+  addStoreIdToFiber(fiber, storeId);
+  if (fiber.alternate) addStoreIdToFiber(fiber.alternate, storeId);
+  return true;
+};
+
+addFiberUnmountSubscription((fiber) => {
+  const ids = new Set<string>([
+    ...(storeIdsByFiber.get(fiber) ?? []),
+    ...(fiber.alternate ? (storeIdsByFiber.get(fiber.alternate) ?? []) : []),
+  ]);
+
+  if (!ids.size) return;
+
+  for (const storeId of ids) sendDeleteGlobalStateMessage(storeId);
+
+  storeIdsByFiber.delete(fiber);
+  if (fiber.alternate) storeIdsByFiber.delete(fiber.alternate);
+});
 
 /**
  * Re-emits the minimal set of messages needed to recreate every live store at its
@@ -104,19 +170,41 @@ onReactDevToolsConnect(() => {
 });
 
 // connector function, extends the instances of GlobalStore to add devtool capabilities
-global.REACT_GLOBAL_STATE_HOOK_DEBUG = (store, args, storePath) => {
-  // if there was a fast refresh, we need to cleanup the previous global state
-  // we do it based on the stack trace of the global state creation which should be unique
-  // there cannot be two different global states with the same stack trace
-  maybeCleanupPreviousStateMetadata({ sessionId, globalStatePath: storePath });
-
+const debugHook: NonNullable<typeof global.REACT_GLOBAL_STATE_HOOK_DEBUG> = (store, args, rawStorePath) => {
   const storeId = uniqueId('store-id:');
 
+  // Strip bundler cache-bust query strings (Vite's `?v=`/`?t=`) from the creation-stack path so it
+  // is STABLE across reloads and HMR. Without this, the edited module's own frame gets a fresh
+  // `?t=<timestamp>` on every HMR, so the same creation site never matches its previous path and
+  // the untrack-on-same-path check below silently fails (leaving duplicate instances). Done once at
+  // creation, not on the hot path.
+  const storePath = normalizeStorePath(rawStorePath);
+
+  // Tie this store to the fiber creating it (if inside a render), so it's cleaned up when that
+  // component unmounts. Module-scope stores have no current fiber and are skipped. The return
+  // value classifies the store: fiber stores have a real lifecycle; non-fiber (module-scope /
+  // dynamic) stores do not, and are handled by the untrack-on-same-path + re-announce-on-interaction
+  // flow below.
+  const isFiber = registerStoreForFiber(storeId);
+
   store._DEV_TOOLS_STORE_ID = storeId;
+  store._DEV_TOOLS_FIBER = isFiber;
+  // Stash creation inputs on the instance so an untracked non-fiber store can rebuild its own
+  // announce payload later (it will no longer be in globalStatesById to look them up).
+  store._DEV_TOOLS_ARGS = args;
+  store._DEV_TOOLS_PATH = storePath;
 
   store._DEV_TOOLS_IS_CONTEXT = Boolean(
-    (args as { __devtools_isContextStore?: boolean } | undefined)?.__devtools_isContextStore
+    (args as { __devtools_isContextStore?: boolean } | undefined)?.__devtools_isContextStore,
   );
+
+  // A non-fiber store has no unmount lifecycle, so DevTools can only ever track ONE instance per
+  // creation path. When a new one appears at a path already held by another non-fiber store, the
+  // previous id is stale (HMR re-eval) OR the panel simply can't show both (dynamic factory) —
+  // either way we stop tracking the previous id(s) at that path. Removing from DevTools does not
+  // kill the store: if a superseded store is still alive, its next instrumented setState
+  // re-announces it (see makeSetStateWrapper).
+  if (!isFiber) untrackNonFiberStoresAtPath(storePath, storeId);
 
   // store the global state instance by its id for later usage
   // this reference allow the devtool panel to request interactions with specific global states
@@ -134,7 +222,7 @@ global.REACT_GLOBAL_STATE_HOOK_DEBUG = (store, args, storePath) => {
     }),
   });
 
-  const { setState, getMainHook, dispose, getStoreActionsMap, createSelectorHook, __onUnMountContext } = store;
+  const { setState, getMainHook, dispose, getStoreActionsMap, createSelectorHook } = store;
 
   // setState is captured here, before store.setState is overridden below.
   // Passing this original reference into the action wrappers prevents double-logging:
@@ -216,11 +304,6 @@ global.REACT_GLOBAL_STATE_HOOK_DEBUG = (store, args, storePath) => {
     getStoreActionsMap: () => getStoreActionsMap.call(store),
   });
 
-  store.__onUnMountContext = () => {
-    sendDeleteGlobalStateMessage(storeId);
-    __onUnMountContext?.call(store);
-  };
-
   store.dispose = () => {
     sendDeleteGlobalStateMessage(storeId);
     dispose.call(store);
@@ -229,14 +312,20 @@ global.REACT_GLOBAL_STATE_HOOK_DEBUG = (store, args, storePath) => {
   return store;
 };
 
+if (isBrowser) global.REACT_GLOBAL_STATE_HOOK_DEBUG = debugHook;
+
 export function makeSetStateWrapper(
   args: {
     store: GlobalStoreParameter;
     setState: GlobalStoreParameter['setState'];
   },
-  logCallback: (args: { state: unknown; config: SetStateConfigJson }) => void
+  logCallback: (args: { state: unknown; config: SetStateConfigJson }) => void,
 ) {
   return (setter: unknown | (() => unknown), config: SetStateConfigJson = {}) => {
+    // If this non-fiber store was untracked (superseded at its path but still alive), bring it back
+    // BEFORE logging the mutation so the log lands on a tracked store.
+    reAnnounceIfUntracked(args.store);
+
     const previousState = args.store.state;
     const newState = isFunction(setter) ? setter(previousState) : setter;
 
@@ -278,9 +367,9 @@ export function makeGetStoreActionsMapWrapper({
     const isStateChangeScope = logsPrefix.includes('onStateChanged');
 
     // avoid creating a infinite loop when setState is called from onStateChanged
-    const stateSetter = (isStateChangeScope ? store.setActualStateWithoutValidations : setState) as React.Dispatch<
-      React.SetStateAction<unknown>
-    >;
+    const stateSetter = (
+      isStateChangeScope ? store.setActualStateWithoutValidations : setState
+    ) as React.Dispatch<React.SetStateAction<unknown>>;
 
     const logger = new Logger({ storeId: store._DEV_TOOLS_STORE_ID, prefix: `${logsPrefix}:action` });
 
@@ -319,7 +408,7 @@ export function makeGetStoreActionsMapWrapper({
 
           try {
             const handlerResult = runWithActiveActionContext(storeId, { onSetState }, () =>
-              actionHandler.apply(actions, parameters)
+              actionHandler.apply(actions, parameters),
             );
 
             if (!isPromise(handlerResult)) {
@@ -447,6 +536,56 @@ export function sendDeleteGlobalStateMessage(globalStateId: string) {
   });
 }
 
+/**
+ * Stop tracking every NON-FIBER store currently registered at `storePath`, except `keepId`.
+ *
+ * A non-fiber store has no unmount lifecycle, so only one instance per path can be tracked. When a
+ * new one is created at a path already held by others (HMR re-eval, or a dynamic factory producing
+ * a fresh instance), the previous ones are untracked. This does NOT kill them: a still-alive store
+ * re-announces itself on its next setState (see reAnnounceIfUntracked).
+ */
+function untrackNonFiberStoresAtPath(storePath: string, keepId: string) {
+  for (const [id, entry] of globalStatesById.entries()) {
+    if (id === keepId) continue;
+    if (entry.store._DEV_TOOLS_FIBER) continue; // fiber stores keep their own lifecycle
+    if (entry.storePath !== storePath) continue;
+
+    sendDeleteGlobalStateMessage(id);
+  }
+}
+
+/**
+ * Self-heal a non-fiber store that DevTools stopped tracking (e.g. it was superseded at its path by
+ * a sibling created later, but it is still alive and now mutating). We re-register it and re-emit a
+ * RE_ADD_GLOBAL_STATE — a distinct message from ADD_GLOBAL_STATE so it does NOT wipe the path's
+ * other tracked stores; it just brings this one back. No-op for fiber stores (real lifecycle) and
+ * for stores already tracked.
+ */
+function reAnnounceIfUntracked(store: GlobalStoreParameter) {
+  if (store._DEV_TOOLS_FIBER) return;
+
+  const storeId = store._DEV_TOOLS_STORE_ID;
+  // No id => never instrumented/registered (e.g. a bare store in a unit test). Nothing to re-add.
+  if (!storeId) return;
+  if (globalStatesById.has(storeId)) return;
+
+  const storePath = store._DEV_TOOLS_PATH ?? '';
+  const args = store._DEV_TOOLS_ARGS;
+
+  globalStatesById.add(storeId, { store, args, storePath });
+
+  sendMessageFromMonkeyPath({
+    id: uniqueId('path:'),
+    action: 'RE_ADD_GLOBAL_STATE',
+    payload: getGlobalStateMetaPayload({
+      globalState: store,
+      globalStateId: storeId,
+      globalStatePath: storePath,
+      args,
+    }),
+  });
+}
+
 export function addDevtoolsListeners() {
   // once the devtools are connected, send the current build type
   onReactDevToolsConnect(() => {
@@ -470,7 +609,7 @@ export function addDevtoolsListeners() {
           parameters: string;
           state: string;
         };
-      }>
+      }>,
     ) => {
       if (event.source !== window) return;
 
@@ -484,26 +623,45 @@ export function addDevtoolsListeners() {
         return replaySnapshot();
       }
 
+      // Resolve a live store by id. The devtools panel may hold stores that are not (or no longer)
+      // live on the page — e.g. a loaded snapshot whose store never mounted here, or a store that
+      // unmounted after the panel captured it. Dispatching to such an id must be a no-op, not a
+      // crash: reading `.store` off an undefined registry entry used to throw a TypeError on the
+      // page (Cannot read properties of undefined).
+      const resolveLiveStore = (id: string): GlobalStoreParameter | null => {
+        return globalStatesById.get(id)?.store ?? null;
+      };
+
       // try to execute an specific action of and specific global state
       if (action === 'EXECUTE_ACTION') {
         const { payload } = event.data;
         const { actionName, globalStateId, parameters: parametersString } = payload;
+        const globalState = resolveLiveStore(globalStateId);
+        if (!globalState) {
+          console.warn(`[devtools] EXECUTE_ACTION: no live store for ${globalStateId} (not connected)`);
+          return;
+        }
+
         const args: unknown[] = Function(`return [${parametersString.trim()}]`)();
-        const globalState = globalStatesById.get(globalStateId).store;
 
         const actionFunction: (...args: unknown[]) => unknown = Object.getOwnPropertyDescriptor(
           globalState.actions,
-          actionName
+          actionName,
         )?.value;
 
-        return actionFunction.apply(globalState.actions, args);
+        return observeRejection(actionFunction.apply(globalState.actions, args));
       }
 
       if (action === 'SET_STATE') {
         const { payload } = event.data;
         const { globalStateId, parameters: parametersString } = payload;
+        const globalState = resolveLiveStore(globalStateId);
+        if (!globalState) {
+          console.warn(`[devtools] SET_STATE: no live store for ${globalStateId} (not connected)`);
+          return;
+        }
+
         const setter: unknown = Function(`return [${parametersString.trim()}]`)()[0];
-        const globalState = globalStatesById.get(globalStateId).store;
 
         return globalState.setState.apply(globalState, [setter]);
       }
@@ -512,7 +670,11 @@ export function addDevtoolsListeners() {
         const { payload } = event.data;
         const { globalStateId, state } = payload;
 
-        const globalState = globalStatesById.get(globalStateId).store;
+        const globalState = resolveLiveStore(globalStateId);
+        if (!globalState) {
+          console.warn(`[devtools] RESTORE_STATE: no live store for ${globalStateId} (not connected)`);
+          return;
+        }
 
         // restore the actual state
         const newState = formatFromStore(state);
@@ -527,8 +689,8 @@ export function addDevtoolsListeners() {
         // the restore could be partial due non serializable data
         return globalState.setState.apply(globalState, [merged]);
       }
-    }
+    },
   );
 }
 
-addDevtoolsListeners();
+if (isBrowser) addDevtoolsListeners();
