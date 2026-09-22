@@ -8,7 +8,10 @@ import { usePreferences } from '../state/preferences';
 beforeEach(() => window.localStorage.clear());
 afterEach(() => {
   cleanup();
-  usePreferences.reset({ packageManager: 'npm', miniMeHidden: false }, {});
+  usePreferences.reset(
+    { packageManager: 'npm', miniMeHidden: false, heroSoundOffered: false, heroSound: null },
+    {},
+  );
 });
 
 describe('InstallCommand', () => {

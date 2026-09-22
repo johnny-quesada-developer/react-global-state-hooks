@@ -12,7 +12,12 @@ export function NameCard() {
         Name
         <input
           value={name}
-          onChange={(event) => setProfile((profile) => ({ ...profile, name: event.target.value }))}
+          onChange={(event) =>
+            setProfile((profile) => ({
+              ...profile,
+              name: event.target.value,
+            }))
+          }
         />
       </label>
     </section>

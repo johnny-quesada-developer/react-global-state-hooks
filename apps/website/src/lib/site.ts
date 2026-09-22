@@ -28,6 +28,10 @@ export const links = {
   liveDemo: required('PUBLIC_LIVE_DEMO_URL', import.meta.env.PUBLIC_LIVE_DEMO_URL),
   videoTutorial: required('PUBLIC_VIDEO_TUTORIAL_URL', import.meta.env.PUBLIC_VIDEO_TUTORIAL_URL),
   easyWebWorker: required('PUBLIC_EASY_WEB_WORKER_URL', import.meta.env.PUBLIC_EASY_WEB_WORKER_URL),
+  jsonStorageFormatter: required(
+    'PUBLIC_JSON_STORAGE_FORMATTER_URL',
+    import.meta.env.PUBLIC_JSON_STORAGE_FORMATTER_URL,
+  ),
   githubProfile: required('PUBLIC_GITHUB_PROFILE_URL', import.meta.env.PUBLIC_GITHUB_PROFILE_URL),
   linkedin: required('PUBLIC_LINKEDIN_URL', import.meta.env.PUBLIC_LINKEDIN_URL),
 } as const;

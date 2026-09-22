@@ -1,0 +1,11 @@
+$ npx rgsh --store todos
+
+[todos] toggle(2)
+  todos[1].done: false → true
+  duration: 23ms
+
+$ npx rgsh action pipeline runAsyncFailing
+
+[pipeline] runAsyncFailing()
+  stage: "uploading" → "failed"
+  lastError: null → "Upload rejected by server"

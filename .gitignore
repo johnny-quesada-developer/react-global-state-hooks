@@ -37,5 +37,9 @@ openapi.json
 .claude/settings.local.json
 /brag-output
 /brag-output-landscape
+/brag-output-agentic
+/brag-output-runtime-debugging
+/brag-output-verify-fix
 .DS_Store
 apps/website/public/pagefind/
+.playwright-mcp/

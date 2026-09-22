@@ -11,6 +11,7 @@ interface ImportMetaEnv {
   readonly PUBLIC_LIVE_DEMO_URL: string;
   readonly PUBLIC_VIDEO_TUTORIAL_URL: string;
   readonly PUBLIC_EASY_WEB_WORKER_URL: string;
+  readonly PUBLIC_JSON_STORAGE_FORMATTER_URL: string;
   readonly PUBLIC_GITHUB_PROFILE_URL: string;
   readonly PUBLIC_LINKEDIN_URL: string;
 }

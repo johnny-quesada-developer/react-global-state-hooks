@@ -19,7 +19,7 @@ export const isValidAgentPort = (port: unknown): port is number =>
 
 /** Persisted in the panel's own localStorage, so the choice survives closing DevTools. */
 export const agentSettings$ = createGlobalState(
-  { enabled: true, port: AGENT_DEFAULT_PORT, allowControl: false } as AgentSettings,
+  { enabled: true, port: AGENT_DEFAULT_PORT, allowControl: true } as AgentSettings,
   {
     name: 'agentSettings',
     localStorage: {

@@ -1,11 +1,14 @@
 import type { ReactNode } from 'react';
 import { links, withBase } from '../lib/site';
-import { AuthorChip } from './AuthorChip';
+import { AgenticDevTools } from './AgenticDevTools';
+import { AuthorNote } from './AuthorNote';
 import { CodeBlock } from './CodeBlock';
 
 interface HomePageProps {
   storeSource: string;
   nameCardSource: string;
+  oneLinerSource: string;
+  agenticSession: string;
   /**
    * Interactive islands, passed from the Astro page as named slots (`slot="install"` becomes the
    * `install` prop at render time). Astro's type checker cannot see slots, so they are optional here.
@@ -15,7 +18,15 @@ interface HomePageProps {
   demo?: ReactNode;
 }
 
-export function HomePage({ storeSource, nameCardSource, install, video, demo }: HomePageProps) {
+export function HomePage({
+  storeSource,
+  nameCardSource,
+  oneLinerSource,
+  agenticSession,
+  install,
+  video,
+  demo,
+}: HomePageProps) {
   const gettingStarted = withBase('docs/getting-started/');
 
   const benefits = [
@@ -38,6 +49,63 @@ export function HomePage({ storeSource, nameCardSource, install, video, demo }: 
       title: 'localStorage in one option',
       body: 'Add a key to save and restore a store in the browser. Validation and versioning are optional.',
       href: `${gettingStarted}#persist-to-localstorage`,
+    },
+  ];
+
+  const learningPath = [
+    {
+      title: 'Getting started',
+      body: 'Install the package, create your first store, select a slice, add an action, persist it.',
+      href: gettingStarted,
+    },
+    {
+      title: 'Examples',
+      body: 'Task list, async loading and retry, persistence and scoped state, each with live source.',
+      href: withBase('examples/'),
+    },
+    {
+      title: 'Agentic DevTools',
+      body: 'Give a coding agent a terminal into the running app: list stores, watch actions, drive state.',
+      href: `${withBase('docs/devtools/')}#drive-it-from-a-terminal`,
+    },
+    {
+      title: 'DevTools extension',
+      body: 'Inspect, edit and time-travel your stores from a Chrome panel.',
+      href: links.chromeStore,
+      external: true,
+    },
+    {
+      title: 'Video tutorial',
+      body: 'A walkthrough of the library on YouTube.',
+      href: links.videoTutorial,
+      external: true,
+    },
+    {
+      title: 'Live demo app',
+      body: 'A larger example app, deployed on GitHub Pages.',
+      href: links.liveDemo,
+      external: true,
+    },
+  ];
+
+  const otherProjects = [
+    {
+      title: 'easy-web-worker',
+      body: 'Runs functions in Web Workers without separate worker files, so parallel work reads like a normal async call.',
+      href: links.easyWebWorker,
+      external: true,
+    },
+    {
+      title: 'json-storage-formatter',
+      body: 'Serializes values that plain JSON.stringify loses — Map, Set, Date, custom classes — for storage and back.',
+      href: links.jsonStorageFormatter,
+      external: true,
+    },
+    {
+      title: 'easy-code-review',
+      body: 'Runs an AI coding agent over your files in small, verified steps, with ordinary code checking every step.',
+      href: withBase('easy-code-review/'),
+      badge: 'Beta, not published',
     },
   ];
 
@@ -65,8 +133,6 @@ export function HomePage({ storeSource, nameCardSource, install, video, demo }: 
                 Explore examples
               </a>
             </p>
-
-            <AuthorChip />
           </div>
 
           <div className="hero__video">{video}</div>
@@ -74,9 +140,16 @@ export function HomePage({ storeSource, nameCardSource, install, video, demo }: 
       </section>
 
       <section className="section container" aria-labelledby="code-heading">
+        <p className="section__eyebrow">The one-liner</p>
+        <div className="one-liner">
+          <CodeBlock code={oneLinerSource} lang="ts" title="counter.ts" />
+          <p className="one-liner__caption">No providers. No context boilerplate. No configuration files.</p>
+        </div>
+
         <h2 id="code-heading">A store is one call. A component is one line.</h2>
         <p className="section__lede">
-          These are the exact files behind the live demo below, not a separate illustration.
+          The demo below needs three named fields to show selective subscriptions. Here are its exact files,
+          not a separate illustration.
         </p>
         <div className="code-pair">
           <CodeBlock code={storeSource} lang="ts" title="store.ts" />
@@ -96,6 +169,8 @@ export function HomePage({ storeSource, nameCardSource, install, video, demo }: 
         </div>
       </section>
 
+      <AgenticDevTools session={agenticSession} />
+
       <section className="section container" aria-labelledby="benefits-heading">
         <h2 id="benefits-heading">What you get</h2>
         <ul className="benefits">
@@ -110,49 +185,46 @@ export function HomePage({ storeSource, nameCardSource, install, video, demo }: 
         </ul>
       </section>
 
+      <AuthorNote />
+
       <section className="section container" aria-labelledby="learn-heading">
         <h2 id="learn-heading">Keep learning</h2>
-        <ul className="learn">
-          <li>
-            <a href={gettingStarted}>Getting started</a> Install, create a store, select, act, persist.
-          </li>
-          <li>
-            <a href={withBase('examples/')}>Examples</a> Task list, async loading and retry, persistence and
-            scoped state, each with live source.
-          </li>
-          <li>
-            <a href={links.videoTutorial} rel="noopener">
-              Video tutorial
-            </a>{' '}
-            Walkthrough on YouTube.
-          </li>
-          <li>
-            <a href={links.liveDemo} rel="noopener">
-              Live demo app
-            </a>{' '}
-            A larger example app on GitHub Pages.
-          </li>
-          <li>
-            <a href={links.chromeStore} rel="noopener">
-              DevTools extension
-            </a>{' '}
-            Inspect, edit and time-travel your stores in Chrome.
-          </li>
-        </ul>
+        <p className="section__lede">A path from your first store to driving one from a terminal.</p>
+        <ol className="resources">
+          {learningPath.map((resource, index) => (
+            <li className="resource" key={resource.title}>
+              <span className="resource__step">{String(index + 1).padStart(2, '0')}</span>
+              <div>
+                <h3>
+                  <a href={resource.href} rel={resource.external ? 'noopener' : undefined}>
+                    {resource.title}
+                  </a>
+                </h3>
+                <p>{resource.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
       </section>
 
       <section className="section container other" aria-labelledby="other-heading">
         <h2 id="other-heading">Other projects</h2>
-        <p>
-          <a href={links.easyWebWorker} rel="noopener">
-            easy-web-worker
-          </a>{' '}
-          runs functions in Web Workers without separate worker files. It lives in its own repository.
-        </p>
-        <p>
-          <a href={withBase('easy-code-review/')}>easy-code-review</a> (beta, not published yet) runs an AI
-          coding agent in small, verified steps.
-        </p>
+        <p className="section__lede">Developer tooling, built the same way as this library.</p>
+        <ul className="resources resources--grid">
+          {otherProjects.map((project) => (
+            <li className="resource" key={project.title}>
+              <div>
+                <h3>
+                  <a href={project.href} rel={project.external ? 'noopener' : undefined}>
+                    {project.title}
+                  </a>
+                  {project.badge && <span className="badge badge--beta">{project.badge}</span>}
+                </h3>
+                <p>{project.body}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
       </section>
     </>
   );

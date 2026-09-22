@@ -39,6 +39,9 @@ export function Header({ pathname, children }: HeaderProps) {
           <a href={examples} aria-current={pathname.startsWith(examples) ? 'page' : undefined}>
             Examples
           </a>
+          <a className="site-nav__agentic" href={`${withBase()}#agentic-devtools`}>
+            Agentic DevTools
+          </a>
           <a href={about} aria-current={pathname.startsWith(about) ? 'page' : undefined}>
             About
           </a>

@@ -4,15 +4,25 @@ import { useHydrated } from './useHydrated';
 export const PACKAGE_MANAGERS = ['npm', 'yarn', 'pnpm'] as const;
 export type PackageManager = (typeof PACKAGE_MANAGERS)[number];
 
+export type HeroSound = 'on' | 'off' | null;
+
 export interface Preferences {
   packageManager: PackageManager;
   miniMeHidden: boolean;
+  heroSoundOffered: boolean;
+  heroSound: HeroSound;
 }
 
-const defaults: Preferences = { packageManager: 'npm', miniMeHidden: false };
+const defaults: Preferences = {
+  packageManager: 'npm',
+  miniMeHidden: false,
+  heroSoundOffered: false,
+  heroSound: null,
+};
 
 /**
- * Visitor preferences shared by every island on every page (install command tab, mini-me strip).
+ * Visitor preferences shared by every island on every page (install command tab, mini-me strip, and whether
+ * the hero video has already played with sound, and the visitor's own sound choice for it).
  * Saved to localStorage; anything unexpected in storage falls back to the defaults.
  */
 export const usePreferences = createGlobalState(defaults, {
@@ -22,13 +32,15 @@ export const usePreferences = createGlobalState(defaults, {
     validator: ({ restored, initial }) => {
       if (typeof restored !== 'object' || restored === null) return initial;
 
-      const { packageManager, miniMeHidden } = restored as Partial<Preferences>;
+      const { packageManager, miniMeHidden, heroSoundOffered, heroSound } = restored as Partial<Preferences>;
 
       return {
         packageManager: PACKAGE_MANAGERS.includes(packageManager as PackageManager)
           ? (packageManager as PackageManager)
           : initial.packageManager,
         miniMeHidden: typeof miniMeHidden === 'boolean' ? miniMeHidden : initial.miniMeHidden,
+        heroSoundOffered: typeof heroSoundOffered === 'boolean' ? heroSoundOffered : initial.heroSoundOffered,
+        heroSound: heroSound === 'on' || heroSound === 'off' ? heroSound : initial.heroSound,
       };
     },
   },

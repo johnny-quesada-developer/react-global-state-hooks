@@ -9,7 +9,10 @@ const Probe = () => <span data-testid="pm">{usePackageManager()}</span>;
 beforeEach(() => window.localStorage.clear());
 afterEach(() => {
   cleanup();
-  usePreferences.reset({ packageManager: 'npm', miniMeHidden: false }, {});
+  usePreferences.reset(
+    { packageManager: 'npm', miniMeHidden: false, heroSoundOffered: false, heroSound: null },
+    {},
+  );
   useSearchDialog.reset({ open: false }, {});
 });
 
@@ -18,7 +21,12 @@ describe('preferences store', () => {
     usePreferences.setState((current) => ({ ...current, packageManager: 'pnpm' }));
 
     const saved = JSON.parse(window.localStorage.getItem('user-preferences') ?? 'null');
-    expect(saved.s).toEqual({ packageManager: 'pnpm', miniMeHidden: false });
+    expect(saved.s).toEqual({
+      packageManager: 'pnpm',
+      miniMeHidden: false,
+      heroSoundOffered: false,
+      heroSound: null,
+    });
   });
 
   it('shares the value between separate React roots', () => {

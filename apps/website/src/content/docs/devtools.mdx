@@ -26,6 +26,7 @@ The DevTools extension connects to your stores in development so you can see wha
 - **Edit** state from the panel and watch the app respond.
 - **Time travel** to an earlier state.
 - **Track actions** to see which one changed the state.
+- **Drive it from a terminal or a coding agent** with `rgsh`.
 
 ## Connect your app
 
@@ -78,6 +79,27 @@ npx rgsh patch todos '{"filter":"done"}'      # merge JSON into the state
 ```
 
 If `ws` is missing, rgsh tells you and prints the install command.
+
+### Use it from a coding agent
+
+A coding agent that can run shell commands can use `rgsh` on the app you have open in Chrome, so it checks what its
+change did instead of guessing from the source.
+
+```bash
+npx rgsh --list                                    # find the store and its action names
+npx rgsh action todos add "Write the docs"         # run it; prints the state changes, then exits
+npx rgsh state todos todos[0].done                 # read the value back
+```
+
+- Each `action`, `patch` and `set` prints the resulting block (state changes as `path: before → after`, the result
+  or the error, and the duration) and exits, so the output is easy to read from a script or an agent.
+- Exit codes: `0` done, `1` failed (unknown store or action, not allowed, the action threw), `2` no store given and
+  no terminal, `3` sent but the page reported nothing within `--timeout`.
+- An unknown store name is answered with the stores that do exist.
+- Changing state is off until you enable "Allow the terminal to change state and run actions" in the panel under
+  the gear, Terminal connection. Watching and reading never change the app.
+- Arguments are JSON data and nothing the terminal sends is evaluated. `rgsh` listens on `127.0.0.1` only.
+- `rgsh` works on store state and actions. It does not click or type in the page.
 
 ## A tour of the panel
 
