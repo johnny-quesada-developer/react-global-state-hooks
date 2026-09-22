@@ -8,7 +8,7 @@ status: beta
 
 import { CodeBlock } from '../../ui/CodeBlock';
 import { Callout } from '../../ui/Callout';
-import { links } from '../../lib/site';
+import { links, withBase } from '../../lib/site';
 import { DevToolsLockup } from '../../ui/DevToolsLockup';
 import { DevToolsShowcase } from '../../ui/DevToolsShowcase';
 
@@ -27,6 +27,20 @@ The DevTools extension connects to your stores in development so you can see wha
 - **Time travel** to an earlier state.
 - **Track actions** to see which one changed the state.
 - **Drive it from a terminal or a coding agent** with `rgsh`.
+
+## Try it on this website
+
+**This website is already connected to DevTools.** Try the extension on the live demos
+before adding anything to your own project. You only need the Chrome extension.
+
+1. <a href={links.chromeStore} target="_blank" rel="noopener noreferrer">Install the Chrome extension (opens in a new tab).</a>
+2. <a href={`${withBase('')}#demo`}>Open the homepage demo.</a> Open Chrome DevTools on that tab and select the react-global-state-hooks panel.
+3. Reload the page with the panel open, then select the **profile** store.
+4. Change the name or click a button in the demo. Watch the state update in the panel, then try editing a value there and see the demo respond.
+
+You can also inspect the stores behind the <a href={withBase('examples/')}>interactive examples</a>.
+This public demo site intentionally includes the debug integration so you can explore it hands-on.
+For your own app, keep the integration in development builds as described below.
 
 ## Connect your app
 

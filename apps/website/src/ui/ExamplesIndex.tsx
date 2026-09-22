@@ -1,4 +1,5 @@
 import { withBase } from '../lib/site';
+import { TryDevTools } from './TryDevTools';
 
 export interface ExampleCard {
   id: string;
@@ -14,6 +15,8 @@ export function ExamplesIndex({ examples }: { examples: ExampleCard[] }) {
         Working examples with live demos. Each one shows the exact source it runs, and the same files are
         tested.
       </p>
+
+      <TryDevTools />
 
       <div className="docs-index__grid">
         {examples.map((example, index) => (

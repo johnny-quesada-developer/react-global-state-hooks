@@ -8,21 +8,23 @@
 
 <div align="center">
 
-**Shared React state. Precise subscriptions. Built-in DevTools.** 🚀
+**Shared state that feels like React.**
 
-_The familiarity of `useState`, with the power of a shared store._
+Build connected React experiences with the familiar `useState` API, focused subscriptions, and persistence that keeps preferences and drafts across browser sessions. Start with a single hook; bring in typed actions, reusable selectors, and scoped stores as your application grows.
 
 [![npm version](https://img.shields.io/npm/v/react-global-state-hooks.svg)](https://www.npmjs.com/package/react-global-state-hooks)
 [![Downloads](https://img.shields.io/npm/dm/react-global-state-hooks.svg)](https://www.npmjs.com/package/react-global-state-hooks)
 [![License](https://img.shields.io/npm/l/react-global-state-hooks.svg)](https://github.com/johnny-quesada-developer/react-global-state-hooks/blob/master/LICENSE)
 
-[**Live Demo**](https://johnny-quesada-developer.github.io/global-hooks-example/) • [**Video Tutorial**](https://www.youtube.com/watch?v=1UBqXk2MH8I) • [**CodePen**](https://codepen.io/johnnynabetes/pen/WNmeGwb?editors=0010)
+[**Website**](https://johnny-quesada-developer.github.io/react-global-state-hooks/) · [**Documentation**](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/) · [**Examples**](https://johnny-quesada-developer.github.io/react-global-state-hooks/examples/) · [**DevTools**](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/devtools/)
+
+Created by [Johnny Quesada](https://johnny-quesada-developer.github.io/react-global-state-hooks/about/), author of the React Global State Hooks family.
 
 </div>
 
 ---
 
-## 🎯 The One-Liner
+## Start with a single hook
 
 ```tsx
 import { createGlobalState } from 'react-global-state-hooks';
@@ -30,7 +32,7 @@ import { createGlobalState } from 'react-global-state-hooks';
 export const useCounter = createGlobalState(0);
 ```
 
-**That's it.** No providers. No context boilerplate. No configuration files. Shared state with a familiar React API.
+A shared store, ready to use. Global hooks work without a provider; use `createContext` when a subtree needs its own instance.
 
 ```tsx
 // Use it anywhere, instantly
@@ -42,9 +44,9 @@ function Counter() {
 
 ---
 
-## 🚀 Built for React applications
+## Built for React applications
 
-### 🎓 **Familiar React API**
+### **Familiar React API**
 
 ```tsx
 // If you know this...
@@ -54,7 +56,7 @@ const [state, setState] = useState(0);
 const [state, setState] = useGlobalState();
 ```
 
-### ⚡ **Precise subscriptions**
+### **Precise subscriptions**
 
 Subscribe to a slice so unrelated store changes do not trigger component updates.
 
@@ -63,14 +65,14 @@ Subscribe to a slice so unrelated store changes do not trigger component updates
 const [name] = useStore((s) => s.user.name);
 ```
 
-### 🔗 **Chainable Selectors**
+### **Chainable Selectors**
 
 ```tsx
 const useUsers = useStore.createSelectorHook((s) => s.users);
 const useAdmins = useUsers.createSelectorHook((users) => users.filter((u) => u.isAdmin));
 ```
 
-### 🎭 **Actions (Optional)**
+### **Actions (Optional)**
 
 ```tsx
 const useAuth = createGlobalState(null, {
@@ -85,7 +87,7 @@ const useAuth = createGlobalState(null, {
 });
 ```
 
-### 🎪 **Context Mode**
+### **Context Mode**
 
 ```tsx
 const Form = createContext({ name: '', email: '' });
@@ -95,9 +97,9 @@ const Form = createContext({ name: '', email: '' });
 </Form.Provider>;
 ```
 
-### 📦 **Non-Reactive API**
+### **Non-Reactive API**
 
-Use state anywhere - even outside React components!
+Read and update your store from event handlers, services, and React components.
 
 ```tsx
 // In API interceptors, WebSockets, utils...
@@ -107,7 +109,7 @@ useAuth.setState({ user: newUser });
 
 ---
 
-## 📦 Installation
+## Installation
 
 ```bash
 npm install react-global-state-hooks
@@ -120,9 +122,9 @@ npm install react-global-state-hooks
 
 ---
 
-## 🎬 Quick Start
+## Quick Start
 
-### 30 Seconds to Global State
+### Your first shared store
 
 ```tsx
 import { createGlobalState } from 'react-global-state-hooks';
@@ -195,13 +197,13 @@ function LoginButton({ authenticate }: { authenticate: () => Promise<User> }) {
 
 ---
 
-## 🌟 Core Features Deep Dive
+## Core Features Deep Dive
 
-### 1️⃣ Global State with `createGlobalState`
+### Global State with `createGlobalState`
 
-Create state that lives outside React's component tree. Perfect for app-wide state!
+Keep app-wide state outside the component tree and subscribe wherever it is needed.
 
-#### 🎨 The Basics
+#### The Basics
 
 ```tsx
 // Primitives
@@ -224,7 +226,7 @@ const useExpensiveState = createGlobalState(() => {
 });
 ```
 
-#### 🎯 Surgical Re-renders with Selectors
+#### Focused subscriptions with Selectors
 
 Selectors keep components subscribed to the state they use.
 
@@ -273,7 +275,7 @@ function NotificationCount() {
 | `useStore()` | Any store value change |
 | `useStore(selector)` | A change to the selected value |
 
-#### ⚡ Computed Values with Dependencies
+#### Computed Values with Dependencies
 
 Derive values from both store state and component-local values, with explicit dependencies.
 
@@ -351,7 +353,7 @@ function AdvancedFiltered() {
 }
 ```
 
-#### 🔗 Reusable Selector Hooks
+#### Reusable Selector Hooks
 
 Compose reusable selector hooks. Each hook returns its selected value directly.
 
@@ -416,7 +418,7 @@ function ActivateAll() {
 }
 ```
 
-**Why this is powerful:**
+**Selector composition:**
 
 | Feature              | Benefit                                    |
 | -------------------- | ------------------------------------------ |
@@ -426,9 +428,9 @@ function ActivateAll() {
 | 🎨 **Clean Code**    | No repetitive selector logic in components |
 | ⚡ **Performance**   | Automatic memoization and change detection |
 
-#### 🎬 Actions - When You Need Structure
+#### Actions - When You Need Structure
 
-Actions aren't required, but they're awesome for organizing mutations!
+Add actions to give your store a clear, reusable mutation API.
 
 ```tsx
 const useStore = createGlobalState(
@@ -519,15 +521,15 @@ function TodoApp() {
   );
 }
 
-// 🤠 Don't worry, you can still go rogue with setState!
+// Direct updates remain available through setState.
 const handleQuickFix = () => {
   useStore.setState((s) => ({ ...s, filter: 'all' }));
 };
 ```
 
-#### 🔌 Non-Reactive API (Use Outside React!)
+#### Store access outside React
 
-Access your state from _anywhere_ - even outside components!
+Use the same store API in components, services, and background workflows.
 
 ```tsx
 const useAuth = createGlobalState({ user: null, token: null });
@@ -569,9 +571,9 @@ const unsubscribe = useAuth.subscribe(
 );
 ```
 
-#### 🔭 Observable Fragments
+#### Observable Fragments
 
-Create observable slices of your state for reactive programming!
+Create observable state slices for subscriptions outside React.
 
 ```tsx
 const useStore = createGlobalState({
@@ -597,7 +599,7 @@ console.log(countObservable.getState()); // Current count value
 const doubledObservable = countObservable.createObservable((count) => count * 2);
 ```
 
-#### 📋 Metadata - Non-Reactive Side Info
+#### Metadata - Non-Reactive Side Info
 
 Keep request counters and timestamps in metadata when they are read only by handlers or background work.
 Put loading indicators and displayed errors in state so components subscribe to their changes.
@@ -621,11 +623,11 @@ function recordFetchedItems(items: string[]) {
 
 ---
 
-### 💾 Persisted State with localStorage
+### Persisted State with localStorage
 
-This package comes with **built-in localStorage integration**! The key insight: **just add a `key` property** and your state automatically persists across browser sessions. No setup, no configuration files, no extra code.
+Keep preferences and drafts across browser sessions with built-in localStorage integration. Add `localStorage: { key }` to a store; the library handles saving and restoration.
 
-### 🎨 Basic Persistence
+### Basic Persistence
 
 ```tsx
 import { createGlobalState } from 'react-global-state-hooks';
@@ -640,14 +642,14 @@ const useSettings = createGlobalState(
 );
 ```
 
-**That's literally all you need!** Your state will automatically:
+With persistence enabled, the store will:
 
 - ✅ Save to localStorage on every change
 - ✅ Restore from localStorage on initialization
 - ✅ Handle JSON serialization/deserialization
-- ✅ Work with any data type (objects, arrays, primitives)
+- ✅ Persist objects, arrays, and primitive values
 
-### 🔒 Safe Persistence with Validation (Optional)
+### Safe Persistence with Validation (Optional)
 
 The `validator` is **completely optional**. Add it only when you need to validate or transform restored data:
 
@@ -682,9 +684,9 @@ const useContacts = createGlobalState(new Map(), {
 - ✅ You changed your data structure and need to migrate old data
 - ✅ You want to validate data integrity
 - ✅ You need to transform restored data
-- ❌ Simple use cases - validator is not required!
+For simple cases, you can omit the validator.
 
-### 🔄 Versioning & Migration (Optional)
+### Versioning & Migration (Optional)
 
 Handle breaking changes gracefully with optional versioning:
 
@@ -734,7 +736,7 @@ const useUserPrefs = createGlobalState(
 4. After migration, `validator` runs (if provided)
 5. New version is saved to localStorage
 
-### 🎯 Selective Persistence (Optional)
+### Selective Persistence (Optional)
 
 Only persist specific parts of your state:
 
@@ -778,11 +780,11 @@ const useAppState = createGlobalState(
 );
 ```
 
-### 2️⃣ Scoped State with `createContext`
+### Scoped State with `createContext`
 
-Sometimes you need state scoped to a component tree. That's what `createContext` is for!
+Use `createContext` to give each provider its own store instance.
 
-#### 🎪 The Basics
+#### The Basics
 
 ```tsx
 import { createContext } from 'react-global-state-hooks';
@@ -824,7 +826,7 @@ function FormPreview() {
 }
 ```
 
-#### 🎁 Provider Variations
+#### Provider Variations
 
 ```tsx
 const ThemeContext = createContext('light');
@@ -851,7 +853,7 @@ function App() {
 }
 ```
 
-#### 🎯 Context + Selectors = ❤️
+#### Context selectors
 
 Use the same selectors, actions and metadata with state scoped to each provider.
 
@@ -880,7 +882,7 @@ function EmailField() {
 }
 ```
 
-#### 🎭 Context with Actions
+#### Context with Actions
 
 ```tsx
 const CounterContext = createContext(0, {
@@ -923,9 +925,9 @@ function App() {
 }
 ```
 
-#### 🔗 Reusable Context Selectors
+#### Reusable Context Selectors
 
-Yes, chainable selectors work here too!
+Compose reusable selectors for scoped stores with the same API.
 
 ```tsx
 const DataContext = createContext({
@@ -960,9 +962,9 @@ function UserList() {
 }
 ```
 
-#### 🧪 What About Testing?
+#### Testing context stores
 
-Do you need to access the context to spy on state changes, inject test data, or manipulate state directly? No problem!
+Access the context store directly to inspect changes, inject test data, and exercise updates.
 
 ```tsx
 import { renderHook } from '@testing-library/react';
@@ -988,9 +990,9 @@ describe('CounterContext', () => {
 });
 ```
 
-#### 🎬 Lifecycle Hooks
+#### Lifecycle Hooks
 
-React to context lifecycle events!
+Connect initialization and cleanup to the context lifecycle.
 
 ```tsx
 const DataContext = createContext([], {
@@ -1030,11 +1032,11 @@ function App() {
 
 ---
 
-### 3️⃣ External Actions with `actions`
+### External Actions with `actions`
 
-Extend any store with additional actions without modifying it! Perfect for separating concerns! 🎯
+Define actions in focused modules and bind them to an existing store.
 
-#### 💪 Direct Binding
+#### Direct Binding
 
 ```tsx
 import { createGlobalState, actions } from 'react-global-state-hooks';
@@ -1068,9 +1070,9 @@ counterActions.double(); // count = 10
 counterActions.decrement(3); // count = 7
 ```
 
-#### 🎨 Action Templates (Define Before Ready!)
+#### Action templates
 
-Need actions in contexts or lifecycle hooks (onInit) before the store API is available? Create action templates first, bind them later!
+Define action templates before the store API is available, then bind them in a context or lifecycle callback.
 
 ```tsx
 import { actions, InferAPI, createContext } from 'react-global-state-hooks';
@@ -1121,9 +1123,9 @@ const { loadData } = SessionContext.use.actions();
 console.log(loadData); // undefined
 ```
 
-#### 🔄 Actions Calling Actions
+#### Actions Calling Actions
 
-Actions can call each other in multiple ways!
+Compose actions into larger workflows.
 
 ```tsx
 const useStore = createGlobalState({ count: 0, history: [] }, {
@@ -1170,9 +1172,9 @@ const storeActions = actions(useStore, {
 storeActions.incrementTwice(5);
 ```
 
-#### 🎭 Access Store Actions
+#### Access Store Actions
 
-External actions can call each other with `this` and access the store's public actions!
+External actions can call each other with `this` and access the store's public actions.
 
 ```tsx
 const useStore = createGlobalState(
@@ -1211,7 +1213,7 @@ const extraActions = actions(useStore, {
 extraActions.incrementAndLog(5);
 ```
 
-#### 🎪 Works with Context!
+#### Actions in context stores
 
 ```tsx
 import { actions, InferAPI } from 'react-global-state-hooks';
@@ -1260,11 +1262,11 @@ function Counter() {
 
 ---
 
-## 🔥 Advanced Patterns
+## Advanced Patterns
 
-### 🏗️ Production Architecture (File Organization)
+### Production Architecture (File Organization)
 
-Real-world large-scale applications need clean separation! Here's how to organize a store with actions in separate files, custom hooks, observables, and a namespace pattern:
+Keep each domain easy to navigate with dedicated modules for its store, actions, selector hooks, and observables:
 
 **File Structure:**
 
@@ -1450,9 +1452,9 @@ function TodoApp() {
 - ✅ **Namespace pattern** - Everything bundled: `todos$.useActiveTodos()`, `todos$.activeTodos$`
 - ✅ **Scalable** - Easy to find, test, and maintain individual pieces
 
-### 🎧 Smart Subscriptions
+### Smart Subscriptions
 
-Subscribe to specific slices outside React!
+Subscribe to the state slice your integration needs.
 
 ```tsx
 const useStore = createGlobalState({
@@ -1486,11 +1488,11 @@ unsubRole();
 
 ---
 
-## 🎨 `uniqueId` - Type-Safe Unique IDs
+## `uniqueId` - Type-Safe Unique IDs
 
-Generate branded unique identifiers with compile-time safety!
+Generate unique identifiers with branded types that distinguish one domain from another.
 
-### 🏷️ Basic Usage
+### Basic Usage
 
 ```tsx
 import { uniqueId } from 'react-global-state-hooks';
@@ -1501,9 +1503,9 @@ const id2 = uniqueId('user:'); // "user:a1b2c3d4-e5f6-7890-abcd-ef1234567890"
 const id3 = uniqueId('session:'); // "session:a1b2c3d4-e5f6-7890-abcd-ef1234567890"
 ```
 
-### 🔒 Branded IDs (Type Safety!)
+### Branded identifiers
 
-Create ID generators with compile-time type checking!
+Create ID generators with compile-time type checking.
 
 ```tsx
 // Create branded generators
@@ -1520,7 +1522,7 @@ const postId: PostId = generatePostId(); // ✅ "post:a1b2c3d4-e5f6-7890-abcd-ef
 const wrong: UserId = generatePostId(); // ❌ Type error!
 ```
 
-### 🛡️ Runtime Validation
+### Runtime Validation
 
 ```tsx
 const generateUserId = uniqueId.for('user:');
@@ -1540,9 +1542,9 @@ generateUserId.assert('user:a1b2c3d4-e5f6-7890-abcd-ef1234567890'); // ✅ OK
 generateUserId.assert('post:a1b2c3d4-e5f6-7890-abcd-ef1234567890'); // ❌ Throws error!
 ```
 
-### 🎯 Strict Branding
+### Strict Branding
 
-Maximum type safety with symbol branding!
+Use symbol branding to distinguish identifier types even when their prefixes match.
 
 ```tsx
 declare const UserBrand: unique symbol;
@@ -1561,7 +1563,7 @@ const id1: UserId = generateUserId(); // ✅
 const id2: UserId = generateUserId2(); // ❌ Different brands!
 ```
 
-### 💼 Real-World Example
+### Real-World Example
 
 ```tsx
 import { createGlobalState, uniqueId } from 'react-global-state-hooks';
@@ -1643,44 +1645,47 @@ actions.addTodo('Build feature', userId);
 
 ---
 
-## 🎓 Learning Resources
+## Documentation and examples
 
-| Resource                                                                             | Description                       |
-| ------------------------------------------------------------------------------------ | --------------------------------- |
-| 🎮 [**Live Demo**](https://johnny-quesada-developer.github.io/global-hooks-example/) | Interactive examples              |
-| 🎥 [**Video Tutorial**](https://www.youtube.com/watch?v=1UBqXk2MH8I)                | Full walkthrough                  |
-| 💻 [**CodePen**](https://codepen.io/johnnynabetes/pen/WNmeGwb?editors=0010)          | Try it online                     |
-| 📚 **400+ Tests**                                                                    | Check the test suite for patterns |
+The [React Global State Hooks website](https://johnny-quesada-developer.github.io/react-global-state-hooks/) is the home for current documentation,
+interactive examples, and the DevTools walkthrough.
 
----
-
-## 🌐 Platform-Specific Versions
-
-| Package                                                                                            | Platform             | Special Feature          |
-| -------------------------------------------------------------------------------------------------- | -------------------- | ------------------------ |
-| [`react-hooks-global-states`](https://www.npmjs.com/package/react-hooks-global-states)               | React / React Native | Core library             |
-| [`react-global-state-hooks`](https://www.npmjs.com/package/react-global-state-hooks)               | Web                  | localStorage integration |
-| [`react-native-global-state-hooks`](https://www.npmjs.com/package/react-native-global-state-hooks) | React Native         | AsyncStorage integration |
+| Explore | What you will find |
+| --- | --- |
+| [Getting started](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/getting-started/) | Create your first store and connect it to your UI. |
+| [API and guides](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/) | Selectors, actions, scoped state, persistence, and TypeScript. |
+| [Interactive examples](https://johnny-quesada-developer.github.io/react-global-state-hooks/examples/) | Explore the state model in working browser examples. |
+| [DevTools](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/devtools/) | Inspect state, follow actions, and use the terminal workflow. |
+| [Platform guide](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/platform-and-versions/) | Choose the package and persistence model for your app. |
 
 ---
 
-## 🎉 Why Developers Choose This
+## Choose your package
 
-### At a glance
+The family shares a common state API, with persistence tailored to each platform.
 
-| What You Get                | What You Don't        |
-| --------------------------- | --------------------- |
-| ✅ `useState` API           | ❌ Boilerplate        |
-| ✅ Surgical re-renders      | ❌ Whole-tree updates |
-| ✅ Chainable selectors      | ❌ Repetitive code    |
-| ✅ TypeScript inference     | ❌ Manual typing      |
-| ✅ Global + Context         | ❌ Either/or choice   |
-| ✅ Actions (optional)       | ❌ Required structure |
-| ✅ Familiar hook syntax     | ❌ New component APIs |
+| Package | Best fit |
+| --- | --- |
+| [`react-global-state-hooks`](https://www.npmjs.com/package/react-global-state-hooks) | React web applications with optional localStorage persistence. |
+| [`react-native-global-state-hooks`](https://www.npmjs.com/package/react-native-global-state-hooks) | React Native applications with optional asynchronous persistence. |
+| [`react-hooks-global-states`](https://www.npmjs.com/package/react-hooks-global-states) | The shared core without platform-specific persistence. |
+| [`react-hooks-global-states-debug`](https://www.npmjs.com/package/react-hooks-global-states-debug) | Development instrumentation for the DevTools extension. |
+
+See the [platform guide](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/platform-and-versions/) for package differences
+and the [DevTools guide](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/devtools/) for debug entry points.
 
 ---
 
-## 🚀 Get Started Now
+## Built to grow with your application
+
+- **Familiar from the first hook.** Share state through a `useState`-style API.
+- **Focused subscriptions.** Select the values a component needs.
+- **Composable structure.** Bring in actions, selectors, and scoped stores as your features grow.
+- **A connected debugging workflow.** Follow state and actions with the [DevTools integration](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/devtools/).
+
+---
+
+## Get Started Now
 
 ```bash
 npm install react-global-state-hooks
@@ -1699,14 +1704,23 @@ function App() {
 }
 ```
 
-**That's it. You're done.** 🎉
+Continue with the [guides and interactive examples](https://johnny-quesada-developer.github.io/react-global-state-hooks/) to build your next store.
 
 ---
 
-<div align="center">
+## Built by Johnny Quesada
 
-### Built with ❤️ for developers who value simplicity
+Explore the [project website](https://johnny-quesada-developer.github.io/react-global-state-hooks/), meet [Johnny](https://johnny-quesada-developer.github.io/react-global-state-hooks/about/),
+and help shape what comes next. If the library helps your work, a GitHub star or a
+shared example helps more developers discover it.
 
-**[⭐ Star on GitHub](https://github.com/johnny-quesada-developer/react-global-state-hooks)** • **[📝 Report Issues](https://github.com/johnny-quesada-developer/react-global-state-hooks/issues)** • **[💬 Discussions](https://github.com/johnny-quesada-developer/react-global-state-hooks/discussions)**
+[Star on GitHub](https://github.com/johnny-quesada-developer/react-global-state-hooks) · [Report an issue](https://github.com/johnny-quesada-developer/react-global-state-hooks/issues) · [Explore the source](https://github.com/johnny-quesada-developer/react-global-state-hooks/tree/master/libs/web)
 
-</div>
+## Legacy resources
+
+Earlier demos and walkthroughs are preserved here for reference. For current APIs,
+examples, and setup instructions, start with the [documentation website](https://johnny-quesada-developer.github.io/react-global-state-hooks/).
+
+- [Original browser demo](https://johnny-quesada-developer.github.io/global-hooks-example/)
+- [Original video walkthrough](https://www.youtube.com/watch?v=1UBqXk2MH8I)
+- [Original CodePen example](https://codepen.io/johnnynabetes/pen/WNmeGwb?editors=0010)

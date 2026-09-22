@@ -3,6 +3,7 @@ import { links, withBase } from '../lib/site';
 import { AgenticDevTools } from './AgenticDevTools';
 import { AuthorNote } from './AuthorNote';
 import { CodeBlock } from './CodeBlock';
+import { TryDevTools } from './TryDevTools';
 
 interface HomePageProps {
   storeSource: string;
@@ -139,7 +140,22 @@ export function HomePage({
             </p>
           </div>
 
-          <div className="hero__video">{video}</div>
+          <div className="hero__video">
+            <a className="hero-agentic" href="#agentic-devtools">
+              <span className="hero-agentic__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                  <path d="M10 3 12.5 9.5 19 12l-6.5 2.5L10 21l-2.5-6.5L1 12l6.5-2.5L10 3Z" />
+                  <path d="m20 1 1.1 2.9L24 5l-2.9 1.1L20 9l-1.1-2.9L16 5l2.9-1.1L20 1Z" />
+                </svg>
+              </span>
+              <span className="hero-agentic__copy">
+                <strong>Agentic state management</strong>
+                <span>Live state. Real actions. Results your agent can verify.</span>
+              </span>
+              <span className="hero-agentic__arrow" aria-hidden="true">↗</span>
+            </a>
+            {video}
+          </div>
         </div>
       </section>
 
@@ -161,6 +177,7 @@ export function HomePage({
             renders for every change.
           </p>
           {demo}
+          <TryDevTools />
         </div>
       </section>
 

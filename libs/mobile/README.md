@@ -8,21 +8,23 @@
 
 <div align="center">
 
-**Shared React Native state. Precise subscriptions. Async persistence.** 🚀
+**State that moves with your React Native app.**
 
-_The simplicity of `useState`, shared across your React Native app._ ✨
+Keep screens in sync with shared hooks, focused subscriptions, and asynchronous persistence. Bring the same state model to app-wide data and isolated flows, with typed actions and storage adapters that fit your mobile application.
 
 [![npm version](https://img.shields.io/npm/v/react-native-global-state-hooks.svg)](https://www.npmjs.com/package/react-native-global-state-hooks)
 [![Downloads](https://img.shields.io/npm/dm/react-native-global-state-hooks.svg)](https://www.npmjs.com/package/react-native-global-state-hooks)
-[![License](https://img.shields.io/npm/l/react-native-global-state-hooks.svg)](https://github.com/johnny-quesada-developer/react-native-global-state-hooks/blob/master/LICENSE)
+[![License](https://img.shields.io/npm/l/react-native-global-state-hooks.svg)](https://github.com/johnny-quesada-developer/react-global-state-hooks/blob/master/LICENSE)
 
-[**NPM**](https://www.npmjs.com/package/react-native-global-state-hooks) • [**GitHub**](https://github.com/johnny-quesada-developer/react-native-global-state-hooks) • [**Core API Demo**](https://johnny-quesada-developer.github.io/global-hooks-example/) • [**Video Tutorial**](https://www.youtube.com/watch?v=1UBqXk2MH8I)
+[**Website**](https://johnny-quesada-developer.github.io/react-global-state-hooks/) · [**Documentation**](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/) · [**Examples**](https://johnny-quesada-developer.github.io/react-global-state-hooks/examples/) · [**DevTools**](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/devtools/)
+
+Created by [Johnny Quesada](https://johnny-quesada-developer.github.io/react-global-state-hooks/about/), author of the React Global State Hooks family.
 
 </div>
 
 ---
 
-## 🎯 The One-Liner
+## Start with a single hook
 
 ```tsx
 import { createGlobalState } from "react-native-global-state-hooks";
@@ -30,7 +32,7 @@ import { createGlobalState } from "react-native-global-state-hooks";
 export const useCounter = createGlobalState(0);
 ```
 
-**That's it.** No providers. No Redux boilerplate. No configuration files. Just shared state with a familiar React API. 🎨
+A shared store, ready to use across your screens. Global hooks work without a provider; use `createContext` for isolated flows.
 
 ```tsx
 import { Button } from "react-native";
@@ -44,9 +46,9 @@ function Counter() {
 
 ---
 
-## 🚀 Built for React applications
+## Built for React applications
 
-### 🎓 **Familiar React API**
+### **Familiar React API**
 
 If you know `useState`, the basic API already feels familiar:
 
@@ -58,7 +60,7 @@ const [count, setCount] = useState(0);
 const [count, setCount] = useCounter();
 ```
 
-### ⚡ **Surgical Re-renders**
+### **Focused subscriptions**
 
 Subscribe to only the part of the state your component needs.
 
@@ -68,7 +70,7 @@ const [name] = useStore((state) => state.user.name);
 
 The component only needs to react when its selected value changes.
 
-### 🔗 **Chainable Selectors**
+### **Chainable Selectors**
 
 Build reusable state hooks from other selector hooks.
 
@@ -78,7 +80,7 @@ const useUsers = useStore.createSelectorHook((state) => state.users);
 const useAdmins = useUsers.createSelectorHook((users) => users.filter((user) => user.role === "admin"));
 ```
 
-### 🎭 **Actions (Optional)**
+### **Actions (Optional)**
 
 Keep mutation logic close to the store when you want more structure.
 
@@ -94,7 +96,7 @@ const useCounter = createGlobalState(0, {
 });
 ```
 
-### 🎪 **Context Mode**
+### **Context Mode**
 
 Need isolated state instead of app-wide state? Use the same state model inside a Provider.
 
@@ -109,7 +111,7 @@ const Form = createContext({
 </Form.Provider>;
 ```
 
-### 📱 **Native Async Persistence**
+### **Native Async Persistence**
 
 Persist state with React Native async storage semantics.
 
@@ -128,7 +130,7 @@ const useSettings = createGlobalState(
 );
 ```
 
-### 📦 **Non-Reactive API**
+### **Non-Reactive API**
 
 Read, update, or subscribe to state outside React components.
 
@@ -143,7 +145,7 @@ useAuth.setState((state) => ({
 
 ---
 
-## 📦 Installation
+## Installation
 
 ```bash
 npm install react-native-global-state-hooks
@@ -155,7 +157,7 @@ or
 yarn add react-native-global-state-hooks
 ```
 
-### 💾 Persisted State
+### Persisted State
 
 The core state library does **not** require AsyncStorage.
 
@@ -175,9 +177,9 @@ yarn add @react-native-async-storage/async-storage
 
 ---
 
-## 🎬 Quick Start
+## Quick Start
 
-### 30 Seconds to Global State
+### Your first shared store
 
 ```tsx
 import { Button, Text, View } from "react-native";
@@ -282,13 +284,13 @@ Now you have:
 
 ---
 
-## 🌟 Core Features Deep Dive
+## Core Features Deep Dive
 
-### 1️⃣ Global State with `createGlobalState`
+### Global State with `createGlobalState`
 
 Create state that lives outside the component tree and can be consumed anywhere in your React Native app.
 
-#### 🎨 The Basics
+#### The Basics
 
 ```tsx
 import { createGlobalState } from "react-native-global-state-hooks";
@@ -311,7 +313,7 @@ const useTodos = createGlobalState([
 ]);
 ```
 
-#### 🎯 Surgical Re-renders with Selectors
+#### Focused subscriptions with Selectors
 
 ```tsx
 const useStore = createGlobalState({
@@ -348,7 +350,7 @@ function NotificationCount() {
 
 Each component subscribes to the value it actually uses instead of blindly reacting to the whole state object.
 
-#### ⚡ Computed Values with Dependencies
+#### Computed Values with Dependencies
 
 Selectors can also depend on component-local values.
 
@@ -402,7 +404,7 @@ const [todos] = useTodos(
 );
 ```
 
-#### 🔗 Reusable Selector Hooks
+#### Reusable Selector Hooks
 
 Create hooks from hooks and compose them.
 
@@ -438,7 +440,7 @@ function UserStats() {
 }
 ```
 
-#### 🎬 Actions — When You Need Structure
+#### Actions — When You Need Structure
 
 Actions are optional. Add them when you want a defined mutation API.
 
@@ -501,7 +503,7 @@ function TodoActions() {
 }
 ```
 
-#### 🔌 Non-Reactive API — Use Outside React
+#### Non-Reactive API — Use Outside React
 
 The store hook also exposes its API directly.
 
@@ -546,7 +548,7 @@ unsubscribe();
 
 This is useful for networking layers, app lifecycle handlers, push-notification handlers, analytics, and other code that does not render UI.
 
-#### 🔭 Observable Fragments
+#### Observable Fragments
 
 Create observable slices of state for reactive workflows outside components.
 
@@ -569,7 +571,7 @@ console.log(countObservable.getState());
 const doubledObservable = countObservable.createObservable((count) => count * 2);
 ```
 
-#### 📋 Metadata — Non-Reactive Side Information
+#### Metadata — Non-Reactive Side Information
 
 Metadata is useful for information that belongs to the store but should not independently trigger component updates.
 
@@ -609,13 +611,13 @@ const [, , { isAsyncStorageReady, asyncStorageKey }] = useSettings();
 
 ---
 
-### 💾 Persisted State with Async Storage
+### Persisted State with Async Storage
 
 This is the major platform-specific feature of `react-native-global-state-hooks`.
 
 Unlike browser `localStorage`, React Native persistence is **asynchronous**. A persisted store starts with its initial state, checks storage asynchronously, validates or migrates the restored value, and then marks the persistence initialization as ready.
 
-#### 🎨 Basic Persistence
+#### Basic Persistence
 
 ```tsx
 import { createGlobalState } from "react-native-global-state-hooks";
@@ -661,7 +663,7 @@ The built-in persistence flow:
 - ✅ Supports custom error handling
 - ✅ Uses a configurable async storage backend
 
-#### ⏳ Async Restore & `isAsyncStorageReady`
+#### Async Restore & `isAsyncStorageReady`
 
 Because storage access is asynchronous, the initial state can be available before persisted state has finished loading.
 
@@ -690,7 +692,7 @@ That initialization can:
 
 This is fundamentally different from synchronous browser `localStorage`.
 
-#### 🔒 Validation
+#### Validation
 
 The current Native persistence configuration includes a `validator`.
 
@@ -723,7 +725,7 @@ Return behavior:
 
 The validator also runs after migration.
 
-#### 🔄 Versioning & Migration
+#### Versioning & Migration
 
 Persisted schemas evolve. Native persistence can migrate old values before committing them to the current store.
 
@@ -775,7 +777,7 @@ With the built-in persistence path:
 3. The migrated result goes through `validator`
 4. The normalized state is committed and persisted
 
-#### 🚨 Persistence Errors
+#### Persistence Errors
 
 Handle storage, serialization, validation, or migration failures without mixing them into your UI state.
 
@@ -797,7 +799,7 @@ const useSettings = createGlobalState(initialSettings, {
 
 If `onError` is omitted, the library reports persistence failures to `console.error`.
 
-#### 🔧 Custom Async Storage Manager
+#### Custom Async Storage Manager
 
 By default, the library attempts to use:
 
@@ -831,7 +833,7 @@ Configure the manager before persisted stores need to initialize.
 
 The library still owns formatting, restoration, validation, and version envelopes when you use this low-level manager.
 
-#### 🧩 Per-Store Persistence Adapter
+#### Per-Store Persistence Adapter
 
 Need one store to use a completely different persistence mechanism? Use `adapter`.
 
@@ -875,11 +877,11 @@ Use an adapter when a specific store needs custom persistence behavior.
 
 ---
 
-### 2️⃣ Scoped State with `createContext`
+### Scoped State with `createContext`
 
 Sometimes state should belong to one subtree rather than the entire application.
 
-#### 🎪 The Basics
+#### The Basics
 
 ```tsx
 import { TextInput, View } from "react-native";
@@ -927,7 +929,7 @@ function FormFields() {
 }
 ```
 
-#### 🎁 Provider Variations
+#### Provider Variations
 
 Use the default value:
 
@@ -953,7 +955,7 @@ Or derive a value from the context's initial value:
 </Theme.Provider>
 ```
 
-#### 🎯 Context + Selectors = ❤️
+#### Context selectors
 
 ```tsx
 const Profile = createContext({
@@ -973,7 +975,7 @@ function UserName() {
 }
 ```
 
-#### 🎭 Context with Actions
+#### Context with Actions
 
 ```tsx
 const Counter = createContext(0, {
@@ -1007,7 +1009,7 @@ function CounterScreen() {
 }
 ```
 
-#### 🔗 Reusable Context Selectors
+#### Reusable Context Selectors
 
 ```tsx
 const Data = createContext({
@@ -1035,7 +1037,7 @@ function ActiveUsers() {
 }
 ```
 
-#### 🧪 Testing Context Stores
+#### Testing Context Stores
 
 The Provider can expose its store tools through a wrapper helper.
 
@@ -1050,7 +1052,7 @@ context.current.actions.increment();
 console.log(context.current.getState());
 ```
 
-#### 🎬 Lifecycle Hooks
+#### Lifecycle Hooks
 
 Context stores can react to Provider creation, mount, and cleanup.
 
@@ -1079,9 +1081,9 @@ const Session = createContext(
 
 ---
 
-## 🔥 Advanced Patterns
+## Advanced Patterns
 
-### 🏗️ Production Architecture
+### Production Architecture
 
 A larger application can keep each domain store self-contained.
 
@@ -1194,7 +1196,7 @@ function TodoList() {
 }
 ```
 
-### 🎧 Smart Subscriptions
+### Smart Subscriptions
 
 Subscribe to only the fragment an integration needs.
 
@@ -1225,7 +1227,7 @@ unsubscribeRole();
 unsubscribeConnection();
 ```
 
-### 📲 App Lifecycle Integration
+### App Lifecycle Integration
 
 The non-reactive API is useful when React Native lifecycle events happen outside a screen.
 
@@ -1248,11 +1250,11 @@ subscription.remove();
 
 ---
 
-## 🎨 `uniqueId` — Type-Safe Unique IDs
+## `uniqueId` — Type-Safe Unique IDs
 
 `react-native-global-state-hooks` also exports `uniqueId`.
 
-### 🏷️ Basic Usage
+### Basic Usage
 
 ```tsx
 import { uniqueId } from "react-native-global-state-hooks";
@@ -1269,7 +1271,7 @@ const userId = uniqueId("user:");
 const todoId = uniqueId("todo:");
 ```
 
-### 🔒 Branded IDs
+### Branded IDs
 
 Create identifiers that TypeScript treats as different domains.
 
@@ -1294,7 +1296,7 @@ openUser(userId); // ✅
 openUser(todoId); // ❌ TypeScript error
 ```
 
-### 💼 Real-World Example
+### Real-World Example
 
 ```tsx
 type User = {
@@ -1316,51 +1318,47 @@ const useApp = createGlobalState({
 
 ---
 
-## 🎓 Learning Resources
+## Documentation and examples
 
-| Resource                                                                                                | Description                                          |
-| ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| 📦 [**NPM Package**](https://www.npmjs.com/package/react-native-global-state-hooks)                     | Published React Native package                       |
-| 💻 [**GitHub Repository**](https://github.com/johnny-quesada-developer/react-native-global-state-hooks) | Source, tests, and issues                            |
-| 🎮 [**Core API Demo**](https://johnny-quesada-developer.github.io/global-hooks-example/)                | Browser demo of the shared state-management concepts |
-| 🎥 [**Video Tutorial**](https://www.youtube.com/watch?v=1UBqXk2MH8I)                                   | State-management walkthrough                         |
-| 📚 [**Core Package**](https://www.npmjs.com/package/react-hooks-global-states)                          | Shared state engine used by the platform packages    |
+The [React Global State Hooks website](https://johnny-quesada-developer.github.io/react-global-state-hooks/) is the home for current documentation,
+interactive examples, and the DevTools walkthrough.
 
----
-
-## 🌐 Platform-Specific Versions
-
-| Package                                                                                            | Platform                 | Persistence                                          |
-| -------------------------------------------------------------------------------------------------- | ------------------------ | ---------------------------------------------------- |
-| [`react-hooks-global-states`](https://www.npmjs.com/package/react-hooks-global-states)             | Core React state library | No platform-specific persistence layer               |
-| [`react-global-state-hooks`](https://www.npmjs.com/package/react-global-state-hooks)               | Web                      | `localStorage` integration                           |
-| [`react-native-global-state-hooks`](https://www.npmjs.com/package/react-native-global-state-hooks) | React Native             | Async persistence with optional AsyncStorage backend |
-
-The state-management concepts are intentionally similar across the packages, but their persistence models are **not interchangeable**.
+| Explore | What you will find |
+| --- | --- |
+| [Getting started](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/getting-started/) | Create your first store and connect it to your UI. |
+| [API and guides](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/) | Selectors, actions, scoped state, persistence, and TypeScript. |
+| [Interactive examples](https://johnny-quesada-developer.github.io/react-global-state-hooks/examples/) | Explore the state model in working browser examples. |
+| [DevTools](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/devtools/) | Inspect state, follow actions, and use the terminal workflow. |
+| [Platform guide](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/platform-and-versions/) | Choose the package and persistence model for your app. |
 
 ---
 
-## 🎉 Why Developers Choose This
+## Choose your package
 
-### At a glance
+The family shares a common state API, with persistence tailored to each platform.
 
-| What You Get                        | What You Avoid                     |
-| ----------------------------------- | ---------------------------------- |
-| ✅ `useState`-like API              | ❌ Redux-style boilerplate         |
-| ✅ Surgical selectors               | ❌ Whole-store re-renders          |
-| ✅ Chainable selector hooks         | ❌ Repeated selector logic         |
-| ✅ Optional actions                 | ❌ Forced architecture             |
-| ✅ Global + scoped context state    | ❌ Choosing only one model         |
-| ✅ Non-reactive store API           | ❌ React-only access               |
-| ✅ Async native persistence         | ❌ Hand-written restore plumbing   |
-| ✅ `isAsyncStorageReady`            | ❌ Guessing when restore completed |
-| ✅ Validation + migration           | ❌ Fragile persisted schemas       |
-| ✅ Custom storage manager / adapter | ❌ One forced persistence backend  |
-| ✅ TypeScript inference             | ❌ Manual state contracts          |
+| Package | Best fit |
+| --- | --- |
+| [`react-global-state-hooks`](https://www.npmjs.com/package/react-global-state-hooks) | React web applications with optional localStorage persistence. |
+| [`react-native-global-state-hooks`](https://www.npmjs.com/package/react-native-global-state-hooks) | React Native applications with optional asynchronous persistence. |
+| [`react-hooks-global-states`](https://www.npmjs.com/package/react-hooks-global-states) | The shared core without platform-specific persistence. |
+| [`react-hooks-global-states-debug`](https://www.npmjs.com/package/react-hooks-global-states-debug) | Development instrumentation for the DevTools extension. |
+
+See the [platform guide](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/platform-and-versions/) for package differences
+and the [DevTools guide](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/devtools/) for debug entry points.
 
 ---
 
-## 🚀 Get Started Now
+## Built to grow with your application
+
+- **Familiar from the first hook.** Share state through a `useState`-style API.
+- **Focused subscriptions.** Select the values a component needs.
+- **Composable structure.** Bring in actions, selectors, and scoped stores as your features grow.
+- **A connected debugging workflow.** Follow state and actions with the [DevTools integration](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/devtools/).
+
+---
+
+## Get Started Now
 
 ```bash
 npm install react-native-global-state-hooks
@@ -1394,14 +1392,23 @@ function App() {
 }
 ```
 
-**That's it. You're managing shared React Native state.** 🎉
+Explore the [documentation](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/) to add selectors, actions, and persistence to your app.
 
 ---
 
-<div align="center">
+## Built by Johnny Quesada
 
-### Built with ❤️ for developers who value simplicity
+Explore the [project website](https://johnny-quesada-developer.github.io/react-global-state-hooks/), meet [Johnny](https://johnny-quesada-developer.github.io/react-global-state-hooks/about/),
+and help shape what comes next. If the library helps your work, a GitHub star or a
+shared example helps more developers discover it.
 
-**[⭐ Star on GitHub](https://github.com/johnny-quesada-developer/react-native-global-state-hooks)** • **[📝 Report Issues](https://github.com/johnny-quesada-developer/react-native-global-state-hooks/issues)** • **[📦 NPM](https://www.npmjs.com/package/react-native-global-state-hooks)**
+[Star on GitHub](https://github.com/johnny-quesada-developer/react-global-state-hooks) · [Report an issue](https://github.com/johnny-quesada-developer/react-global-state-hooks/issues) · [Explore the source](https://github.com/johnny-quesada-developer/react-global-state-hooks/tree/master/libs/mobile)
 
-</div>
+## Legacy resources
+
+Earlier demos and walkthroughs are preserved here for reference. For current APIs,
+examples, and setup instructions, start with the [documentation website](https://johnny-quesada-developer.github.io/react-global-state-hooks/).
+
+- [Original browser demo](https://johnny-quesada-developer.github.io/global-hooks-example/)
+- [Original video walkthrough](https://www.youtube.com/watch?v=1UBqXk2MH8I)
+- [Original CodePen example](https://codepen.io/johnnynabetes/pen/WNmeGwb?editors=0010)
