@@ -17,7 +17,7 @@ export const heroVideos: readonly HeroVideo[] = [
   {
     id: 'introduction',
     title: 'Introduction',
-    summary: 'Shared state in one call',
+    summary: 'Shared state without the ceremony',
     landscape: {
       src: withBase('media/intro.landscape.mp4'),
       poster: withBase('posters/intro.landscape.jpg'),
@@ -40,7 +40,7 @@ export const heroVideos: readonly HeroVideo[] = [
   {
     id: 'verify-the-fix',
     title: 'Verify the Fix',
-    summary: 'Prove it against the running app',
+    summary: 'Test the fix against the running app',
     landscape: {
       src: withBase('media/verify-the-fix.landscape.mp4'),
       poster: withBase('posters/verify-the-fix.landscape.jpg'),

@@ -16,7 +16,7 @@ beforeAll(() => {
 
 afterEach(() => {
   act(() => {
-    agentSettings$.setState({ enabled: true, port: AGENT_DEFAULT_PORT, allowControl: false });
+    agentSettings$.setState({ enabled: true, port: AGENT_DEFAULT_PORT });
     agentStatus$.setState('waiting');
   });
 });
@@ -83,15 +83,9 @@ describe('AgentConnectionModal', () => {
     expect(agentSettings$.getState().enabled).toBe(false);
   });
 
-  it('keeps control off until it is switched on, and then shows the control commands', () => {
+  it('always shows the control commands: changing state is not gated behind a setting', () => {
     render(<AgentConnectionModal open onClose={() => undefined} />);
 
-    expect(agentSettings$.getState().allowControl).toBe(false);
-    expect(screen.queryByText(/npx rgsh set counter/)).toBeNull();
-
-    fireEvent.click(screen.getByLabelText(/Allow the terminal to change state and run actions/));
-
-    expect(agentSettings$.getState().allowControl).toBe(true);
     expect(screen.getByText('npx rgsh set counter 5')).toBeTruthy();
     expect(screen.getByText('npx rgsh action todos add "Write the docs"')).toBeTruthy();
   });

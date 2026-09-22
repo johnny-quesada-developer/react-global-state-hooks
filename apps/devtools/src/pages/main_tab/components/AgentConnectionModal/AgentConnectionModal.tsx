@@ -89,22 +89,6 @@ export const AgentConnectionModal: React.FC<AgentConnectionModalProps> = ({
           Allow a terminal to connect
         </label>
 
-        <label className="flex items-start gap-2">
-          <input
-            type="checkbox"
-            className="mt-1"
-            checked={settings.allowControl}
-            disabled={!settings.enabled}
-            onChange={(event) => agentSettings$.actions.setAllowControl(event.target.checked)}
-          />
-          <span>
-            Allow the terminal to change state and run actions
-            <span className="block text-xs text-gray-600 dark:text-gray-400">
-              Off: the terminal can only watch. On: it can do what the State and Actions tabs do.
-            </span>
-          </span>
-        </label>
-
         <label className="flex items-center gap-2">
           Port
           <input
@@ -156,22 +140,15 @@ export const AgentConnectionModal: React.FC<AgentConnectionModalProps> = ({
             hint='Stream named stores (use "*" for all: slower and noisier).'
           />
           <CommandLine command={`npx rgsh state todos${portFlag}`} hint="Read a store's state and metadata." />
-          {settings.allowControl && (
-            <>
-              <CommandLine
-                command={`npx rgsh action todos add "Write the docs"${portFlag}`}
-                hint="Run an action and print what it did."
-              />
-              <CommandLine
-                command={`npx rgsh patch todos '{"filter":"done"}'${portFlag}`}
-                hint="Merge JSON into the state (primitives replace)."
-              />
-              <CommandLine
-                command={`npx rgsh set counter 5${portFlag}`}
-                hint="Replace the whole state with JSON."
-              />
-            </>
-          )}
+          <CommandLine
+            command={`npx rgsh action todos add "Write the docs"${portFlag}`}
+            hint="Run an action and print what it did."
+          />
+          <CommandLine
+            command={`npx rgsh patch todos '{"filter":"done"}'${portFlag}`}
+            hint="Merge JSON into the state (primitives replace)."
+          />
+          <CommandLine command={`npx rgsh set counter 5${portFlag}`} hint="Replace the whole state with JSON." />
         </div>
 
         <p className="text-xs text-gray-500 dark:text-gray-400">Click outside or press Esc to close.</p>

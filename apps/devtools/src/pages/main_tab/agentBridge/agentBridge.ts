@@ -42,7 +42,6 @@ export const agentTracker = new AgentTracker(
   },
   send,
   {
-    isAllowed: () => agentSettings$.getState().allowControl,
     dispatch: (action, payload) => dispatchToPage?.(action, payload),
   },
 );

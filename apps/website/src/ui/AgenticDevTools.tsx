@@ -31,7 +31,7 @@ const abilities = [
   {
     command: 'rgsh action | patch | set',
     title: 'Test against the runtime',
-    body: 'When you allow it, run an action or write state, so the agent can reproduce behavior and verify its own fix.',
+    body: 'Run an action or write state from the terminal, so the agent can reproduce behavior and verify its own fix.',
   },
 ];
 
@@ -116,11 +116,10 @@ export function AgenticDevTools({ session }: AgenticDevToolsProps) {
       <div className="agentic__trust">
         <p className="agentic__trust-title">Runtime access without handing over everything</p>
         <p className="agentic__note">
-          <code>rgsh</code> listens on localhost only, commands are JSON data rather than evaluated code, and
-          changing the app stays off until you explicitly allow it in the DevTools panel, under Terminal
-          connection. It needs the extension open on your app&rsquo;s tab, the <code>ws</code> dev dependency,
-          and the <code>react-global-state-hooks/debug</code> import in development. Part of
-          react-global-state-hooks {PACKAGE_VERSION}.
+          <code>rgsh</code> listens on localhost only, and commands are JSON data rather than evaluated code.
+          It needs the extension open on your app&rsquo;s tab, the <code>ws</code> dev dependency, and the{' '}
+          <code>react-global-state-hooks/debug</code> import in development. Part of react-global-state-hooks{' '}
+          {PACKAGE_VERSION}.
         </p>
       </div>
     </section>

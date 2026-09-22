@@ -46,7 +46,7 @@ WATCH
   rgsh --store todos,auth           several (comma separated, or repeat --store)
   rgsh --store "*"                  every store: DevTools does more work and the stream is much larger
 
-CHANGE  (needs "Allow the terminal to change state and run actions" in gear > Terminal connection)
+CHANGE
   rgsh action <store> <name> [args...]     run an action:  rgsh action todos add "Write the docs"
   rgsh patch  <store> <json>               objects merge into the state, anything else replaces it
                                            rgsh patch todos '{"filter":"done"}'   rgsh patch counter 5

@@ -285,7 +285,6 @@ export function HeroVideos({ videos = heroVideos }: HeroVideosProps) {
               <span className="hero-videos__head">
                 <span className="hero-videos__index">{String(index + 1).padStart(2, '0')}</span>
                 <span className="hero-videos__title">{item.title}</span>
-                {index === active + 1 && <span className="hero-videos__next">Up next</span>}
               </span>
               <span className="hero-videos__summary">{item.summary}</span>
               <span className="hero-videos__bar" aria-hidden="true" />

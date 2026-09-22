@@ -4,8 +4,6 @@ import { AGENT_DEFAULT_PORT } from 'react-hooks-global-states-debug/agent/protoc
 export type AgentSettings = {
   enabled: boolean;
   port: number;
-  /** Lets the terminal change state and run actions. Off by default: reading is passive, this is not. */
-  allowControl: boolean;
 };
 
 /** `off` disabled in settings, `waiting` dialing the port, `idle` nobody answered so dialing paused, `connected` an `rgsh` answered, `replaced` a newer panel took over. */
@@ -19,7 +17,7 @@ export const isValidAgentPort = (port: unknown): port is number =>
 
 /** Persisted in the panel's own localStorage, so the choice survives closing DevTools. */
 export const agentSettings$ = createGlobalState(
-  { enabled: true, port: AGENT_DEFAULT_PORT, allowControl: true } as AgentSettings,
+  { enabled: true, port: AGENT_DEFAULT_PORT } as AgentSettings,
   {
     name: 'agentSettings',
     localStorage: {
@@ -27,16 +25,12 @@ export const agentSettings$ = createGlobalState(
       validator: ({ restored, initial }) => {
         const value = restored as Partial<AgentSettings> | null;
         if (typeof value?.enabled !== 'boolean' || !isValidAgentPort(value.port)) return initial;
-        return { enabled: value.enabled, port: value.port, allowControl: value.allowControl === true };
+        return { enabled: value.enabled, port: value.port };
       },
     },
     actions: {
       setEnabled: (enabled: boolean) => {
         return ({ setState }) => setState((settings) => ({ ...settings, enabled }));
-      },
-
-      setAllowControl: (allowControl: boolean) => {
-        return ({ setState }) => setState((settings) => ({ ...settings, allowControl }));
       },
 
       setPort: (port: number) => {

@@ -43,7 +43,7 @@ See every action that changes state
 
 ## 💻 Terminal (`rgsh`)
 
-The state libraries install an `rgsh` command that talks to the panel: watch actions, read state and, if you allow it, run actions or change state from a terminal.
+The state libraries install an `rgsh` command that talks to the panel: watch actions, read state, and run actions or change state from a terminal.
 
 ```bash
 npm i -D ws

@@ -59,8 +59,8 @@ Give stores a `name` option so they are easy to find in the panel.
 ## Drive it from a terminal
 
 `react-global-state-hooks`, `react-hooks-global-states` and `react-native-global-state-hooks` each install an
-`rgsh` command. It talks to the panel, so you can watch actions, read state and (if you allow it) change state
-without leaving the terminal.
+`rgsh` command. It talks to the panel, so you can watch actions, read state and change state without leaving
+the terminal, including changing state.
 
 ```bash
 npm i -D ws        # rgsh needs it to talk to the extension
@@ -74,7 +74,7 @@ and has to match the panel under gear > Terminal connection.
 ```bash
 npx rgsh --store todos                        # stream one store's actions and state changes
 npx rgsh state todos                          # read a store's state and metadata
-npx rgsh action todos add "Write the docs"    # run an action (needs "Allow the terminal to change state")
+npx rgsh action todos add "Write the docs"    # run an action
 npx rgsh patch todos '{"filter":"done"}'      # merge JSON into the state
 ```
 
@@ -96,8 +96,6 @@ npx rgsh state todos todos[0].done                 # read the value back
 - Exit codes: `0` done, `1` failed (unknown store or action, not allowed, the action threw), `2` no store given and
   no terminal, `3` sent but the page reported nothing within `--timeout`.
 - An unknown store name is answered with the stores that do exist.
-- Changing state is off until you enable "Allow the terminal to change state and run actions" in the panel under
-  the gear, Terminal connection. Watching and reading never change the app.
 - Arguments are JSON data and nothing the terminal sends is evaluated. `rgsh` listens on `127.0.0.1` only.
 - `rgsh` works on store state and actions. It does not click or type in the page.
 

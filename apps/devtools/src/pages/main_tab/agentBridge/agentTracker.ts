@@ -24,9 +24,8 @@ export type TrackerModel = {
   getStore: (globalStateId: string) => GlobalStateMetaExtended | undefined;
 };
 
-/** How the tracker reaches the inspected page, and whether the user allowed it to. */
+/** How the tracker reaches the inspected page. */
 export type TrackerControl = {
-  isAllowed: () => boolean;
   /** Posts a `devtools-request/<action>` message to the page, the same route the panel UI uses. */
   dispatch: (action: 'EXECUTE_ACTION' | 'RESTORE_STATE', payload: object) => void;
 };
@@ -135,13 +134,6 @@ export class AgentTracker {
    */
   private runControl(request: Extract<CliToPanel, { type: 'RUN_ACTION' | 'SET_STATE' | 'PATCH_STATE' }>) {
     const reject = (reason: string) => this.send({ type: 'REQUEST_REJECTED', reason });
-
-    if (!this.control.isAllowed()) {
-      return reject(
-        'The terminal is not allowed to change the app. In DevTools open the gear, "Terminal connection", ' +
-          'and enable "Allow the terminal to change state and run actions".',
-      );
-    }
 
     const store = this.findSingleStore(request.selector);
     if (typeof store === 'string') return reject(store);

@@ -385,18 +385,7 @@ describe('agent runtime inspection, end to end', () => {
   });
 
   describe('control: run actions and set state from the terminal', () => {
-    afterEach(() => agentSettings$.actions.setAllowControl(false));
-
-    it('is refused until the user allows it in DevTools', async () => {
-      const session = startCli(['action', 'todos', 'add', 'nope']);
-
-      expect(await session.done).toBe(EXIT.failed);
-      expect(session.err.join('\n')).toContain('not allowed to change the app');
-      expect(stores.todos.getState().todos.some((todo: any) => todo.text === 'nope')).toBe(false);
-    });
-
     it('runs an action with its arguments and prints what it did', async () => {
-      agentSettings$.actions.setAllowControl(true);
       const session = startCli(['action', 'todos', 'add', 'from the terminal']);
 
       expect(await session.done).toBe(EXIT.ok);
@@ -409,7 +398,6 @@ describe('agent runtime inspection, end to end', () => {
     });
 
     it('passes arguments as data: quotes and code in a value stay text', async () => {
-      agentSettings$.actions.setAllowControl(true);
       // Text that would break out of a quoted argument if it were spliced into code.
       const hostile = 'x"); globalThis.__pwned = true; ("';
       const session = startCli(['action', 'todos', 'add', hostile]);
@@ -425,7 +413,6 @@ describe('agent runtime inspection, end to end', () => {
     });
 
     it('sets a store state from JSON and prints the change', async () => {
-      agentSettings$.actions.setAllowControl(true);
       const session = startCli(['set', 'counter', '42']);
 
       expect(await session.done).toBe(EXIT.ok);
@@ -435,7 +422,6 @@ describe('agent runtime inspection, end to end', () => {
     });
 
     it('reports a thrown error and exits non-zero', async () => {
-      agentSettings$.actions.setAllowControl(true);
       const session = startCli(['action', 'todos', 'boom']);
 
       expect(await session.done).toBe(EXIT.failed);
@@ -443,7 +429,6 @@ describe('agent runtime inspection, end to end', () => {
     });
 
     it('rejects an unknown action or store with what is available', async () => {
-      agentSettings$.actions.setAllowControl(true);
 
       const action = startCli(['action', 'todos', 'nothing']);
       expect(await action.done).toBe(EXIT.failed);
@@ -480,18 +465,7 @@ describe('agent runtime inspection, end to end', () => {
   });
 
   describe('patch', () => {
-    afterEach(() => agentSettings$.actions.setAllowControl(false));
-
-    it('is refused until control is allowed', async () => {
-      const session = startCli(['patch', 'profile', '{"count":5}']);
-
-      expect(await session.done).toBe(EXIT.failed);
-      expect(session.err.join('\n')).toContain('not allowed to change the app');
-      expect(stores.profile.getState().count).toBe(1);
-    });
-
     it('merges an object into the state and leaves everything else alone, functions included', async () => {
-      agentSettings$.actions.setAllowControl(true);
       const session = startCli(['patch', 'profile', '{"user":{"age":2}}']);
 
       expect(await session.done).toBe(EXIT.ok);
@@ -505,7 +479,6 @@ describe('agent runtime inspection, end to end', () => {
     });
 
     it('replaces primitives and arrays', async () => {
-      agentSettings$.actions.setAllowControl(true);
 
       const primitive = startCli(['patch', 'counter', '7']);
       expect(await primitive.done).toBe(EXIT.ok);

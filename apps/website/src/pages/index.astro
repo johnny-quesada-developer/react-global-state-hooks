@@ -6,7 +6,9 @@ import { HeroVideos } from '../ui/HeroVideos';
 import { SelectiveDemo } from '@examples/selective/SelectiveDemo';
 import storeSource from '@examples/selective/store.ts?raw';
 import nameCardSource from '@examples/selective/NameCard.tsx?raw';
-import oneLinerSource from '@snippets/getting-started/create-store.ts?raw';
+import oneLinerSource from '@snippets/getting-started/Counter.ts?raw';
+import useItSource from '@snippets/getting-started/read-and-update.tsx?raw';
+import shareItSource from '@snippets/getting-started/Labels.tsx?raw';
 import agenticSession from '../data/agentic-proof.txt?raw';
 ---
 
@@ -20,6 +22,8 @@ import agenticSession from '../data/agentic-proof.txt?raw';
     storeSource={storeSource}
     nameCardSource={nameCardSource}
     oneLinerSource={oneLinerSource}
+    useItSource={useItSource}
+    shareItSource={shareItSource}
     agenticSession={agenticSession}
   >
     <InstallCommand slot="install" client:idle />

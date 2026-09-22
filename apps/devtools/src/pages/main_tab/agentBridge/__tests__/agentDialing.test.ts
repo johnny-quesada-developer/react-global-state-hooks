@@ -31,7 +31,7 @@ const load = async () => {
   vi.resetModules();
   const bridge = await import('../agentBridge');
   const { agentSettings$, agentStatus$ } = await import('../agentSettings');
-  agentSettings$.setState({ enabled: true, port: 7787, allowControl: false });
+  agentSettings$.setState({ enabled: true, port: 7787 });
   bridge.startAgentBridge({ retryMs: RETRY_MS });
   return { ...bridge, agentSettings$, agentStatus$ };
 };

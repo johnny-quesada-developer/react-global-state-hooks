@@ -8,6 +8,8 @@ interface HomePageProps {
   storeSource: string;
   nameCardSource: string;
   oneLinerSource: string;
+  useItSource: string;
+  shareItSource: string;
   agenticSession: string;
   /**
    * Interactive islands, passed from the Astro page as named slots (`slot="install"` becomes the
@@ -22,6 +24,8 @@ export function HomePage({
   storeSource,
   nameCardSource,
   oneLinerSource,
+  useItSource,
+  shareItSource,
   agenticSession,
   install,
   video,
@@ -139,21 +143,12 @@ export function HomePage({
         </div>
       </section>
 
-      <section className="section container" aria-labelledby="code-heading">
-        <p className="section__eyebrow">The one-liner</p>
-        <div className="one-liner">
-          <CodeBlock code={oneLinerSource} lang="ts" title="counter.ts" />
-          <p className="one-liner__caption">No providers. No context boilerplate. No configuration files.</p>
-        </div>
-
-        <h2 id="code-heading">A store is one call. A component is one line.</h2>
-        <p className="section__lede">
-          The demo below needs three named fields to show selective subscriptions. Here are its exact files,
-          not a separate illustration.
-        </p>
-        <div className="code-pair">
-          <CodeBlock code={storeSource} lang="ts" title="store.ts" />
-          <CodeBlock code={nameCardSource} lang="tsx" title="NameCard.tsx" />
+      <section className="proof container" aria-label="One call creates the store">
+        <div className="proof__demo">
+          <p className="proof__statement">No providers. No context boilerplate. No configuration files.</p>
+          <CodeBlock code={oneLinerSource} lang="ts" title="Counter.ts" />
+          <CodeBlock code={useItSource} lang="tsx" title="CounterButton.tsx" />
+          <CodeBlock code={shareItSource} lang="tsx" title="Labels.tsx" />
         </div>
       </section>
 
@@ -183,6 +178,17 @@ export function HomePage({
             </li>
           ))}
         </ul>
+      </section>
+
+      <section className="section container" aria-labelledby="code-heading">
+        <h2 id="code-heading">A store is one call. A component is one line.</h2>
+        <p className="section__lede">
+          These are the exact files behind the render demo above, not a separate illustration.
+        </p>
+        <div className="code-pair">
+          <CodeBlock code={storeSource} lang="ts" title="store.ts" />
+          <CodeBlock code={nameCardSource} lang="tsx" title="NameCard.tsx" />
+        </div>
       </section>
 
       <AuthorNote />

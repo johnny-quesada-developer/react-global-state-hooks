@@ -35,7 +35,7 @@ describe('page watcher', () => {
     globals.chrome = originalChrome;
   });
 
-  it('probes right away, keeps probing every second while the patch is missing, then stops', async () => {
+  it('probes right away, keeps probing every second while the patch is missing, then settles into a heartbeat', async () => {
     const { probePage, watcher, pageDiagnosis$ } = await load([missing, missing, missing, ready]);
 
     watcher.startPageWatcher();
@@ -50,15 +50,21 @@ describe('page watcher', () => {
     expect(probePage).toHaveBeenCalledTimes(4);
     expect(pageDiagnosis$.getState().problem).toBeNull();
 
-    await vi.advanceTimersByTimeAsync(20_000);
-    expect(probePage).toHaveBeenCalledTimes(4);
+    // Once ready, it keeps checking every 5s instead of going idle: a tab restored from the
+    // browser's back/forward cache runs no script and may never fire `onNavigated`, so this
+    // heartbeat is what notices the page changed underneath it.
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(probePage).toHaveBeenCalledTimes(5);
+
+    await vi.advanceTimersByTimeAsync(15_000);
+    expect(probePage).toHaveBeenCalledTimes(8);
   });
 
   it('starts over when the inspected page navigates', async () => {
     const { probePage, watcher, navigate } = await load([ready, ready]);
 
     watcher.startPageWatcher();
-    await vi.advanceTimersByTimeAsync(5000);
+    await vi.advanceTimersByTimeAsync(0);
     expect(probePage).toHaveBeenCalledTimes(1);
 
     navigate();

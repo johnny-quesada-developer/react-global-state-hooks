@@ -89,8 +89,7 @@ describe('help', () => {
   it('documents every command, option and exit code so it works as discovery', () => {
     for (const part of [
       '--list', '--store', '--port', '--timeout', 'rgsh state', 'rgsh action', 'rgsh patch', 'rgsh set',
-      'Allow the terminal to change state and run actions', 'EXIT CODES', 'READING THE OUTPUT', 'setMetadata',
-      '__non_serializable__',
+      'EXIT CODES', 'READING THE OUTPUT', 'setMetadata', '__non_serializable__',
     ]) {
       expect(HELP).toContain(part);
     }

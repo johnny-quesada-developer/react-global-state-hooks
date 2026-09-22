@@ -26,7 +26,7 @@ const defaults: Preferences = {
  * Saved to localStorage; anything unexpected in storage falls back to the defaults.
  */
 export const usePreferences = createGlobalState(defaults, {
-  name: 'sitePreferences',
+  name: '_sitePreferences',
   localStorage: {
     key: 'user-preferences',
     validator: ({ restored, initial }) => {

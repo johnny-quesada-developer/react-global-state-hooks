@@ -64,11 +64,11 @@ afterEach(() => {
 });
 
 describe('HeroVideos', () => {
-  it('names every video, marks the first as current and the second as up next', () => {
+  it('names every video and marks the first as current', () => {
     render(<HeroVideos videos={videos} />);
 
     const tabs = screen.getAllByRole('tab');
-    expect(tabs.map((tab) => tab.textContent)).toEqual(['01OneFirst', '02TwoUp nextSecond', '03ThreeThird']);
+    expect(tabs.map((tab) => tab.textContent)).toEqual(['01OneFirst', '02TwoSecond', '03ThreeThird']);
     expect(tabs.map((tab) => tab.getAttribute('aria-selected'))).toEqual(['true', 'false', 'false']);
     expect(tabs.map((tab) => tab.tabIndex)).toEqual([0, -1, -1]);
   });

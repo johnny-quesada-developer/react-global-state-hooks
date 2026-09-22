@@ -1,8 +1,8 @@
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
-import { useCounter as basicCounter } from './create-store';
+import { useCounter as basicCounter } from './Counter';
 import { CounterButton } from './read-and-update';
-import { CountLabel, StepLabel } from './select-a-slice';
+import { Labels } from './Labels';
 import { useCounter as actionsCounter } from './actions';
 import { Counter } from './use-actions';
 import { usePreferences } from './persist';
@@ -38,8 +38,7 @@ describe('select-a-slice', () => {
     render(
       <>
         <Spy />
-        <CountLabel />
-        <StepLabel />
+        <Labels />
       </>,
     );
     const initial = countRenders;
@@ -54,7 +53,7 @@ describe('select-a-slice', () => {
   });
 
   it('select returns the selected value', () => {
-    render(<StepLabel />);
+    render(<Labels />);
     act(() => basicCounter.setState((s) => ({ ...s, step: 7 })));
 
     expect(screen.getByText('7')).toBeTruthy();

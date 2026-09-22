@@ -345,17 +345,6 @@
   font-weight: 700;
 }
 
-.hero-videos__next {
-  padding: 0 0.4rem;
-  border-radius: var(--radius-sm);
-  background: var(--color-yellow);
-  color: var(--color-text);
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
 .hero-videos__summary {
   font-size: var(--text-sm);
 }
@@ -827,7 +816,7 @@
 /* ---------- homepage ---------- */
 .hero {
   background: linear-gradient(180deg, var(--color-mint) 0%, var(--color-bg) 100%);
-  padding-block: var(--space-6) var(--space-7);
+  padding-block: var(--space-6) var(--space-4);
 }
 
 .hero__inner {
@@ -882,8 +871,7 @@
 
 .hero__video {
   width: 100%;
-  max-width: 44rem;
-  justify-self: center;
+  min-width: 0;
 }
 
 .section {
@@ -891,8 +879,7 @@
 }
 
 .section--tinted {
-  margin-top: var(--space-7);
-  padding-block: var(--space-7);
+  padding-block: var(--space-6);
   background: var(--color-sky);
 }
 
@@ -900,25 +887,63 @@
   font-size: var(--text-2xl);
 }
 
-.section__eyebrow {
+.proof {
+  padding-block: var(--space-4);
+}
+
+.proof__statement {
   margin: 0 0 var(--space-3);
-  font-size: var(--text-sm);
+  font-size: var(--text-xl);
   font-weight: 700;
-  color: var(--color-primary);
 }
 
-.one-liner {
-  max-width: 34rem;
-  margin-bottom: var(--space-6);
+.proof__demo {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: minmax(0, 1fr);
 }
 
-.one-liner .code-block pre {
+@media (min-width: 40rem) {
+  .proof__demo {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 56rem) {
+  .proof__demo {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: auto 1fr;
+  }
+
+  .proof__statement {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .proof__demo > .code-block:nth-child(2) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .proof__demo > .code-block:nth-child(3) {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .proof__demo > .code-block:nth-child(4) {
+    grid-column: 3;
+    grid-row: 2;
+  }
+}
+
+.proof__demo .code-block pre {
   overflow-x: visible;
   white-space: pre-wrap;
   word-break: break-word;
+  font-size: 0.8125rem;
 }
 
-.one-liner__caption {
+.proof__caption {
   margin: var(--space-2) 0 0;
   font-size: var(--text-sm);
   color: var(--color-text-muted);
