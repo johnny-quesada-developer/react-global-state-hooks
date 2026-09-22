@@ -1,27 +1,7 @@
 /**
- * Build script for react-global-state-hooks.
- *
- * Produces a clean dual-format package. For every entry point we emit:
- *   - <name>.mjs  -> native ES module   (export const x; export default x)
- *   - <name>.cjs  -> clean CommonJS      (exports.x = x; exports.default = x; __esModule)
- *   - <name>.js   -> clean CommonJS      (identical to .cjs, kept for backward compatibility
- *                                         with the previous `main`/exports that pointed at *.js)
- *
- * NO UMD is emitted. The old UMD wrapper (webpack libraryTarget: 'umd') is what broke
- * esbuild-based runtimes (tsx, Vite dev, Bun): its `this[...] = factory(...)` global-assignment
- * branch confused esbuild's CJS export detection, producing phantom named exports and a
- * non-callable default. Native ESM + clean CJS interops everywhere.
- *
- * This package is a thin consumer/re-exporter of react-hooks-global-states. That base package
- * is kept EXTERNAL so it resolves at the consumer as a normal dependency (not duplicated here).
- * json-storage-formatter is imported directly (in GlobalStore.ts) and also kept external; it now
- * ships a clean dual ESM/CJS format (>=4.0.0-beta) so it interops correctly under native ESM.
- *
- * Cross-subpath imports (e.g. GlobalStore importing ./tryCatch) are kept EXTERNAL so the
- * module graph stays split (no code duplicated across subpaths). esbuild rewrites those
- * specifiers to the correct extension per format via a small onResolve plugin.
- *
- * Run with: tsx esbuild.config.ts
+ * Emit ESM (.mjs), CommonJS (.cjs) and legacy .js entries.
+ * Keep dependencies and sibling modules external to preserve shared instances.
+ * Packaging details: ../../ARCHITECTURE.md.
  */
 import * as esbuild from 'esbuild';
 import path from 'node:path';
@@ -40,19 +20,13 @@ const entryPoints: Record<string, string> = {
   throwWrongKeyOnActionCollectionConfig: 'src/throwWrongKeyOnActionCollectionConfig.ts',
   uniqueId: 'src/uniqueId.ts',
   actions: 'src/actions.ts',
-  // opt-in DevTools debug side-effect subpath (import 'react-global-state-hooks/debug').
-  // Delegates to react-hooks-global-states/debug, which is already external (see bareExternals),
-  // so nothing is bundled into this package.
+  // Keep the opt-in debug package external.
   debug: 'src/debug.ts',
   // internal module imported by GlobalStore (kept as a sibling file, not a public subpath)
   tryCatch: 'src/tryCatch.ts',
 };
 
-// bare-module externals: never bundle these.
-// react / react-dom are peer dependencies. react-hooks-global-states is the base package this
-// package re-exports; it must resolve at the consumer, not be inlined here. json-storage-formatter
-// is a runtime dependency imported directly by GlobalStore.ts; it now ships clean dual ESM/CJS
-// (>=4.0.0-beta) so it interops correctly and can safely stay external (deduped/shared).
+// Resolve runtime dependencies from the consumer’s installation.
 const bareExternals = [
   'react',
   'react-dom',
@@ -64,12 +38,7 @@ const bareExternals = [
 
 const outdir = path.resolve(__dirname, 'dist');
 
-/**
- * esbuild plugin that keeps relative sibling imports (./tryCatch, ./GlobalStore, ...) external
- * and rewrites their extension to match the current output format. This mirrors the old
- * webpack behavior where each subpath referenced its siblings as separate files instead of
- * inlining them.
- */
+/** Keep sibling imports external and match their extension to the output format. */
 const relativeSiblingExternal = (extension: string): esbuild.Plugin => ({
   name: 'relative-sibling-external',
   setup(build) {
@@ -77,8 +46,6 @@ const relativeSiblingExternal = (extension: string): esbuild.Plugin => ({
       // Never externalize the entry points themselves.
       if (args.kind === 'entry-point') return null;
 
-      // Treat relative sibling imports (./tryCatch, ./GlobalStore, ...) as external and
-      // re-point them to the emitted sibling file for the current output format.
       const withoutExt = args.path.replace(/\.(ts|js|mjs|cjs)$/, '');
       return {
         path: `${withoutExt}${extension}`,
@@ -97,7 +64,6 @@ const shared: esbuild.BuildOptions = {
   // No sourcemaps in the published output: they would reference ../src which is not shipped.
   sourcemap: false,
   logLevel: 'info',
-  // Minify the published output (restores parity with the pre-dual-output build).
   // Safe here: the only class-identity check uses reference equality
   // (this.constructor !== GlobalStore in GlobalStore.ts), not name comparison, and the
   // CJS interop shape (__esModule + named/default exports) is guarded by scripts/test-interop.ts.
@@ -106,7 +72,6 @@ const shared: esbuild.BuildOptions = {
 };
 
 async function build(): Promise<void> {
-  // ESM build -> .mjs, sibling imports point to ./*.mjs
   await esbuild.build({
     ...shared,
     format: 'esm',
@@ -114,7 +79,6 @@ async function build(): Promise<void> {
     plugins: [relativeSiblingExternal('.mjs')],
   });
 
-  // CJS build -> .cjs, sibling imports point to ./*.cjs
   await esbuild.build({
     ...shared,
     format: 'cjs',
@@ -122,9 +86,7 @@ async function build(): Promise<void> {
     plugins: [relativeSiblingExternal('.cjs')],
   });
 
-  // Legacy CJS build -> .js, sibling imports point to ./*.js
-  // Kept so the previous `main: ./bundle.js` and any deep `require('.../<name>.js')`
-  // references from already-published consumers keep resolving to clean CJS.
+  // Preserve legacy deep imports ending in .js.
   await esbuild.build({
     ...shared,
     format: 'cjs',

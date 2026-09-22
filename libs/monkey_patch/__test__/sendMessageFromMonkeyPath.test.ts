@@ -4,6 +4,7 @@ import sendMessageFromMonkeyPath from '../src/sendMessageFromMonkeyPath';
 import type { MonkeyPathMessage } from '../src/schema/MonkeyPathMessageJson';
 import { SubActionJsonEnum } from '../src/schema/SubActionJson';
 import { BuildTypeJsonEnum } from '../src/schema/BuildTypeJson';
+import { ActionTypeJsonEnum } from '../src/schema/ActionTypeJson';
 
 describe('sendMessageFromMonkeyPath', () => {
   let postMessageSpy: ReturnType<typeof vi.fn>;
@@ -59,7 +60,7 @@ describe('sendMessageFromMonkeyPath', () => {
           start: Date.now(),
           timing: 0,
           logs: [],
-          actionType: 'async',
+          actionType: ActionTypeJsonEnum.CUSTOM_ACTION,
         },
       };
 
@@ -202,15 +203,7 @@ describe('sendMessageFromMonkeyPath', () => {
         },
       } as Any;
 
-      // Should throw due to missing required fields
-      try {
-        sendMessageFromMonkeyPath(invalidMessage);
-        // If no error, fail the test
-        expect(true).toBe(false);
-      } catch (error) {
-        // Expected to throw
-        expect(error).toBeDefined();
-      }
+      expect(() => sendMessageFromMonkeyPath(invalidMessage)).toThrow();
     });
   });
 
@@ -297,77 +290,6 @@ describe('sendMessageFromMonkeyPath', () => {
       expect(postMessageSpy).toHaveBeenCalledTimes(1);
       // Should not throw and should handle nested function
       expect(postMessageSpy).toHaveBeenCalled();
-    });
-  });
-
-  describe('message prefixing', () => {
-    it('should prefix action with "monkey-patch/"', () => {
-      const message: MonkeyPathMessage = {
-        id: 'msg-1',
-        action: 'ADD_GLOBAL_STATE',
-        payload: {
-          globalStateId: 'state-1',
-          name: 'Test',
-          globalStatePath: '/test',
-          initialState: {},
-          actions: {},
-          callbacks: [],
-          localStorage: null,
-          metadata: {},
-          isContext: false,
-        },
-      };
-
-      sendMessageFromMonkeyPath(message);
-
-      const sentMessage = postMessageSpy.mock.calls[0][0];
-      expect(sentMessage.action).toBe('monkey-patch/ADD_GLOBAL_STATE');
-      expect(sentMessage.action).toContain('monkey-patch/');
-    });
-
-    it('should preserve original action name after prefix', () => {
-      const actions: MonkeyPathMessage['action'][] = [
-        'ADD_GLOBAL_STATE',
-        'START_ACTION',
-        'ADD_ACTION_LOG',
-        'UPDATE_ACTION',
-        'CLEAR_GLOBAL_STATES',
-        'DELETE_GLOBAL_STATE',
-        'SET_REACT_BUILD_TYPE',
-      ];
-
-      actions.forEach((action) => {
-        const message: Any = {
-          id: 'msg-1',
-          action,
-          payload:
-            action === 'ADD_GLOBAL_STATE'
-              ? {
-                  globalStateId: 'state-1',
-                  name: 'Test',
-                  globalStatePath: '/test',
-                  initialState: {},
-                  actions: {},
-                  callbacks: [],
-                  localStorage: null,
-                  metadata: {},
-                  isContext: false,
-                }
-              : {},
-        };
-
-        if (action === 'SET_REACT_BUILD_TYPE') {
-          message.payload = { buildType: 'development' };
-        }
-
-        try {
-          sendMessageFromMonkeyPath(message);
-          const sentMessage = postMessageSpy.mock.calls[postMessageSpy.mock.calls.length - 1][0];
-          expect(sentMessage.action).toBe(`monkey-patch/${action}`);
-        } catch {
-          // Some messages might fail validation with minimal payload, that's ok for this test
-        }
-      });
     });
   });
 
@@ -488,13 +410,13 @@ describe('sendMessageFromMonkeyPath', () => {
       sendMessageFromMonkeyPath(message);
 
       expect(postMessageSpy).toHaveBeenCalledTimes(1);
-      // Should serialize special objects
+
       expect(postMessageSpy).toHaveBeenCalled();
     });
   });
 
   describe('error scenarios', () => {
-    it('should handle window.postMessage errors gracefully', () => {
+    it('propagates window.postMessage errors', () => {
       global.window = {
         postMessage: () => {
           throw new Error('postMessage failed');
@@ -517,7 +439,6 @@ describe('sendMessageFromMonkeyPath', () => {
         },
       };
 
-      // Should throw the postMessage error
       expect(() => sendMessageFromMonkeyPath(message)).toThrow('postMessage failed');
     });
   });

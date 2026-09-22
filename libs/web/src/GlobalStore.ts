@@ -18,7 +18,7 @@ import formatFromStore from 'json-storage-formatter/formatFromStore';
 import formatToStore from 'json-storage-formatter/formatToStore';
 import isNil from 'json-storage-formatter/isNil';
 import isPrimitive from 'json-storage-formatter/isPrimitive';
-import { AnyActions } from './createGlobalState';
+import type { AnyActions } from './createGlobalState';
 
 const defaultStorageVersion = -1;
 

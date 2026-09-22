@@ -1,6 +1,3 @@
-import isNil from 'json-storage-formatter/isNil';
-import selectedGlobalStateId$ from '../../selectedGlobalStateId';
-import { actionsById$, actionIdsByStateId$ } from '../globalStates';
 import { type ActionTypeJsonEnum } from '@src/shared/schema/ActionTypeJson';
 import { type EntityAdapter } from '@src/shared/tools/EntityAdapter';
 import type { ActionId, ActionJson } from '@src/shared/schema/ActionJson';
@@ -30,28 +27,6 @@ export const mapGroupedToHeaders = (grouped: EntityAdapter<ActionId, ActionJson>
   return grouped.values().map(toHeader);
 };
 
-const buildHeaders = (actionIds: Set<ActionId> | undefined): ActionHeader[] => {
-  if (!actionIds) return [];
-
-  const actionsById = actionsById$.getState();
-  const headers: ActionHeader[] = [];
-
-  for (const actionId of actionIds) {
-    const action = actionsById.get(actionId);
-    headers.push(toHeader(action));
-  }
-
-  return headers;
-};
-
-const selectHeaders = (
-  selectedStateId: GlobalStateId | null,
-  actionIdsByStateId: EntityAdapter<GlobalStateId, Set<ActionId>>,
-): ActionHeader[] => {
-  if (isNil(selectedStateId)) return [];
-  return buildHeaders(actionIdsByStateId.get(selectedStateId));
-};
-
 export const isEqualRoot =
   (selectedStateId: GlobalStateId | null) =>
   (
@@ -61,15 +36,3 @@ export const isEqualRoot =
     if (!selectedStateId) return current === next;
     return current.get(selectedStateId) === next.get(selectedStateId);
   };
-
-export const useActionsHeaders = (): ActionHeader[] => {
-  const [selectedStateId] = selectedGlobalStateId$();
-
-  return actionIdsByStateId$.use.select(
-    (actionIdsByStateId) => selectHeaders(selectedStateId, actionIdsByStateId),
-    {
-      dependencies: [selectedStateId],
-      isEqualRoot: isEqualRoot(selectedStateId),
-    },
-  );
-};

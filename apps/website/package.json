@@ -17,7 +17,6 @@
     "ts-check": "astro check",
     "check:links": "node scripts/check-links.mjs",
     "make:og": "node scripts/make-og.mjs",
-    "capture:devtools": "node scripts/capture-devtools.mjs",
     "capture:devtools:showcase": "node scripts/capture-devtools-showcase.mjs"
   },
   "dependencies": {

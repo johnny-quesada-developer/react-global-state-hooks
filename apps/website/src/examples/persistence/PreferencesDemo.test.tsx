@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -72,7 +72,9 @@ describe('PreferencesDemo', () => {
       expect(JSON.parse(screen.getByTestId('saved').textContent!).s).not.toHaveProperty('draft'),
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Clear saved data' }));
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Clear saved data' }));
+    });
     expect(screen.getByTestId('preview').className).toContain('pref-preview--mint');
   });
 });

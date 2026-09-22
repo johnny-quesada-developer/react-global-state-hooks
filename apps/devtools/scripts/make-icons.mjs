@@ -1,17 +1,8 @@
 #!/usr/bin/env node
 /**
- * Converts the author's illustrated avatar (public/icon.jpeg, an opaque JPEG on white) into the extension's
- * icon files: the SAME file names, format and size the previous icon used (PNG data, 102x102, named .ico).
- * Nothing is redrawn: the pixels come from icon.jpeg. The white background is removed (only white connected
- * to the image border, so the white of the teeth and the glasses highlights stays) and the edge is decontaminated.
- *
- *   node scripts/make-icons.mjs
- *
- * Writes:
- *   src/assets/devtools_page_icon.ico       102x102 PNG (manifest 128px icon)
- *   src/assets/devtools_page_icon-28px.ico  102x102 PNG (manifest 16px icon and the panel icon), same as before
- *   ../website/public/img/devtools-logo.png 512x512 transparent PNG for the site
- * The original monkey icon is kept at src/assets/original/monkey_icon.ico.
+ * Generate extension and website icons from public/icon.jpeg.
+ * Remove border-connected white while preserving white details inside the artwork.
+ * Extension icons retain their manifest filenames (102px PNG data in .ico files).
  */
 import fs from 'node:fs';
 import path from 'node:path';

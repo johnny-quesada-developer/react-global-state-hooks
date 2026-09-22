@@ -10,9 +10,3 @@ export const useIsSelectedLog = (logId: string) => {
     }
   );
 };
-
-export const useIsSelectedAction = (actionId: string) => {
-  return selectedLogs$(([, current]) => current?.actionId === actionId, {
-    dependencies: [actionId],
-  });
-};

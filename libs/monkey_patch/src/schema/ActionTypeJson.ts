@@ -7,17 +7,7 @@ export enum ActionTypeJsonEnum {
   STATE_ACTION = 'STATE_ACTION',
 }
 
-// Schema accepts both enum values and legacy test values for backwards compatibility
-export const actionTypeJsonSchema = z.enum([
-  ActionTypeJsonEnum.LIFE_CYCLE,
-  ActionTypeJsonEnum.LIFE_CYCLE_PARAMETER,
-  ActionTypeJsonEnum.CUSTOM_ACTION,
-  ActionTypeJsonEnum.STATE_ACTION,
-  // Legacy values kept for backwards compatibility with older payloads/tests.
-  'async',
-  'action',
-  'callback',
-]);
+export const actionTypeJsonSchema = z.enum(ActionTypeJsonEnum);
 
 export type ActionTypeJson = z.infer<typeof actionTypeJsonSchema>;
 

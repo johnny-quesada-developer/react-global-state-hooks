@@ -17,11 +17,3 @@ export type MonkeyPatchActionJson = z.infer<typeof monkeyPatchActionJsonSchema>;
 export function isMonkeyPatchActionJson(data: unknown): data is MonkeyPatchActionJson {
   return monkeyPatchActionJsonSchema.safeParse(data).success;
 }
-
-export function assertMonkeyPatchActionJson(data: unknown): asserts data is MonkeyPatchActionJson {
-  const result = monkeyPatchActionJsonSchema.safeParse(data);
-  if (!result.success) {
-    const errors = result.error.issues.map((err) => `${err.path.join('.')}: ${err.message}`);
-    throw new Error(`Invalid MonkeyPatchActionJson: ${errors.join(', ')}`);
-  }
-}

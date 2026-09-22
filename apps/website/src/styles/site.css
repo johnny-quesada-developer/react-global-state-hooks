@@ -1466,47 +1466,6 @@
   color: var(--color-sky-text);
 }
 
-/* ---------- DevTools screenshots ---------- */
-.shot {
-  margin: var(--space-5) 0;
-}
-
-.shot__grid {
-  display: grid;
-  gap: var(--space-4);
-  align-items: start;
-}
-
-@media (min-width: 64rem) {
-  .shot__grid {
-    grid-template-columns: minmax(10rem, 20rem) minmax(0, 1fr);
-  }
-}
-
-.shot__item {
-  margin: 0;
-}
-
-.shot__item img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-}
-
-.shot__item figcaption {
-  margin-top: var(--space-1);
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-}
-
-.shot__caption {
-  margin-top: var(--space-3);
-  max-width: 46rem;
-}
-
 /* ---------- DevTools showcase ---------- */
 .showcase {
   display: grid;

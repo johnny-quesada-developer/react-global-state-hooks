@@ -43,3 +43,6 @@ openapi.json
 .DS_Store
 apps/website/public/pagefind/
 .playwright-mcp/
+
+# Generated extension release archive
+/apps/devtools/react-hooks-global-states-dev-tools.zip

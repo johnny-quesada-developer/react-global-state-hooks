@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 /**
- * Showcase screenshots of the DevTools extension for the website: the whole DevTools window and each section of
- * the panel, taken from the LIVE playground and the INSTALLED extension (no mock, no generated images).
- * Setup is the same as capture-devtools.mjs (see README-devtools-capture.md).
+ * Capture the running playground and extension panel for the website.
+ * Setup: README-devtools-capture.md.
  *
  *   node scripts/capture-devtools-showcase.mjs
  *

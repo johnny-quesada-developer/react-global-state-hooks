@@ -29,7 +29,7 @@ vi.mock('react-hooks-global-states-debug/tools/react', () => ({
   addFiberUnmountSubscription: vi.fn(() => () => {}),
 }));
 
-describe('End-to-End Workflows', () => {
+describe('Store workflow integration', () => {
   let global: any;
 
   beforeAll(async () => {
@@ -113,14 +113,12 @@ describe('End-to-End Workflows', () => {
         },
       };
 
-      // STEP 1: Store creation (monkey patch initialization)
       postedMessages = [];
       const patchedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/counter.ts');
 
       const storeId = patchedStore._DEV_TOOLS_STORE_ID;
       expect(storeId).toBeDefined();
 
-      // Should send ADD_GLOBAL_STATE message
       const addMessages = postedMessages.filter((msg) => msg.action === 'monkey-patch/ADD_GLOBAL_STATE');
       expect(addMessages).toHaveLength(1);
 
@@ -129,35 +127,26 @@ describe('End-to-End Workflows', () => {
       expect(addPayload.globalStateId).toBe(storeId);
       expect(addPayload.initialState).toEqual({ count: 0, history: [] });
 
-      // STEP 2: User updates state directly via setState
       postedMessages = [];
       patchedStore.setState({ count: 5 });
 
       expect(currentState.count).toBe(5);
 
-      // Messages should be sent (may include various types)
-      expect(postedMessages.length).toBeGreaterThanOrEqual(0);
-
-      // STEP 3: User executes action via devtools
       postedMessages = [];
       const wrappedActions = patchedStore.__devtools_initialize_getStoreActionsMapWrapped();
       wrappedActions.actions.increment();
 
       expect(currentState.count).toBe(6);
 
-      // Should send START_ACTION and related messages
       const actionMessages = postedMessages.filter((msg) => msg.action.includes('ACTION'));
       expect(actionMessages.length).toBeGreaterThan(0);
 
-      // STEP 4: Execute another action with parameters
       postedMessages = [];
 
-      // Action should execute without throwing
       expect(() => {
         wrappedActions.actions.addToHistory('first-item');
       }).not.toThrow();
 
-      // STEP 5: User restores previous state from devtools
       const globalStatesById = (global as any).__REACT_GLOBAL_STATE_HOOK_DEBUG_STORES__;
       if (globalStatesById) {
         globalStatesById.set(storeId, patchedStore);
@@ -180,7 +169,6 @@ describe('End-to-End Workflows', () => {
       // State should be restored (merged)
       expect(currentState.count).toBe(0);
 
-      // STEP 6: Component unmounts, store disposed
       postedMessages = [];
       patchedStore.dispose();
 
@@ -434,7 +422,6 @@ describe('End-to-End Workflows', () => {
 
       window.dispatchEvent(setStateEvent);
 
-      // State should be updated
       expect(currentState.count).toBe(20);
     });
   });
@@ -452,16 +439,13 @@ describe('End-to-End Workflows', () => {
       };
 
       const patchedV1 = global.REACT_GLOBAL_STATE_HOOK_DEBUG(storeV1, undefined, '/src/stores/counter.ts');
-      void patchedV1._DEV_TOOLS_STORE_ID; // Read for side effects
+      expect(patchedV1._DEV_TOOLS_STORE_ID).toBeDefined();
 
       // Simulate fast refresh - clear all states
       postedMessages = [];
       if (global.__REACT_GLOBAL_STATE_HOOK_DEBUG_ON_FAST_RELOAD__) {
         global.__REACT_GLOBAL_STATE_HOOK_DEBUG_ON_FAST_RELOAD__();
       }
-
-      const clearMessages = postedMessages.filter((msg) => msg.action === 'monkey-patch/CLEAR_GLOBAL_STATES');
-      expect(clearMessages.length).toBeGreaterThanOrEqual(0); // May or may not send message depending on implementation
 
       // New store instance after HMR (simulating code update)
       const storeV2: any = {
@@ -476,14 +460,12 @@ describe('End-to-End Workflows', () => {
       postedMessages = [];
       global.REACT_GLOBAL_STATE_HOOK_DEBUG(storeV2, undefined, '/src/stores/counter.ts');
 
-      // Should register new store
       const addMessages = postedMessages.filter((msg) => msg.action === 'monkey-patch/ADD_GLOBAL_STATE');
       expect(addMessages).toHaveLength(1);
 
       const payload =
         typeof addMessages[0].payload === 'string' ? JSON.parse(addMessages[0].payload) : addMessages[0].payload;
 
-      // New store should have updated state structure
       expect(payload.initialState.version).toBe(2);
       expect(payload.initialState.newFeature).toBe(true);
     });

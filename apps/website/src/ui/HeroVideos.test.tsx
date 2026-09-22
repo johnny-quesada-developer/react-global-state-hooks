@@ -1,8 +1,8 @@
 import { Profiler } from 'react';
+import { renderToString } from 'react-dom/server';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { HeroVideos } from './HeroVideos';
-import { usePreferences } from '../state/preferences';
 
 const videos = [
   {
@@ -16,8 +16,7 @@ const videos = [
   { id: 'three', title: 'Three', summary: 'Third', landscape: { src: '/three.mp4', poster: '/three.jpg' } },
 ];
 
-let allowSound = true;
-let playCalls: Array<{ src: string; muted: boolean }> = [];
+let playCalls: string[] = [];
 
 const setMatches = (matches: Record<string, boolean>) => {
   window.matchMedia = ((query: string) => ({
@@ -38,34 +37,27 @@ const mockTiming = (element: HTMLVideoElement, duration: number, currentTime: nu
 };
 
 beforeEach(() => {
-  window.localStorage.clear();
   window.location.hash = '';
-  allowSound = true;
   playCalls = [];
   setMatches({ '(min-width: 48rem)': true });
   Element.prototype.scrollIntoView = vi.fn();
 
   vi.spyOn(HTMLMediaElement.prototype, 'play').mockImplementation(function (this: HTMLMediaElement) {
-    playCalls.push({ src: this.getAttribute('src') ?? '', muted: this.muted });
+    playCalls.push(this.getAttribute('src') ?? '');
 
-    return !this.muted && !allowSound
-      ? Promise.reject(new DOMException('blocked', 'NotAllowedError'))
-      : Promise.resolve();
+    return Promise.resolve();
   });
 });
 
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
-  usePreferences.reset(
-    { packageManager: 'npm', miniMeHidden: false, heroSoundOffered: false, heroSound: null },
-    {},
-  );
 });
 
 describe('HeroVideos', () => {
-  it('names every video and marks the first as current', () => {
+  it('names every video and marks the first as current', async () => {
     render(<HeroVideos videos={videos} />);
+    await flush();
 
     const tabs = screen.getAllByRole('tab');
     expect(tabs.map((tab) => tab.textContent)).toEqual(['01OneFirst', '02TwoSecond', '03ThreeThird']);
@@ -74,44 +66,23 @@ describe('HeroVideos', () => {
   });
 
   it('renders no source on the server-rendered markup so nothing downloads before playback', () => {
-    setMatches({});
-    const { container } = render(<HeroVideos videos={videos} />);
+    const markup = renderToString(<HeroVideos videos={videos} />);
+    const container = document.createElement('div');
+    container.innerHTML = markup;
+    const video = container.querySelector('video');
 
-    expect(container.querySelector('video')?.getAttribute('preload')).toBe('none');
+    expect(video).not.toBeNull();
+    expect(video?.getAttribute('preload')).toBe('none');
+    expect(video?.hasAttribute('src')).toBe(false);
+    expect(container.querySelector('source')).toBeNull();
   });
 
-  it('starts the first video by itself and falls back to muted when sound is blocked', async () => {
-    allowSound = false;
+  it('lets the browser autoplay the first video by default', async () => {
     render(<HeroVideos videos={videos} />);
     await flush();
 
     expect(videoElement().getAttribute('src')).toBe('/one.mp4');
-    expect(playCalls.map((call) => call.muted)).toEqual([false, true]);
-    expect(videoElement().muted).toBe(true);
-    expect(usePreferences.getState().heroSoundOffered).toBe(false);
-  });
-
-  it('plays the first video with sound once, records it, and mutes the video that follows', async () => {
-    render(<HeroVideos videos={videos} />);
-    await flush();
-
-    expect(playCalls).toEqual([{ src: '/one.mp4', muted: false }]);
-    expect(usePreferences.getState().heroSoundOffered).toBe(true);
-
-    fireEvent.ended(videoElement());
-    await flush();
-
-    expect(videoElement().getAttribute('src')).toBe('/two.mp4');
-    expect(videoElement().muted).toBe(true);
-    expect(playCalls.at(-1)).toEqual({ src: '/two.mp4', muted: true });
-  });
-
-  it('starts muted on a later visit', async () => {
-    usePreferences.setState((state) => ({ ...state, heroSoundOffered: true }));
-    render(<HeroVideos videos={videos} />);
-    await flush();
-
-    expect(playCalls).toEqual([{ src: '/one.mp4', muted: true }]);
+    expect(videoElement().autoplay).toBe(true);
   });
 
   it('does not autoplay when the visitor prefers reduced motion', async () => {
@@ -119,11 +90,10 @@ describe('HeroVideos', () => {
     render(<HeroVideos videos={videos} />);
     await flush();
 
-    expect(playCalls).toEqual([]);
+    expect(videoElement().autoplay).toBe(false);
   });
 
   it('advances through the list, and stops after the last video', async () => {
-    usePreferences.setState((state) => ({ ...state, heroSoundOffered: true }));
     render(<HeroVideos videos={videos} />);
     await flush();
 
@@ -135,16 +105,13 @@ describe('HeroVideos', () => {
     expect(videoElement().getAttribute('src')).toBe('/three.mp4');
     expect(screen.getByRole('tab', { name: /Three/ }).getAttribute('aria-selected')).toBe('true');
 
-    const calls = playCalls.length;
     fireEvent.ended(videoElement());
     await flush();
 
-    expect(playCalls.length).toBe(calls);
     expect(videoElement().getAttribute('src')).toBe('/three.mp4');
   });
 
-  it('switches on click and plays the chosen video, but leaves the current one alone when clicked again', async () => {
-    usePreferences.setState((state) => ({ ...state, heroSoundOffered: true }));
+  it('switches on click, but leaves the current one alone when clicked again', async () => {
     render(<HeroVideos videos={videos} />);
     await flush();
 
@@ -152,65 +119,12 @@ describe('HeroVideos', () => {
     await flush();
 
     expect(videoElement().getAttribute('src')).toBe('/two.mp4');
-    expect(playCalls.at(-1)?.src).toBe('/two.mp4');
+    expect(screen.getByRole('tab', { name: /Two/ }).getAttribute('aria-selected')).toBe('true');
 
-    const calls = playCalls.length;
     fireEvent.click(screen.getByRole('tab', { name: /Two/ }));
     await flush();
 
-    expect(playCalls.length).toBe(calls);
-  });
-
-  it('remembers when the visitor turns sound on, and keeps it on for the next video', async () => {
-    usePreferences.setState((state) => ({ ...state, heroSoundOffered: true }));
-    render(<HeroVideos videos={videos} />);
-    await flush();
-
-    videoElement().muted = false;
-    fireEvent.volumeChange(videoElement());
-
-    expect(usePreferences.getState().heroSound).toBe('on');
-
-    fireEvent.ended(videoElement());
-    await flush();
-
-    expect(videoElement().muted).toBe(false);
-    expect(playCalls.at(-1)).toEqual({ src: '/two.mp4', muted: false });
-  });
-
-  it('tries sound again on a later visit after the visitor turned it on', async () => {
-    usePreferences.setState((state) => ({ ...state, heroSoundOffered: true, heroSound: 'on' }));
-    render(<HeroVideos videos={videos} />);
-    await flush();
-
-    expect(playCalls).toEqual([{ src: '/one.mp4', muted: false }]);
-  });
-
-  it('falls back to muted playback without forgetting the choice when the browser blocks sound', async () => {
-    allowSound = false;
-    usePreferences.setState((state) => ({ ...state, heroSoundOffered: true, heroSound: 'on' }));
-    render(<HeroVideos videos={videos} />);
-    await flush();
-    await act(() => new Promise((resolve) => setTimeout(resolve, 20)));
-
-    expect(playCalls.map((call) => call.muted)).toEqual([false, true]);
-    expect(usePreferences.getState().heroSound).toBe('on');
-  });
-
-  it('stays muted for good when the visitor muted it, even on a first visit', async () => {
-    usePreferences.setState((state) => ({ ...state, heroSound: 'off' }));
-    render(<HeroVideos videos={videos} />);
-    await flush();
-
-    expect(playCalls).toEqual([{ src: '/one.mp4', muted: true }]);
-
-    videoElement().muted = false;
-    fireEvent.volumeChange(videoElement());
-    expect(usePreferences.getState().heroSound).toBe('on');
-
-    videoElement().muted = true;
-    fireEvent.volumeChange(videoElement());
-    expect(usePreferences.getState().heroSound).toBe('off');
+    expect(playCalls).toEqual([]);
   });
 
   it('shows the seconds left and the progress without rendering again', async () => {
@@ -296,7 +210,7 @@ describe('HeroVideos', () => {
     expect(videoElement().getAttribute('src')).toBe('/two.mp4');
   });
 
-  it('switches to the right file and resumes when the viewport crosses the breakpoint mid-playback', async () => {
+  it('switches to the right file when the viewport crosses the breakpoint mid-playback', async () => {
     let matches = false;
     let onChange: (() => void) | undefined;
     window.matchMedia = ((query: string) => ({
@@ -314,13 +228,10 @@ describe('HeroVideos', () => {
     await flush();
 
     expect(videoElement().getAttribute('src')).toBe('/one-m.mp4');
-    fireEvent.play(videoElement());
 
     matches = true;
-    onChange?.();
-    await flush();
+    await act(async () => onChange?.());
 
     expect(videoElement().getAttribute('src')).toBe('/one.mp4');
-    expect(playCalls.at(-1)?.src).toBe('/one.mp4');
   });
 });

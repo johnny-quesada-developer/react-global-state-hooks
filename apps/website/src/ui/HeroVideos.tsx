@@ -1,28 +1,14 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import { heroVideos } from '../data/heroVideos';
 import type { HeroVideo } from '../data/heroVideos';
-import { usePreferences } from '../state/preferences';
 
 const WIDE = '(min-width: 48rem)';
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
 const WATCH_HASH = /^#watch-(.+)$/;
 const PANEL_ID = 'hero-video-panel';
 
-type PlayMode = 'first' | 'advance' | 'keep';
-
 const tabId = (id: string) => `watch-${id}`;
-
-const play = (element: HTMLVideoElement): Promise<boolean> => {
-  try {
-    return Promise.resolve(element.play()).then(
-      () => true,
-      () => false,
-    );
-  } catch {
-    return Promise.resolve(false);
-  }
-};
 
 interface HeroVideosProps {
   videos?: readonly HeroVideo[];
@@ -31,14 +17,12 @@ interface HeroVideosProps {
 export function HeroVideos({ videos = heroVideos }: HeroVideosProps) {
   const [active, setActive] = useState(0);
   const [wide, setWide] = useState<boolean | null>(null);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   const video = useRef<HTMLVideoElement>(null);
   const count = useRef<HTMLSpanElement>(null);
   const nav = useRef<HTMLDivElement>(null);
   const root = useRef<HTMLDivElement>(null);
-  const pending = useRef<PlayMode | null>('first');
-  const started = useRef(false);
-  const programmatic = useRef(0);
   const activeRef = useRef(active);
   activeRef.current = active;
 
@@ -46,45 +30,8 @@ export function HeroVideos({ videos = heroVideos }: HeroVideosProps) {
   const file = wide === false && current.mobile ? current.mobile : current.landscape;
   const source = wide === null ? undefined : file.src;
 
-  const setMuted = useCallback((muted: boolean) => {
-    const element = video.current;
-    if (!element || element.muted === muted) return;
-
-    programmatic.current += 1;
-    element.muted = muted;
-  }, []);
-
-  const start = useCallback(
-    async (mode: PlayMode) => {
-      const element = video.current;
-      if (!element) return;
-
-      const { heroSound, heroSoundOffered } = usePreferences.getState();
-      const wantsSound =
-        mode === 'first'
-          ? heroSound === 'on' || (heroSound === null && !heroSoundOffered)
-          : mode === 'advance'
-            ? heroSound === 'on'
-            : !element.muted;
-
-      if (wantsSound) {
-        setMuted(false);
-
-        if (await play(element)) {
-          if (mode === 'first') usePreferences.setState((state) => ({ ...state, heroSoundOffered: true }));
-
-          return;
-        }
-      }
-
-      setMuted(true);
-      await play(element);
-    },
-    [setMuted],
-  );
-
   useEffect(() => {
-    if (window.matchMedia(REDUCED_MOTION).matches) pending.current = null;
+    setReducedMotion(window.matchMedia(REDUCED_MOTION).matches);
 
     const query = window.matchMedia(WIDE);
     const choose = () => setWide(query.matches);
@@ -96,37 +43,14 @@ export function HeroVideos({ videos = heroVideos }: HeroVideosProps) {
   }, []);
 
   useEffect(() => {
-    if (!source) return;
-
-    if (pending.current !== null) {
-      const mode = pending.current;
-      pending.current = null;
-      void start(mode);
-
-      return;
-    }
-
-    // The viewport crossed the landscape/portrait breakpoint mid-session (resize, rotation): the
-    // landscape/mobile file just changed under an already-playing video. Resume in the right file,
-    // keeping whatever mute state the visitor already has.
-    if (started.current) void start('keep');
-  }, [source, start]);
-
-  useEffect(() => {
     const go = (initial: boolean) => {
       const id = WATCH_HASH.exec(window.location.hash)?.[1];
       const index = videos.findIndex((item) => item.id === id);
       if (index < 0) return;
 
       if (!initial) root.current?.scrollIntoView({ block: 'center' });
+      if (index === activeRef.current) return;
 
-      if (index === activeRef.current) {
-        if (!initial) void start('keep');
-
-        return;
-      }
-
-      pending.current = initial ? (pending.current === null ? null : 'advance') : 'keep';
       setActive(index);
     };
 
@@ -136,7 +60,7 @@ export function HeroVideos({ videos = heroVideos }: HeroVideosProps) {
     window.addEventListener('hashchange', onHashChange);
 
     return () => window.removeEventListener('hashchange', onHashChange);
-  }, [videos, start]);
+  }, [videos]);
 
   const showCount = (visible: boolean) => {
     if (count.current) count.current.hidden = !visible;
@@ -168,41 +92,16 @@ export function HeroVideos({ videos = heroVideos }: HeroVideosProps) {
     nav.current?.style.setProperty('--progress', '0');
   };
 
-  const onVolumeChange = () => {
-    const element = video.current;
-    if (!element) return;
-
-    if (programmatic.current > 0) {
-      programmatic.current -= 1;
-
-      return;
-    }
-
-    const heroSound = !element.muted && element.volume > 0 ? 'on' : 'off';
-    usePreferences.setState((state) => ({ ...state, heroSound }));
-  };
-
   const onEnded = () => {
     const next = active + 1;
     if (next >= videos.length) return;
 
-    pending.current = 'advance';
     setActive(next);
   };
 
   const select = (index: number) => {
-    const element = video.current;
+    if (index === active) return;
 
-    if (index === active) {
-      if (element?.ended) {
-        element.currentTime = 0;
-        void start('keep');
-      }
-
-      return;
-    }
-
-    pending.current = 'keep';
     setActive(index);
   };
 
@@ -237,19 +136,16 @@ export function HeroVideos({ videos = heroVideos }: HeroVideosProps) {
           ref={video}
           controls
           playsInline
+          autoPlay={!reducedMotion}
           preload="none"
           poster={file.poster}
           src={source}
           aria-label={`${current.title} video`}
-          onPlay={() => {
-            started.current = true;
-          }}
           onPlaying={onPlaying}
           onPause={onHide}
           onEmptied={onHide}
           onLoadStart={onLoadStart}
           onTimeUpdate={paint}
-          onVolumeChange={onVolumeChange}
           onEnded={onEnded}
         >
           <p>

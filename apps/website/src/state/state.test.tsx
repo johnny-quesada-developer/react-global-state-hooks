@@ -9,10 +9,7 @@ const Probe = () => <span data-testid="pm">{usePackageManager()}</span>;
 beforeEach(() => window.localStorage.clear());
 afterEach(() => {
   cleanup();
-  usePreferences.reset(
-    { packageManager: 'npm', miniMeHidden: false, heroSoundOffered: false, heroSound: null },
-    {},
-  );
+  usePreferences.reset({ packageManager: 'npm', miniMeHidden: false }, {});
   useSearchDialog.reset({ open: false }, {});
 });
 
@@ -24,8 +21,6 @@ describe('preferences store', () => {
     expect(saved.s).toEqual({
       packageManager: 'pnpm',
       miniMeHidden: false,
-      heroSoundOffered: false,
-      heroSound: null,
     });
   });
 

@@ -86,12 +86,6 @@ export function loadMockState(mockData: unknown) {
   replaceAllStates(entries);
 }
 
-export function loadMockStateIfDevelopment(mockData: unknown) {
-  if (process.env.NODE_ENV === 'development') {
-    loadMockState(mockData);
-  }
-}
-
 /**
  * The live stores the panel currently mirrors, grouped by creation path in announcement order:
  * `path -> [liveId, liveId, ...]`.

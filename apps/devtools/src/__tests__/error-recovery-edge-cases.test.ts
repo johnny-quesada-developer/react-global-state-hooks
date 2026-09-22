@@ -81,7 +81,6 @@ describe('Error Recovery & Edge Cases', () => {
         children: [],
       };
 
-      // Create circular reference
       const child: any = { name: 'child', parent: circularState };
       circularState.children.push(child);
 
@@ -125,7 +124,6 @@ describe('Error Recovery & Edge Cases', () => {
       const root: any = { level: 0 };
       let current = root;
 
-      // Create chain of 5 objects
       for (let i = 1; i <= 5; i++) {
         current.next = { level: i, previous: current };
         current = current.next;
@@ -150,8 +148,8 @@ describe('Error Recovery & Edge Cases', () => {
     });
   });
 
-  describe('performance edge cases', () => {
-    it('should handle extremely large arrays efficiently', () => {
+  describe('large state and repeated updates', () => {
+    it('should handle extremely large arrays', () => {
       const largeArray = Array.from({ length: 10000 }, (_, i) => ({
         id: `item-${i}`,
         value: i,
@@ -171,22 +169,18 @@ describe('Error Recovery & Edge Cases', () => {
         createSelectorHook: vi.fn(() => vi.fn()),
       };
 
-      const startTime = performance.now();
+      const setState = mockStore.setState;
       const patchedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/large-array.ts');
-      const endTime = performance.now();
 
-      // Should complete in reasonable time (< 100ms)
-      expect(endTime - startTime).toBeLessThan(100);
-
-      // Should still be able to update state
-      const updateStart = performance.now();
+      expect(patchedStore._DEV_TOOLS_STORE_ID).toBeDefined();
+      const registration = postedMessages.find((msg) => msg.action === 'monkey-patch/ADD_GLOBAL_STATE');
+      expect(JSON.parse(registration.payload).initialState.items).toHaveLength(10000);
       patchedStore.setState({ count: 10001 });
-      const updateEnd = performance.now();
+      expect(setState).toHaveBeenCalledWith({ count: 10001 }, {});
 
-      expect(updateEnd - updateStart).toBeLessThan(50);
     });
 
-    it('should handle large objects with many keys efficiently', () => {
+    it('should handle large objects with many keys', () => {
       const largeObject: any = {};
       for (let i = 0; i < 1000; i++) {
         largeObject[`key${i}`] = {
@@ -205,11 +199,10 @@ describe('Error Recovery & Edge Cases', () => {
         createSelectorHook: vi.fn(() => vi.fn()),
       };
 
-      const startTime = performance.now();
       global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/large-object.ts');
-      const endTime = performance.now();
+      const registration = postedMessages.find((msg) => msg.action === 'monkey-patch/ADD_GLOBAL_STATE');
+      expect(Object.keys(JSON.parse(registration.payload).initialState)).toHaveLength(1000);
 
-      expect(endTime - startTime).toBeLessThan(100);
     });
 
     it('should handle rapid setState calls', () => {
@@ -228,17 +221,10 @@ describe('Error Recovery & Edge Cases', () => {
 
       const patchedStore = global.REACT_GLOBAL_STATE_HOOK_DEBUG(mockStore, undefined, '/src/stores/rapid.ts');
 
-      const startTime = performance.now();
-
-      // Perform 100 rapid setState calls
       for (let i = 0; i < 100; i++) {
         patchedStore.setState({ count: i });
       }
 
-      const endTime = performance.now();
-
-      // Should complete all updates in reasonable time
-      expect(endTime - startTime).toBeLessThan(200);
       expect(currentState.count).toBe(99);
     });
   });

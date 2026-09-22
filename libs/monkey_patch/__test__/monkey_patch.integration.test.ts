@@ -1367,7 +1367,7 @@ describe('Real GlobalStore comprehensive workflow tests', () => {
   // ── 3. No double-logging guarantee ─────────────────────────────────────────
 
   describe('no double-logging when action calls setState', () => {
-    it('setState inside an action can produce STATE_ACTION starts, but keeps exactly one CUSTOM_ACTION start', () => {
+    it('setState inside an action keeps exactly one CUSTOM_ACTION start', () => {
       const store = buildCounterStore();
       postedMessages.length = 0;
 
@@ -1377,8 +1377,6 @@ describe('Real GlobalStore comprehensive workflow tests', () => {
       const customActionStarts = msgs('START_ACTION').filter((p) => p.actionType === 'CUSTOM_ACTION');
       expect(customActionStarts.length).toBe(1);
 
-      const stateActionStarts = msgs('START_ACTION').filter((p) => p.actionType === 'STATE_ACTION');
-      expect(stateActionStarts.length).toBeGreaterThanOrEqual(0);
     });
 
     it('direct store.setState produces exactly one STATE_ACTION START_ACTION', () => {

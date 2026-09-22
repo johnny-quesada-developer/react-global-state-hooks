@@ -29,9 +29,7 @@ import throwWrongKeyOnActionCollectionConfig from './throwWrongKeyOnActionCollec
 import uniqueId from './uniqueId';
 import debugProps from './GlobalStore.debugProps';
 
-/**
- * The GlobalStore class is the main class of the library and it is used to create a GlobalStore instances
- * */
+/** Shared state, subscriptions, actions and lifecycle management. */
 export class GlobalStore<
   State,
   Metadata extends BaseMetadata,
@@ -64,9 +62,7 @@ export class GlobalStore<
   public use!: StateHook<State, PublicStateMutator, Metadata>;
 
   /**
-   * @deprecated
-   * @description Set of subscribers that are listening to state changes
-   * Useful for debugging purposes... You'll probably not need to use this in your application
+   * @deprecated Internal subscription registry. Use `subscribe` to observe state changes.
    */
   public subscribers = new Set<SubscriberParameters>();
 
@@ -99,7 +95,6 @@ export class GlobalStore<
       name?: string;
     } = { metadata: {} as Metadata },
   ) {
-    // bound methods for the hook
     this.dispose = this.dispose.bind(this);
     this.getMetadata = this.getMetadata.bind(this);
     this.getState = this.getState.bind(this);
@@ -147,8 +142,7 @@ export class GlobalStore<
    * Initializes the global store, setting up the main hook and actions map if applicable,
    */
   protected async initialize() {
-    // actions should be created first than the main hook and the configuration callback param
-    // because both depend on the actions map being created
+    // Hooks and lifecycle callbacks need the actions map before initialization.
     const storeAndActions =
       this.__devtools_initialize_getStoreActionsMapWrapped?.() ?? this.getStoreActionsMap();
 
@@ -159,7 +153,6 @@ export class GlobalStore<
 
     this.use = this.getMainHook();
 
-    // this method could be overridden by extended classes
     const extensionCleanup = this.onInit?.() ?? null;
     if (isFunction(extensionCleanup)) this.cleanupFunctions.push(extensionCleanup);
 
@@ -196,25 +189,23 @@ export class GlobalStore<
       isEqual = (a, b) => a === b,
     } = subscription;
 
-    // compare the root state, there should not be a re-render if the root state is the same
+    // Check root equality before running the selector.
     if (!args.forceUpdate && isEqualRoot(args.currentState, args.newState)) {
       return { didUpdate: false };
     }
 
     const newChildState = selector ? selector(args.newState) : args.newState;
 
-    // compare the state of the selected part of the state, there should not be a re-render if the state is the same
+    // Notify only when the selected value changes, unless explicitly forced.
     if (!args.forceUpdate && isEqual(currentChildState, newChildState)) {
       return { didUpdate: false };
     }
 
-    // update the current state of the subscription
     this.partialUpdateSubscription(subscription, {
       currentState: newChildState,
     });
 
-    // execute the callback associated with the subscription
-    // the callback could be an observer event or a sync callback from useSyncExternalStore
+    // Observers and useSyncExternalStore share this notification path.
     callback(
       {
         state: newChildState,
@@ -360,7 +351,6 @@ export class GlobalStore<
         return isFunction(selector) ? selector(state) : state;
       };
 
-      // builds the subscription object or retrieves the existing one
       subscriptionRef.current = ((): SubscriberParameters => {
         if (subscriptionRef.current) return subscriptionRef.current;
 
@@ -386,7 +376,6 @@ export class GlobalStore<
         dependencies: newDependencies,
       };
 
-      // keep the hook props updated
       this.partialUpdateSubscription(subscriptionRef.current, extensions);
 
       const [{ subscribe, getSnapshot, getServerSnapshot }] = useState(() => {
@@ -430,7 +419,7 @@ export class GlobalStore<
       createSelectorHook: this.createSelectorHook.bind(apiAsReadOnly) as typeof use.createSelectorHook,
       dispose,
 
-      // this is an special placeholder prop that should be defined with defineProperty below
+      // Replaced with a live getter below.
       metadata: undefined as unknown as Metadata,
       getMetadata,
 
@@ -440,10 +429,8 @@ export class GlobalStore<
       setState,
       subscribe,
 
-      // useful for debugging purposes
       subscribers: this.subscribers,
 
-      // sugar syntax
       use,
       select: ((...args: Parameters<typeof use>) => use(...args)[0]) as SelectHook<State>,
     };
@@ -526,7 +513,6 @@ export class GlobalStore<
 
     const newState = isFunction(setter) ? (setter as (state: State) => State)(previousState) : setter;
 
-    // if the state didn't change, we don't need to do anything
     if (!forceUpdate && this.state === newState) return;
 
     const setState = this.setActualStateWithoutValidations as React.Dispatch<React.SetStateAction<State>>;
@@ -571,7 +557,6 @@ export class GlobalStore<
   } {
     const { getMetadata, setMetadata, getState, setState, subscribe } = this;
 
-    // passes the same object to all the actions
     const storeTools: typeof this.storeTools = {
       setMetadata,
       get metadata() {
@@ -598,7 +583,7 @@ export class GlobalStore<
 
     const actionsKeys = Object.keys(actionsConfig);
 
-    // we bind the functions to the actions object to allow reusing actions in the same api config by using the -this- keyword
+    // Bind `this` to the action collection so actions can call one another.
     for (const action_key of actionsKeys) {
       Object.assign(actions, {
         [action_key](...parameters: unknown[]) {
@@ -609,15 +594,12 @@ export class GlobalStore<
           const action = actionConfig.apply(actions, parameters);
           const actionIsNotAFunction = typeof action !== 'function';
 
-          // we throw an error if the action is not a function, this is mandatory for the correct execution of the actions
           if (actionIsNotAFunction) {
             throwWrongKeyOnActionCollectionConfig(action_key);
           }
 
-          // executes the actions bringing access to the state setter and a copy of the state
           const result = action.call(actions, storeTools);
 
-          // we return the result of the actions to the invoker
           return result;
         },
       });
@@ -642,7 +624,6 @@ export class GlobalStore<
   }
 
   public dispose() {
-    // clean up all the references while keep the structure helps the garbage collector
     this.removeSubscriptions();
     this.executeCleanupTasks();
   }
@@ -657,7 +638,6 @@ export class GlobalStore<
    * This method is reserved for advanced use cases and testing scenarios, use with caution.
    */
   public reset(...args: [State?, Metadata?]): void {
-    // execute cleanup functions
     this.executeCleanupTasks();
 
     const hasArgs = args.length > 0;
@@ -676,11 +656,9 @@ export class GlobalStore<
       return this.metadata;
     })();
 
-    // reset state and metadata
     this.setActualStateWithoutValidations(state, { forceUpdate: true });
     this.setMetadata(metadata);
 
-    // this method could be overridden by extended classes
     const extensionCleanup = this.onInit?.() ?? null;
     if (isFunction(extensionCleanup)) this.cleanupFunctions.push(extensionCleanup);
 
@@ -728,7 +706,7 @@ export function createObservable<RootState, PublicStateMutator, Metadata extends
     name: selectorName ?? uniqueId('sh:'),
   });
 
-  // keeps the root state and the derivate state in sync
+  // keeps the root state and the derived state in sync
   const unsubscribeFromRootState = this.subscribe(
     (newRoot) => {
       const isRootEqual = (mainIsEqualRoot ?? Object.is)(rootState, newRoot);
@@ -798,7 +776,7 @@ export function createSelectorHook<RootState, PublicStateMutator, Metadata exten
     name: selectorName ?? uniqueId('sh:'),
   });
 
-  // keeps the root state and the derivate state in sync
+  // keeps the root state and the derived state in sync
   const unsubscribeFromRootState = this.subscribe(
     (newRoot) => {
       const isRootEqual = (mainIsEqualRoot ?? Object.is)(rootState, newRoot);
