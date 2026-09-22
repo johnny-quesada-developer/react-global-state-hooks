@@ -1,6 +1,6 @@
 {
   "name": "react-global-state-hooks",
-  "version": "16.0.5-beta.0",
+  "version": "16.0.5",
   "private": true,
   "description": "Monorepo for the react-global-state-hooks family of packages (universal, web, react-native).",
   "workspaces": [
