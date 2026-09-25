@@ -1,4 +1,10 @@
 import type { ReactNode } from 'react';
+import { Badge } from './Badge';
+import { BenefitCard, BenefitList } from './BenefitList';
+import { ButtonLink } from './ButtonLink';
+import { PageShell } from './PageShell';
+import { ResourceItem, ResourceList } from './ResourceList';
+import { Section, SectionLede, SectionTitle } from './Section';
 import { links, withBase } from '../lib/site';
 import { AgenticDevTools } from './AgenticDevTools';
 import { AuthorNote } from './AuthorNote';
@@ -116,139 +122,177 @@ export function HomePage({
 
   return (
     <>
-      <section className="hero">
-        <div className="container hero__inner">
-          <div className="hero__copy">
-            <p className="hero__eyebrow">React state management</p>
-            <h1>
-              Shared React state that works like <code>useState</code>
+      <section className="bg-[linear-gradient(180deg,var(--color-mint)_0%,var(--color-bg)_100%)] pt-8 pb-4">
+        <PageShell className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:gap-12">
+          <div className="flex flex-col items-start gap-4">
+            <p className="m-0 text-sm font-bold text-primary">React state management</p>
+            <h1 className="text-3xl leading-heading">
+              Shared React state that works like <code className="bg-yellow text-[0.9em]">useState</code>
             </h1>
-            <p className="hero__lede">
+            <p className="m-0 max-w-[34rem] text-lg text-text-muted">
               Create a store with one call, use it in any component, and re-render only the components whose
               selected slice changed. No provider required.
             </p>
 
             {install}
 
-            <p className="hero__actions">
-              <a className="button button--primary" href={gettingStarted}>
+            <p className="m-0 flex flex-wrap gap-3">
+              <ButtonLink href={gettingStarted}>
                 Get started
-              </a>
-              <a className="button button--secondary" href={withBase('examples/')}>
+              </ButtonLink>
+              <ButtonLink variant="secondary" href={withBase('examples/')}>
                 Explore examples
-              </a>
+              </ButtonLink>
             </p>
           </div>
 
-          <div className="hero__video">
-            <a className="hero-agentic" href="#agentic-devtools">
-              <span className="hero-agentic__icon" aria-hidden="true">
+          <div className="grid w-full min-w-0 gap-3">
+            <a
+              className="group flex items-center gap-3 border-b border-line pt-2 pb-3 text-text no-underline"
+              href="#agentic-devtools"
+            >
+              <span
+                className="grid h-10 flex-[0_0_2.5rem] place-items-center rounded-sm bg-primary text-white"
+                aria-hidden="true"
+              >
                 <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
                   <path d="M10 3 12.5 9.5 19 12l-6.5 2.5L10 21l-2.5-6.5L1 12l6.5-2.5L10 3Z" />
                   <path d="m20 1 1.1 2.9L24 5l-2.9 1.1L20 9l-1.1-2.9L16 5l2.9-1.1L20 1Z" />
                 </svg>
               </span>
-              <span className="hero-agentic__copy">
-                <strong>Agentic state management</strong>
-                <span>Live state. Real actions. Results your agent can verify.</span>
+              <span className="grid min-w-0 gap-[0.125rem]">
+                <strong className="text-base leading-[1.3] group-hover:text-primary group-hover:underline group-hover:underline-offset-[0.2em]">
+                  Agentic state management
+                </strong>
+                <span className="text-sm text-text-muted">
+                  Live state. Real actions. Results your agent can verify.
+                </span>
               </span>
-              <span className="hero-agentic__arrow" aria-hidden="true">↗</span>
+              <span className="ml-auto px-2 text-[1.35rem] text-primary" aria-hidden="true">
+                ↗
+              </span>
             </a>
             {video}
           </div>
-        </div>
+        </PageShell>
       </section>
 
-      <section className="proof container" aria-label="One call creates the store">
-        <div className="proof__demo">
-          <p className="proof__statement">No providers. No context boilerplate. No configuration files.</p>
-          <CodeBlock code={oneLinerSource} lang="ts" title="Counter.ts" />
-          <CodeBlock code={useItSource} lang="tsx" title="CounterButton.tsx" />
-          <CodeBlock code={shareItSource} lang="tsx" title="Labels.tsx" />
+      <PageShell as="section" className="py-4" aria-label="One call creates the store">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-4 sm:grid-cols-[repeat(2,minmax(0,1fr))] wide:grid-cols-[repeat(3,minmax(0,1fr))] wide:grid-rows-[auto_1fr]">
+          <p className="mt-0 mr-0 mb-3 ml-0 text-xl font-bold wide:col-start-1 wide:row-start-1">
+            No providers. No context boilerplate. No configuration files.
+          </p>
+          <CodeBlock
+            className="code-block--compact wide:col-start-1 wide:row-start-2"
+            code={oneLinerSource}
+            lang="ts"
+            title="Counter.ts"
+          />
+          <CodeBlock
+            className="code-block--compact wide:col-start-2 wide:row-start-2"
+            code={useItSource}
+            lang="tsx"
+            title="CounterButton.tsx"
+          />
+          <CodeBlock
+            className="code-block--compact wide:col-start-3 wide:row-start-2"
+            code={shareItSource}
+            lang="tsx"
+            title="Labels.tsx"
+          />
         </div>
-      </section>
+      </PageShell>
 
-      <section className="section section--tinted" id="demo" aria-labelledby="demo-heading">
-        <div className="container">
-          <h2 id="demo-heading">Change one field, watch which components render</h2>
-          <p className="section__lede">
+      <Section tone="tinted" shell={false} id="demo" aria-labelledby="demo-heading">
+        <PageShell>
+          <SectionTitle id="demo-heading">Change one field, watch which components render</SectionTitle>
+          <SectionLede>
             Each card shows how many times it has rendered. Type a name: the Name card and the whole-state
             card render again, the Role and Clicks cards do not. The whole-state card has no selector, so it
             renders for every change.
-          </p>
+          </SectionLede>
           {demo}
           <TryDevTools />
-        </div>
-      </section>
+        </PageShell>
+      </Section>
 
       <AgenticDevTools session={agenticSession} />
 
-      <section className="section container" aria-labelledby="benefits-heading">
-        <h2 id="benefits-heading">What you get</h2>
-        <ul className="benefits">
+      <Section aria-labelledby="benefits-heading">
+        <SectionTitle id="benefits-heading">What you get</SectionTitle>
+        <BenefitList>
           {benefits.map((benefit) => (
-            <li className="benefit" key={benefit.title}>
-              <h3>
-                <a href={benefit.href}>{benefit.title}</a>
-              </h3>
-              <p>{benefit.body}</p>
-            </li>
+            <BenefitCard title={<a href={benefit.href}>{benefit.title}</a>} key={benefit.title}>
+              {benefit.body}
+            </BenefitCard>
           ))}
-        </ul>
-      </section>
+        </BenefitList>
+      </Section>
 
-      <section className="section container" aria-labelledby="code-heading">
-        <h2 id="code-heading">A store is one call. A component is one line.</h2>
-        <p className="section__lede">
+      <Section aria-labelledby="code-heading">
+        <SectionTitle id="code-heading">A store is one call. A component is one line.</SectionTitle>
+        <SectionLede>
           Use the same store and component code that powers the live demo above.
-        </p>
-        <div className="code-pair">
-          <CodeBlock code={storeSource} lang="ts" title="store.ts" />
-          <CodeBlock code={nameCardSource} lang="tsx" title="NameCard.tsx" />
+        </SectionLede>
+        <div className="grid gap-4 wider:grid-cols-[repeat(2,minmax(0,1fr))]">
+          <CodeBlock
+            className="code-block--fill flex h-full flex-col"
+            code={storeSource}
+            lang="ts"
+            title="store.ts"
+          />
+          <CodeBlock
+            className="code-block--fill flex h-full flex-col"
+            code={nameCardSource}
+            lang="tsx"
+            title="NameCard.tsx"
+          />
         </div>
-      </section>
+      </Section>
 
       <AuthorNote />
 
-      <section className="section container" aria-labelledby="learn-heading">
-        <h2 id="learn-heading">Keep learning</h2>
-        <p className="section__lede">A path from your first store to driving one from a terminal.</p>
-        <ol className="resources">
+      <Section aria-labelledby="learn-heading">
+        <SectionTitle id="learn-heading">Keep learning</SectionTitle>
+        <SectionLede>A path from your first store to driving one from a terminal.</SectionLede>
+        <ResourceList>
           {learningPath.map((resource, index) => (
-            <li className="resource" key={resource.title}>
-              <span className="resource__step">{String(index + 1).padStart(2, '0')}</span>
-              <div>
-                <h3>
-                  <a href={resource.href} rel={resource.external ? 'noopener' : undefined}>
-                    {resource.title}
-                  </a>
-                </h3>
-                <p>{resource.body}</p>
-              </div>
-            </li>
+            <ResourceItem
+              key={resource.title}
+              step={String(index + 1).padStart(2, '0')}
+              title={
+                <a href={resource.href} rel={resource.external ? 'noopener' : undefined}>
+                  {resource.title}
+                </a>
+              }
+            >
+              {resource.body}
+            </ResourceItem>
           ))}
-        </ol>
-      </section>
+        </ResourceList>
+      </Section>
 
-      <section className="section container other" aria-labelledby="other-heading">
-        <h2 id="other-heading">Other projects</h2>
-        <p className="section__lede">Developer tooling, built the same way as this library.</p>
-        <ul className="resources resources--grid">
+      <Section aria-labelledby="other-heading">
+        <SectionTitle id="other-heading">Other projects</SectionTitle>
+        <SectionLede>Developer tooling, built the same way as this library.</SectionLede>
+        <ResourceList as="ul" layout="grid">
           {otherProjects.map((project) => (
-            <li className="resource" key={project.title}>
-              <div>
-                <h3>
+            <ResourceItem
+              key={project.title}
+              title={
+                <>
                   <a href={project.href} rel={project.external ? 'noopener' : undefined}>
                     {project.title}
                   </a>
-                  {project.badge && <span className="badge badge--beta">{project.badge}</span>}
-                </h3>
-                <p>{project.body}</p>
-              </div>
-            </li>
+                  {project.badge && <Badge>{project.badge}</Badge>}
+                </>
+              }
+            >
+              {project.body}
+            </ResourceItem>
           ))}
-        </ul>
-      </section>
+        </ResourceList>
+      </Section>
     </>
   );
 }

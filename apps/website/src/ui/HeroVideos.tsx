@@ -124,15 +124,16 @@ export function HeroVideos({ videos = heroVideos }: HeroVideosProps) {
   };
 
   return (
-    <div className="hero-videos" ref={root}>
+    <div className="hero-videos flex flex-col gap-3" ref={root}>
       <div
-        className="hero-videos__frame"
+        className="relative aspect-video w-full overflow-hidden rounded-md border border-line-strong bg-mint shadow-md max-md:data-[mobile=yes]:mx-auto max-md:data-[mobile=yes]:aspect-[9/16] max-md:data-[mobile=yes]:w-[min(100%,22rem)]"
         data-mobile={wide === false && current.mobile ? 'yes' : 'no'}
         role="tabpanel"
         id={PANEL_ID}
         aria-labelledby={tabId(current.id)}
       >
         <video
+          className="block h-full w-full object-contain"
           ref={video}
           controls
           playsInline
@@ -152,11 +153,16 @@ export function HeroVideos({ videos = heroVideos }: HeroVideosProps) {
             Your browser cannot play this video. <a href={current.landscape.src}>Download it (MP4)</a>.
           </p>
         </video>
-        <span className="hero-videos__count" ref={count} hidden aria-hidden="true" />
+        <span
+          className="hero-videos__count pointer-events-none absolute top-2 right-2 min-w-7 rounded-sm bg-black/50 px-[0.4rem] py-[0.1rem] text-center font-mono text-xs leading-[1.4] font-semibold text-white tabular-nums"
+          ref={count}
+          hidden
+          aria-hidden="true"
+        />
       </div>
 
       <div
-        className="hero-videos__nav"
+        className="hero-videos__nav grid gap-4 [--progress:0]"
         role="tablist"
         aria-label="Videos"
         ref={nav}
@@ -172,18 +178,21 @@ export function HeroVideos({ videos = heroVideos }: HeroVideosProps) {
               role="tab"
               key={item.id}
               id={tabId(item.id)}
-              className="hero-videos__tab"
+              className="group relative flex cursor-pointer flex-col gap-0.5 border-x-0 border-t-2 border-b-0 border-line bg-transparent px-0 pt-2 pb-0 text-left font-sans text-base font-normal text-text-muted hover:text-text aria-selected:text-text"
               aria-selected={selected}
               aria-controls={PANEL_ID}
               tabIndex={selected ? 0 : -1}
               onClick={() => select(index)}
             >
-              <span className="hero-videos__head">
-                <span className="hero-videos__index">{String(index + 1).padStart(2, '0')}</span>
-                <span className="hero-videos__title">{item.title}</span>
+              <span className="flex flex-wrap items-baseline gap-2">
+                <span className="font-mono text-xs leading-[normal] font-bold group-aria-selected:text-primary">{String(index + 1).padStart(2, '0')}</span>
+                <span className="font-bold">{item.title}</span>
               </span>
-              <span className="hero-videos__summary">{item.summary}</span>
-              <span className="hero-videos__bar" aria-hidden="true" />
+              <span className="text-sm">{item.summary}</span>
+              <span
+                className="absolute -top-0.5 right-0 left-0 hidden h-0.5 origin-left scale-x-[var(--progress)] bg-primary group-aria-selected:block"
+                aria-hidden="true"
+              />
             </button>
           );
         })}

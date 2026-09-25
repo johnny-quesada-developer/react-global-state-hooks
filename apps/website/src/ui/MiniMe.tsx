@@ -8,6 +8,9 @@ import { usePreferences, useMiniMeHidden } from '../state/preferences';
  * hidden (the choice is remembered), and stays still when the visitor prefers reduced motion (see
  * site.css).
  */
+const control =
+  'cursor-pointer rounded-sm border border-line-strong bg-bg px-2 py-0 font-sans text-xs font-normal text-text';
+
 export function MiniMe() {
   const hidden = useMiniMeHidden();
   const [paused, setPaused] = useState(false);
@@ -17,24 +20,33 @@ export function MiniMe() {
 
   if (hidden) {
     return (
-      <button type="button" className="minime-show" onClick={() => setHidden(false)}>
+      <button type="button" className={`minime-show mt-0 mr-4 mb-3 ml-auto block md:mr-6 ${control}`} onClick={() => setHidden(false)}>
         Show the walking character
       </button>
     );
   }
 
   return (
-    <div className="minime" data-paused={paused}>
-      <div className="minime__controls">
-        <button type="button" data-minime-pause aria-pressed={paused} onClick={() => setPaused(!paused)}>
+    <div
+      className="minime relative overflow-hidden border-t border-line bg-sky [contain:layout_paint]"
+      data-paused={paused}
+    >
+      <div className="absolute top-1 right-4 z-1 flex gap-2 md:right-6">
+        <button
+          type="button"
+          className={control}
+          data-minime-pause
+          aria-pressed={paused}
+          onClick={() => setPaused(!paused)}
+        >
           {paused ? 'Play' : 'Pause'}
         </button>
-        <button type="button" onClick={() => setHidden(true)}>
+        <button type="button" className={control} onClick={() => setHidden(true)}>
           Hide
         </button>
       </div>
-      <div className="minime__track" aria-hidden="true">
-        <div className="minime__walker">
+      <div className="[container-type:inline-size] relative h-15" aria-hidden="true">
+        <div className="minime__walker absolute bottom-[0.4rem] left-0 will-change-transform motion-reduce:left-4">
           <div className="minime__flip">
             <svg viewBox="0 0 48 56" width="40" height="47" role="presentation">
               <g className="limb limb--back">

@@ -1,4 +1,5 @@
 import { withBase } from '../lib/site';
+import { PageShell } from './PageShell';
 
 export interface IndexPage {
   id: string;
@@ -13,25 +14,27 @@ export interface IndexSection {
 
 export function DocsIndex({ sections }: { sections: IndexSection[] }) {
   return (
-    <div className="container docs-index">
-      <h1>Documentation</h1>
-      <p className="lede">Task-oriented guides for react-global-state-hooks. Start with Getting started.</p>
+    <PageShell className="py-8">
+      <h1 className="text-3xl leading-heading">Documentation</h1>
+      <p className="mt-2 text-lg text-text-muted">Task-oriented guides for react-global-state-hooks. Start with Getting started.</p>
 
-      <div className="docs-index__grid">
+      <div className="mt-6 grid grid-cols-[repeat(auto-fill,minmax(18rem,1fr))] gap-4">
         {sections.map((section) => (
-          <section className="docs-index__card" key={section.title}>
-            <h2>{section.title}</h2>
-            <ul>
+          <section className="rounded-md bg-mint px-6 py-4" key={section.title}>
+            <h2 className="mb-3 text-xl leading-heading">{section.title}</h2>
+            <ul className="m-0 list-none p-0">
               {section.pages.map((page) => (
                 <li key={page.id}>
-                  <a href={withBase(`docs/${page.id}/`)}>{page.title}</a>
-                  <span>{page.description}</span>
+                  <a className="block font-bold" href={withBase(`docs/${page.id}/`)}>
+                    {page.title}
+                  </a>
+                  <span className="block text-sm text-text-muted">{page.description}</span>
                 </li>
               ))}
             </ul>
           </section>
         ))}
       </div>
-    </div>
+    </PageShell>
   );
 }

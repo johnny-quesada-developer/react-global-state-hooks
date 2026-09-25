@@ -2,6 +2,7 @@ import js from '@eslint/js';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import pluginReact from 'eslint-plugin-react';
+import betterTailwind from 'eslint-plugin-better-tailwindcss';
 import { defineConfig } from 'eslint/config';
 
 const $globals = {
@@ -101,6 +102,36 @@ export default defineConfig([
       // TS types the props; the plugin's runtime prop-types / display-name checks are redundant noise here.
       'react/prop-types': 'off',
       'react/display-name': 'off',
+    },
+  },
+  {
+    // apps/website is Tailwind-only. `ignore` lists the classes that exist on purpose outside
+    // Tailwind: hooks the Playwright specs and unit tests select by, and the overrides.css rules.
+    // .astro is excluded because this config has no Astro parser.
+    files: ['apps/website/src/ui/**/*.tsx'],
+    plugins: { 'better-tailwindcss': betterTailwind },
+    settings: {
+      'better-tailwindcss': { entryPoint: 'src/styles/app.css' },
+    },
+    rules: {
+      'better-tailwindcss/no-unknown-classes': [
+        'error',
+        {
+          ignore: [
+            '^prose$',
+            '^code-block(--compact|--fill)?$',
+            '^search-(open|dialog)$',
+            '^minime(-show|__walker|__flip)?$',
+            '^limb(--back|--front)?$',
+            '^install$',
+            '^site-footer$',
+            '^hero-videos(__count|__nav)?$',
+          ],
+        },
+      ],
+      'better-tailwindcss/enforce-consistent-class-order': 'error',
+      'better-tailwindcss/no-duplicate-classes': 'error',
+      'better-tailwindcss/no-unnecessary-whitespace': 'error',
     },
   },
 ]);

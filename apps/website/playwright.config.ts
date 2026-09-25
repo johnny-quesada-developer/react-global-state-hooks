@@ -14,7 +14,13 @@ export default defineConfig({
   fullyParallel: true,
   reporter: [['list'], ['html', { open: 'never' }]],
   expect: {
-    toHaveScreenshot: { maxDiffPixelRatio: 0.03, animations: 'disabled', caret: 'hide', scale: 'css' },
+    // VISUAL_STRICT=1 drops the tolerance to zero, for restyling work.
+    toHaveScreenshot: {
+      maxDiffPixelRatio: process.env.VISUAL_STRICT ? 0 : 0.03,
+      animations: 'disabled',
+      caret: 'hide',
+      scale: 'css',
+    },
   },
   use: {
     baseURL: `http://127.0.0.1:${PORT}${BASE}`,

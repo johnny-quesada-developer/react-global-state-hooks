@@ -46,3 +46,11 @@
 .pref-preview--compact {
   padding: var(--space-2);
 }
+
+/* Used by PreferencesDemo. The example pages render this component's source as page content, so the
+   file is left as it is until the demos are migrated together. */
+.section__lede {
+  margin: 0.5rem 0 1.5rem;
+  color: var(--color-text-muted);
+  max-width: 46rem;
+}

@@ -1,6 +1,10 @@
 import type { ReactNode } from 'react';
+import { Badge } from './Badge';
+import { PageHeader } from './PageHeader';
+import { PageShell } from './PageShell';
+import { Pager, PagerLink } from './Pager';
 import { withBase } from '../lib/site';
-import { DocsNav, type NavGroup, type NavPage } from './DocsNav';
+import { DocsNav, navLink, navTitle, type NavGroup, type NavPage } from './DocsNav';
 
 export interface TocHeading {
   depth: number;
@@ -37,64 +41,52 @@ export function DocsPage({
   const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
 
   return (
-    <div className="container docs">
-      <details className="docs__mobile-nav">
-        <summary>Documentation menu</summary>
+    <PageShell className="grid grid-cols-[minmax(0,1fr)] gap-6 py-6 wider:grid-cols-[14rem_minmax(0,1fr)] wider:gap-8 widest:grid-cols-[14rem_minmax(0,1fr)_13rem]">
+      <details className="rounded-md border border-line-strong px-4 py-2 wider:hidden">
+        <summary className="cursor-pointer font-semibold">Documentation menu</summary>
         <DocsNav sections={sections} currentId={id} />
       </details>
 
-      <aside className="docs__sidebar">
+      <aside className="hidden wider:sticky wider:top-[calc(var(--header-height)+1rem)] wider:block wider:max-h-[calc(100vh-var(--header-height)-2rem)] wider:self-start wider:overflow-y-auto">
         <DocsNav sections={sections} currentId={id} />
       </aside>
 
-      <article className="docs__content" data-pagefind-body>
-        <header className="docs__header">
-          <p className="docs__section" data-pagefind-ignore>
+      <article data-pagefind-body>
+        <PageHeader title={title} description={description}>
+          <p className="m-0 mb-2 text-sm font-bold text-primary" data-pagefind-ignore>
             {section}
-            {status === 'beta' && <span className="badge badge--beta">Beta</span>}
+            {status === 'beta' && <Badge>Beta</Badge>}
           </p>
-          <h1>{title}</h1>
-          <p className="docs__lede">{description}</p>
-        </header>
+        </PageHeader>
 
         <div className="prose">{children}</div>
 
-        <nav className="docs__pager" aria-label="Previous and next pages" data-pagefind-ignore>
+        <Pager aria-label="Previous and next pages">
           {previous ? (
-            <a className="docs__pager-link" rel="prev" href={withBase(`docs/${previous.id}/`)}>
-              <span>Previous</span>
-              {previous.title}
-            </a>
+            <PagerLink direction="previous" title={previous.title} href={withBase(`docs/${previous.id}/`)} />
           ) : (
             <span />
           )}
-          {next && (
-            <a
-              className="docs__pager-link docs__pager-link--next"
-              rel="next"
-              href={withBase(`docs/${next.id}/`)}
-            >
-              <span>Next</span>
-              {next.title}
-            </a>
-          )}
-        </nav>
+          {next && <PagerLink direction="next" title={next.title} href={withBase(`docs/${next.id}/`)} />}
+        </Pager>
       </article>
 
       {toc.length > 0 && (
-        <aside className="docs__toc" data-pagefind-ignore>
+        <aside className="hidden widest:sticky widest:top-[calc(var(--header-height)+1rem)] widest:block widest:max-h-[calc(100vh-var(--header-height)-2rem)] widest:self-start widest:overflow-y-auto" data-pagefind-ignore>
           <nav aria-label="On this page">
-            <p className="docs-nav__title">On this page</p>
-            <ul>
+            <p className={navTitle}>On this page</p>
+            <ul className="m-0 list-none p-0">
               {toc.map((heading) => (
-                <li className={heading.depth === 3 ? 'toc-sub' : undefined} key={heading.slug}>
-                  <a href={`#${heading.slug}`}>{heading.text}</a>
+                <li key={heading.slug}>
+                  <a className={`${navLink} ${heading.depth === 3 ? 'pl-6' : ''}`} href={`#${heading.slug}`}>
+                    {heading.text}
+                  </a>
                 </li>
               ))}
             </ul>
           </nav>
         </aside>
       )}
-    </div>
+    </PageShell>
   );
 }

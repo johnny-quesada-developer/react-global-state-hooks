@@ -1,0 +1,105 @@
+/* Rules targeting markup this site does not author, so no element of ours can carry the utility. */
+
+/* Pagefind builds its own UI at runtime and reads these from the container. */
+.search-dialog {
+  --pagefind-ui-primary: var(--color-primary);
+  --pagefind-ui-text: var(--color-text);
+  --pagefind-ui-background: var(--color-bg);
+  --pagefind-ui-border: var(--color-line-strong);
+  --pagefind-ui-tag: var(--color-mint);
+  --pagefind-ui-border-width: 1px;
+  --pagefind-ui-border-radius: 8px;
+  --pagefind-ui-font: var(--font-sans);
+}
+
+.search-dialog::backdrop {
+  background: rgb(32 51 45 / 0.35);
+}
+
+/* The walking character: a container query drives the distance, keyframes drive the gait. */
+.minime__walker {
+  animation: minime-walk 40s linear infinite;
+}
+
+.minime__flip {
+  animation: minime-turn 40s step-end infinite;
+}
+
+.limb {
+  transform-origin: 24px 38px;
+  animation: minime-step 0.7s ease-in-out infinite alternate;
+}
+
+.limb--back {
+  animation-direction: alternate-reverse;
+}
+
+.minime[data-paused='true'] .minime__walker,
+.minime[data-paused='true'] .minime__flip,
+.minime[data-paused='true'] .limb {
+  animation-play-state: paused;
+}
+
+/* transform-only: runs on the compositor and never triggers layout on the main thread */
+@keyframes minime-walk {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(calc(100cqw - 40px));
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes minime-turn {
+  0% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(-1);
+  }
+}
+
+@keyframes minime-step {
+  from {
+    transform: rotate(-22deg);
+  }
+  to {
+    transform: rotate(22deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .minime__walker {
+    animation: none !important;
+  }
+  .minime__flip,
+  .limb {
+    animation: none !important;
+  }
+  .minime [data-minime-pause] {
+    display: none;
+  }
+}
+
+/* shiki returns the <pre> as an HTML string, with its background as an inline style. */
+.code-block pre {
+  margin: 0;
+  padding: var(--space-4);
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  background: var(--color-bg) !important;
+}
+.code-block--compact pre {
+  overflow-x: visible;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.8125rem;
+}
+
+.code-block--fill pre {
+  flex: 1;
+}

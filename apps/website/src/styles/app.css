@@ -1,0 +1,13 @@
+/*
+ * No Preflight: it drops link underlines, flattens heading sizes and strips list markers, which the
+ * design depends on. base.css is the reset instead. Utilities come last and unlayered so they
+ * outrank it. An @import that follows any other rule is invalid CSS and gets dropped.
+ */
+@layer theme, base;
+
+@import 'tailwindcss/theme.css' layer(theme);
+@import './tokens.css';
+@import './base.css' layer(base);
+@import './overrides.css';
+@import './prose.css';
+@import 'tailwindcss/utilities.css';

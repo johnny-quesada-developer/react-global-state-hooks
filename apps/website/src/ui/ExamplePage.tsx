@@ -1,4 +1,7 @@
 import type { ReactNode } from 'react';
+import { PageHeader } from './PageHeader';
+import { PageShell } from './PageShell';
+import { Pager, PagerLink } from './Pager';
 import { withBase } from '../lib/site';
 
 export interface ExampleLink {
@@ -17,21 +20,18 @@ interface ExamplePageProps {
 
 export function ExamplePage({ title, description, related, previous, next, children }: ExamplePageProps) {
   return (
-    <div className="container example" data-pagefind-body>
-      <p className="example__crumb" data-pagefind-ignore>
+    <PageShell className="pt-6 pb-0" data-pagefind-body>
+      <p className="mt-0 mr-0 mb-2 ml-0 text-sm font-bold" data-pagefind-ignore>
         <a href={withBase('examples/')}>Examples</a>
       </p>
-      <header className="docs__header">
-        <h1>{title}</h1>
-        <p className="docs__lede">{description}</p>
-      </header>
+      <PageHeader title={title} description={description} />
 
-      <div className="prose prose--wide">{children}</div>
+      <div className="prose max-w-none">{children}</div>
 
       {related.length > 0 && (
-        <section className="example__related" data-pagefind-ignore>
-          <h2>Related documentation</h2>
-          <ul>
+        <section className="mt-12" data-pagefind-ignore>
+          <h2 className="mb-3 text-xl leading-heading">Related documentation</h2>
+          <ul className="m-0 pl-[1.2rem]">
             {related.map((link) => (
               <li key={link.href}>
                 <a href={link.href}>{link.label}</a>
@@ -41,26 +41,14 @@ export function ExamplePage({ title, description, related, previous, next, child
         </section>
       )}
 
-      <nav className="docs__pager" aria-label="Previous and next examples" data-pagefind-ignore>
+      <Pager aria-label="Previous and next examples">
         {previous ? (
-          <a className="docs__pager-link" rel="prev" href={withBase(`examples/${previous.id}/`)}>
-            <span>Previous</span>
-            {previous.title}
-          </a>
+          <PagerLink direction="previous" title={previous.title} href={withBase(`examples/${previous.id}/`)} />
         ) : (
           <span />
         )}
-        {next && (
-          <a
-            className="docs__pager-link docs__pager-link--next"
-            rel="next"
-            href={withBase(`examples/${next.id}/`)}
-          >
-            <span>Next</span>
-            {next.title}
-          </a>
-        )}
-      </nav>
-    </div>
+        {next && <PagerLink direction="next" title={next.title} href={withBase(`examples/${next.id}/`)} />}
+      </Pager>
+    </PageShell>
   );
 }

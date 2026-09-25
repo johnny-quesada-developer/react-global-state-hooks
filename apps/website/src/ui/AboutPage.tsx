@@ -1,4 +1,8 @@
 import { links, withBase } from '../lib/site';
+import { BenefitCard, BenefitList } from './BenefitList';
+import { ButtonLink } from './ButtonLink';
+import { Section, SectionLede, SectionTitle } from './Section';
+import { PageShell } from './PageShell';
 
 interface CaseStudy {
   id: string;
@@ -141,10 +145,11 @@ const history = [
 
 export function AboutPage() {
   return (
-    <div className="container about">
-      <header className="about__hero">
-        <div className="about__portrait">
+    <PageShell className="pt-8 pb-0">
+      <header className="grid items-end gap-6 md:grid-cols-[auto_minmax(0,1fr)] md:gap-8">
+        <div className="w-48 overflow-hidden rounded-md border border-[#c2dfcb] bg-mint leading-[0]">
           <img
+            className="block h-auto w-48"
             src={withBase('img/johnny-512.png')}
             srcSet={`${withBase('img/johnny-256.png')} 256w, ${withBase('img/johnny-512.png')} 512w`}
             sizes="192px"
@@ -155,72 +160,71 @@ export function AboutPage() {
           />
         </div>
         <div>
-          <p className="about__eyebrow">About the author</p>
-          <h1>Johnny Quesada</h1>
-          <p className="about__lede">
+          <p className="mt-0 mr-0 mb-1 ml-0 text-sm font-bold text-primary">About the author</p>
+          <h1 className="text-3xl leading-heading">Johnny Quesada</h1>
+          <p className="my-3 max-w-[44rem] text-lg text-text-muted">
             Senior product engineer, also published as J. Esteban Quesada, currently working on Vonage&rsquo;s
             video developer platform. I work across the whole path from understanding a problem to shipping
             and improving the solution: full-stack architecture, React and TypeScript, performance, and
             developer tooling. Based in Spain, with more than twelve years of engineering experience.
           </p>
-          <p className="about__links">
-            <a className="button button--secondary" href={links.githubProfile} rel="noopener">
+          <p className="m-0 flex flex-wrap gap-3">
+            <ButtonLink variant="secondary" href={links.githubProfile} rel="noopener">
               GitHub
-            </a>
-            <a className="button button--secondary" href="https://www.npmjs.com/~johnny-qc" rel="noopener">
+            </ButtonLink>
+            <ButtonLink variant="secondary" href="https://www.npmjs.com/~johnny-qc" rel="noopener">
               npm
-            </a>
-            <a className="button button--secondary" href={links.linkedin} rel="noopener">
+            </ButtonLink>
+            <ButtonLink variant="secondary" href={links.linkedin} rel="noopener">
               LinkedIn
-            </a>
+            </ButtonLink>
           </p>
         </div>
       </header>
 
-      <section className="about__section" aria-labelledby="cases">
-        <h2 id="cases">Selected engineering case studies</h2>
-        <p className="section__lede">
+      <Section shell={false} aria-labelledby="cases">
+        <SectionTitle id="cases">Selected engineering case studies</SectionTitle>
+        <SectionLede>
           Faster analytics, shared mobile architecture and incremental modernization: three projects where
           engineering decisions improved product performance and team delivery.
-        </p>
+        </SectionLede>
         {caseStudies.map((study) => (
-          <article className="case" key={study.id} id={study.id}>
-            <h3>{study.title}</h3>
-            <p className="case__context">{study.context}</p>
+          <article className="mt-6 max-w-[52rem] rounded-md border border-line p-6 shadow-sm" key={study.id} id={study.id}>
+            <h3 className="text-xl leading-heading">{study.title}</h3>
+            <p className="mt-2 mr-0 mb-3 ml-0 text-text-muted">{study.context}</p>
             <dl>
-              <dt>Problem</dt>
-              <dd>{study.problem}</dd>
-              <dt>My responsibility</dt>
-              <dd>{study.responsibility}</dd>
-              <dt>Decisions</dt>
-              <dd>
-                <ul>
+              <dt className="mt-3 font-bold text-primary">Problem</dt>
+              <dd className="mt-1 mr-0 mb-0 ml-0">{study.problem}</dd>
+              <dt className="mt-3 font-bold text-primary">My responsibility</dt>
+              <dd className="mt-1 mr-0 mb-0 ml-0">{study.responsibility}</dd>
+              <dt className="mt-3 font-bold text-primary">Decisions</dt>
+              <dd className="mt-1 mr-0 mb-0 ml-0">
+                <ul className="m-0 pl-[1.2rem]">
                   {study.decisions.map((decision) => (
                     <li key={decision}>{decision}</li>
                   ))}
                 </ul>
               </dd>
-              <dt>Outcome</dt>
-              <dd>{study.outcome}</dd>
+              <dt className="mt-3 font-bold text-primary">Outcome</dt>
+              <dd className="mt-1 mr-0 mb-0 ml-0">{study.outcome}</dd>
             </dl>
           </article>
         ))}
-      </section>
+      </Section>
 
-      <section className="about__section" aria-labelledby="approach">
-        <h2 id="approach">Engineering approach</h2>
-        <ul className="benefits">
+      <Section shell={false} aria-labelledby="approach">
+        <SectionTitle id="approach">Engineering approach</SectionTitle>
+        <BenefitList>
           {approach.map((item) => (
-            <li className="benefit" key={item.title}>
-              <h3>{item.title}</h3>
-              <p>{item.body}</p>
-            </li>
+            <BenefitCard title={item.title} key={item.title}>
+              {item.body}
+            </BenefitCard>
           ))}
-        </ul>
-      </section>
+        </BenefitList>
+      </Section>
 
-      <section className="about__section" aria-labelledby="open-source">
-        <h2 id="open-source">Open source</h2>
+      <Section shell={false} aria-labelledby="open-source">
+        <SectionTitle id="open-source">Open source</SectionTitle>
         <p>
           <a href={links.repo} rel="noopener">
             react-global-state-hooks
@@ -232,26 +236,26 @@ export function AboutPage() {
           makes Web Worker concurrency easier to apply through a reusable API. It grew out of moving heavy
           chart data work off the main thread at Fragomen.
         </p>
-      </section>
+      </Section>
 
-      <section className="about__section" aria-labelledby="history">
-        <h2 id="history">Career history</h2>
-        <p className="section__lede">
+      <Section shell={false} aria-labelledby="history">
+        <SectionTitle id="history">Career history</SectionTitle>
+        <SectionLede>
           Product engineering and technical leadership across analytics, mobile applications, identity
           platforms and developer tools. Consulting engagements are identified below.
-        </p>
-        <ol className="history">
+        </SectionLede>
+        <ol className="mt-4 mr-0 mb-0 ml-0 grid max-w-[52rem] list-none gap-3 p-0">
           {history.map((item) => (
-            <li key={item.role}>
-              <span className="history__years">{item.years}</span>
+            <li className="grid gap-x-4 gap-y-1 border-b border-line pb-3 sm:grid-cols-[9rem_minmax(0,1fr)]" key={item.role}>
+              <span className="text-sm font-bold text-text-muted">{item.years}</span>
               <div>
                 <strong>{item.role}</strong>
-                <p>{item.note}</p>
+                <p className="mt-1 mr-0 mb-0 ml-0 text-sm text-text-muted">{item.note}</p>
               </div>
             </li>
           ))}
         </ol>
-      </section>
-    </div>
+      </Section>
+    </PageShell>
   );
 }

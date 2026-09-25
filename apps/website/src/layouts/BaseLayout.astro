@@ -1,6 +1,5 @@
 ---
-import '../styles/global.css';
-import '../styles/site.css';
+import '../styles/app.css';
 import { Header } from '../ui/Header';
 import { Footer } from '../ui/Footer';
 import { Search } from '../ui/Search';
@@ -57,7 +56,10 @@ const imageUrl = image ? new URL(withBase(image), Astro.site).href : undefined;
     <slot name="head" />
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+    <a
+      class="absolute top-[-4rem] left-3 z-[100] rounded-sm bg-primary px-4 py-2 text-on-primary focus:top-3 focus:text-on-primary"
+      href="#main">Skip to content</a
+    >
     <Header pathname={Astro.url.pathname}><Search client:idle /></Header>
     <main id="main">
       <slot />

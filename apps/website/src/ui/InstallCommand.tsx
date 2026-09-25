@@ -49,13 +49,14 @@ export function InstallCommand({ pkg = 'react-global-state-hooks' }: InstallComm
   };
 
   return (
-    <div className="install">
-      <div className="install__tabs" role="tablist" aria-label="Package manager">
+    <div className="install max-w-[min(30rem,100%)] overflow-hidden rounded-md border border-line-strong bg-bg">
+      <div className="flex border-b border-line bg-mint" role="tablist" aria-label="Package manager">
         {PACKAGE_MANAGERS.map((manager) => (
           <button
             type="button"
             role="tab"
             key={manager}
+            className="cursor-pointer border-x-0 border-t-0 border-b-2 border-transparent bg-transparent px-4 py-2 font-sans text-sm font-normal text-text-muted aria-selected:border-b-primary aria-selected:font-bold aria-selected:text-text"
             aria-selected={manager === packageManager}
             onClick={() => select(manager)}
           >
@@ -63,11 +64,19 @@ export function InstallCommand({ pkg = 'react-global-state-hooks' }: InstallComm
           </button>
         ))}
       </div>
-      <div className="install__row">
-        <code className="install__command" ref={output} aria-live="polite">
+      <div className="flex items-center justify-between gap-3 px-4 py-3 max-xs:flex-wrap max-xs:px-3">
+        <code
+          className="min-w-0 overflow-x-auto bg-transparent p-0 text-[0.9rem] whitespace-nowrap max-xs:flex-[1_1_100%] max-xs:[overflow-wrap:anywhere] max-xs:whitespace-normal"
+          ref={output}
+          aria-live="polite"
+        >
           {command}
         </code>
-        <button type="button" className="install__copy" onClick={copy}>
+        <button
+          type="button"
+          className="flex-none cursor-pointer rounded-sm border border-primary bg-bg px-3 py-1 font-sans text-sm font-semibold text-primary hover:bg-mint max-xs:ms-auto"
+          onClick={copy}
+        >
           {copied === 'copied' ? 'Copied' : copied === 'manual' ? 'Press Ctrl/Cmd+C' : 'Copy'}
         </button>
       </div>

@@ -1,8 +1,9 @@
 /*
- * Design tokens. White pages; pastel colour lives on surfaces, strong colour on text and actions.
- * Text/surface pairs are contrast-checked by src/lib/contrast.test.ts, which parses this file.
+ * Design tokens, registered as the Tailwind theme. src/lib/contrast.test.ts parses the `--color-*`
+ * hex literals out of this file. `static` because the remaining stylesheets read these through
+ * `var()`, which Tailwind's usage detection cannot see.
  */
-:root {
+@theme static {
   /* palette */
   --color-bg: #ffffff;
   --color-text: #20332d;
@@ -18,26 +19,23 @@
   --color-line-strong: #7c9488;
   --color-focus: #1d5578;
 
-  /* type */
+  /* type. `--text-*--line-height: inherit` keeps a size utility from changing the line height. */
   --font-sans:
     ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-lg: 1.125rem;
+  --text-xs--line-height: inherit;
+  --text-sm--line-height: inherit;
+  --text-base--line-height: inherit;
+  --text-lg--line-height: inherit;
   --text-xl: 1.375rem;
+  --text-xl--line-height: inherit;
   --text-2xl: 1.75rem;
+  --text-2xl--line-height: inherit;
   --text-3xl: clamp(2rem, 4.2vw, 2.75rem);
+  --text-3xl--line-height: inherit;
 
-  /* spacing scale (4px base) */
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.5rem;
-  --space-6: 2rem;
-  --space-7: 3rem;
-  --space-8: 4.5rem;
+  /* A size utility always sets line-height, so a sized heading must restate the base rule's 1.2. */
+  --leading-heading: 1.2;
 
   /* shape */
   --radius-sm: 6px;
@@ -46,13 +44,25 @@
   --shadow-md: 0 2px 10px rgb(32 51 45 / 0.08);
 
   /* layout */
-  --gutter: 1rem;
-  --page-max: 90rem;
-  --header-height: 3.5rem;
+  --container-page: 90rem;
+
+  /* widths Tailwind has no default for */
+  --breakpoint-xs: 30rem;
+  --breakpoint-wide: 56rem;
+  --breakpoint-wider: 60rem;
+  --breakpoint-widest: 78rem;
 }
 
-@media (min-width: 48rem) {
-  :root {
-    --gutter: 1.5rem;
-  }
+@custom-variant hover-none (@media (hover: none));
+
+/* Read by the remaining stylesheets. Exactly Tailwind's scale, so components use `p-6` directly. */
+:root {
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+
+  --header-height: 3.5rem;
 }

@@ -1,17 +1,18 @@
 import { withBase } from '../lib/site';
+import { ButtonLink } from './ButtonLink';
 
 export function NotFound() {
   return (
-    <div className="container not-found">
-      <h1>Page not found</h1>
+    <div className="mx-auto w-full max-w-[40rem] px-4 py-18 md:px-6">
+      <h1 className="mb-4">Page not found</h1>
       <p>The page you asked for does not exist or has moved.</p>
       <p>
-        <a className="button button--primary" href={withBase()}>
+        <ButtonLink href={withBase()}>
           Back to the home page
-        </a>
-        <a className="button button--secondary" href={withBase('docs/')}>
+        </ButtonLink>
+        <ButtonLink variant="secondary" className="ml-2" href={withBase('docs/')}>
           Browse the docs
-        </a>
+        </ButtonLink>
       </p>
     </div>
   );

@@ -77,8 +77,9 @@ function Shot({ id, className = '' }: { id: Id; className?: string }) {
   const text = copy[id];
 
   return (
-    <figure className={`showcase__item ${className}`.trim()}>
+    <figure className={`m-0 ${className}`.trim()}>
       <img
+        className="block h-auto w-full rounded-md border border-line-strong bg-bg shadow-sm"
         src={withBase(`devtools/showcase/${shot.file}`)}
         width={shot.width}
         height={shot.height}
@@ -86,7 +87,7 @@ function Shot({ id, className = '' }: { id: Id; className?: string }) {
         loading="lazy"
         decoding="async"
       />
-      <figcaption>
+      <figcaption className="mt-2 max-w-[46rem] text-sm text-text-muted">
         <strong>{text.title}.</strong> {text.caption}
       </figcaption>
     </figure>
@@ -96,28 +97,28 @@ function Shot({ id, className = '' }: { id: Id; className?: string }) {
 /** A tour of the extension: the whole window first, then each section as its own capture. */
 export function DevToolsShowcase() {
   return (
-    <div className="showcase">
-      <Shot id="whole-screen" className="showcase__hero" />
+    <div className="my-6 grid gap-8">
+      <Shot id="whole-screen" />
 
-      <div className="showcase__row showcase__row--three">
+      <div className="grid items-start gap-6 wider:grid-cols-[minmax(0,0.8fr)_minmax(0,0.75fr)_minmax(0,1.4fr)]">
         <Shot id="store-list" />
         <Shot id="logs-list" />
         <Shot id="state-changes" />
       </div>
 
-      <div className="showcase__row showcase__row--two">
+      <div className="grid items-start gap-6 wider:grid-cols-[repeat(2,minmax(0,1fr))]">
         <Shot id="state-tab" />
         <Shot id="time-logs" />
         <Shot id="action-groups" />
         <Shot id="actions-tab" />
       </div>
 
-      <div className="showcase__row showcase__row--two">
+      <div className="grid items-start gap-6 wider:grid-cols-[repeat(2,minmax(0,1fr))]">
         <Shot id="restore-dialog" />
         <Shot id="app" />
       </div>
 
-      <p className="showcase__note">
+      <p className="m-0 text-sm text-text-muted">
         Captured from the live playground with the extension, in the light theme, against library version{' '}
         {data.capturedWith.libraryVersion}.
       </p>

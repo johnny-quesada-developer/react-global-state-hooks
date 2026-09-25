@@ -9,10 +9,14 @@ function makeHeading(Tag: 'h2' | 'h3') {
   // Replaces h2/h3 in MDX so every heading gets a visible, focusable anchor link.
   return function Heading({ id, children }: HeadingProps) {
     return (
-      <Tag id={id} className="heading">
+      <Tag id={id} className="group relative">
         {children}
         {id && (
-          <a className="heading__anchor" href={`#${id}`} aria-label="Link to this section">
+          <a
+            className="ml-[0.4em] font-normal text-text-muted no-underline opacity-0 group-hover:opacity-100 focus-visible:opacity-100 hover-none:opacity-60"
+            href={`#${id}`}
+            aria-label="Link to this section"
+          >
             #
           </a>
         )}
