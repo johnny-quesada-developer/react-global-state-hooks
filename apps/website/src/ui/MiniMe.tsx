@@ -9,7 +9,7 @@ import { usePreferences, useMiniMeHidden } from '../state/preferences';
  * site.css).
  */
 const control =
-  'cursor-pointer rounded-sm border border-line-strong bg-bg px-2 py-0 font-sans text-xs font-normal text-text';
+  'cursor-pointer rounded-sm border border-line-strong bg-bg px-2 py-0 font-sans text-xs font-normal text-text transition duration-150 ease-out active:scale-[0.97] hover:bg-mint';
 
 export function MiniMe() {
   const hidden = useMiniMeHidden();

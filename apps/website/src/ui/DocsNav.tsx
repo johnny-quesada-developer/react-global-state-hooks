@@ -17,7 +17,7 @@ interface DocsNavProps {
 
 export const navTitle = 'm-0 mb-2 text-xs font-bold tracking-[0.06em] text-text-muted uppercase';
 export const navLink =
-  'block border-l-2 border-line px-3 py-1 text-sm text-text no-underline hover:bg-mint aria-[current=page]:border-l-primary aria-[current=page]:bg-mint aria-[current=page]:font-bold';
+  'block border-l-2 border-line px-3 py-1 text-sm text-text no-underline transition duration-150 ease-out hover:bg-mint aria-[current=page]:border-l-primary aria-[current=page]:bg-mint aria-[current=page]:font-bold';
 
 export function DocsNav({ sections, currentId }: DocsNavProps) {
   return (

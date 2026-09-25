@@ -10,7 +10,7 @@ export function BenefitList({ children }: { children: ReactNode }) {
 
 export function BenefitCard({ title, children }: { title: ReactNode; children: ReactNode }) {
   return (
-    <li className="rounded-md border border-line px-6 py-4 shadow-sm">
+    <li className="rounded-md border border-line px-6 py-4 shadow-sm transition duration-150 ease-out hover:border-line-strong hover:shadow-md">
       <h3 className="mb-2 text-lg leading-heading">{title}</h3>
       <p className="m-0 text-sm text-text-muted">{children}</p>
     </li>

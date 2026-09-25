@@ -9,7 +9,7 @@ interface HeaderProps {
 }
 
 const navLink =
-  'border-b-2 border-transparent py-1 text-sm font-semibold text-text no-underline hover:border-primary hover:text-primary aria-[current=page]:border-primary aria-[current=page]:text-primary';
+  'border-b-2 border-transparent py-1 text-sm font-semibold text-text no-underline transition duration-150 ease-out hover:border-primary hover:text-primary aria-[current=page]:border-primary aria-[current=page]:text-primary';
 
 export function Header({ pathname, children }: HeaderProps) {
   const docs = withBase('docs/');

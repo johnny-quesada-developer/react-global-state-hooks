@@ -2,7 +2,7 @@ import type { ComponentPropsWithoutRef } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 
 const pagerLink = tv({
-  base: 'block min-w-[40%] rounded-md border border-line-strong px-4 py-3 font-bold no-underline hover:bg-mint',
+  base: 'block min-w-[40%] rounded-md border border-line-strong px-4 py-3 font-bold no-underline transition duration-150 ease-out hover:bg-mint',
   variants: {
     direction: {
       previous: '',

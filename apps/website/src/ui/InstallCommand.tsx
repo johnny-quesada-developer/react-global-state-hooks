@@ -56,7 +56,7 @@ export function InstallCommand({ pkg = 'react-global-state-hooks' }: InstallComm
             type="button"
             role="tab"
             key={manager}
-            className="cursor-pointer border-x-0 border-t-0 border-b-2 border-transparent bg-transparent px-4 py-2 font-sans text-sm font-normal text-text-muted aria-selected:border-b-primary aria-selected:font-bold aria-selected:text-text"
+            className="cursor-pointer border-x-0 border-t-0 border-b-2 border-transparent bg-transparent px-4 py-2 font-sans text-sm font-normal text-text-muted transition duration-150 ease-out hover:text-text aria-selected:border-b-primary aria-selected:font-bold aria-selected:text-text"
             aria-selected={manager === packageManager}
             onClick={() => select(manager)}
           >
@@ -74,7 +74,8 @@ export function InstallCommand({ pkg = 'react-global-state-hooks' }: InstallComm
         </code>
         <button
           type="button"
-          className="flex-none cursor-pointer rounded-sm border border-primary bg-bg px-3 py-1 font-sans text-sm font-semibold text-primary hover:bg-mint max-xs:ms-auto"
+          className="flex-none cursor-pointer rounded-sm border border-primary bg-bg px-3 py-1 font-sans text-sm font-semibold text-primary transition duration-150 ease-out hover:bg-mint active:scale-[0.97] max-xs:ms-auto"
+          aria-live="polite"
           onClick={copy}
         >
           {copied === 'copied' ? 'Copied' : copied === 'manual' ? 'Press Ctrl/Cmd+C' : 'Copy'}

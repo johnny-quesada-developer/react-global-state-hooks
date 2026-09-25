@@ -26,7 +26,7 @@ interface ResourceItemProps {
 
 export function ResourceItem({ step, title, children }: ResourceItemProps) {
   return (
-    <li className="flex items-baseline gap-3 rounded-md border border-line bg-bg px-4 py-3">
+    <li className="flex items-baseline gap-3 rounded-md border border-line bg-bg px-4 py-3 transition duration-150 ease-out hover:border-line-strong hover:shadow-sm">
       {step && (
         <span className="flex-none font-mono text-xs leading-[normal] font-bold text-primary">{step}</span>
       )}

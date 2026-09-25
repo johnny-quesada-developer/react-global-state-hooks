@@ -13,7 +13,7 @@ function makeHeading(Tag: 'h2' | 'h3') {
         {children}
         {id && (
           <a
-            className="ml-[0.4em] font-normal text-text-muted no-underline opacity-0 group-hover:opacity-100 focus-visible:opacity-100 hover-none:opacity-60"
+            className="ml-[0.4em] font-normal text-text-muted no-underline opacity-0 transition-opacity duration-150 ease-out group-hover:opacity-100 focus-visible:opacity-100 hover-none:opacity-60"
             href={`#${id}`}
             aria-label="Link to this section"
           >

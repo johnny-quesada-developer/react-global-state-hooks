@@ -92,7 +92,7 @@ export function Search() {
     <>
       <button
         type="button"
-        className="search-open inline-flex cursor-pointer items-center gap-2 rounded-md border border-line-strong bg-bg px-[0.6rem] py-[0.35rem] font-sans text-sm font-normal text-text-muted hover:bg-mint"
+        className="search-open inline-flex cursor-pointer items-center gap-2 rounded-md border border-line-strong bg-bg px-[0.6rem] py-[0.35rem] font-sans text-sm font-normal text-text-muted transition duration-150 ease-out hover:bg-mint active:scale-[0.97]"
         onClick={() => actions.show()}
         aria-haspopup="dialog"
       >
@@ -105,7 +105,7 @@ export function Search() {
 
       <dialog
         ref={dialog}
-        className="search-dialog mx-auto mt-16 mb-auto max-h-[min(80vh,40rem)] w-[min(42rem,calc(100vw-2rem))] rounded-md border border-line-strong bg-bg p-4 text-text shadow-md"
+        className="search-dialog mx-auto mt-16 mb-auto max-h-[min(80vh,40rem)] w-[min(42rem,calc(100vw-2rem))] overscroll-contain rounded-md border border-line-strong bg-bg p-4 text-text shadow-md"
         aria-label="Search documentation"
         onClose={() => useSearchDialog.getState().open && actions.hide()}
         onClick={(event) => {
@@ -118,7 +118,7 @@ export function Search() {
           <span>Search documentation</span>
           <button
             type="button"
-            className="cursor-pointer rounded-sm border border-line-strong bg-bg px-3 py-1 font-sans text-sm font-bold"
+            className="cursor-pointer rounded-sm border border-line-strong bg-bg px-3 py-1 font-sans text-sm font-bold transition duration-150 ease-out hover:bg-mint active:scale-[0.97]"
             onClick={() => actions.hide()}
           >
             Close

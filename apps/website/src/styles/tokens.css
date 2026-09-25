@@ -37,6 +37,9 @@
   /* A size utility always sets line-height, so a sized heading must restate the base rule's 1.2. */
   --leading-heading: 1.2;
 
+  /* Built-in CSS easings are too weak for UI; this is the stronger ease-out. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+
   /* shape */
   --radius-sm: 6px;
   --radius-md: 10px;
