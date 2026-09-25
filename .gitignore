@@ -38,6 +38,9 @@ openapi.json
 brag-output*
 .DS_Store
 apps/website/public/pagefind/
+apps/website/test-results/
+apps/website/playwright-report/
+apps/website/blob-report/
 .playwright-mcp/
 
 # Generated extension release archive

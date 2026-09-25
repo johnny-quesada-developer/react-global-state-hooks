@@ -28,6 +28,14 @@
       "executor": "nx:run-commands",
       "options": { "command": "yarn test", "cwd": "apps/website" }
     },
+    "test:visual": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn test:visual", "cwd": "apps/website" }
+    },
+    "test:visual:update": {
+      "executor": "nx:run-commands",
+      "options": { "command": "yarn test:visual:update", "cwd": "apps/website" }
+    },
     "lint": {
       "executor": "nx:run-commands",
       "options": { "command": "yarn lint", "cwd": "apps/website" }
