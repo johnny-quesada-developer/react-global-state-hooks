@@ -4,7 +4,7 @@ set -eu
 repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 cgc_bin="${CGC_BIN:-$HOME/.local/share/codegraphcontext/venv/bin/cgc}"
 if [ ! -x "$cgc_bin" ]; then
-  echo "CodeGraphContext is not installed. See ARCHITECTURE.md (Code navigation)." >&2
+  echo "CodeGraphContext executable not found at $cgc_bin. Install CodeGraphContext or set CGC_BIN to its executable." >&2
   exit 1
 fi
 repo_key=$(printf '%s' "$repo_root" | shasum -a 256 | cut -c1-12)

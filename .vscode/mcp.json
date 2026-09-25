@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "codegraphcontext": {
+      "type": "stdio",
+      "command": "/bin/sh",
+      "args": ["${workspaceFolder}/scripts/codegraph.sh", "mcp", "start"]
+    }
+  }
+}
