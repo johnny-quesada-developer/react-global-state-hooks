@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
-import { TasksDemo } from './TasksDemo';
+import { TasksDemo, resetTasksDemo } from './TasksDemo';
 import { useOpenCount, useTasks } from './store';
 
 afterEach(() => {
@@ -11,9 +11,8 @@ afterEach(() => {
 
 const count = (name: string) =>
   Number(
-    within(screen.getByRole(name === 'Add task' ? 'form' : 'region', { name })).getAllByTestId(
-      'render-count',
-    )[0].textContent,
+    within(screen.getByRole(name === 'Add task' ? 'form' : 'region', { name })).getAllByTestId('render-count')[0]
+      .textContent,
   );
 
 const rowCount = (text: string) =>
@@ -68,6 +67,15 @@ describe.each([
     expect(useTasks.getState().tasks).toHaveLength(3);
   });
 
+  it('shows an empty state for a filter with no tasks', () => {
+    render(wrap(<TasksDemo />));
+
+    fireEvent.click(screen.getByLabelText('done'));
+    fireEvent.click(screen.getByRole('button', { name: 'Clear done' }));
+
+    expect(screen.getByText('Nothing completed yet.')).toBeTruthy();
+  });
+
   it('a toggle re-renders the list, the stats and only the toggled row', () => {
     render(wrap(<TasksDemo />));
     const before = { form: count('Add task'), stats: count('Task stats'), list: count('Task list') };
@@ -94,12 +102,25 @@ describe.each([
     expect(count('Task list')).toBe(listRenders + 1);
   });
 
-  it('reset demo restores tasks and counters', () => {
+  it('rejects a blank task with a message beside the input', () => {
     render(wrap(<TasksDemo />));
+
+    fireEvent.click(screen.getByRole('button', { name: 'Add task' }));
+
+    expect(screen.getByRole('alert').textContent).toBe('Add a task name first.');
+    expect(screen.getByLabelText('New task').getAttribute('aria-invalid')).toBe('true');
+    expect(useTasks.getState().tasks).toHaveLength(3);
+  });
+
+  it('reset restores the tasks, and a remount restarts the counters', () => {
+    const { unmount } = render(wrap(<TasksDemo />));
     act(() => useTasks.actions.clearDone());
-    fireEvent.click(screen.getByRole('button', { name: 'Reset demo' }));
+    act(() => resetTasksDemo());
 
     expect(screen.getAllByRole('checkbox')).toHaveLength(3);
+
+    unmount();
+    render(wrap(<TasksDemo />));
     expect(count('Task stats')).toBe(1);
   });
 });

@@ -1,7 +1,23 @@
 ---
 title: Async workflows
-description: Loading, success, error and retry in one store, with an action that ignores late answers from older requests.
+headline: Every request state, covered
+description: Walk through loading, failure and retry with an explicit state for each outcome, and an action that ignores late answers from older requests.
 order: 3
+category: Async
+thumb: async
+outcome: Visible status belongs in state. Request bookkeeping belongs in metadata.
+points:
+  - Turn on Simulate a failing server and load the users. The status moves through idle, loading and error; `attempts` counts every request.
+  - Turn the server back on and press Retry. Retry is the same `load` action, and it clears the previous error.
+  - The button is disabled while a request is in flight. The "server" answers after about 700 ms.
+sources:
+  - file: async/store.ts
+    title: store.ts
+  - file: async/fakeApi.ts
+    title: fakeApi.ts
+  - file: async/AsyncDemo.tsx
+    title: AsyncDemo.tsx
+guide: async-workflows
 related:
   - label: Actions
     href: ../../docs/actions/
@@ -13,23 +29,9 @@ related:
 
 import { CodeBlock } from '../../ui/CodeBlock';
 import { Callout } from '../../ui/Callout';
-import { AsyncDemo } from '@examples/async/AsyncDemo';
 import store from '@examples/async/store.ts?raw';
 import fakeApi from '@examples/async/fakeApi.ts?raw';
 import demo from '@examples/async/AsyncDemo.tsx?raw';
-
-## Try it
-
-The "server" answers after about 700 ms. Turn on **Simulate a failing server**, load the users, then turn it off
-and press **Retry**.
-
-<AsyncDemo client:visible />
-
-## What to look for
-
-- The status moves through idle, loading, success and error. `attempts` counts every request.
-- **Retry** is the same `load` action. A retry clears the previous error.
-- The button is disabled while a request is in flight.
 
 ## The code
 

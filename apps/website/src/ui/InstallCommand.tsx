@@ -1,85 +1,75 @@
-import { useEffect, useRef, useState } from 'react';
-import {
-  PACKAGE_MANAGERS,
-  usePackageManager,
-  usePreferences,
-  type PackageManager,
-} from '../state/preferences';
+import { PACKAGE_MANAGERS, usePackageManager, usePreferences, type PackageManager } from '../state/preferences';
+import { Icon } from './Icon';
 
 const install: Record<PackageManager, string> = {
   npm: 'npm install',
-  yarn: 'yarn add',
   pnpm: 'pnpm add',
+  yarn: 'yarn add',
+  bun: 'bun add',
 };
 
 interface InstallCommandProps {
   pkg?: string;
 }
 
+/** Terminal block plus package-manager tabs (reference `#install`). The choice is shared and remembered. */
 export function InstallCommand({ pkg = 'react-global-state-hooks' }: InstallCommandProps) {
-  // The choice is stored globally, so it is shared by every install box on the site and remembered.
   const packageManager = usePackageManager();
-  const [copied, setCopied] = useState<'idle' | 'copied' | 'manual'>('idle');
-  const output = useRef<HTMLElement>(null);
   const command = `${install[packageManager]} ${pkg}`;
-
-  useEffect(() => {
-    if (copied === 'idle') return;
-
-    const timer = setTimeout(() => setCopied('idle'), 1800);
-    return () => clearTimeout(timer);
-  }, [copied]);
 
   const select = (choice: PackageManager) =>
     usePreferences.setState((preferences) => ({ ...preferences, packageManager: choice }));
 
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(command);
-      setCopied('copied');
-    } catch {
-      // clipboard blocked: select the text so the visitor can copy it manually
-      const range = document.createRange();
-      if (output.current) range.selectNodeContents(output.current);
-      const selection = window.getSelection();
-      selection?.removeAllRanges();
-      selection?.addRange(range);
-      setCopied('manual');
-    }
+  const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const index = PACKAGE_MANAGERS.indexOf(packageManager);
+    const moves: Record<string, number> = {
+      ArrowRight: (index + 1) % PACKAGE_MANAGERS.length,
+      ArrowLeft: (index - 1 + PACKAGE_MANAGERS.length) % PACKAGE_MANAGERS.length,
+      Home: 0,
+      End: PACKAGE_MANAGERS.length - 1,
+    };
+    const next = moves[event.key];
+    if (next === undefined) return;
+
+    event.preventDefault();
+    select(PACKAGE_MANAGERS[next]);
+    (event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="tab"]')[next] ?? null)?.focus();
   };
 
   return (
-    <div className="install max-w-[min(30rem,100%)] overflow-hidden rounded-md border border-line-strong bg-bg">
-      <div className="flex border-b border-line bg-mint" role="tablist" aria-label="Package manager">
+    <div className="install">
+      <figure className="code-block m-0">
+        <div className="code-head">
+          <span>
+            <Icon name="terminal" />
+            terminal
+          </span>
+          <button type="button" className="copy-button" data-copy={command} aria-label="Copy install command">
+            <Icon name="copy" />
+          </button>
+        </div>
+        <pre>
+          <code>
+            <span className="line" aria-live="polite">
+              {command}
+            </span>
+          </code>
+        </pre>
+      </figure>
+      <div className="-mt-3 mb-6 flex gap-3 border-b border-line px-4" role="tablist" aria-label="Package manager" onKeyDown={onKeyDown}>
         {PACKAGE_MANAGERS.map((manager) => (
           <button
             type="button"
             role="tab"
             key={manager}
-            className="cursor-pointer border-x-0 border-t-0 border-b-2 border-transparent bg-transparent px-4 py-2 font-sans text-sm font-normal text-text-muted transition duration-150 ease-out hover:text-text aria-selected:border-b-primary aria-selected:font-bold aria-selected:text-text"
+            className="rounded-none border-b-2 border-transparent px-2 py-[14px] text-11 text-muted aria-selected:border-green aria-selected:font-[550] aria-selected:text-green"
             aria-selected={manager === packageManager}
+            tabIndex={manager === packageManager ? 0 : -1}
             onClick={() => select(manager)}
           >
             {manager}
           </button>
         ))}
-      </div>
-      <div className="flex items-center justify-between gap-3 px-4 py-3 max-xs:flex-wrap max-xs:px-3">
-        <code
-          className="min-w-0 overflow-x-auto bg-transparent p-0 text-[0.9rem] whitespace-nowrap max-xs:flex-[1_1_100%] max-xs:[overflow-wrap:anywhere] max-xs:whitespace-normal"
-          ref={output}
-          aria-live="polite"
-        >
-          {command}
-        </code>
-        <button
-          type="button"
-          className="flex-none cursor-pointer rounded-sm border border-primary bg-bg px-3 py-1 font-sans text-sm font-semibold text-primary transition duration-150 ease-out hover:bg-mint active:scale-[0.97] max-xs:ms-auto"
-          aria-live="polite"
-          onClick={copy}
-        >
-          {copied === 'copied' ? 'Copied' : copied === 'manual' ? 'Press Ctrl/Cmd+C' : 'Copy'}
-        </button>
       </div>
     </div>
   );

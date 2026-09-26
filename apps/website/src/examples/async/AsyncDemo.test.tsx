@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { AsyncDemo } from './AsyncDemo';
+import { AsyncDemo, resetAsyncDemo } from './AsyncDemo';
 import { useServer, useUsers } from './fakeApi';
 import { createUsersStore, type User } from './store';
 
@@ -91,7 +91,7 @@ describe('AsyncDemo', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Load users' }));
     expect(screen.getByRole('status').textContent).toBe('Loading users…');
-    expect((screen.getByRole('button', { name: 'Load users' }) as HTMLButtonElement).disabled).toBe(true);
+    expect((screen.getByRole('button', { name: 'Loading…' }) as HTMLButtonElement).disabled).toBe(true);
 
     await act(() => vi.advanceTimersByTimeAsync(700));
 
@@ -115,13 +115,21 @@ describe('AsyncDemo', () => {
     expect(screen.getByText('attempts: 2')).toBeTruthy();
   });
 
-  it('reset demo returns to idle', async () => {
+  it('reset returns to idle', async () => {
     render(<AsyncDemo />);
     fireEvent.click(screen.getByRole('button', { name: 'Load users' }));
     await act(() => vi.advanceTimersByTimeAsync(700));
 
-    fireEvent.click(screen.getByRole('button', { name: 'Reset demo' }));
+    act(() => resetAsyncDemo());
 
     expect(screen.getByRole('status').textContent).toBe('Nothing loaded yet.');
+  });
+
+  it('shows the loading state and disables the controls while a request is in flight', () => {
+    render(<AsyncDemo />);
+    fireEvent.click(screen.getByRole('button', { name: 'Load users' }));
+
+    expect(screen.getByRole('status').textContent).toBe('Loading users…');
+    expect((screen.getByLabelText('Simulate a failing server') as HTMLInputElement).disabled).toBe(true);
   });
 });

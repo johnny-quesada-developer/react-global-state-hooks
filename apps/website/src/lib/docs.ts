@@ -23,3 +23,10 @@ export async function getDocsNav(): Promise<{ sections: NavSection[]; flat: DocE
 
   return { sections, flat: sections.flatMap((section) => section.pages) };
 }
+
+/** The badge shown in the article meta row. */
+export function docKind(entry: DocEntry): 'Guide' | 'API reference' | 'Problem solving' {
+  if (entry.data.section === 'API reference') return 'API reference';
+  if (entry.data.symptoms) return 'Problem solving';
+  return 'Guide';
+}

@@ -1,21 +1,32 @@
 import { highlight, type CodeLanguage } from '../lib/highlight';
+import { Icon } from './Icon';
 
 interface CodeBlockProps {
   code: string;
   lang?: CodeLanguage;
+  /** Filename or label in the header row; `terminal` switches the icon. */
   title?: string;
   className?: string;
+  /** No line numbers, compact padding (one-line commands). */
+  plain?: boolean;
 }
 
-/** Build-time syntax highlighting (light theme). Rendered to static HTML, never hydrated. */
-export function CodeBlock({ code, lang = 'tsx', title, className = '' }: CodeBlockProps) {
+/** Build-time syntax highlighting. Rendered to static HTML, never hydrated; the copy control is wired by CopyController. */
+export function CodeBlock({ code, lang = 'tsx', title, className = '', plain = false }: CodeBlockProps) {
+  const label = title ?? (lang === 'bash' ? 'terminal' : lang);
+  const terminal = label === 'terminal' || lang === 'bash';
+
   return (
-    <figure className={`code-block mx-0 overflow-hidden rounded-md border border-line bg-bg shadow-sm ${className}`.trim()}>
-      {title && (
-        <figcaption className="flex justify-between gap-3 border-b border-line bg-mint px-4 py-2 font-mono text-sm">
-          {title}
-        </figcaption>
-      )}
+    <figure className={`code-block ${plain ? 'code-block--plain' : ''} ${className}`.trim()}>
+      <div className="code-head">
+        <span>
+          <Icon name={terminal ? 'terminal' : 'code'} />
+          {label}
+        </span>
+        <button type="button" className="copy-button" data-copy={code.trimEnd()} aria-label={`Copy ${label}`}>
+          <Icon name="copy" />
+        </button>
+      </div>
       <div dangerouslySetInnerHTML={{ __html: highlight(code, lang) }} />
     </figure>
   );

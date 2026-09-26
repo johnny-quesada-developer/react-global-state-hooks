@@ -1,6 +1,39 @@
+.note-card {
+  padding: 15px;
+}
+
+.note-card .note-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.note-badge {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #dce8df;
+  background: var(--color-green-soft);
+  color: var(--color-green);
+  padding: 3px 9px;
+  border-radius: 5px;
+  font-size: 10px;
+  letter-spacing: 0.045em;
+  line-height: 1.7;
+  font-weight: 550;
+}
+
+.note-card:nth-child(even) .note-badge {
+  border-color: #e2e6ef;
+  background: var(--color-blue-soft);
+  color: var(--color-blue);
+}
+
 .scoped-field {
   display: grid;
-  gap: var(--space-2);
+  gap: 6px;
+  position: relative;
 }
 
 .scoped-field .render-count {
@@ -8,15 +41,40 @@
 }
 
 .scoped-field textarea {
-  font: inherit;
-  padding: 0.45rem 0.6rem;
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-sm);
+  min-height: 90px;
+  font-size: 12px;
+  line-height: 1.7;
+  border-color: #e4e9e2;
+  padding: 10px;
   resize: vertical;
+}
+
+.scoped-field output {
+  font-size: 9px;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+}
+
+.scoped-field button {
+  justify-self: start;
+  min-height: 30px;
+  font-size: 11px;
 }
 
 .scoped-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  gap: 8px;
+}
+
+.scoped-notes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 370px) {
+  .scoped-notes {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

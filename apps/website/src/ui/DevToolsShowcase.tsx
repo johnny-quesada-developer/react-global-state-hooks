@@ -79,7 +79,7 @@ function Shot({ id, className = '' }: { id: Id; className?: string }) {
   return (
     <figure className={`m-0 ${className}`.trim()}>
       <img
-        className="block h-auto w-full rounded-md border border-line-strong bg-bg shadow-sm"
+        className="block h-auto w-full rounded-[8px] border border-line bg-paper"
         src={withBase(`devtools/showcase/${shot.file}`)}
         width={shot.width}
         height={shot.height}
@@ -87,8 +87,8 @@ function Shot({ id, className = '' }: { id: Id; className?: string }) {
         loading="lazy"
         decoding="async"
       />
-      <figcaption className="mt-2 max-w-[46rem] text-sm text-text-muted">
-        <strong>{text.title}.</strong> {text.caption}
+      <figcaption className="mt-2 max-w-[46rem] text-12 leading-[1.7] text-muted">
+        <strong className="text-ink">{text.title}.</strong> {text.caption}
       </figcaption>
     </figure>
   );
@@ -100,25 +100,25 @@ export function DevToolsShowcase() {
     <div className="my-6 grid gap-8">
       <Shot id="whole-screen" />
 
-      <div className="grid items-start gap-6 wider:grid-cols-[minmax(0,0.8fr)_minmax(0,0.75fr)_minmax(0,1.4fr)]">
+      <div className="grid items-start gap-6 md:grid-cols-[minmax(0,0.8fr)_minmax(0,0.75fr)_minmax(0,1.4fr)]">
         <Shot id="store-list" />
         <Shot id="logs-list" />
         <Shot id="state-changes" />
       </div>
 
-      <div className="grid items-start gap-6 wider:grid-cols-[repeat(2,minmax(0,1fr))]">
+      <div className="grid items-start gap-6 md:grid-cols-[repeat(2,minmax(0,1fr))]">
         <Shot id="state-tab" />
         <Shot id="time-logs" />
         <Shot id="action-groups" />
         <Shot id="actions-tab" />
       </div>
 
-      <div className="grid items-start gap-6 wider:grid-cols-[repeat(2,minmax(0,1fr))]">
+      <div className="grid items-start gap-6 md:grid-cols-[repeat(2,minmax(0,1fr))]">
         <Shot id="restore-dialog" />
         <Shot id="app" />
       </div>
 
-      <p className="m-0 text-sm text-text-muted">
+      <p className="m-0 text-12 text-muted">
         Captured from the live playground with the extension, in the light theme, against library version{' '}
         {data.capturedWith.libraryVersion}.
       </p>

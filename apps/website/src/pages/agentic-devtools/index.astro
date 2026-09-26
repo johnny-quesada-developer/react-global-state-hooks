@@ -1,0 +1,156 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { AgentEvidenceLoop } from '../../ui/agentic/AgentEvidenceLoop';
+import { WatchVideo } from '../../ui/home/VideoDialog';
+import { ButtonLink, TextLink } from '../../ui/Button';
+import { Callout } from '../../ui/Callout';
+import { CodeBlock } from '../../ui/CodeBlock';
+import { Eyebrow, SectionHead } from '../../ui/Eyebrow';
+import { Icon } from '../../ui/Icon';
+import { MiniNode } from '../../ui/Panel';
+import { StripCta } from '../../ui/StripCta';
+import { links, withBase } from '../../lib/site';
+
+const devtools = withBase('docs/devtools/');
+
+const points = [
+  { icon: 'layers', title: 'Inspect the real model', text: 'Read stores, selected values and action history—not just a screenshot of the result.' },
+  { icon: 'terminal', title: 'Use the same actions', text: 'Invoke exposed store actions from a terminal. Keep domain behavior in the application.' },
+  { icon: 'check', title: 'Verify the outcome', text: 'Read back the state after a change. A completed command is not proof that the intended state was reached.' },
+] as const;
+
+const commands = [
+  { title: 'Discover stores', command: 'npx rgsh --list', text: 'Identify what the running application exposes.' },
+  { title: 'Read a store', command: 'npx rgsh state todos', text: 'Inspect the current value before changing it.' },
+  { title: 'Call an action', command: 'npx rgsh action todos add "Write the docs"', text: 'Use the application’s own state transition.' },
+  { title: 'Read a path', command: 'npx rgsh state todos todos[0].done', text: 'Verify the exact part of the result that matters.' },
+];
+
+const flow = ['App + debug entry', 'DevTools panel', 'Local WebSocket', 'CLI / coding agent'];
+const setup = `npm i -D ws\nnpx rgsh --list\nnpx rgsh state todos\nnpx rgsh action todos add "Write the docs"`;
+---
+
+<BaseLayout
+  image="og/agentic-devtools.png"
+  imageAlt="Agentic DevTools: give your agent state, not guesses"
+  title="Agentic DevTools"
+  description="Inspect the live store, call a real action, read back what changed. A direct view of your application from the terminal your coding agent already uses."
+  family="Product"
+>
+  <div class="wrap">
+    <section class="pt-[68px] pb-[42px] text-center max-md:pt-11 max-md:pb-[30px]">
+      <Eyebrow className="mb-[21px] justify-center max-md:text-10">Agentic DevTools</Eyebrow>
+      <h1 class="text-[66px] max-3xl:text-[59px] max-md:text-[43px] max-md:leading-[1.12] max-xs:text-[37px]">
+        Give your agent<br /><span class="text-green">state. Not guesses.</span>
+      </h1>
+      <p class="mx-auto mb-[25px] max-w-[600px] text-16 leading-[1.7] max-md:text-15">
+        Inspect the live store. Call a real action. Read back what changed.<br />A direct view of your application, from the terminal your agent already uses.
+      </p>
+      <div class="mt-[30px] flex flex-wrap items-center justify-center gap-3">
+        <ButtonLink variant="primary" icon="arrow" href={devtools}>Connect your app</ButtonLink>
+        <ButtonLink icon="external" href={links.chromeStore} target="_blank" rel="noopener noreferrer">Get the extension</ButtonLink>
+      </div>
+      <p class="mt-[18px] mb-0 text-11 text-muted">Development only · Open source · Runs through the browser panel</p>
+    </section>
+
+    <AgentEvidenceLoop client:load />
+
+    <section class="border-t border-line py-[70px] max-md:py-[42px]">
+      <SectionHead kicker="A more useful conversation" lead="The interface and the state answer different questions. Give your tools access to both.">
+        <Fragment slot="title">From “what happened?”<br />to a trace you can inspect.</Fragment>
+      </SectionHead>
+      <div class="grid grid-cols-3 gap-6 max-md:grid-cols-1">
+        {
+          points.map((point) => (
+            <div class="min-w-0 rounded-panel border border-line bg-paper p-[30px]">
+              <Icon name={point.icon} />
+              <h3 class="mt-[26px] text-22">{point.title}</h3>
+              <p class="mt-3 mb-0 text-13 text-muted">{point.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="border-t border-line pb-[70px] max-md:pb-[42px]">
+      <SectionHead className="pt-[70px] max-md:pt-[42px]" kicker="The connection" title="One application. A shared view." />
+      <div class="rounded-[8px] border border-line bg-soft p-[26px] max-md:p-[19px]">
+        <div class="flex items-center justify-center gap-3 max-xl:gap-[7px] max-md:flex-col">
+          {
+            flow.map((node, index) => (
+              <>
+                {index > 0 && <Icon name="arrow" className="max-md:size-[18px] max-md:rotate-90" />}
+                <MiniNode tone={index === 1 ? 'accent' : 'plain'} className="h-[95px] flex-1 flex-col justify-center gap-[10px] text-center font-sans text-12 max-xl:text-10 max-md:h-auto max-md:min-h-[65px] max-md:w-full max-md:flex-row max-md:justify-between max-md:p-[18px] max-md:text-12">
+                  {node}
+                </MiniNode>
+              </>
+            ))
+          }
+        </div>
+        <p class="mt-[18px] mb-0 text-center text-10 text-muted">The panel stays open on your app’s tab. The CLI connects on the same port.</p>
+      </div>
+      <div class="mt-9 grid grid-cols-[1fr_1.15fr] gap-[65px] max-xl:gap-[35px] max-md:grid-cols-1 max-md:gap-[25px]">
+        <div class="min-w-0">
+          <h3 class="text-22">Start with the development entry.</h3>
+          <p class="mt-[14px] text-14 text-muted">Load debug instrumentation before creating stores. Open the extension panel, reload the app, and connect its terminal port.</p>
+          <div class="mt-6"><TextLink href={devtools}>Read the connection guide</TextLink></div>
+        </div>
+        <CodeBlock code={setup} lang="bash" title="terminal" className="mt-0" />
+      </div>
+      <Callout type="warning" title="State access is not browser automation">
+        The CLI reads and changes state through the panel. It does not click controls or type into the page. Keep browser automation for those tasks, and keep the debug entry out of production.
+      </Callout>
+    </section>
+
+    <section class="border-t border-line pb-[70px] max-md:pb-[42px]">
+      <SectionHead className="pt-[70px] max-md:pt-[42px]" kicker="Small commands. Specific answers." title="Start with a question about state." />
+      <div class="grid grid-cols-2 gap-4 max-xl:gap-[10px] max-md:grid-cols-1">
+        {
+          commands.map((item) => (
+            <div class="min-w-0 rounded-[8px] border border-line p-[21px] max-md:p-5">
+              <h3 class="mb-[10px] text-17">{item.title}</h3>
+              <p class="m-0 text-12">{item.text}</p>
+              <CodeBlock code={item.command} lang="bash" title="terminal" plain />
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="border-t border-line pb-[70px] max-md:pb-[42px]">
+      <SectionHead className="pt-[70px] max-md:pt-[42px]" kicker="See the real thing" title="See it work. In a real application." lead="Recordings of the extension, the state model and the workflow, captured against this repository’s playground." />
+      <div class="grid grid-cols-2 gap-6 max-md:grid-cols-1 max-md:gap-5">
+        <WatchVideo
+          client:idle
+          ids={['runtime-debugging', 'verify-the-fix']}
+          className="block w-full overflow-hidden rounded-[8px] border border-line text-left hover:border-[#9eb2a4]"
+        >
+          <div class="flex h-[170px] flex-col items-center justify-center gap-5 bg-soft p-[25px] max-md:h-[155px]">
+            <span class="flex size-12 items-center justify-center rounded-full border border-line bg-paper"><Icon name="play" /></span>
+            <span class="font-mono text-11">Inspect → act → verify</span>
+          </div>
+          <div class="p-[22px]">
+            <Eyebrow className="mb-[10px]">Product recordings</Eyebrow>
+            <h3 class="mb-[10px] text-18">Agentic workflow</h3>
+            <p class="m-0 text-12">Runtime debugging and verifying the fix, recorded with a coding agent and the extension.</p>
+          </div>
+        </WatchVideo>
+        <a class="block overflow-hidden rounded-[8px] border border-line hover:border-[#9eb2a4]" href={links.videoTutorial} target="_blank" rel="noopener noreferrer">
+          <div class="flex h-[170px] flex-col items-center justify-center gap-5 bg-blue-soft p-[25px] max-md:h-[155px]">
+            <span class="flex size-12 items-center justify-center rounded-full border border-line bg-paper"><Icon name="play" /></span>
+            <span class="font-mono text-11">A library walkthrough</span>
+          </div>
+          <div class="p-[22px]">
+            <Eyebrow className="mb-[10px]">Video tutorial</Eyebrow>
+            <h3 class="mb-[10px] text-18">Start with the fundamentals</h3>
+            <p class="m-0 text-12">Open the original video tutorial on YouTube.</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <StripCta className="mt-0" title="A clearer view of your next bug." text="Connect a development build and inspect your first store.">
+      <ButtonLink slot="action" variant="primary" icon="arrow" href={devtools}>Get connected</ButtonLink>
+    </StripCta>
+  </div>
+</BaseLayout>

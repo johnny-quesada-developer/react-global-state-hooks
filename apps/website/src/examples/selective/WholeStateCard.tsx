@@ -6,10 +6,11 @@ export function WholeStateCard() {
   const [profile] = useProfile();
 
   return (
-    <section className="demo-card demo-card--whole" aria-label="Whole state card">
+    <section className="demo-card demo-card--wide" aria-label="Whole state card">
       <RenderCount />
       <span>Whole state</span>
       <pre className="demo-json">{JSON.stringify(profile, null, 2)}</pre>
+      <p className="demo-caption">No selector: this card subscribes to the whole store and renders for every change.</p>
     </section>
   );
 }

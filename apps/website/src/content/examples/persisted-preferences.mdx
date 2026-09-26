@@ -1,7 +1,21 @@
 ---
 title: Persisted preferences
-description: Save part of a store to localStorage, validate what comes back, and hydrate without a mismatch.
+headline: Preferences that stay
+description: Save a preference, restore it, and keep session-only values out of storage. Validate what comes back and hydrate without a mismatch.
 order: 4
+category: Persistence
+thumb: persist
+outcome: Persist deliberately. Validate what returns.
+points:
+  - Choose an accent and a size. The box under Saved in localStorage shows what was written.
+  - The draft note appears in the preview but never in the saved data. The `selector` decides what is stored.
+  - Reload the page. Your choices come back; the draft does not. Reset rewrites the defaults.
+sources:
+  - file: persistence/store.ts
+    title: store.ts
+  - file: persistence/PreferencesDemo.tsx
+    title: PreferencesDemo.tsx
+guide: persistence
 related:
   - label: Persistence
     href: ../../docs/persistence/
@@ -11,25 +25,14 @@ related:
 
 import { CodeBlock } from '../../ui/CodeBlock';
 import { Callout } from '../../ui/Callout';
-import { PreferencesDemo } from '@examples/persistence/PreferencesDemo';
 import store from '@examples/persistence/store.ts?raw';
 import demo from '@examples/persistence/PreferencesDemo.tsx?raw';
-
-## Try it
-
-<PreferencesDemo client:visible />
-
-## What to look for
-
-- Choose an accent and a size. The box under **Saved in localStorage** shows what was written.
-- The draft note appears in the preview but never in the saved data: the `selector` decides what is stored.
-- Reload the page. Your choices come back; the draft does not.
-- **Clear saved data** resets the store and rewrites the defaults.
 
 ## The code
 
 `selector` picks what is saved. `validator` runs on every restore and keeps only values that are still
-valid, so an old or edited value cannot break the page.
+valid, so an old or edited value cannot break the page. The store uses its own namespaced key,
+`examples:preferences`; nothing else in your browser storage is touched.
 
 <CodeBlock code={store} lang="ts" title="store.ts" />
 

@@ -1,16 +1,18 @@
 import { renderToString } from 'react-dom/server';
 import { act, cleanup, render, screen } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { usePackageManager, usePreferences } from './preferences';
-import { useSearchDialog } from './search';
+import { useDialogs } from './dialogs';
+import { useToast } from './toast';
+import { useMotion } from './motion';
 
 const Probe = () => <span data-testid="pm">{usePackageManager()}</span>;
 
 beforeEach(() => window.localStorage.clear());
 afterEach(() => {
   cleanup();
-  usePreferences.reset({ packageManager: 'npm', miniMeHidden: false }, {});
-  useSearchDialog.reset({ open: false }, {});
+  usePreferences.reset({ packageManager: 'npm' }, {});
+  useDialogs.reset({ open: null }, {});
 });
 
 describe('preferences store', () => {
@@ -18,10 +20,7 @@ describe('preferences store', () => {
     usePreferences.setState((current) => ({ ...current, packageManager: 'pnpm' }));
 
     const saved = JSON.parse(window.localStorage.getItem('user-preferences') ?? 'null');
-    expect(saved.s).toEqual({
-      packageManager: 'pnpm',
-      miniMeHidden: false,
-    });
+    expect(saved.s).toEqual({ packageManager: 'pnpm' });
   });
 
   it('shares the value between separate React roots', () => {
@@ -40,14 +39,40 @@ describe('preferences store', () => {
   });
 });
 
-describe('search dialog store', () => {
-  it('opens and closes through actions', () => {
-    expect(useSearchDialog.getState().open).toBe(false);
+describe('dialogs store', () => {
+  it('opens one dialog at a time and only hides the named one', () => {
+    useDialogs.actions.show('search');
+    expect(useDialogs.getState().open).toBe('search');
 
-    useSearchDialog.actions.show();
-    expect(useSearchDialog.getState().open).toBe(true);
+    useDialogs.actions.show('navigation');
+    expect(useDialogs.getState().open).toBe('navigation');
 
-    useSearchDialog.actions.hide();
-    expect(useSearchDialog.getState().open).toBe(false);
+    useDialogs.actions.hide('search');
+    expect(useDialogs.getState().open).toBe('navigation');
+
+    useDialogs.actions.hide('navigation');
+    expect(useDialogs.getState().open).toBeNull();
+  });
+});
+
+describe('toast store', () => {
+  it('shows a message and hides it after 2.6 seconds', () => {
+    vi.useFakeTimers();
+    useToast.actions.announce('Copied to clipboard');
+    expect(useToast.getState()).toMatchObject({ message: 'Copied to clipboard', shown: true });
+
+    vi.advanceTimersByTime(2600);
+    expect(useToast.getState().shown).toBe(false);
+    vi.useRealTimers();
+  });
+});
+
+describe('motion store', () => {
+  it('toggles the html class', () => {
+    useMotion.actions.set(true);
+    expect(document.documentElement.classList.contains('motion-off')).toBe(true);
+
+    useMotion.actions.toggle();
+    expect(document.documentElement.classList.contains('motion-off')).toBe(false);
   });
 });

@@ -1,6 +1,39 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { EasyCodeReviewPage } from '../../ui/EasyCodeReviewPage';
+import { ReviewPipeline } from '../../ui/review/ReviewPipeline';
+import { Badge } from '../../ui/Badge';
+import { ButtonLink } from '../../ui/Button';
+import { Callout } from '../../ui/Callout';
+import { CodeBlock } from '../../ui/CodeBlock';
+import { Eyebrow, SectionHead } from '../../ui/Eyebrow';
+import { Icon } from '../../ui/Icon';
+import { Panel, PanelTop } from '../../ui/Panel';
+import { RowLink, RowLinks } from '../../ui/RowLinks';
+import { StripCta } from '../../ui/StripCta';
+import { links } from '../../lib/site';
+
+const repo = `${links.repo}/tree/master/libs/code-review`;
+
+const report = [
+  ['Measured', 'Coverage from your test runner'],
+  ['Checked', 'Configured executable validation'],
+  ['Reviewed', 'Agent findings and rubric'],
+  ['Recorded', 'Per-run report and file changes'],
+];
+
+const loop = [
+  ['A concrete target', 'A file, folder, glob, Nx project, commit or your current changes. Give the agent a defined review task.'],
+  ['Bounded iteration', 'Use coverage goals and retry limits. Concrete failures can trigger another pass; the loop stops on repeated failures, stalled progress or your attempt limit.'],
+  ['A traceable report', 'Inspect the run output and the diff under .review/runs/. Test coverage and an agent’s rubric score are different kinds of evidence.'],
+];
+
+const setup = `yarn install\nyarn workspace code-review build\n\n# Review the playground with a coverage goal.\nyarn review playground --goal 85\n\n# Create a review rule.\nyarn review rule create`;
+
+const safeguards = [
+  ['Clean baseline', 'Start from a clean working tree so new changes are attributable, and inspect them with git diff before keeping them.'],
+  ['Explicit permissions', 'Choose the agent’s edit permissions. Kiro and Copilot adapters use workspace-wide write access; folder-level restrictions are unavailable through those adapters. Claude also reports blocked edits directly to the pipeline.'],
+  ['Human inspection', 'Validate the output and examine the complete diff before accepting the result. Model scores complement your final code review; they do not replace it.'],
+];
 ---
 
 <BaseLayout
@@ -8,6 +41,121 @@ import { EasyCodeReviewPage } from '../../ui/EasyCodeReviewPage';
   imageAlt="easy-code-review beta"
   title="easy-code-review (beta)"
   description="Automate coverage improvements and custom code reviews with easy-code-review. Measured results, focused retries and detailed reports across coding agent providers."
+  family="Product"
 >
-  <EasyCodeReviewPage />
+  <div class="wrap">
+    <section class="grid grid-cols-[1.15fr_1fr] items-center gap-[70px] pt-[74px] pb-12 max-3xl:gap-[35px] max-xl:gap-[30px] max-md:grid-cols-1 max-md:gap-[25px] max-md:pt-[43px] max-md:pb-[30px]">
+      <div class="min-w-0">
+        <div class="mb-6 flex items-center gap-3">
+          <Eyebrow>Companion project</Eyebrow>
+          <Badge tone="amber">Beta</Badge>
+        </div>
+        <h1 class="max-xl:text-[46px] max-md:text-[43px] max-xs:text-38">Give code review<br />a repeatable<br />finish line.</h1>
+        <p class="mb-7 max-w-[560px] text-17 leading-[1.7] max-md:text-15">
+          easy-code-review turns coverage goals and review rules into focused code improvements. It runs your coding agent through a repeatable pipeline that measures results, feeds failures back into the next attempt and saves a detailed report of every run.
+        </p>
+        <div class="mt-7 flex flex-wrap items-center gap-3">
+          <ButtonLink variant="primary" icon="arrow" href="#setup">Set up the pipeline</ButtonLink>
+          <ButtonLink icon="external" href={repo} target="_blank" rel="noopener noreferrer">View source</ButtonLink>
+        </div>
+        <p class="mt-[18px] mb-0 text-11 text-muted">Currently a workspace package in the react-global-state-hooks repository. Try the beta from source.</p>
+      </div>
+      <Panel>
+        <PanelTop>
+          <span class="flex items-center gap-3"><Icon name="check" /> Review report</span>
+          <Badge>Illustrative output</Badge>
+        </PanelTop>
+        <div class="p-7">
+          <Eyebrow>playground / review</Eyebrow>
+          <h3 class="my-5 text-22">A result you can inspect.</h3>
+          {
+            report.map(([title, text]) => (
+              <div class="mb-2 flex items-start gap-[13px] border-b border-line py-[17px] last-of-type:mb-5">
+                <span class="pt-[2px] text-green"><Icon name="check" /></span>
+                <div>
+                  <strong class="text-14">{title}</strong>
+                  <p class="mt-[5px] mb-0 text-12 leading-[1.65]">{text}</p>
+                </div>
+              </div>
+            ))
+          }
+          <code class="text-11">.review/runs/</code>
+        </div>
+      </Panel>
+    </section>
+
+    <ReviewPipeline client:visible />
+
+    <section class="border-t border-line py-[70px] max-md:py-[42px]">
+      <SectionHead kicker="What makes a useful loop">
+        <Fragment slot="title">Measure the result.<br />Keep the judgment separate.</Fragment>
+      </SectionHead>
+      <div class="grid grid-cols-3 gap-6 max-md:grid-cols-1">
+        {
+          loop.map(([title, text]) => (
+            <div class="min-w-0 rounded-panel border border-line bg-paper p-[30px]">
+              <h3 class="text-22">{title}</h3>
+              <p class="mt-4 mb-0 text-13">{text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="border-t border-line pb-[70px] max-md:pb-[42px]" id="setup">
+      <SectionHead className="pt-[70px] max-md:pt-[42px]" kicker="Start in the workspace" title="Make the checks executable." />
+      <div class="grid grid-cols-[1fr_1.15fr] gap-[65px] max-xl:gap-[35px] max-md:grid-cols-1 max-md:gap-[25px]">
+        <div class="min-w-0">
+          <h3 class="text-22">01. Prepare the project</h3>
+          <p class="mt-[14px] mb-[26px] text-14 text-muted">
+            Node.js, installed workspace dependencies and a configured test runner (this repository uses Vitest). A <code class="text-13">review.config.json</code> at the workspace root points at a folder with <code class="text-13">settings.ts</code> and optional <code class="text-13">rules/</code>. Build the code-review package before the first run.
+          </p>
+          <h3 class="text-22">02. Choose your agent</h3>
+          <p class="mt-[14px] mb-[26px] text-14 text-muted">
+            One installed, signed-in agent CLI: Claude, Codex, Kiro or Copilot. The pipeline uses a fast model for scoring and a capable model for edits. Runs use that provider’s own quota or billing.
+          </p>
+          <div class="flex flex-wrap gap-2">
+            <Badge>Claude</Badge><Badge>Codex</Badge><Badge>Kiro</Badge><Badge>Copilot</Badge>
+          </div>
+        </div>
+        <CodeBlock code={setup} lang="bash" title="terminal" className="mt-0" />
+      </div>
+      <div class="mt-7 grid grid-cols-2 gap-8 max-md:grid-cols-1">
+        <Panel tone="soft">
+          <Eyebrow>Configuration</Eyebrow>
+          <h3 class="mt-[18px] mb-3 text-22">Project settings and rules.</h3>
+          <p class="m-0 text-13">Use the existing <code class="text-12">review.config.json</code> and settings module. The built-in <code class="text-12">test-coverage</code> rule measures coverage and scores test quality; prompt-based rules add your own criteria. Check the package README for configuration and CLI updates when upgrading a beta release.</p>
+        </Panel>
+        <Panel tone="soft">
+          <Eyebrow>Output</Eyebrow>
+          <h3 class="mt-[18px] mb-3 text-22">One record per run.</h3>
+          <p class="m-0 text-13">Inspect reports under <code class="text-12">.review/runs/</code>, along with the changed files: per-file results, an event log, usage and every prompt and response. Keep actual measurements separate from agent-generated assessments.</p>
+        </Panel>
+      </div>
+    </section>
+
+    <section class="border-t border-line pb-[70px] max-md:pb-[42px]">
+      <SectionHead className="pt-[70px] max-md:pt-[42px]" kicker="Before the first run" title="An agent is still writing to your workspace." />
+      <Callout type="warning" title="A target is not a permission boundary">
+        The review target selects what to check; the granted permissions determine which files the agent can edit, including supporting files. Some provider CLIs write across the workspace. Start from a clean working tree and inspect the complete diff.
+      </Callout>
+      <RowLinks className="mb-0">
+        {
+          safeguards.map(([title, text], index) => (
+            <RowLink title={title} text={text}>
+              <span slot="kicker" class="font-mono text-12 text-green">0{index + 1}</span>
+            </RowLink>
+          ))
+        }
+      </RowLinks>
+      <p class="mt-6 mb-0 text-11 leading-[1.8] text-muted">
+        Share a review workflow, request a rule or report an issue in <a class="underline underline-offset-[3px]" href={`${links.repo}/issues`} target="_blank" rel="noopener noreferrer">the repository’s issue tracker</a>.
+      </p>
+    </section>
+
+    <StripCta className="mt-0" text="Build a review loop around checks your project can actually run.">
+      <Fragment slot="title">Repeat the process.<br />Inspect the evidence.</Fragment>
+      <ButtonLink slot="action" variant="primary" icon="external" href={repo} target="_blank" rel="noopener noreferrer">Explore the repository</ButtonLink>
+    </StripCta>
+  </div>
 </BaseLayout>

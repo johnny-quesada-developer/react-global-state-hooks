@@ -1,15 +1,14 @@
 import { renderToString } from 'react-dom/server';
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { InstallCommand } from './InstallCommand';
-import { MiniMe } from './MiniMe';
 import { usePreferences } from '../state/preferences';
 
-beforeEach(() => window.localStorage.clear());
-afterEach(() => {
-  cleanup();
-  usePreferences.reset({ packageManager: 'npm', miniMeHidden: false }, {});
+beforeEach(() => {
+  window.localStorage.clear();
+  usePreferences.setState({ packageManager: 'npm' });
 });
+afterEach(cleanup);
 
 describe('InstallCommand', () => {
   it('shows the npm command by default and switches manager on click', () => {
@@ -36,6 +35,16 @@ describe('InstallCommand', () => {
     expect(screen.getByText('yarn add other')).toBeTruthy();
   });
 
+  it('moves between managers with the arrow keys', () => {
+    render(<InstallCommand />);
+
+    fireEvent.keyDown(screen.getByRole('tablist'), { key: 'ArrowRight' });
+    expect(screen.getByText('pnpm add react-global-state-hooks')).toBeTruthy();
+
+    fireEvent.keyDown(screen.getByRole('tablist'), { key: 'End' });
+    expect(screen.getByText('bun add react-global-state-hooks')).toBeTruthy();
+  });
+
   it('renders the default on the server even if another manager is stored', () => {
     usePreferences.setState((current) => ({ ...current, packageManager: 'yarn' }));
 
@@ -48,21 +57,5 @@ describe('InstallCommand', () => {
     render(<InstallCommand />);
 
     expect(screen.getByText('yarn add react-global-state-hooks')).toBeTruthy();
-  });
-});
-
-describe('MiniMe', () => {
-  it('pauses and can be hidden, and the choice is remembered', () => {
-    render(<MiniMe />);
-
-    fireEvent.click(screen.getByRole('button', { name: 'Pause' }));
-    expect(screen.getByRole('button', { name: 'Play' }).getAttribute('aria-pressed')).toBe('true');
-
-    fireEvent.click(screen.getByRole('button', { name: 'Hide' }));
-    expect(screen.queryByRole('button', { name: 'Play' })).toBeNull();
-    expect(JSON.parse(window.localStorage.getItem('user-preferences') ?? 'null').s.miniMeHidden).toBe(true);
-
-    act(() => fireEvent.click(screen.getByRole('button', { name: 'Show the walking character' })));
-    expect(screen.getByRole('button', { name: 'Hide' })).toBeTruthy();
   });
 });

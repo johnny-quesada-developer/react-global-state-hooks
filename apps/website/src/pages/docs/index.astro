@@ -1,16 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { DocsIndex } from '../../ui/DocsIndex';
+import { DocsHub } from '../../ui/docs/DocsHub';
 import { getDocsNav } from '../../lib/docs';
 
 const { sections } = await getDocsNav();
-const indexSections = sections.map((section) => ({
+const hubSections = sections.map((section) => ({
   title: section.title,
-  pages: section.pages.map((page) => ({
-    id: page.id,
-    title: page.data.title,
-    description: page.data.description,
-  })),
+  pages: section.pages.map((page) => ({ id: page.id, title: page.data.title, description: page.data.description })),
 }));
 ---
 
@@ -20,5 +16,5 @@ const indexSections = sections.map((section) => ({
   title="Documentation"
   description="Guides and reference for react-global-state-hooks: install, create stores, select state, add actions, persist and test."
 >
-  <DocsIndex sections={indexSections} />
+  <DocsHub sections={hubSections} />
 </BaseLayout>

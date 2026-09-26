@@ -1,33 +1,219 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { HomePage } from '../ui/HomePage';
-import { InstallCommand } from '../ui/InstallCommand';
-import { HeroVideos } from '../ui/HeroVideos';
-import { SelectiveDemo } from '@examples/selective/SelectiveDemo';
-import storeSource from '@examples/selective/store.ts?raw';
-import nameCardSource from '@examples/selective/NameCard.tsx?raw';
-import oneLinerSource from '@snippets/getting-started/Counter.ts?raw';
-import useItSource from '@snippets/getting-started/read-and-update.tsx?raw';
-import shareItSource from '@snippets/getting-started/Labels.tsx?raw';
-import agenticSession from '../data/agentic-proof.txt?raw';
+import { HeroSequence } from '../ui/home/HeroSequence';
+import { HomeAgentWorkflow } from '../ui/home/HomeAgentWorkflow';
+import { PrecisionDemo } from '../ui/home/PrecisionDemo';
+import { SelectorExplorer } from '../ui/home/SelectorExplorer';
+import { WatchVideo } from '../ui/home/VideoDialog';
+import { Icon } from '../ui/Icon';
+import { ButtonLink } from '../ui/Button';
+import { withBase } from '../lib/site';
+
+const gettingStarted = withBase("docs/getting-started/");
+const install = 'npm install react-global-state-hooks';
+
+const essentials = [
+  {
+    icon: 'scope',
+    title: 'Global, or close to home.',
+    text: 'Share state across your app, or isolate it with <code>createContext</code>. The same approach, at the right scope.',
+    link: 'Choose your scope',
+    href: withBase('docs/scoped-state-with-createcontext/'),
+    tone: 'border-[#e7ecdf] bg-[#f5f7f2] text-[#718563]',
+  },
+  {
+    icon: 'save',
+    title: 'State that stays with you.',
+    text: 'Add a storage key for browser persistence. Bring validation and migrations when your data evolves.',
+    link: 'Explore persistence',
+    href: withBase('docs/persistence/'),
+    tone: 'border-[#ece7db] bg-[#f8f6f0] text-[#887859]',
+  },
+  {
+    icon: 'bolt',
+    title: 'Actions with intention.',
+    text: 'Give updates a name. Organize async work and domain logic without changing how components read state.',
+    link: 'Work with actions',
+    href: withBase('docs/actions/'),
+    tone: 'border-[#e8e5ef] bg-[#f5f4f8] text-[#7b7897]',
+  },
+] as const;
+
+const questions = [
+  {
+    q: 'Do I need a provider for global state?',
+    a: 'No. A store created with <code>createGlobalState</code> lives outside the component tree. A provider is used when you intentionally choose scoped state with <code>createContext</code>.',
+  },
+  {
+    q: 'What does an agent need to use the DevTools?',
+    a: 'An agent that can execute terminal commands, a running development app, the Chrome extension with its panel open, the development debug import, and the <code>ws</code> dependency. The <code>rgsh</code> CLI works with state and actions; it is not browser automation.',
+  },
+  {
+    q: 'Can I try the actual extension before integrating it?',
+    a: `Yes. The examples on this website are connected. <a class="underline underline-offset-[3px]" href="${withBase('examples/')}">Open an example</a>, install the Chrome extension, open its DevTools panel, and reload that page. <a class="underline underline-offset-[3px]" href="${withBase('docs/devtools/')}#try-it-on-this-website">How to try it</a>.`,
+  },
+];
+
+const textLink = 'inline-flex items-center gap-[9px] text-14 font-[550] text-ink hover:text-green [&_.arrow]:transition-transform [&_.arrow]:duration-200 hover:[&_.arrow]:translate-x-[3px]';
+const installCopy =
+  'mt-[17px] inline-flex items-center justify-center gap-3 rounded-[5px] px-[9px] py-[7px] font-mono text-11 leading-[1.4] text-muted hover:bg-soft hover:text-green max-sm:mt-3 max-sm:gap-[9px] max-sm:text-9';
 ---
 
 <BaseLayout
   image="og/home.png"
-  imageAlt="react-global-state-hooks: shared React state that works like useState"
+  imageAlt="react-global-state-hooks: React state. Without the guesswork."
   title="react-global-state-hooks"
-  description="Shared React state that works like useState. One-call stores, selected slices, actions, localStorage, DevTools, and terminal access for coding agents."
+  description="Shared React state that feels like useState. Precise subscriptions, composable selectors, and DevTools your coding agent can use."
+  family="Product"
 >
-  <HomePage
-    storeSource={storeSource}
-    nameCardSource={nameCardSource}
-    oneLinerSource={oneLinerSource}
-    useItSource={useItSource}
-    shareItSource={shareItSource}
-    agenticSession={agenticSession}
-  >
-    <InstallCommand slot="install" client:idle />
-    <HeroVideos slot="video" client:idle />
-    <SelectiveDemo slot="demo" client:visible />
-  </HomePage>
+  <section class="wrap pt-[65px] text-center max-2xl:pt-[53px] max-sm:pt-[42px]" aria-labelledby="hero-title">
+    <a
+      class="inline-flex min-h-[29px] items-center gap-[9px] rounded-full border border-line bg-surface py-1 pr-[10px] pl-[9px] text-11 text-[#4f5d54] hover:border-[#b6c9bc] max-sm:gap-[6px] max-sm:text-10"
+      href="#agentic"
+    >
+      <span class="rounded-[20px] bg-[#e9f0e9] px-[6px] py-1 font-mono text-9 leading-[1.2] text-green max-sm:text-8">EXPLORE</span>
+      Agentic DevTools. Runtime, in plain sight.
+      <Icon name="chevron" className="size-[13px] text-[#7b867e]" />
+    </a>
+    <h1
+      id="hero-title"
+      class="mx-auto mt-6 mb-5 max-w-[1100px] text-[clamp(56px,6.1vw,87px)] leading-[1.025] font-[550] tracking-[-0.065em] max-2xl:text-[76px] max-lg:text-[67px] max-sm:mt-[23px] max-sm:mb-[18px] max-sm:text-[clamp(39px,9.25vw,59px)] max-sm:leading-[1.075] max-sm:tracking-[-0.06em] 4xl:text-[91px]"
+    >
+      React state.<br /><span class="text-[#464e48]">Without the guesswork.</span>
+    </h1>
+    <p class="mx-auto mb-0 max-w-[630px] text-17 leading-[1.75] tracking-[-0.2px] text-muted max-lg:max-w-[570px] max-lg:text-15 max-sm:max-w-[370px] max-sm:text-14 max-sm:leading-[1.8]">
+      Shared state that feels like <code class="rounded-[4px] bg-[#f1f4ef] px-[5px] py-[2px] text-[0.86em] text-[#46544a]">useState</code>. Precise subscriptions,<br class="max-sm:hidden" /> composable selectors, and DevTools your coding agent can use.
+    </p>
+    <div class="mt-[26px] flex flex-wrap items-center justify-center gap-3 max-sm:mt-[22px] max-sm:gap-[9px]">
+      <ButtonLink variant="primary" icon="arrow" className="min-h-12 px-[22px] text-14 max-sm:min-h-[45px] max-sm:px-[14px] max-sm:text-12" href={gettingStarted}>Start building</ButtonLink>
+      <button type="button" class="inline-flex min-h-12 items-center justify-center gap-3 rounded-control border border-line bg-paper px-[22px] text-14 font-[550] whitespace-nowrap hover:border-[#b7c2ba] hover:bg-soft max-sm:min-h-[45px] max-sm:px-[14px] max-sm:text-12" data-hero-play>
+        <Icon name="play" className="size-[14px]" /> See how it works
+      </button>
+    </div>
+    <button type="button" class={installCopy} data-copy={install} aria-label="Copy npm install command">
+      <span class="text-[#646c64]">$</span><span>{install}</span><Icon name="copy" className="size-[13px] max-sm:size-3" />
+    </button>
+
+    <HeroSequence client:load />
+
+    <div class="mt-[41px] flex flex-wrap items-center justify-center gap-[27px] border-b border-line pb-[51px] text-11 text-[#6f796f] max-lg:gap-[17px] max-sm:mt-[30px] max-sm:gap-x-5 max-sm:gap-y-[13px] max-sm:pb-9 max-sm:text-9" aria-label="Library capabilities">
+      <span class="inline-flex items-center gap-2 max-sm:gap-[5px]"><Icon name="code" className="size-[14px] text-[#808d7a] max-sm:size-3" /> Familiar hook API</span>
+      <span class="h-[13px] w-px bg-[#e2e7dd] max-lg:hidden" aria-hidden="true"></span>
+      <span class="inline-flex items-center gap-2 max-sm:gap-[5px]"><Icon name="check" className="size-[14px] text-[#808d7a] max-sm:size-3" /> TypeScript inference</span>
+      <span class="h-[13px] w-px bg-[#e2e7dd] max-lg:hidden" aria-hidden="true"></span>
+      <span class="inline-flex items-center gap-2 max-sm:gap-[5px]"><Icon name="scope" className="size-[14px] text-[#808d7a] max-sm:size-3" /> Global or scoped</span>
+      <span class="h-[13px] w-px bg-[#e2e7dd] max-lg:hidden" aria-hidden="true"></span>
+      <span class="inline-flex items-center gap-2 max-sm:gap-[5px]"><Icon name="github" className="size-[14px] text-[#808d7a] max-sm:size-3" /> Open source · MIT</span>
+    </div>
+  </section>
+
+  <section class="wrap py-[103px] max-sm:py-[66px]" id="agentic" aria-labelledby="agentic-title">
+    <div class="mb-[35px] flex items-end justify-between gap-[42px] max-2xl:gap-[30px] max-lg:block max-sm:mb-[27px]">
+      <div>
+        <div class="eyebrow-mono"><span class="h-px w-[26px] bg-current"></span> FOR YOU. AND YOUR CODING AGENT. <span class="inline-block rounded-[3px] border border-[#d8ded5] px-1 py-px font-mono text-8 leading-[1.5] tracking-[0.02em] text-[#656d5d]">BETA</span></div>
+        <h2 id="agentic-title" class="mt-[18px] text-[clamp(34px,3.55vw,49px)] leading-[1.1] font-[520] tracking-[-0.045em] max-lg:text-[43px] max-sm:mt-[15px] max-sm:text-[36px]">Give your agent<br />runtime evidence.</h2>
+      </div>
+      <div class="max-w-[400px] pb-[3px] max-2xl:max-w-[360px] max-lg:mt-[23px] max-lg:max-w-[520px] max-sm:mt-[18px]">
+        <p class="m-0 text-15 leading-[1.85] text-muted max-sm:text-13 max-sm:leading-[1.9]">Go beyond what the code should do. Inspect the state, run an action, and read back what actually changed. A shorter path from question to evidence.</p>
+        <a class={`${textLink} mt-[17px] text-12 max-sm:mt-[14px]`} href={withBase('agentic-devtools/')}>Explore Agentic DevTools <Icon name="arrow" className="arrow" /></a>
+      </div>
+    </div>
+    <HomeAgentWorkflow client:idle />
+  </section>
+
+  <section class="wrap grid grid-cols-[.92fr_1.25fr] items-center gap-[93px] border-t border-line py-[103px] max-2xl:gap-12 max-lg:grid-cols-[1fr_1.2fr] max-lg:gap-10 max-sm:flex max-sm:flex-col max-sm:items-stretch max-sm:gap-[30px] max-sm:py-[66px]" id="precision" aria-labelledby="precision-title">
+    <div class="min-w-0">
+      <div class="eyebrow-mono"><span class="h-px w-[26px] bg-current"></span> PRECISE SUBSCRIPTIONS</div>
+      <h2 id="precision-title" class="mt-[18px] text-[clamp(34px,3.55vw,49px)] leading-[1.1] font-[520] tracking-[-0.045em] max-lg:text-[36px] max-sm:mt-[15px] max-sm:text-[35px]">One field changes.<br />Not everything<br />needs to react.</h2>
+      <p class="mt-[22px] mb-0 max-w-[350px] text-15 leading-[1.85] text-muted max-lg:text-13 max-sm:mt-[19px] max-sm:max-w-[450px]">A component should subscribe to what it uses. Select a name, a theme, or a derived value. Unrelated store changes stay unrelated.</p>
+      <a class={`${textLink} mt-[25px] text-12 max-sm:mt-[18px]`} href={withBase('docs/selectors-and-derived-state/')}>Get precise with selectors <Icon name="arrow" className="arrow" /></a>
+      <p class="mt-[22px] mb-0 max-w-[350px] text-10 leading-[1.7] text-[#676c62] max-sm:mt-[15px] max-sm:max-w-[440px] max-sm:text-9">This is about updates from a store subscription. Components can still render for other React reasons.</p>
+    </div>
+    <PrecisionDemo client:idle />
+  </section>
+
+  <section class="wrap grid grid-cols-[1.25fr_.92fr] items-center gap-[93px] border-t border-line py-[103px] max-2xl:gap-12 max-lg:grid-cols-[1.2fr_1fr] max-lg:gap-10 max-sm:flex max-sm:flex-col max-sm:items-stretch max-sm:gap-[30px] max-sm:py-[66px]" id="selectors" aria-labelledby="selectors-title">
+    <SelectorExplorer client:idle />
+    <div class="min-w-0 pl-[6px] max-sm:order-first max-sm:pl-0">
+      <div class="eyebrow-mono text-[#586b89]"><span class="h-px w-[26px] bg-current"></span> CHAINABLE SELECTORS</div>
+      <h2 id="selectors-title" class="mt-[18px] text-[clamp(34px,3.55vw,49px)] leading-[1.1] font-[520] tracking-[-0.045em] max-lg:text-[36px] max-sm:mt-[15px] max-sm:text-[35px]">Build on a selector.<br />Not on repetition.</h2>
+      <p class="mt-[22px] mb-0 max-w-[350px] text-15 leading-[1.85] text-muted max-lg:text-13 max-sm:mt-[19px] max-sm:max-w-[450px]">Turn a slice into a reusable hook. Derive another hook from it. Share the same logic across components without copying the selection everywhere.</p>
+      <a class={`${textLink} mt-[25px] text-12 max-sm:mt-[18px]`} href={`${withBase('docs/selectors-and-derived-state/')}#share-a-derivation-with-selector-hooks`}>Explore selector composition <Icon name="arrow" className="arrow" /></a>
+      <p class="mt-[22px] mb-0 max-w-[350px] text-10 leading-[1.7] text-[#676c62] max-sm:mt-[15px] max-sm:max-w-[440px] max-sm:text-9">Selector hooks return values directly. Update the source store through its API. Use an equality option for derived arrays.</p>
+    </div>
+  </section>
+
+  <section class="wrap border-t border-line pt-[75px] pb-[84px] max-sm:py-[60px]" aria-labelledby="essentials-title">
+    <div class="mb-[33px] flex items-end justify-between gap-[25px] max-sm:mb-[30px] max-sm:block">
+      <h2 id="essentials-title" class="max-w-[400px] text-[31px] leading-[1.1] font-[520] tracking-[-0.045em] max-sm:text-[28px]">Small API.<br />Room for the real world.</h2>
+      <p class="m-0 max-w-[300px] text-12 text-[#656c61] max-sm:mt-4 max-sm:max-w-[400px]">Start with one store. Add structure only where your application needs it.</p>
+    </div>
+    <div class="grid grid-cols-3 gap-10 max-lg:gap-[19px] max-sm:flex max-sm:flex-col max-sm:gap-[27px]">
+      {
+        essentials.map((item) => (
+          <article class="pr-5 [&+&]:border-l [&+&]:border-line [&+&]:pl-[30px] max-lg:pr-0 max-lg:[&+&]:pl-[21px] max-sm:relative max-sm:pr-0 max-sm:pb-6 max-sm:pl-[51px] max-sm:not-last:border-b max-sm:not-last:border-line max-sm:[&+&]:border-l-0 max-sm:[&+&]:pl-[51px]">
+            <span class={`mb-4 grid size-[33px] place-items-center rounded-control border max-sm:absolute max-sm:top-0 max-sm:left-0 ${item.tone}`}>
+              <Icon name={item.icon} className="size-[17px]" />
+            </span>
+            <h3 class="mb-[9px] text-16 font-[550] tracking-[-0.4px] max-lg:text-14 max-sm:text-15">{item.title}</h3>
+            <p class="m-0 text-12 leading-[1.85] text-[#646d5d] [&_code]:text-[0.9em] max-lg:text-11 max-sm:text-12" set:html={item.text} />
+            <a class={`${textLink} mt-[15px] text-11 text-[#68775e] max-sm:mt-[11px]`} href={item.href}>{item.link} <Icon name="arrow" className="arrow" /></a>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="wrap grid grid-cols-[.75fr_1.25fr] gap-[100px] border-t border-line pt-[67px] pb-20 max-2xl:gap-[65px] max-lg:grid-cols-[1fr_1.3fr] max-lg:gap-10 max-sm:grid-cols-1 max-sm:gap-[25px] max-sm:pt-[55px] max-sm:pb-[58px]" aria-labelledby="questions-title">
+    <div>
+      <h2 id="questions-title" class="text-[29px] leading-[1.1] font-[520] tracking-[-0.045em] max-sm:text-[27px]">A few useful details.</h2>
+      <p class="mt-[14px] mb-0 text-12 leading-[1.85] text-muted max-sm:mt-[10px]">No mystery around the small print.</p>
+    </div>
+    <div>
+      {
+        questions.map((item) => (
+          <details class="border-b border-line first:border-t [&[open]_.icon]:rotate-45">
+            <summary class="flex cursor-pointer items-center justify-between gap-[25px] py-[18px] text-12 font-medium max-sm:gap-[14px]">
+              {item.q}
+              <Icon name="plus" className="size-[13px] text-[#8a947f]" />
+            </summary>
+            <p class="m-0 pb-[18px] text-12 leading-[1.9] text-muted [&_code]:text-10 max-sm:text-11" set:html={item.a} />
+          </details>
+        ))
+      }
+    </div>
+  </section>
+
+  <aside class="wrap flex items-center justify-between gap-8 rounded-[9px] border border-line bg-[#fbfcf9] px-8 py-[27px] max-sm:block max-sm:p-[22px]" aria-label="Project maintainer">
+    <div class="flex items-center gap-[17px] max-sm:gap-[13px]">
+      <span class="grid size-[45px] shrink-0 place-items-center overflow-hidden rounded-full border border-[#dde5d4] bg-[#eef3e7] max-sm:size-[37px]" aria-hidden="true">
+        <img class="block size-full object-cover" src={withBase('img/avatar-head.png')} width="45" height="45" alt="" loading="lazy" decoding="async" />
+      </span>
+      <div>
+        <h3 class="text-13 font-[550] tracking-normal max-sm:text-11">Independent software. Accountable craftsmanship.</h3>
+        <p class="mt-[3px] mb-0 text-11 text-[#656d5c] max-sm:text-10 max-sm:leading-[1.8]">Created and maintained by Johnny Quesada. Open code, real examples, and a direct line to the builder.</p>
+      </div>
+    </div>
+    <a class={`${textLink} text-11 whitespace-nowrap max-sm:mt-[15px] max-sm:ml-[50px] max-sm:text-10`} href={withBase('about/')}>Meet the engineer <Icon name="up-right" className="arrow" /></a>
+  </aside>
+
+  <section class="wrap pt-24 pb-[86px] text-center max-sm:pt-[68px] max-sm:pb-[62px]" aria-labelledby="closing-title">
+    <div class="eyebrow-mono justify-center">LESS CEREMONY. MORE CLARITY.</div>
+    <h2 id="closing-title" class="mt-[15px] text-[clamp(35px,4.1vw,56px)] leading-[1.1] font-[520] tracking-[-0.045em] max-sm:text-[37px]">Your next store<br />starts here.</h2>
+    <p class="mt-[17px] mb-0 text-14 text-[#646d5d] max-sm:mt-[15px] max-sm:text-12">A familiar hook. A precise subscription. A clearer way to build.</p>
+    <div class="mt-[25px] flex flex-wrap items-center justify-center gap-3 max-sm:mt-[22px] max-sm:gap-[9px]">
+      <ButtonLink variant="primary" icon="arrow" className="min-h-12 px-[22px] text-14 max-sm:min-h-[45px] max-sm:px-[14px] max-sm:text-12" href={gettingStarted}>Get started</ButtonLink>
+      <WatchVideo
+        client:idle
+        ids={['introduction']}
+        title="react-global-state-hooks · Introduction"
+        className="inline-flex min-h-12 items-center justify-center gap-3 rounded-control border border-line bg-paper px-[22px] text-14 font-[550] whitespace-nowrap hover:border-[#b7c2ba] hover:bg-soft max-sm:min-h-[45px] max-sm:px-[14px] max-sm:text-12"
+      >
+        <Icon name="play" className="size-[14px]" /> Watch the introduction
+      </WatchVideo>
+    </div>
+    <button type="button" class={`${installCopy} mt-[14px]`} data-copy={install} aria-label="Copy npm install command">
+      <span class="text-[#646c64]">$</span><span>{install}</span><Icon name="copy" className="size-[13px] max-sm:size-3" />
+    </button>
+  </section>
 </BaseLayout>

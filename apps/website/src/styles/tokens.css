@@ -1,71 +1,77 @@
 /*
- * Design tokens, registered as the Tailwind theme. src/lib/contrast.test.ts parses the `--color-*`
- * hex literals out of this file. `static` because the remaining stylesheets read these through
- * `var()`, which Tailwind's usage detection cannot see.
+ * Design tokens from the complete-site reference (rgsh-complete-site/handoff/TOKENS.json), registered
+ * as the Tailwind theme. src/lib/contrast.test.ts parses the `--color-*` hex literals out of this file.
+ * `static` because the remaining stylesheets read these through `var()`.
  */
 @theme static {
   /* palette */
-  --color-bg: #ffffff;
-  --color-text: #20332d;
-  --color-text-muted: #4a5f57;
-  --color-primary: #24634b;
-  --color-primary-hover: #1b4e3b;
-  --color-on-primary: #ffffff;
-  --color-mint: #e4f2e8;
-  --color-sky: #e5f2fa;
-  --color-sky-text: #1d5578;
-  --color-yellow: #fff0b8;
-  --color-line: #d3dfd9;
-  --color-line-strong: #7c9488;
-  --color-focus: #1d5578;
+  --color-paper: #ffffff;
+  --color-ink: #1d2422;
+  --color-muted: #626d66;
+  --color-line: #e3e7e4;
+  --color-soft: #f7f8f6;
+  --color-surface: #fbfcfa;
+  --color-green: #326c52;
+  --color-green-soft: #edf4ee;
+  --color-blue: #53658c;
+  --color-blue-soft: #f0f2f8;
+  --color-amber: #88682e;
+  --color-amber-soft: #faf5e9;
+  --color-red: #9b443e;
+  --color-red-soft: #fcf1ef;
+  --color-terminal: #202724;
+  --color-terminal-muted: #a8b9ae;
+  --color-terminal-text: #e3eae4;
 
-  /* type. `--text-*--line-height: inherit` keeps a size utility from changing the line height. */
-  --font-sans:
-    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
-  --text-xs--line-height: inherit;
-  --text-sm--line-height: inherit;
-  --text-base--line-height: inherit;
-  --text-lg--line-height: inherit;
-  --text-xl: 1.375rem;
-  --text-xl--line-height: inherit;
-  --text-2xl: 1.75rem;
-  --text-2xl--line-height: inherit;
-  --text-3xl: clamp(2rem, 4.2vw, 2.75rem);
-  --text-3xl--line-height: inherit;
+  /* type */
+  --font-sans: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  --font-mono: SFMono-Regular, Consolas, 'Liberation Mono', monospace;
+  --text-8: 8px;
+  --text-9: 9px;
+  --text-10: 10px;
+  --text-11: 11px;
+  --text-12: 12px;
+  --text-13: 13px;
+  --text-14: 14px;
+  --text-15: 15px;
+  --text-16: 16px;
+  --text-17: 17px;
+  --text-18: 18px;
+  --text-19: 19px;
+  --text-20: 20px;
+  --text-22: 22px;
+  --text-24: 24px;
+  --text-26: 26px;
+  --text-30: 30px;
+  --text-32: 32px;
+  --text-38: 38px;
+  --text-45: 45px;
 
-  /* A size utility always sets line-height, so a sized heading must restate the base rule's 1.2. */
-  --leading-heading: 1.2;
-
-  /* Built-in CSS easings are too weak for UI; this is the stronger ease-out. */
-  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 
   /* shape */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --shadow-sm: 0 1px 2px rgb(32 51 45 / 0.06);
-  --shadow-md: 0 2px 10px rgb(32 51 45 / 0.08);
+  --radius-control: 7px;
+  --radius-panel: 10px;
+  --radius-code: 8px;
+  --shadow-code: 0 12px 36px -30px #1d2422;
+  --shadow-thumb: 0 12px 25px -24px #38413b;
+  --shadow-dialog: 0 24px 100px #10201520;
 
   /* layout */
-  --container-page: 90rem;
+  --container-wrap: 1160px;
+  --container-wide: 1320px;
+  --spacing-header: 78px;
+  --spacing-header-mobile: 65px;
 
-  /* widths Tailwind has no default for */
-  --breakpoint-xs: 30rem;
-  --breakpoint-wide: 56rem;
-  --breakpoint-wider: 60rem;
-  --breakpoint-widest: 78rem;
+  /* desktop-first reference breakpoints; use the max-* variants (max-md = width < 761px) */
+  --breakpoint-xs: 371px;
+  --breakpoint-sm: 641px;
+  --breakpoint-md: 761px;
+  --breakpoint-lg: 861px;
+  --breakpoint-xl: 901px;
+  --breakpoint-2xl: 1101px;
+  --breakpoint-3xl: 1191px;
+  --breakpoint-4xl: 1601px;
 }
 
 @custom-variant hover-none (@media (hover: none));
-
-/* Read by the remaining stylesheets. Exactly Tailwind's scale, so components use `p-6` directly. */
-:root {
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-6: 2rem;
-  --space-7: 3rem;
-
-  --header-height: 3.5rem;
-}

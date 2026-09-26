@@ -12,6 +12,25 @@ import { links, withBase } from '../../lib/site';
 import { DevToolsLockup } from '../../ui/DevToolsLockup';
 import { DevToolsShowcase } from '../../ui/DevToolsShowcase';
 
+export const mainEntry = `// main.tsx
+import 'react-global-state-hooks/debug';
+
+import { createRoot } from 'react-dom/client';
+import { App } from './App';`;
+
+export const install = `npm i -D ws        # rgsh needs it to talk to the extension
+npx rgsh --list    # every store DevTools knows about
+npx rgsh --help    # everything rgsh can do`;
+
+export const commands = `npx rgsh --store todos                        # stream one store's actions and state changes
+npx rgsh state todos                          # read a store's state and metadata
+npx rgsh action todos add "Write the docs"    # run an action
+npx rgsh patch todos '{"filter":"done"}'      # merge JSON into the state`;
+
+export const agent = `npx rgsh --list                                    # find the store and its action names
+npx rgsh action todos add "Write the docs"         # run it; prints the state changes, then exits
+npx rgsh state todos todos[0].done                 # read the value back`;
+
 <DevToolsLockup />
 
 The DevTools extension connects to your stores in development so you can see what changes and when.
@@ -47,13 +66,7 @@ For your own app, keep the integration in development builds as described below.
 Import the debug entry once, at the very top of your entry file, before React and before any module that
 creates a store. It patches the library as stores are created, so stores created before it are not tracked.
 
-```ts
-// main.tsx
-import 'react-global-state-hooks/debug';
-
-import { createRoot } from 'react-dom/client';
-import { App } from './App';
-```
+<CodeBlock code={mainEntry} lang="ts" title="main.tsx" />
 
 <Callout type="warning" title="Development only">
   Never ship this import in a production build. The `react-global-state-hooks/debug` entry exists from 16.0.4
@@ -76,21 +89,12 @@ Give stores a `name` option so they are easy to find in the panel.
 `rgsh` command. It talks to the panel, so you can watch actions, read state and change state without leaving
 the terminal.
 
-```bash
-npm i -D ws        # rgsh needs it to talk to the extension
-npx rgsh --list    # every store DevTools knows about
-npx rgsh --help    # everything rgsh can do
-```
+<CodeBlock code={install} lang="bash" title="terminal" />
 
 Your app must import the debug entry and the panel must be open on the app's tab. The port is `7787` by default
 and has to match the panel under gear > Terminal connection.
 
-```bash
-npx rgsh --store todos                        # stream one store's actions and state changes
-npx rgsh state todos                          # read a store's state and metadata
-npx rgsh action todos add "Write the docs"    # run an action
-npx rgsh patch todos '{"filter":"done"}'      # merge JSON into the state
-```
+<CodeBlock code={commands} lang="bash" title="terminal" />
 
 If `ws` is missing, rgsh tells you and prints the install command.
 
@@ -99,11 +103,7 @@ If `ws` is missing, rgsh tells you and prints the install command.
 A coding agent that can run shell commands can use `rgsh` on the app you have open in Chrome, so it checks what its
 change did instead of guessing from the source.
 
-```bash
-npx rgsh --list                                    # find the store and its action names
-npx rgsh action todos add "Write the docs"         # run it; prints the state changes, then exits
-npx rgsh state todos todos[0].done                 # read the value back
-```
+<CodeBlock code={agent} lang="bash" title="terminal" />
 
 - Each `action`, `patch` and `set` prints the resulting block (state changes as `path: before → after`, the result
   or the error, and the duration) and exits, so the output is easy to read from a script or an agent.

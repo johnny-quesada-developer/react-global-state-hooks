@@ -1,9 +1,11 @@
 ---
 import '../styles/app.css';
-import { Header } from '../ui/Header';
-import { Footer } from '../ui/Footer';
-import { Search } from '../ui/Search';
-import { MiniMe } from '../ui/MiniMe';
+import { Header } from '../ui/shell/Header';
+import { Footer } from '../ui/shell/Footer';
+import { SearchDialog } from '../ui/shell/SearchDialog';
+import { NavDrawer } from '../ui/shell/NavDrawer';
+import { CopyController } from '../ui/shell/CopyController';
+import { MotionToggle } from '../ui/shell/MotionToggle';
 import { SITE_NAME, withBase } from '../lib/site';
 
 interface Props {
@@ -14,13 +16,16 @@ interface Props {
   imageAlt?: string;
   ogType?: 'website' | 'article';
   noindex?: boolean;
+  /** Search result grouping (`Documentation`, `Examples`, `Product`). */
+  family?: string;
 }
 
-const { title, description, image, imageAlt, ogType = 'website', noindex = false } = Astro.props;
+const { title, description, image, imageAlt, ogType = 'website', noindex = false, family = 'Documentation' } = Astro.props;
 
 const fullTitle = title === SITE_NAME ? title : `${title} · ${SITE_NAME}`;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const imageUrl = image ? new URL(withBase(image), Astro.site).href : undefined;
+const pathname = Astro.url.pathname;
 ---
 
 <!doctype html>
@@ -58,13 +63,36 @@ const imageUrl = image ? new URL(withBase(image), Astro.site).href : undefined;
   </head>
   <body>
     <a
-      class="absolute top-[-4rem] left-3 z-[100] rounded-sm bg-primary px-4 py-2 text-on-primary focus:top-3 focus:text-on-primary"
+      class="fixed top-2 left-2 z-[100] -translate-y-[200%] rounded-control bg-ink px-4 py-3 text-13 text-white focus:translate-y-0"
       href="#main">Skip to content</a
     >
-    <Header pathname={Astro.url.pathname}><Search client:idle /></Header>
-    <main id="main">
+    <Header pathname={pathname} />
+    <main id="main" tabindex="-1" class="outline-none" data-pagefind-body={noindex ? undefined : ''}>
+      {
+        !noindex && (
+          <div hidden>
+            <span data-pagefind-meta="description">{description}</span>
+            <span data-pagefind-meta="family">{family}</span>
+          </div>
+        )
+      }
       <slot />
     </main>
-    <Footer><MiniMe client:idle /></Footer>
+    <Footer><MotionToggle client:idle /></Footer>
+    <SearchDialog client:idle />
+    <NavDrawer client:idle pathname={pathname} />
+    <CopyController client:idle />
+    <script>
+      // Deep links into disclosure rows: open the <details> the hash points at, then let the browser scroll.
+      const reveal = () => {
+        const id = decodeURIComponent(location.hash.slice(1));
+        if (!id) return;
+        const target = document.getElementById(id);
+        if (target instanceof HTMLDetailsElement) target.open = true;
+        target?.closest('details')?.setAttribute('open', '');
+      };
+      reveal();
+      window.addEventListener('hashchange', reveal);
+    </script>
   </body>
 </html>

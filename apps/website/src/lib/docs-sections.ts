@@ -1,12 +1,3 @@
-export const DOC_SECTIONS = [
-  'Getting started',
-  'Core concepts',
-  'API reference',
-  'Guides and recipes',
-  'TypeScript',
-  'Testing and troubleshooting',
-  'DevTools',
-  'Platform and version considerations',
-] as const;
+export const DOC_SECTIONS = ['Start here', 'Core concepts', 'API reference', 'Guides', 'Quality', 'DevTools', 'Platform'] as const;
 
 export type DocSection = (typeof DOC_SECTIONS)[number];

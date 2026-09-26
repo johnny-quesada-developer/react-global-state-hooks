@@ -12,6 +12,7 @@ export function NameCard() {
         Name
         <input
           value={name}
+          maxLength={40}
           onChange={(event) =>
             setProfile((profile) => ({
               ...profile,

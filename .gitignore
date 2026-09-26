@@ -45,3 +45,4 @@ apps/website/blob-report/
 
 # Generated extension release archive
 /apps/devtools/react-hooks-global-states-dev-tools.zip
+/rgsh-complete-site

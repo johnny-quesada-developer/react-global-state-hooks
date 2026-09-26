@@ -6,8 +6,7 @@ const masks = (page: Page) => [page.locator('video')];
 async function settle(page: Page) {
   await page.waitForLoadState('networkidle');
   await page.evaluate(() => document.fonts.ready);
-  await page.locator('.search-open').waitFor();
-  await page.locator('.minime, .minime-show').waitFor();
+  await page.locator('.toast').waitFor({ state: 'attached' });
 }
 
 for (const route of routes()) {

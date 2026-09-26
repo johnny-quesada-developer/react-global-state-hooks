@@ -31,13 +31,18 @@ function Choice<T extends string>({
   );
 }
 
-function readSaved(): string {
+type Storage = { saved: string; available: boolean };
+
+function readSaved(): Storage {
   try {
-    return window.localStorage.getItem(STORAGE_KEY) ?? '(nothing saved)';
+    return { saved: window.localStorage.getItem(STORAGE_KEY) ?? '(nothing saved)', available: true };
   } catch {
-    return '(storage unavailable)';
+    return { saved: '(storage unavailable)', available: false };
   }
 }
+
+/** Writes the defaults back, which also rewrites the saved value. */
+export const resetPreferencesDemo = () => usePreferences.setState({ ...defaults });
 
 export function PreferencesDemo() {
   const [stored, setPreferences] = usePreferences();
@@ -46,44 +51,42 @@ export function PreferencesDemo() {
   const hydrated = useHydrated();
   const preferences: Preferences = hydrated ? stored : defaults;
 
-  const [saved, setSaved] = useState('');
+  const [storage, setStorage] = useState<Storage>({ saved: '', available: true });
   useEffect(() => {
-    setSaved(readSaved());
+    setStorage(readSaved());
 
     // Subscribers run before the store writes to localStorage, so read the saved value a moment later.
-    return usePreferences.subscribe(() => queueMicrotask(() => setSaved(readSaved())), { skipFirst: true });
+    return usePreferences.subscribe(() => queueMicrotask(() => setStorage(readSaved())), { skipFirst: true });
   }, []);
 
   const update = (patch: Partial<Preferences>) => setPreferences((current) => ({ ...current, ...patch }));
 
   return (
     <div className="demo">
-      <div className="demo-grid demo-grid--wide">
+      <div className="demo-grid demo-grid--stack">
         <section className="demo-card" aria-label="Preferences">
           <RenderCount />
-          <Choice
-            legend="Accent"
-            options={ACCENTS}
-            value={preferences.accent}
-            onChange={(accent) => update({ accent })}
-          />
-          <Choice
-            legend="Text size"
-            options={SIZES}
-            value={preferences.size}
-            onChange={(size) => update({ size })}
-          />
+          <div className="pref-row">
+            <div>
+              <strong>Accent</strong>
+              <p>Saved. Only this preview changes.</p>
+            </div>
+            <Choice legend="Accent" options={ACCENTS} value={preferences.accent} onChange={(accent) => update({ accent })} />
+          </div>
+          <div className="pref-row">
+            <div>
+              <strong>Text size</strong>
+              <p>Saved with the accent.</p>
+            </div>
+            <Choice legend="Text size" options={SIZES} value={preferences.size} onChange={(size) => update({ size })} />
+          </div>
           <label className="pref-check">
-            <input
-              type="checkbox"
-              checked={preferences.compact}
-              onChange={() => update({ compact: !preferences.compact })}
-            />
             <span>Compact layout</span>
+            <input type="checkbox" checked={preferences.compact} onChange={() => update({ compact: !preferences.compact })} />
           </label>
-          <label>
+          <label className="pref-draft">
             Draft note (not saved)
-            <input value={preferences.draft} onChange={(event) => update({ draft: event.target.value })} />
+            <input value={preferences.draft} placeholder="This will not be saved" maxLength={60} onChange={(event) => update({ draft: event.target.value })} />
           </label>
         </section>
 
@@ -95,18 +98,17 @@ export function PreferencesDemo() {
             <strong>Preview</strong>
             <p>{preferences.draft || 'Your draft appears here.'}</p>
           </div>
-          <span className="pref-caption">Saved in localStorage</span>
+          <span>Saved in localStorage</span>
           <pre className="demo-json" data-testid="saved">
-            {saved}
+            {storage.saved}
           </pre>
+          <p className={`pref-status${storage.available ? '' : ' pref-status--unavailable'}`} role="status">
+            {storage.available
+              ? 'Reload this page: the saved values come back and the draft does not.'
+              : 'Storage unavailable — changes are session-only'}
+          </p>
         </section>
       </div>
-      <p className="section__lede">
-        Change something, then reload this page: the saved values come back and the draft does not.
-      </p>
-      <button type="button" className="demo-reset" onClick={() => usePreferences.setState({ ...defaults })}>
-        Clear saved data
-      </button>
     </div>
   );
 }

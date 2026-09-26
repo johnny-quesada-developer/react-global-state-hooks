@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
-import { SelectiveDemo } from './SelectiveDemo';
+import { SelectiveDemo, resetSelectiveDemo } from './SelectiveDemo';
 import { useProfile } from './store';
 
 const counts = () => {
@@ -51,15 +51,18 @@ describe.each([
     expect(counts()).toEqual({ name: 1, role: 1, clicks: 1, whole: 1 });
   });
 
-  it('reset restores the state and the counters', () => {
-    render(wrap(<SelectiveDemo />));
+  it('reset restores the state, and a remount restarts the counters', () => {
+    const { unmount } = render(wrap(<SelectiveDemo />));
 
     fireEvent.click(screen.getByRole('button', { name: /clicked 0 times/i }));
     fireEvent.change(screen.getByLabelText('Name'), { target: { value: 'Grace' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Reset demo' }));
+    act(() => resetSelectiveDemo());
 
     expect(useProfile.getState()).toEqual({ name: 'Ada', role: 'Engineer', clicks: 0 });
     expect(screen.getByLabelText('Name')).toHaveProperty('value', 'Ada');
+
+    unmount();
+    render(wrap(<SelectiveDemo />));
     expect(counts()).toEqual({ name: 1, role: 1, clicks: 1, whole: 1 });
   });
 });

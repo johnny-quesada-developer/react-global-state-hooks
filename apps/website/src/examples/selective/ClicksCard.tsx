@@ -8,10 +8,7 @@ export function ClicksCard() {
     <section className="demo-card" aria-label="Clicks card">
       <RenderCount />
       <span>Clicks</span>
-      <button
-        type="button"
-        onClick={() => setProfile((profile) => ({ ...profile, clicks: profile.clicks + 1 }))}
-      >
+      <button type="button" onClick={() => setProfile((profile) => ({ ...profile, clicks: profile.clicks + 1 }))}>
         Clicked {clicks} times
       </button>
     </section>

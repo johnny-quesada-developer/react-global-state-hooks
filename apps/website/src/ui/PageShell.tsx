@@ -1,12 +1,17 @@
 import type { ComponentPropsWithoutRef, ElementType } from 'react';
-import { tv } from 'tailwind-variants';
+import { tv, type VariantProps } from '../lib/tv';
 
-const pageShell = tv({ base: 'mx-auto w-full max-w-page px-4 md:px-6' });
+const pageShell = tv({
+  variants: { width: { wrap: 'wrap', wide: 'wide' } },
+  defaultVariants: { width: 'wrap' },
+});
 
-type PageShellProps<T extends ElementType> = { as?: T } & Omit<ComponentPropsWithoutRef<T>, 'as'>;
+type PageShellProps<T extends ElementType> = { as?: T } & VariantProps<typeof pageShell> &
+  Omit<ComponentPropsWithoutRef<T>, 'as'>;
 
-export function PageShell<T extends ElementType = 'div'>({ as, className, ...props }: PageShellProps<T>) {
+/** Centred content column: `wrap` (1160px marketing) or `wide` (1320px documentation). */
+export function PageShell<T extends ElementType = 'div'>({ as, width, className, ...props }: PageShellProps<T>) {
   const Tag = (as ?? 'div') as ElementType;
 
-  return <Tag className={pageShell({ className })} {...props} />;
+  return <Tag className={pageShell({ width, className })} {...props} />;
 }

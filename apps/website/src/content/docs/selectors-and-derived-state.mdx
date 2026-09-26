@@ -10,6 +10,12 @@ import { Callout } from '../../ui/Callout';
 import filterDeps from '@snippets/selectors/filter-with-dependencies.tsx?raw';
 import selectorHooks from '@snippets/selectors/selector-hooks.tsx?raw';
 import observable from '@snippets/selectors/observable.ts?raw';
+import { FlowDiagram } from '../../ui/docs/InlineDiagram';
+
+<FlowDiagram
+  nodes={[{ label: 'useStore' }, { label: 'useUsers', tone: 'blue' }, { label: 'useActiveUsers', tone: 'accent' }]}
+  caption="Compose a selection. Reuse the hook. Subscribe to its result."
+/>
 
 ## The problem this solves
 

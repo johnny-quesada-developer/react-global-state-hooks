@@ -1,26 +1,110 @@
+.async-track {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  font: 9px var(--font-mono);
+  color: var(--color-muted);
+}
+
+.async-track span {
+  padding: 3px 7px;
+  border: 1px solid var(--color-line);
+  border-radius: 3px;
+}
+
+.async-track .active {
+  background: var(--color-green-soft);
+  color: var(--color-green);
+  border-color: #cfddd2;
+}
+
+.async-stage {
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.async-symbol {
+  width: 43px;
+  height: 43px;
+  border: 1px solid var(--color-line);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0 16px;
+  color: var(--color-muted);
+}
+
+.async-stage--error .async-symbol {
+  color: var(--color-red);
+  border-color: #ebcec9;
+  background: var(--color-red-soft);
+}
+
+.async-stage--success .async-symbol {
+  color: var(--color-green);
+  background: var(--color-green-soft);
+}
+
+.async-stage--loading .async-symbol {
+  animation: spin 1.5s linear infinite;
+}
+
 .async-status {
-  margin: 0;
-  min-height: 1.6em;
+  margin: 0 0 10px;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--color-ink);
+  line-height: 1.2;
+}
+
+.async-hint {
+  margin: 0 0 16px;
+  font-size: 12px;
+  max-width: 260px;
 }
 
 .async-users {
-  margin: 0;
-  padding-left: 1.2rem;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+  font-size: 12px;
+  color: var(--color-muted);
+}
+
+.async-users li {
+  display: inline;
+}
+
+.async-users li + li::before {
+  content: ' · ';
 }
 
 .async-actions {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: 12px;
 }
 
 .async-attempts {
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
+  font: 10px var(--font-mono);
+  color: var(--color-muted);
 }
 
 .async-switch {
   flex-direction: row !important;
   align-items: center;
-  font-weight: 600;
+  gap: 9px !important;
+  font-weight: 400 !important;
+  font-size: 13px !important;
+}
+
+.async-stage-card {
+  align-items: stretch;
 }

@@ -19,12 +19,12 @@ const out = path.join(root, 'public/og');
 
 const color = {
   bg: '#ffffff',
-  text: '#20332d',
-  muted: '#4a5f57',
-  primary: '#24634b',
-  mint: '#e4f2e8',
-  sky: '#e5f2fa',
-  yellow: '#fff0b8',
+  text: '#1d2422',
+  muted: '#626d66',
+  primary: '#326c52',
+  mint: '#edf4ee',
+  sky: '#f0f2f8',
+  yellow: '#faf5e9',
 };
 const FONT = 'Helvetica Neue, Helvetica, Arial, sans-serif';
 
@@ -67,11 +67,11 @@ function svg({ kicker, title, description }) {
   <rect x="400" y="574" width="400" height="56" fill="${color.sky}"/>
   <rect x="800" y="574" width="400" height="56" fill="${color.yellow}"/>
   <g transform="translate(80 84)">
-    <rect width="64" height="64" rx="16" fill="${color.primary}"/>
-    <circle cx="20" cy="22" r="6" fill="${color.yellow}"/>
-    <circle cx="44" cy="22" r="6" fill="${color.mint}"/>
-    <circle cx="32" cy="44" r="6" fill="${color.sky}"/>
-    <path d="M20 22 L44 22 L32 44 Z" fill="none" stroke="#ffffff" stroke-width="2.8" stroke-linejoin="round"/>
+    <g transform="scale(2)" fill="none" stroke="${color.primary}" stroke-linecap="round">
+      <path d="M5 6v20m22-20v20M5 10h8l6 12h8" stroke-width="2.3"/>
+      <circle cx="5" cy="10" r="3.5" fill="#ffffff" stroke-width="2"/>
+      <circle cx="27" cy="22" r="3.5" fill="#ffffff" stroke-width="2"/>
+    </g>
   </g>
   <text x="164" y="128" font-family="${FONT}" font-size="34" font-weight="700" fill="${color.text}">react-global-state-hooks</text>
   <text x="80" y="206" font-family="${FONT}" font-size="26" font-weight="700" fill="${color.primary}" letter-spacing="1.5">${escape(kicker.toUpperCase())}</text>
@@ -92,8 +92,8 @@ const pages = [
   {
     file: 'home',
     kicker: 'React state management',
-    title: 'Shared React state that works like useState',
-    description: 'One call to create a store. Selectors, actions and localStorage built in.',
+    title: 'React state. Without the guesswork.',
+    description: 'Precise subscriptions, composable selectors, and DevTools your coding agent can use.',
   },
   {
     file: 'docs',
@@ -112,6 +112,12 @@ const pages = [
     kicker: 'About the author',
     title: 'Johnny Quesada',
     description: 'Senior product engineer. Case studies, engineering approach and open-source work.',
+  },
+  {
+    file: 'agentic-devtools',
+    kicker: 'Agentic DevTools',
+    title: 'Give your agent state. Not guesses.',
+    description: 'Inspect the live store, call a real action, read back what changed.',
   },
   {
     file: 'easy-code-review',

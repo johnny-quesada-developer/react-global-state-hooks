@@ -1,81 +1,135 @@
+/* Workbench previews: white cards on the soft stage, green for changed values (reference .preview-card). */
 .demo {
   display: grid;
-  gap: var(--space-4);
+  gap: 20px;
+  min-width: 0;
 }
 
 .demo-grid {
   display: grid;
-  gap: var(--space-3);
-  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 13px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+
+.demo-grid--stack {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .demo-card {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-4);
+  gap: 8px;
+  padding: 17px;
   border: 1px solid var(--color-line);
-  border-radius: var(--radius-md);
-  background: var(--color-bg);
+  border-radius: 7px;
+  background: var(--color-paper);
+  min-width: 0;
   position: relative;
 }
 
-.demo-card--whole {
-  background: var(--color-sky);
-  border-color: #c3dfef;
+.demo-card--wide {
+  grid-column: 1 / -1;
 }
 
 .demo-card label {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
-  font-weight: 600;
-  font-size: var(--text-sm);
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 550;
+  color: var(--color-ink);
 }
 
-.demo-card input,
+.demo-card input:not([type='checkbox']):not([type='radio']),
 .demo-card select,
-.demo-card button,
-.demo-reset {
-  font: inherit;
-  padding: 0.45rem 0.6rem;
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-sm);
-  background: var(--color-bg);
-  color: var(--color-text);
+.demo-card textarea {
+  width: 100%;
+  font-size: 12px;
+  padding: 9px;
+  border-radius: 7px;
+}
+
+.demo-card > span,
+.demo-title {
+  font-size: 11px;
+  font-weight: 550;
+  color: var(--color-ink);
 }
 
 .demo-card button,
-.demo-reset {
+.demo-button {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid #dbe1dc;
+  border-radius: 7px;
+  background: var(--color-paper);
+  font-size: 12px;
+  font-weight: 550;
+  color: var(--color-ink);
   cursor: pointer;
-  font-weight: 600;
-  color: var(--color-primary);
-  border-color: var(--color-primary);
+  transition:
+    background 0.18s,
+    border-color 0.18s;
 }
 
 .demo-card button:hover,
-.demo-reset:hover {
-  background: var(--color-mint);
+.demo-button:hover {
+  background: var(--color-soft);
+  border-color: #b4c1b8;
 }
 
-.demo-reset {
-  justify-self: start;
+.demo-card .demo-button--primary,
+.demo-button--primary {
+  background: var(--color-ink);
+  border-color: var(--color-ink);
+  color: #fff;
+}
+
+.demo-card .demo-button--primary:hover,
+.demo-button--primary:hover {
+  background: #354239;
+  border-color: #354239;
+}
+
+.demo-card .demo-text-button,
+.demo-text-button {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  min-height: 0;
+  font-size: 13px;
+  font-weight: 550;
+  color: var(--color-green);
+}
+
+.demo-card .demo-text-button:hover,
+.demo-text-button:hover {
+  background: transparent;
+  text-decoration: underline;
+  text-underline-offset: 5px;
 }
 
 .segmented {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-1);
+  gap: 5px;
   margin: 0;
   padding: 0;
   border: 0;
+  min-width: 0;
 }
 
 .segmented legend {
   padding: 0;
-  margin-bottom: var(--space-1);
-  font-weight: 600;
-  font-size: var(--text-sm);
+  margin-bottom: 8px;
+  font-weight: 550;
+  font-size: 11px;
+  color: var(--color-ink);
 }
 
 .demo-card .segmented label {
@@ -90,55 +144,70 @@
   inset: 0;
   margin: 0;
   cursor: pointer;
+  width: 100%;
+  height: 100%;
 }
 
 .segmented span {
   display: block;
-  padding: 0.35rem 0.7rem;
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-sm);
-  background: var(--color-bg);
-  font-size: var(--text-sm);
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  color: var(--color-muted);
 }
 
 .segmented input:checked + span {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: var(--color-on-primary);
-  font-weight: 600;
+  background: var(--color-green-soft);
+  color: var(--color-green);
 }
 
 .segmented input:focus-visible + span {
-  outline: 3px solid var(--color-focus);
+  outline: 2px solid var(--color-green);
   outline-offset: 2px;
 }
 
 .demo-json {
   margin: 0;
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--text-sm);
-  line-height: 1.5;
-  background: var(--color-bg);
-  border: 1px solid #c3dfef;
-  border-radius: var(--radius-sm);
-  overflow-x: auto;
+  padding: 10px 12px;
+  font-size: 10px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: var(--color-soft);
+  border: 1px solid var(--color-line);
+  border-radius: 5px;
+  color: #414a43;
+}
+
+.demo-caption {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--color-muted);
+}
+
+/* Commit counter: a small green chip, labelled as renders (not selected-value changes). */
+.demo-card > .render-count {
+  position: absolute;
+  top: 12px;
+  right: 12px;
 }
 
 .render-count {
-  align-self: flex-end;
-  font-size: 0.75rem;
+  align-self: flex-start;
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  font-size: 9px;
   font-family: var(--font-mono);
-  color: var(--color-text-muted);
+  color: var(--color-green);
+  background: var(--color-green-soft);
+  padding: 2px 6px;
+  border-radius: 3px;
 }
 
 .render-count > span {
-  display: inline-block;
-  min-width: 1.5em;
-  text-align: center;
-  padding: 0 0.3em;
-  border-radius: var(--radius-sm);
   font-weight: 700;
-  color: var(--color-text);
 }
 
 .render-count--flash {
@@ -147,9 +216,15 @@
 
 @keyframes render-flash {
   from {
-    background: var(--color-yellow);
+    box-shadow: 0 0 0 3px #acc9b4;
   }
   to {
-    background: transparent;
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+@media (max-width: 370px) {
+  .demo-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

@@ -20,17 +20,18 @@ From the workspace root: `nx run website:test:visual`.
 `site.spec.ts` reads `dist/` and takes a full-page screenshot of every built page, so a new page is
 covered as soon as it builds. `404.html` is reached by requesting an unknown path.
 
-`states.spec.ts` drives components into states the default render cannot show — search dialog with
-results, a non-default package manager, mini-me hidden, the second hero video tab, async demo loaded
-and failed, changed preferences, a completed task, an empty task filter, a third scoped note and an
-updated selective demo — and compares that element only.
+`states.spec.ts` drives components into states the default render cannot show — search results and
+no results, a non-default package manager, the mobile drawers, the hero and agent sequences on a later
+step, changed selected values, every workbench outcome (loaded, failed, validation, empty filter, a third
+scoped note, an updated selective demo, the explanation tab), the empty gallery, and the product-page
+step controls — and compares that element only.
 
 Each spec runs in two projects, `desktop` (1280×900) and `mobile` (390×844).
 
 ## Determinism
 
-- The browser context sets `prefers-reduced-motion: reduce`. `styles/global.css` and `styles/site.css`
-  stop every animation under it, and `HeroVideos` does not autoplay.
+- The browser context sets `prefers-reduced-motion: reduce`. `styles/base.css` stops every animation
+  under it, and the sequences fall back to manual, complete frames.
 - `<video>` elements are masked. The mask covers the element's own box, so its size and position are
   still compared; only decoded frames are excluded.
 - The suite serves the production build through `scripts/visual-server.mjs`. `astro preview` detaches

@@ -10,8 +10,12 @@ const docs = defineCollection({
     description: z.string(),
     section: z.enum(DOC_SECTIONS),
     order: z.number(),
+    /** Shorter label for the sidebar and drawer. */
+    short: z.string().optional(),
     /** `beta` marks pages that describe features that are still in beta. */
     status: z.enum(['stable', 'beta']).default('stable'),
+    /** Troubleshooting layout: every h2 becomes a disclosure row (see src/lib/rehype). */
+    symptoms: z.boolean().default(false),
   }),
 });
 
@@ -21,6 +25,20 @@ const examples = defineCollection({
     title: z.string(),
     description: z.string(),
     order: z.number(),
+    /** Outcome-led headline shown on the gallery card and the example page. */
+    headline: z.string(),
+    /** Gallery filter category (Subscriptions, Selectors, Async, Persistence, Context). */
+    category: z.string(),
+    /** Gallery thumbnail variant. */
+    thumb: z.enum(['shared', 'todos', 'async', 'persist', 'scoped']),
+    /** The one-line learning outcome. */
+    outcome: z.string(),
+    /** What changes: the behaviours to try, in order. */
+    points: z.array(z.string()),
+    /** Source files shown in the workbench Code tab, relative to src/examples. */
+    sources: z.array(z.object({ file: z.string(), title: z.string().optional() })),
+    /** Documentation page that explains the pattern. */
+    guide: z.string(),
     /** Documentation pages that explain the APIs this example uses. */
     related: z.array(z.object({ label: z.string(), href: z.string() })).default([]),
   }),

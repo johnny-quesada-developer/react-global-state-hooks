@@ -3,11 +3,19 @@ title: Scoped state with createContext
 description: Give each part of the tree its own store with the same selector and action API as global state.
 section: Core concepts
 order: 4
+short: Scoped state
 ---
 
 import { CodeBlock } from '../../ui/CodeBlock';
 import { Callout } from '../../ui/Callout';
 import counterContext from '@snippets/context/counter-context.tsx?raw';
+import { PairDiagram } from '../../ui/docs/InlineDiagram';
+
+<PairDiagram
+  left={{ title: 'Provider A', detail: 'name: “Ada”' }}
+  right={{ title: 'Provider B', detail: 'name: “Grace”' }}
+  caption="Same component. Independent store instances."
+/>
 
 ## The problem this solves
 

@@ -7,14 +7,16 @@ export function TaskStats() {
   const done = useDoneCount();
 
   return (
-    <section className="demo-card demo-card--whole" aria-label="Task stats">
-      <RenderCount />
-      <span>
-        {open} open, {done} done
-      </span>
-      <button type="button" onClick={() => useTasks.actions.clearDone()} disabled={done === 0}>
-        Clear done
-      </button>
+    <section className="demo-card" aria-label="Task stats">
+      <div className="tasks-footer">
+        <span>
+          {open} open, {done} done
+        </span>
+        <RenderCount />
+        <button type="button" className="demo-text-button" onClick={() => useTasks.actions.clearDone()} disabled={done === 0}>
+          Clear done
+        </button>
+      </div>
     </section>
   );
 }

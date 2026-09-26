@@ -4,6 +4,9 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { fileURLToPath } from 'node:url';
 import { loadEnv } from 'vite';
+import { rgshLight } from './src/lib/shiki-theme.mjs';
+import { unified } from '@astrojs/markdown-remark';
+import { rehypeCodeBlocks, rehypeSymptoms, rehypeTableWrap } from './src/lib/rehype/index.mjs';
 
 const libs = (path) => fileURLToPath(new URL(`../../libs/${path}`, import.meta.url));
 const here = (path) => fileURLToPath(new URL(path, import.meta.url));
@@ -43,7 +46,9 @@ export default defineConfig({
   build: { format: 'directory' },
   integrations: [react(), mdx(), sitemap()],
   markdown: {
-    shikiConfig: { theme: 'github-light' },
+    shikiConfig: { theme: rgshLight },
+    // unified (not Astro 7's default Sätteri): the rehype plugins give MDX the reference document structure.
+    processor: unified({ rehypePlugins: [rehypeSymptoms, rehypeCodeBlocks, rehypeTableWrap] }),
   },
   vite: {
     plugins: [debugEverywhere],

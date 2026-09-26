@@ -1,7 +1,25 @@
 ---
 title: Derived state and selectors
-description: A filterable task list with actions, a filter that lives outside the store, and derived counts shared through selector hooks.
+headline: A task list that composes
+description: Filter tasks, add an action, and share derived counts through reusable hooks. The filter lives outside the store.
 order: 2
+category: Selectors
+thumb: todos
+outcome: The filter is local. The tasks and reusable derivations are shared.
+points:
+  - Toggle a task. The list and the stats render again, and so does only the row you toggled. The other rows and the add form keep their counts.
+  - Type in the add form. Nothing else renders, because the form uses the actions and never subscribes to the tasks. A blank task is rejected beside the input.
+  - Change the Show filter. The list re-selects without touching the store; the filter is component state passed to the selector through `dependencies`.
+sources:
+  - file: tasks/store.ts
+    title: store.ts
+  - file: tasks/TaskList.tsx
+    title: TaskList.tsx
+  - file: tasks/TaskStats.tsx
+    title: TaskStats.tsx
+  - file: tasks/AddTask.tsx
+    title: AddTask.tsx
+guide: selectors-and-derived-state
 related:
   - label: Selectors and derived state
     href: ../../docs/selectors-and-derived-state/
@@ -12,23 +30,9 @@ related:
 ---
 
 import { CodeBlock } from '../../ui/CodeBlock';
-import { TasksDemo } from '@examples/tasks/TasksDemo';
 import store from '@examples/tasks/store.ts?raw';
 import taskList from '@examples/tasks/TaskList.tsx?raw';
 import taskStats from '@examples/tasks/TaskStats.tsx?raw';
-
-## Try it
-
-<TasksDemo client:visible />
-
-## What to look for
-
-- Toggle a task. The list and the stats render again, and so does only the row you toggled. The other rows and
-  the add form keep their counts.
-- Type in the add form. Nothing else renders, because the form uses the actions and never subscribes to the
-  tasks.
-- Change the **Show** filter. The list re-selects without touching the store: the filter is component state
-  passed to the selector through `dependencies`.
 
 ## The code
 

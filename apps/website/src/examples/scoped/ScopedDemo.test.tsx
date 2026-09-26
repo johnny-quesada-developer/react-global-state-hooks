@@ -15,8 +15,8 @@ describe('ScopedDemo', () => {
 
     fireEvent.change(panel('Note 1').getByLabelText('Body'), { target: { value: 'one two three' } });
 
-    expect(panel('Note 1').getByText('3 words')).toBeTruthy();
-    expect(panel('Note 2').getByText('0 words')).toBeTruthy();
+    expect(panel('Note 1').getByText('3 words · own store')).toBeTruthy();
+    expect(panel('Note 2').getByText('0 words · own store')).toBeTruthy();
   });
 
   it('title edits do not re-render the body or the word count', () => {

@@ -33,17 +33,18 @@ export function RenderCount() {
     if (!node) return;
 
     node.textContent = String(count.current);
-    node.classList.remove('render-count--flash');
+    const chip = node.parentElement;
+    chip?.classList.remove('render-count--flash');
     void node.offsetWidth; // restart the CSS animation
-    node.classList.add('render-count--flash');
+    chip?.classList.add('render-count--flash');
   });
 
   return (
     <span className="render-count" title="Times this component has rendered">
-      renders{' '}
       <span ref={element} data-testid="render-count">
         1
       </span>
+      renders
     </span>
   );
 }

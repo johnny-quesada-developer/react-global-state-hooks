@@ -72,8 +72,9 @@ describe('PreferencesDemo', () => {
       expect(JSON.parse(screen.getByTestId('saved').textContent!).s).not.toHaveProperty('draft'),
     );
 
+    const { resetPreferencesDemo } = await import('./PreferencesDemo');
     await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: 'Clear saved data' }));
+      resetPreferencesDemo();
     });
     expect(screen.getByTestId('preview').className).toContain('pref-preview--mint');
   });
