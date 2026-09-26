@@ -14,8 +14,12 @@ export default defineConfig({
   fullyParallel: true,
   reporter: [['list'], ['html', { open: 'never' }]],
   expect: {
-    // VISUAL_STRICT=1 drops the tolerance to zero, for restyling work.
+    // VISUAL_STRICT=1 is the restyling gate. `threshold` is the per-pixel colour sensitivity: at
+    // its 0.2 default a subtle recolour counts as zero differing pixels, so maxDiffPixelRatio alone
+    // cannot catch one. Playwright squares this value, leaving a usable window of 0.0022 (above
+    // antialiasing noise) to 0.051 (below a one-step hairline recolour).
     toHaveScreenshot: {
+      threshold: process.env.VISUAL_STRICT ? 0.01 : 0.2,
       maxDiffPixelRatio: process.env.VISUAL_STRICT ? 0 : 0.03,
       animations: 'disabled',
       caret: 'hide',
