@@ -243,11 +243,14 @@ A persisted React Native store restores **asynchronously**, so the hook also exp
 ```tsx
 import { ActivityIndicator, Switch, Text, View } from "react-native";
 import { createGlobalState } from "react-native-global-state-hooks";
+import { z } from "zod";
 
-type Settings = {
-  darkMode: boolean;
-  haptics: boolean;
-};
+const settings = z.object({
+  darkMode: z.boolean(),
+  haptics: z.boolean(),
+});
+
+type Settings = z.infer<typeof settings>;
 
 const useSettings = createGlobalState(
   { darkMode: true, haptics: true } as Settings,
@@ -255,10 +258,8 @@ const useSettings = createGlobalState(
     asyncStorage: {
       key: "app-settings",
 
-      validator: ({ restored, initial }) => {
-        if (!restored || typeof restored !== "object") return initial;
-        return restored as Settings;
-      },
+      // A parse error is caught by the store, which then keeps the initial state
+      validator: ({ restored, initial }) => settings.parse({ ...initial, ...(restored as object) }),
     },
 
     actions: {
@@ -626,11 +627,14 @@ Unlike browser `localStorage`, React Native persistence is **asynchronous**. A p
 
 ```tsx
 import { createGlobalState } from "react-native-global-state-hooks";
+import { z } from "zod";
 
-type Settings = {
-  theme: "light" | "dark";
-  language: string;
-};
+const settings = z.object({
+  theme: z.enum(["light", "dark"]),
+  language: z.string(),
+});
+
+type Settings = z.infer<typeof settings>;
 
 const initialSettings: Settings = {
   theme: "dark",
@@ -641,19 +645,7 @@ const useSettings = createGlobalState(initialSettings, {
   asyncStorage: {
     key: "app-settings",
 
-    validator: ({ restored, initial }) => {
-      if (!restored || typeof restored !== "object") {
-        return initial;
-      }
-
-      const value = restored as Partial<Settings>;
-
-      if ((value.theme !== "light" && value.theme !== "dark") || typeof value.language !== "string") {
-        return initial;
-      }
-
-      return value as Settings;
-    },
+    validator: ({ restored, initial }) => settings.parse({ ...initial, ...(restored as object) }),
   },
 });
 ```
@@ -702,17 +694,18 @@ This is fundamentally different from synchronous browser `localStorage`.
 The current Native persistence configuration includes a `validator`.
 
 ```tsx
+import { z } from "zod";
+
+const profile = z.object({
+  name: z.string(),
+  email: z.string(),
+});
+
 const useProfile = createGlobalState(initialProfile, {
   asyncStorage: {
     key: "profile",
 
-    validator: ({ restored, initial }) => {
-      if (!isProfile(restored)) {
-        return initial;
-      }
-
-      return restored;
-    },
+    validator: ({ restored, initial }) => profile.parse({ ...initial, ...(restored as object) }),
   },
 });
 ```
@@ -727,6 +720,11 @@ Return behavior:
 - Return a value → that value becomes the restored state
 - Return `initial` → reject the persisted value and fall back
 - Return `undefined` → accept the restored value as-is
+- Throw → same as returning `initial`, and the error reaches `onError`. This is why a schema can be the
+  whole validator
+
+Validate the state, not the fragment. `restored` holds only what the `selector` saved, so merge it over
+`initial` first: `({ restored, initial }) => schema.parse({ ...initial, ...restored })`
 
 The validator also runs after migration.
 
@@ -735,10 +733,14 @@ The validator also runs after migration.
 Persisted schemas evolve. Native persistence can migrate old values before committing them to the current store.
 
 ```tsx
-type Preferences = {
-  theme: "light" | "dark";
-  notifications: boolean;
-};
+import { z } from "zod";
+
+const preferences = z.object({
+  theme: z.enum(["light", "dark"]),
+  notifications: z.boolean(),
+});
+
+type Preferences = z.infer<typeof preferences>;
 
 const initialPreferences: Preferences = {
   theme: "dark",
@@ -764,13 +766,7 @@ const usePreferences = createGlobalState(initialPreferences, {
       },
     },
 
-    validator: ({ restored, initial }) => {
-      if (!restored || typeof restored !== "object") {
-        return initial;
-      }
-
-      return restored as Preferences;
-    },
+    validator: ({ restored, initial }) => preferences.parse({ ...initial, ...(restored as object) }),
   },
 });
 ```
@@ -787,13 +783,15 @@ With the built-in persistence path:
 Handle storage, serialization, validation, or migration failures without mixing them into your UI state.
 
 ```tsx
+import { z } from "zod";
+
+const settings = z.object({ theme: z.enum(["light", "dark"]), language: z.string() });
+
 const useSettings = createGlobalState(initialSettings, {
   asyncStorage: {
     key: "settings",
 
-    validator: ({ restored, initial }) => {
-      return isSettings(restored) ? restored : initial;
-    },
+    validator: ({ restored, initial }) => settings.parse({ ...initial, ...(restored as object) }),
 
     onError(error) {
       reportError(error);
@@ -845,13 +843,15 @@ Need one store to use a completely different persistence mechanism? Use `adapter
 Unlike the global storage manager, an adapter works with the actual **State value**, not serialized strings.
 
 ```tsx
+import { z } from "zod";
+
+const settings = z.object({ theme: z.enum(["light", "dark"]), language: z.string() });
+
 const useSettings = createGlobalState(initialSettings, {
   asyncStorage: {
     key: "settings",
 
-    validator: ({ restored, initial }) => {
-      return isSettings(restored) ? restored : initial;
-    },
+    validator: ({ restored, initial }) => settings.parse({ ...initial, ...(restored as object) }),
 
     adapter: {
       async getItem(key) {
@@ -1111,15 +1111,15 @@ src/stores/todos/
 
 ```tsx
 import { createGlobalState } from "react-native-global-state-hooks";
+import { z } from "zod";
 import { initialValue } from "./constants/initialValue";
+import { todosState } from "./schema";
 
 const todos$ = createGlobalState(initialValue, {
   asyncStorage: {
     key: "todos",
 
-    validator: ({ restored, initial }) => {
-      return isTodosState(restored) ? restored : initial;
-    },
+    validator: ({ restored, initial }) => todosState.parse({ ...initial, ...(restored as object) }),
   },
 
   actions: {

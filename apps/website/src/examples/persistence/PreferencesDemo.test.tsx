@@ -19,7 +19,19 @@ describe('preferences store', () => {
     expect(stored().s).toEqual({ accent: 'sky', size: 'medium', compact: false });
   });
 
-  it('restores saved values and drops invalid ones', async () => {
+  it('restores a stored value the schema accepts', async () => {
+    window.localStorage.setItem(
+      'examples:preferences',
+      JSON.stringify({ s: { accent: 'sky', size: 'large', compact: true }, v: -1 }),
+    );
+
+    const { usePreferences } = await import('./store');
+
+    expect(usePreferences.getState()).toEqual({ accent: 'sky', size: 'large', compact: true, draft: '' });
+  });
+
+  it('falls back to the defaults when the schema rejects the stored value', async () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
     window.localStorage.setItem(
       'examples:preferences',
       JSON.stringify({ s: { accent: 'sky', size: 'gigantic', compact: true }, v: -1 }),
@@ -27,7 +39,9 @@ describe('preferences store', () => {
 
     const { usePreferences } = await import('./store');
 
-    expect(usePreferences.getState()).toEqual({ accent: 'sky', size: 'medium', compact: true, draft: '' });
+    expect(usePreferences.getState()).toEqual({ accent: 'mint', size: 'medium', compact: false, draft: '' });
+    expect(error).toHaveBeenCalled();
+    error.mockRestore();
   });
 
   it('reset restores the defaults and the stored value', async () => {

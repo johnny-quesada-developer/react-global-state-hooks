@@ -705,17 +705,17 @@ The `validator` is **completely optional**. Add it only when you need to validat
 
 ```tsx
 import { createGlobalState } from 'react-global-state-hooks';
+import { z } from 'zod';
 
-const useContacts = createGlobalState(new Map(), {
+const contacts = z.map(z.string(), z.object({ email: z.string() }));
+
+const useContacts = createGlobalState(new Map<string, { email: string }>(), {
   localStorage: {
     key: 'contacts',
 
-    // Optional: validate/transform restored data
-    validator: ({ restored, initial }) => {
-      // Validate the restored value
-      if (!isMap(restored)) return initial;
-      return restored as typeof initial;
-    },
+    // Optional: validate/transform restored data. A schema library makes this one line, because a
+    // throw is caught by the store and the initial state is kept.
+    validator: ({ restored }) => contacts.parse(restored),
   },
 });
 ```
@@ -728,6 +728,10 @@ const useContacts = createGlobalState(new Map(), {
   - Return a value → That value becomes the new state
   - Return `undefined` → The restored data is used as-is
   - Return `initial` → Falls back to initial state (validation failed)
+  - Throw → Same as returning `initial`, and the error reaches `onError`. This is what lets a schema
+    library be the whole validator
+- Validate the state, not the fragment. `restored` holds only what the `selector` saved, so merge it over
+  `initial` first: `({ restored, initial }) => schema.parse({ ...initial, ...restored })`
 
 **When to use validator:**
 
@@ -742,6 +746,13 @@ Handle breaking changes gracefully with optional versioning:
 
 ```tsx
 import { createGlobalState } from 'react-global-state-hooks';
+import { z } from 'zod';
+
+const prefs = z.object({
+  theme: z.enum(['dark', 'light']),
+  notifications: z.boolean(),
+  language: z.string(),
+});
 
 const useUserPrefs = createGlobalState(
   { theme: 'dark', notifications: true, language: 'en' },
@@ -767,12 +778,7 @@ const useUserPrefs = createGlobalState(
       },
 
       // Optional: validate after migration
-      validator: ({ restored, initial }) => {
-        if (typeof restored === 'object' && restored !== null) {
-          return { ...initial, ...restored };
-        }
-        return initial;
-      },
+      validator: ({ restored, initial }) => prefs.parse({ ...initial, ...(restored as object) }),
     },
   },
 );
@@ -792,12 +798,16 @@ Only persist specific parts of your state:
 
 ```tsx
 import { createGlobalState } from 'react-global-state-hooks';
+import { z } from 'zod';
 
-type AppState = {
-  user: { name: string; email: string };
-  settings: { theme: string };
-  sessionData: { temp: string }; // Don't persist this!
-};
+// The whole state gets a schema, even the part that is never saved
+const appState = z.object({
+  user: z.object({ name: z.string(), email: z.string() }),
+  settings: z.object({ theme: z.string() }),
+  sessionData: z.object({ temp: z.string() }), // Don't persist this!
+});
+
+type AppState = z.infer<typeof appState>;
 
 const initialAppState: AppState = {
   user: { name: 'Guest', email: '' },
@@ -817,14 +827,8 @@ const useAppState = createGlobalState(
         settings: state.settings,
       }),
 
-      // Optional: merge persisted data with initial state
-      validator: ({ restored, initial }) => {
-        if (typeof restored === 'object' && restored !== null) {
-          // Merge persisted data with initial (to get sessionData)
-          return { ...initial, ...restored };
-        }
-        return initial;
-      },
+      // Storage only carries user and settings, so validate the state they produce
+      validator: ({ restored, initial }) => appState.parse({ ...initial, ...(restored as Partial<AppState>) }),
     },
   },
 );

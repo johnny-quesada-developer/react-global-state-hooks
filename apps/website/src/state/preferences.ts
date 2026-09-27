@@ -1,4 +1,5 @@
 import { createGlobalState } from 'react-global-state-hooks';
+import { z } from 'zod';
 import { useHydrated } from './useHydrated';
 import { CODE_THEME_IDS, DEFAULT_CODE_THEME, resolveCodeTheme } from '../lib/code-themes.mjs';
 import { useSyncExternalStore } from 'react';
@@ -10,11 +11,13 @@ export type PackageManager = (typeof PACKAGE_MANAGERS)[number];
 export const THEMES = ['system', 'light', 'dark'] as const;
 export type Theme = (typeof THEMES)[number];
 
-export interface Preferences {
-  packageManager: PackageManager;
-  codeTheme: string;
-  theme: Theme;
-}
+const schema = z.object({
+  packageManager: z.enum(PACKAGE_MANAGERS),
+  codeTheme: z.enum(CODE_THEME_IDS as [string, ...string[]]),
+  theme: z.enum(THEMES),
+});
+
+export type Preferences = z.infer<typeof schema>;
 
 const defaults: Preferences = {
   packageManager: 'npm',
@@ -24,6 +27,9 @@ const defaults: Preferences = {
 
 /** Bumped when a stored shape must not be trusted any more; see the migrator. */
 export const PREFERENCES_VERSION = 2;
+
+/** What survives an upgrade: the picked appearance and package manager, each optional. */
+const carried = schema.pick({ packageManager: true, theme: true }).partial().catch({});
 
 /**
  * Visitor preferences shared by every island on every page (the install command tab).
@@ -36,32 +42,11 @@ export const usePreferences = createGlobalState(defaults, {
     versioning: {
       version: PREFERENCES_VERSION,
       // Version 1 persisted the code theme as a concrete id even when nobody had picked one, so a
-      // page that later turned dark kept painting light code. Only the package manager survives.
-      migrator: ({ legacy, initial }) => {
-        const saved = (typeof legacy === 'object' && legacy !== null ? legacy : {}) as Partial<Preferences>;
-
-        return {
-          ...initial,
-          packageManager: PACKAGE_MANAGERS.includes(saved.packageManager as PackageManager)
-            ? (saved.packageManager as PackageManager)
-            : initial.packageManager,
-          theme: THEMES.includes(saved.theme as Theme) ? (saved.theme as Theme) : initial.theme,
-        };
-      },
+      // page that later turned dark kept painting light code. Only `carried` survives the upgrade.
+      migrator: ({ legacy, initial }) => ({ ...initial, ...carried.parse(legacy) }),
     },
-    validator: ({ restored, initial }) => {
-      if (typeof restored !== 'object' || restored === null) return initial;
-
-      const { packageManager, codeTheme, theme } = restored as Partial<Preferences>;
-
-      return {
-        packageManager: PACKAGE_MANAGERS.includes(packageManager as PackageManager)
-          ? (packageManager as PackageManager)
-          : initial.packageManager,
-        codeTheme: CODE_THEME_IDS.includes(codeTheme as string) ? (codeTheme as string) : initial.codeTheme,
-        theme: THEMES.includes(theme as Theme) ? (theme as Theme) : initial.theme,
-      };
-    },
+    // a parse error is caught by the store, which then keeps the defaults
+    validator: ({ restored, initial }) => schema.parse({ ...initial, ...(restored as Partial<Preferences>) }),
   },
 });
 

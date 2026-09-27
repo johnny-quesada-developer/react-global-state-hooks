@@ -26,7 +26,20 @@ describe('persistence', () => {
     expect(stored('docs:settings').v).toBe(2);
   });
 
-  it('selector saves only part of the state and validator sanitizes restored data', async () => {
+  it('selector saves only part of the state', async () => {
+    window.localStorage.setItem(
+      'docs:preferences',
+      JSON.stringify({ s: { theme: 'dark', language: 'es' }, v: -1 }),
+    );
+
+    const { usePreferences } = await import('./persistence/preferences');
+
+    expect(usePreferences.getState()).toEqual({ theme: 'dark', language: 'es', sessionOnly: 'not saved' });
+    expect(stored('docs:preferences').s).toEqual({ theme: 'dark', language: 'es' });
+  });
+
+  it('a restored value the schema rejects leaves the store on its initial state', async () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
     window.localStorage.setItem(
       'docs:preferences',
       JSON.stringify({ s: { theme: 'dark', language: 42 }, v: -1 }),
@@ -34,8 +47,9 @@ describe('persistence', () => {
 
     const { usePreferences } = await import('./persistence/preferences');
 
-    expect(usePreferences.getState()).toEqual({ theme: 'dark', language: 'en', sessionOnly: 'not saved' });
-    expect(stored('docs:preferences').s).toEqual({ theme: 'dark', language: 'en' });
+    expect(usePreferences.getState()).toEqual({ theme: 'light', language: 'en', sessionOnly: 'not saved' });
+    expect(error).toHaveBeenCalled();
+    error.mockRestore();
   });
 
   it('a value that is not an envelope is reported and falls back to the initial state', async () => {

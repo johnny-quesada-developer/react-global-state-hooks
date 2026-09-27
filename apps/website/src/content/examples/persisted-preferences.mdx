@@ -30,9 +30,10 @@ import demo from '@examples/persistence/PreferencesDemo.tsx?raw';
 
 ## The code
 
-`selector` picks what is saved. `validator` runs on every restore and keeps only values that are still
-valid, so an old or edited value cannot break the page. The store uses its own namespaced key,
-`examples:preferences`; nothing else in your browser storage is touched.
+`selector` picks what is saved. `validator` runs on every restore and hands the stored value to a Zod
+schema, so an old or edited value cannot reach the page: a parse error is caught by the store, which
+keeps its defaults. The store uses its own namespaced key, `examples:preferences`; nothing else in your
+browser storage is touched.
 
 <CodeBlock code={store} lang="ts" title="store.ts" />
 

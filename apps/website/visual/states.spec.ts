@@ -23,7 +23,7 @@ test.describe('site chrome', () => {
     await page.getByRole('button', { name: 'Search documentation' }).click();
 
     const dialog = page.locator('dialog[open]');
-    await dialog.locator('input').fill('zzzzqqq');
+    await dialog.locator('input').fill('qwertzuiopasdfgh');
     await dialog.getByText('No results for').waitFor();
 
     await expect(dialog).toHaveScreenshot('search-empty.png');

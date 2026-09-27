@@ -51,4 +51,5 @@ still being defined. Get the exact type with `InferAPI`, define actions against 
 - The types do not verify that every action key returns a function. A wrong action fails when it is called,
   with an error that names the key.
 - Persistence options are typed loosely (`localStorage?: LocalStorageConfig<Any, Any>`). Type your `validator`
-  arguments yourself when you need the state type inside it.
+  arguments yourself when you need the state type inside it, or let a schema do it: `z.infer<typeof schema>`
+  gives you the state type and `schema.parse` gives you the validator.

@@ -24,8 +24,10 @@ read the store through its API. Values such as `Date`, `Map` and `Set` are seria
 ## Validate and select
 
 `validator` runs after every restore. Return the state to use. Return `initial` to discard bad data. Return
-nothing to accept the restored value as is. `selector` saves only part of the state; the rest comes from the
-initial state.
+nothing to accept the restored value as is. Throwing counts as bad data too, which is what makes a schema
+library a one-line validator. Validate the state, not the fragment: `restored` holds only what the
+`selector` saved, so merge it over `initial` first,
+`validator: ({ restored, initial }) => schema.parse({ ...initial, ...restored })`.
 
 <CodeBlock code={preferences} lang="ts" title="preferences.ts" />
 
@@ -41,7 +43,7 @@ value as `legacy` and must return the new state. The `validator` then runs on th
 | Option | Purpose |
 | --- | --- |
 | `key` | The `localStorage` key. Required. |
-| `validator({ restored, initial })` | Check or transform restored data. |
+| `validator({ restored, initial })` | Check or transform restored data. A throw discards it. |
 | `selector(state)` | Choose what to save. |
 | `versioning: { version, migrator }` | Upgrade data saved by older code. |
 | `onError(error, tools)` | Handle storage errors. Without it, errors are logged with `console.error`. |
