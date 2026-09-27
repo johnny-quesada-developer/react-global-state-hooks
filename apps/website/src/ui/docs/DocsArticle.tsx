@@ -28,7 +28,7 @@ interface DocsArticleProps {
 }
 
 const nextLink =
-  'flex flex-col gap-[10px] rounded-control border border-line p-[18px] text-13 font-[550] hover:border-[light-dark(#acc2b3,#35483b)] hover:bg-surface max-md:p-[13px] max-md:text-12';
+  'flex flex-col gap-[10px] rounded-control border border-line p-[18px] text-13 font-[550] hover:border-[#acc2b3] dark:hover:border-line hover:bg-surface max-md:p-[13px] max-md:text-12';
 
 /** The documentation reading shell: grouped sidebar, article column, on-page navigation. */
 export function DocsArticle({ id, title, description, section, kind, status, sections, headings, previous, next, children }: DocsArticleProps) {
@@ -37,7 +37,7 @@ export function DocsArticle({ id, title, description, section, kind, status, sec
 
   return (
     <>
-      <div className="sticky top-header-mobile z-20 hidden items-center justify-between gap-[10px] border-b border-line bg-[light-dark(#f9fbf7,#101411)] px-[18px] py-[9px] text-11 max-md:flex" data-pagefind-ignore>
+      <div className="sticky top-header-mobile z-20 hidden items-center justify-between gap-[10px] border-b border-line bg-[#f9fbf7] px-[18px] py-[9px] text-11 max-md:flex dark:bg-surface" data-pagefind-ignore>
         <button type="button" className="flex items-center gap-2 text-13 font-[550] text-green" data-dialog="docs">
           <Icon name="menu" />
           Browse docs

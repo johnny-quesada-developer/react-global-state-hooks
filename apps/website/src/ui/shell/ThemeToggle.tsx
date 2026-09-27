@@ -16,9 +16,9 @@ export function ThemeToggle() {
   const wrapper = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (theme === 'system') delete document.documentElement.dataset.theme;
-    else document.documentElement.dataset.theme = theme;
-  }, [theme]);
+    document.documentElement.classList.toggle('dark', dark);
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#131311' : '#ffffff');
+  }, [dark]);
 
   useEffect(() => {
     if (!open) return;

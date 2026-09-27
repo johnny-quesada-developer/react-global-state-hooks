@@ -85,53 +85,27 @@
   }
 }
 
-/*
- * Dark palette. It applies when the visitor picks dark, and when they have no stored choice but
- * their system asks for dark (hence the :not([data-theme='light']) guard). The token names do not
- * change, so every component that reads --color-* follows along.
- */
-:root[data-theme='dark'] {
-  --color-paper: #0f1512;
-  --color-ink: #e7ece8;
-  --color-muted: #9daaa2;
-  --color-line: #2a332d;
-  --color-soft: #171d1a;
-  --color-surface: #141a17;
-  --color-green: #6cbf92;
-  --color-green-soft: #16261d;
-  --color-blue: #9aaeda;
-  --color-blue-soft: #1a2130;
-  --color-amber: #d2aa62;
-  --color-amber-soft: #2a2416;
-  --color-red: #e28d82;
-  --color-red-soft: #2e1c1a;
-  --color-terminal: #0b100d;
-  --color-terminal-muted: #9fb3a6;
-  --color-terminal-text: #e3eae4;
-  --color-on-ink: #0f1512;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --color-paper: #0f1512;
-    --color-ink: #e7ece8;
-    --color-muted: #9daaa2;
-    --color-line: #2a332d;
-    --color-soft: #171d1a;
-    --color-surface: #141a17;
-    --color-green: #6cbf92;
-    --color-green-soft: #16261d;
-    --color-blue: #9aaeda;
-    --color-blue-soft: #1a2130;
-    --color-amber: #d2aa62;
-    --color-amber-soft: #2a2416;
-    --color-red: #e28d82;
-    --color-red-soft: #2e1c1a;
-    --color-terminal: #0b100d;
-    --color-terminal-muted: #9fb3a6;
-    --color-terminal-text: #e3eae4;
-    --color-on-ink: #0f1512;
-  }
+/* Dark palette. The `dark` class on <html> swaps every token; nothing here reads the system preference. */
+.dark {
+  --color-paper: #131311;
+  --color-ink: #f1f0e9;
+  --color-muted: #aaa89e;
+  --color-line: #34342e;
+  --color-soft: #1a1a17;
+  --color-surface: #20201c;
+  --color-green: #83ad8d;
+  --color-green-soft: #202a21;
+  --color-blue: #899fc8;
+  --color-blue-soft: #202532;
+  --color-amber: #cba66a;
+  --color-amber-soft: #2b251b;
+  --color-red: #d8877d;
+  --color-red-soft: #2d201e;
+  --color-terminal: #0c0e0d;
+  --color-terminal-muted: #98a39c;
+  --color-terminal-text: #e8ebe7;
+  --color-on-ink: #131311;
 }
 
 @custom-variant hover-none (@media (hover: none));
+@custom-variant dark (&:where(.dark, .dark *));

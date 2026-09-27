@@ -197,7 +197,7 @@ test.describe('product pages', () => {
 test.describe('dark appearance', () => {
   const pick = async (page: Page, theme: 'light' | 'dark') => {
     await page.getByRole('button', { name: `Switch to the ${theme} appearance` }).click();
-    await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+    await expect(page.locator('html')).toHaveClass(theme === 'dark' ? /\bdark\b/ : /^(?!.*\bdark\b)/);
   };
 
   test('home page in dark', async ({ page }) => {

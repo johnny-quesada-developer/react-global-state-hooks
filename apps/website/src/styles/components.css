@@ -36,6 +36,30 @@
   --code-tag: #569cd6;
 }
 
+:root[data-code-theme='rgsh-dark'],
+.dark:not([data-code-theme]) {
+  --code-bg: #1a1a17;
+  --code-head: #20201c;
+  --code-border: var(--color-line);
+  --code-fg: #f1f0e9;
+  --code-gutter: #6b6a62;
+  --code-emphasis: #24241f;
+  --code-keyword: #899fc8;
+  --code-string: #83ad8d;
+  --code-function: #d8877d;
+  --code-comment: #aaa89e;
+  --code-number: #cba66a;
+  --code-shell: #83ad8d;
+  --code-tag: #d8877d;
+}
+
+:root[data-code-theme='rgsh-dark'] .shiki span,
+.dark:not([data-code-theme]) .shiki span {
+  color: var(--sh-rgsh-dark);
+  font-weight: var(--sh-rgsh-dark-font-weight, inherit);
+  font-style: var(--sh-rgsh-dark-font-style, inherit);
+}
+
 :root[data-code-theme='rgsh'] {
   --code-bg: #f7f8f6;
   --code-head: #f5f7f3;
@@ -278,12 +302,17 @@ html .workbench-source {
 }
 
 .pulse {
+  --pulse-ring: #acc9b4;
   animation: pulse 0.5s var(--ease-out);
+}
+
+.dark .pulse {
+  --pulse-ring: var(--color-green-soft);
 }
 
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 3px light-dark(#acc9b4, #2c4534);
+    box-shadow: 0 0 0 3px var(--pulse-ring);
   }
   100% {
     box-shadow: 0 0 0 0 transparent;
@@ -305,12 +334,17 @@ html .workbench-source {
   content: '';
   width: 12px;
   height: 23px;
-  border-bottom: 1px solid light-dark(#d1d7e3, #282c34);
-  border-left: 1px solid light-dark(#d1d7e3, #282c34);
+  border-bottom: 1px solid #d1d7e3;
+  border-left: 1px solid #d1d7e3;
   border-bottom-left-radius: 4px;
   position: absolute;
   left: calc(var(--depth) * 23px - 12px);
   top: -4px;
+}
+
+.dark .selector-row:not(:first-child)::before {
+  border-bottom-color: var(--color-line);
+  border-left-color: var(--color-line);
 }
 
 @media (max-width: 860px) {
@@ -330,21 +364,35 @@ html .workbench-source {
 /* Home hero: dotted application stage and signal traces. */
 .visual-pane {
   background:
-    radial-gradient(light-dark(#dfe6dc, #20241e) 0.7px, transparent 0.7px) 0 0 / 16px 16px,
-    light-dark(#fbfcfa, #0f1310);
+    radial-gradient(#dfe6dc 0.7px, transparent 0.7px) 0 0 / 16px 16px,
+    #fbfcfa;
+}
+
+.dark .visual-pane {
+  background:
+    radial-gradient(var(--color-line) 0.7px, transparent 0.7px) 0 0 / 16px 16px,
+    var(--color-surface);
 }
 
 .branch .track {
   fill: none;
-  stroke: light-dark(#d4ded2, #252b24);
+  stroke: #d4ded2;
   stroke-width: 1.1;
+}
+
+.dark .branch .track {
+  stroke: var(--color-line);
 }
 
 .branch .signal {
   fill: none;
-  stroke: light-dark(#5a8e61, #54885b);
+  stroke: #5a8e61;
   stroke-width: 1.6;
   opacity: 0;
+}
+
+.dark .branch .signal {
+  stroke: var(--color-green);
 }
 
 /* Mobile hero: the code pane shows the chapter's relevant lines only. */
@@ -363,7 +411,7 @@ html .workbench-source {
   left: 50%;
   transform: translate(-50%, 20px);
   background: var(--color-ink);
-  color: light-dark(#fff, var(--color-paper));
+  color: #fff;
   font-size: calc(12px * var(--type-scale));
   border-radius: 7px;
   padding: 12px 19px;
@@ -374,6 +422,10 @@ html .workbench-source {
   transition: 0.2s;
   max-width: calc(100vw - 40px);
   text-align: center;
+}
+
+.dark .toast {
+  color: var(--color-paper);
 }
 
 .toast.show {

@@ -165,31 +165,31 @@ export function HeroSequence() {
   };
 
   return (
-    <div className="relative mt-10 text-left before:absolute before:-inset-x-[22px] before:-top-5 before:bottom-[43px] before:-z-10 before:rounded-[18px] before:border before:border-[light-dark(#eff1ed,#171b18)] before:bg-[light-dark(#fafbf9,#101311)] before:content-[''] max-sm:mt-[30px] max-sm:before:-inset-x-[9px] max-sm:before:-top-[10px] max-sm:before:rounded-[13px]" id="demo" ref={stage}>
+    <div className="relative mt-10 text-left before:absolute before:-inset-x-[22px] before:-top-5 before:bottom-[43px] before:-z-10 before:rounded-[18px] before:border before:border-[#eff1ed] before:bg-[#fafbf9] before:content-[''] max-sm:mt-[30px] max-sm:before:-inset-x-[9px] max-sm:before:-top-[10px] max-sm:before:rounded-[13px] dark:before:border-soft dark:before:bg-surface" id="demo" ref={stage}>
       <div
-        className="overflow-hidden rounded-[11px] border border-[light-dark(#dfe5df,#202421)] bg-paper shadow-[0_4px_8px_#273b2903,0_16px_48px_#273b2906] max-sm:rounded-[8px]"
+        className="overflow-hidden rounded-[11px] border border-[#dfe5df] bg-paper shadow-[0_4px_8px_#273b2903,0_16px_48px_#273b2906] max-sm:rounded-[8px] dark:border-line"
         aria-label="Animated library walkthrough"
         onFocusCapture={(event) => {
           if (!(event.target as HTMLElement).closest('[data-story-control]')) sequence.pause();
         }}
       >
-        <div className="flex h-[43px] items-center justify-between gap-2 border-b border-line bg-[light-dark(#fdfefc,#0e110f)] px-[19px] max-sm:h-[39px] max-sm:px-3">
-          <div className="flex items-center gap-[9px] text-11 text-[light-dark(#667168,#849086)] max-sm:gap-[6px] max-sm:text-9">
+        <div className="flex h-[43px] items-center justify-between gap-2 border-b border-line bg-[#fdfefc] px-[19px] max-sm:h-[39px] max-sm:px-3 dark:bg-surface">
+          <div className="flex items-center gap-[9px] text-11 text-[#667168] max-sm:gap-[6px] max-sm:text-9 dark:text-muted">
             <span className="mr-[10px] flex gap-[5px] max-sm:mr-[3px] max-sm:gap-[3px]" aria-hidden="true">
-              <i className="block size-[6px] rounded-full border border-[light-dark(#c7d0c8,#2f3630)] max-sm:size-1" />
-              <i className="block size-[6px] rounded-full border border-[light-dark(#c7d0c8,#2f3630)] max-sm:size-1" />
-              <i className="block size-[6px] rounded-full border border-[light-dark(#c7d0c8,#2f3630)] max-sm:size-1" />
+              <i className="block size-[6px] rounded-full border border-[#c7d0c8] max-sm:size-1 dark:border-line" />
+              <i className="block size-[6px] rounded-full border border-[#c7d0c8] max-sm:size-1 dark:border-line" />
+              <i className="block size-[6px] rounded-full border border-[#c7d0c8] max-sm:size-1 dark:border-line" />
             </span>
             One change. A clear story.
           </div>
           <div className="flex items-center gap-[9px] max-sm:gap-[5px]">
-            <span className="inline-flex items-center gap-[6px] font-mono text-9 text-[light-dark(#646c64,#8b938b)] max-sm:text-8">
-              <span className="size-1 rounded-full bg-[light-dark(#93a98b,#4c6045)] max-sm:hidden" />
+            <span className="inline-flex items-center gap-[6px] font-mono text-9 text-[#646c64] max-sm:text-8 dark:text-muted">
+              <span className="size-1 rounded-full bg-[#93a98b] max-sm:hidden dark:bg-muted" />
               INTERACTIVE PREVIEW
             </span>
             <button
               type="button"
-              className="flex min-h-[30px] items-center gap-[5px] py-[5px] pl-[7px] text-10 text-[light-dark(#626e64,#879389)] max-sm:pl-1 max-sm:text-9"
+              className="flex min-h-[30px] items-center gap-[5px] py-[5px] pl-[7px] text-10 text-[#626e64] max-sm:pl-1 max-sm:text-9 dark:text-muted"
               data-story-control
               aria-label={control.aria}
               onClick={onControl}
@@ -202,14 +202,14 @@ export function HeroSequence() {
 
         <div className="grid min-h-[308px] grid-cols-2 max-lg:grid-cols-1 max-sm:flex max-sm:flex-col" role="tabpanel" aria-labelledby={`chapter-${chapter}`}>
           <div className="code-pane relative min-w-0 border-r border-line bg-paper px-6 pt-[21px] pb-[18px] max-lg:border-r-0 max-lg:border-b max-lg:px-[27px] max-lg:py-5 max-sm:min-h-[256px] max-sm:border-b-0 max-sm:px-[10px] max-sm:py-[15px]" data-chapter={chapter} onPointerDown={() => sequence.pause()}>
-            <div className="mb-[14px] ml-5 flex items-center justify-between gap-2 font-mono text-10 text-[light-dark(#666c67,#8c918e)] max-lg:ml-4 max-sm:mb-[9px] max-sm:ml-[14px] max-sm:text-9">
+            <div className="mb-[14px] ml-5 flex items-center justify-between gap-2 font-mono text-10 text-[#666c67] max-lg:ml-4 max-sm:mb-[9px] max-sm:ml-[14px] max-sm:text-9 dark:text-muted">
               <span>
-                <span className="mr-[6px] rounded-[3px] border border-[light-dark(#dde3ef,#20232b)] px-[3px] py-[2px] text-9 text-blue">{chapter === 2 ? '>_' : 'TS'}</span>
+                <span className="mr-[6px] rounded-[3px] border border-[#dde3ef] px-[3px] py-[2px] text-9 text-blue dark:border-line">{chapter === 2 ? '>_' : 'TS'}</span>
                 {chapter === 2 ? 'agent-session' : 'profile.tsx'}
               </span>
               <button
                 type="button"
-                className="inline-flex size-[25px] items-center justify-center rounded-[5px] text-muted hover:bg-[light-dark(#eef1ed,#171b18)] hover:text-ink max-sm:size-[30px]"
+                className="inline-flex size-[25px] items-center justify-center rounded-[5px] text-muted hover:bg-[#eef1ed] hover:text-ink max-sm:size-[30px] dark:hover:bg-green-soft"
                 data-story-control
                 aria-label="Copy the current code example"
                 onClick={async () => {
@@ -224,21 +224,21 @@ export function HeroSequence() {
           </div>
 
           <div className="visual-pane relative min-w-0 overflow-hidden px-7 pt-[21px] pb-[14px] max-lg:px-9 max-lg:pt-5 max-lg:pb-[17px] max-sm:order-first max-sm:border-b max-sm:border-line max-sm:px-[14px] max-sm:pt-4 max-sm:pb-[13px]">
-            <div className="mb-[14px] flex items-center justify-between font-mono text-9 tracking-[0.03em] text-[light-dark(#656c65,#8b938b)] max-lg:mx-auto max-lg:max-w-[540px] max-sm:mb-[13px] max-sm:text-8">
+            <div className="mb-[14px] flex items-center justify-between font-mono text-9 tracking-[0.03em] text-[#656c65] max-lg:mx-auto max-lg:max-w-[540px] max-sm:mb-[13px] max-sm:text-8 dark:text-muted">
               <span>YOUR APPLICATION</span>
-              <span className="text-[light-dark(#5d7060,#829685)]">{['one source of truth', 'selected values only', 'inspectable runtime'][chapter]}</span>
+              <span className="text-[#5d7060] dark:text-muted">{['one source of truth', 'selected values only', 'inspectable runtime'][chapter]}</span>
             </div>
-            <div className="relative z-[2] mx-auto w-[225px] overflow-hidden rounded-control border border-[light-dark(#dce3d9,#222620)] bg-paper shadow-[0_3px_8px_#35493303] max-sm:w-[207px]">
-              <div className="flex items-center justify-between gap-2 border-b border-[light-dark(#edf0e9,#181c19)] px-[11px] py-2 font-mono text-11 max-sm:text-10">
+            <div className="relative z-[2] mx-auto w-[225px] overflow-hidden rounded-control border border-[#dce3d9] bg-paper shadow-[0_3px_8px_#35493303] max-sm:w-[207px] dark:border-line">
+              <div className="flex items-center justify-between gap-2 border-b border-[#edf0e9] px-[11px] py-2 font-mono text-11 max-sm:text-10 dark:border-line">
                 <span>useProfile</span>
-                <Icon name="store" className="size-[14px] text-[light-dark(#758071,#768172)]" />
+                <Icon name="store" className="size-[14px] text-[#758071] dark:text-muted" />
               </div>
               <div className="flex items-center justify-center p-2 font-mono text-10 max-sm:text-9">
-                <span className={`rounded-[3px] px-[6px] py-px whitespace-nowrap ${changed ? 'bg-[light-dark(#e6f0e4,#181e17)]' : ''}`}>
-                  name: <b className="font-normal text-[light-dark(#47644c,#8aa98f)]">'{name}'</b>
+                <span className={`rounded-[3px] px-[6px] py-px whitespace-nowrap ${changed ? 'bg-[#e6f0e4] dark:bg-green-soft' : ''}`}>
+                  name: <b className="font-normal text-[#47644c] dark:text-green">'{name}'</b>
                 </span>
                 <span className="border-l border-line px-[6px] py-px whitespace-nowrap">
-                  theme: <b className="font-normal text-[light-dark(#47644c,#8aa98f)]">'light'</b>
+                  theme: <b className="font-normal text-[#47644c] dark:text-green">'light'</b>
                 </span>
               </div>
             </div>
@@ -250,37 +250,37 @@ export function HeroSequence() {
               </svg>
             </div>
             <div className="grid grid-cols-2 gap-3 max-lg:mx-auto max-lg:max-w-[520px] max-sm:gap-[10px]">
-              <div className={`min-w-0 overflow-hidden rounded-control border bg-paper transition-[border-color,box-shadow] duration-[250ms] ${changed ? 'border-[light-dark(#a2bfa3,#354f37)] shadow-[0_0_0_3px_light-dark(#ecf3e9,#171b15)]' : 'border-[light-dark(#dce3d9,#222620)]'}`}>
-                <div className="flex items-center justify-between gap-[3px] border-b border-[light-dark(#edf0e9,#181c19)] px-[10px] py-[7px] font-mono text-9 text-[light-dark(#636c63,#8a948a)] max-lg:px-[13px] max-lg:py-2 max-sm:px-[9px] max-sm:py-[7px] max-sm:text-8">
+              <div className={`min-w-0 overflow-hidden rounded-control border bg-paper transition-[border-color,box-shadow] duration-[250ms] ${changed ? 'border-[#a2bfa3] shadow-[0_0_0_3px_#ecf3e9] dark:border-line dark:shadow-[0_0_0_3px_var(--color-green-soft)]' : 'border-[#dce3d9] dark:border-line'}`}>
+                <div className="flex items-center justify-between gap-[3px] border-b border-[#edf0e9] px-[10px] py-[7px] font-mono text-9 text-[#636c63] max-lg:px-[13px] max-lg:py-2 max-sm:px-[9px] max-sm:py-[7px] max-sm:text-8 dark:border-line dark:text-muted">
                   <span>&lt;ProfileName /&gt;</span>
                   <Icon name="code" className="size-[11px]" />
                 </div>
                 <div className="flex items-center gap-2 p-[10px] text-13 font-medium max-lg:p-[13px] max-sm:px-[9px] max-sm:py-[10px] max-sm:text-12">
-                  <span className="flex size-[25px] shrink-0 items-center justify-center rounded-full bg-[light-dark(#eff1e8,#191a15)] text-9 text-[light-dark(#5e704e,#859875)]">{name[0]}</span>
+                  <span className="flex size-[25px] shrink-0 items-center justify-center rounded-full bg-[#eff1e8] text-9 text-[#5e704e] dark:bg-green-soft dark:text-green">{name[0]}</span>
                   <span>{name}</span>
                 </div>
-                <div className={`min-h-[19px] px-[10px] pb-2 font-mono text-8 max-lg:pl-[13px] max-sm:px-[9px] max-sm:text-[calc(7px*var(--type-scale))] ${changed ? 'text-[light-dark(#426f49,#77a67d)]' : 'text-[light-dark(#656c61,#8c9388)]'}`}>{nameBadge}</div>
+                <div className={`min-h-[19px] px-[10px] pb-2 font-mono text-8 max-lg:pl-[13px] max-sm:px-[9px] max-sm:text-[calc(7px*var(--type-scale))] ${changed ? 'text-[#426f49] dark:text-green' : 'text-[#656c61] dark:text-muted'}`}>{nameBadge}</div>
               </div>
-              <div className={`min-w-0 overflow-hidden rounded-control border bg-paper transition-[border-color,box-shadow] duration-[250ms] ${themeUpdated ? 'border-[light-dark(#a2bfa3,#354f37)] shadow-[0_0_0_3px_light-dark(#ecf3e9,#171b15)]' : 'border-[light-dark(#dce3d9,#222620)]'}`}>
-                <div className="flex items-center justify-between gap-[3px] border-b border-[light-dark(#edf0e9,#181c19)] px-[10px] py-[7px] font-mono text-9 text-[light-dark(#636c63,#8a948a)] max-lg:px-[13px] max-lg:py-2 max-sm:px-[9px] max-sm:py-[7px] max-sm:text-8">
+              <div className={`min-w-0 overflow-hidden rounded-control border bg-paper transition-[border-color,box-shadow] duration-[250ms] ${themeUpdated ? 'border-[#a2bfa3] shadow-[0_0_0_3px_#ecf3e9] dark:border-line dark:shadow-[0_0_0_3px_var(--color-green-soft)]' : 'border-[#dce3d9] dark:border-line'}`}>
+                <div className="flex items-center justify-between gap-[3px] border-b border-[#edf0e9] px-[10px] py-[7px] font-mono text-9 text-[#636c63] max-lg:px-[13px] max-lg:py-2 max-sm:px-[9px] max-sm:py-[7px] max-sm:text-8 dark:border-line dark:text-muted">
                   <span>&lt;ThemeLabel /&gt;</span>
                   <Icon name="code" className="size-[11px]" />
                 </div>
                 <div className="flex items-center gap-2 p-[10px] text-13 font-medium max-lg:p-[13px] max-sm:px-[9px] max-sm:py-[10px] max-sm:text-12">
-                  <span className="grid size-[25px] shrink-0 place-items-center rounded-full border border-[light-dark(#e0e4d8,#22251d)] bg-[light-dark(#f5f6ee,#131714)] text-[light-dark(#858a67,#727755)]">
+                  <span className="grid size-[25px] shrink-0 place-items-center rounded-full border border-[#e0e4d8] bg-[#f5f6ee] text-[#858a67] dark:border-line dark:bg-green-soft dark:text-muted">
                     <Icon name="sun" className="size-[13px]" />
                   </span>
                   <span>Light theme</span>
                 </div>
-                <div className={`min-h-[19px] px-[10px] pb-2 font-mono text-8 max-lg:pl-[13px] max-sm:px-[9px] max-sm:text-[calc(7px*var(--type-scale))] ${themeUpdated ? 'text-[light-dark(#426f49,#77a67d)]' : 'text-[light-dark(#656c61,#8c9388)]'}`}>{themeBadge}</div>
+                <div className={`min-h-[19px] px-[10px] pb-2 font-mono text-8 max-lg:pl-[13px] max-sm:px-[9px] max-sm:text-[calc(7px*var(--type-scale))] ${themeUpdated ? 'text-[#426f49] dark:text-green' : 'text-[#656c61] dark:text-muted'}`}>{themeBadge}</div>
               </div>
             </div>
-            <div className="mt-[14px] flex min-h-[25px] flex-wrap items-center justify-center gap-[7px] text-10 text-[light-dark(#626d5d,#8a9584)] max-sm:mt-3 max-sm:gap-[5px] max-sm:text-8">
+            <div className="mt-[14px] flex min-h-[25px] flex-wrap items-center justify-center gap-[7px] text-10 text-[#626d5d] max-sm:mt-3 max-sm:gap-[5px] max-sm:text-8 dark:text-muted">
               <Icon name="check" className="size-3" />
               <span>{frame.caption ?? caption}</span>
               <button
                 type="button"
-                className="ml-1 min-h-[27px] rounded-[4px] border border-[light-dark(#dce3d6,#22271f)] bg-paper px-[7px] py-[6px] text-9 leading-[1.2] whitespace-nowrap text-[light-dark(#4b6649,#8aa787)] hover:border-[light-dark(#88a883,#486644)] hover:bg-[light-dark(#f5f9f2,#121613)] max-sm:text-8"
+                className="ml-1 min-h-[27px] rounded-[4px] border border-[#dce3d6] bg-paper px-[7px] py-[6px] text-9 leading-[1.2] whitespace-nowrap text-[#4b6649] hover:border-[#88a883] hover:bg-[#f5f9f2] max-sm:text-8 dark:border-line dark:text-green dark:hover:border-green dark:hover:bg-green-soft"
                 data-story-control
                 onClick={changeName}
               >
@@ -294,7 +294,7 @@ export function HeroSequence() {
           {chapters.map((item, index) => (
             <button
               type="button"
-              className="relative flex gap-[13px] rounded-none bg-[light-dark(#fdfefc,#0e110f)] px-[23px] pt-[17px] pb-[18px] text-left text-[light-dark(#676c64,#8c9289)] hover:bg-[light-dark(#f7f9f4,#111512)] aria-selected:bg-[light-dark(#f4f7f1,#131714)] aria-selected:text-ink aria-selected:after:absolute aria-selected:after:inset-x-0 aria-selected:after:bottom-0 aria-selected:after:h-[2px] aria-selected:after:bg-[light-dark(#72926c,#5c7b57)] aria-selected:after:content-[''] max-lg:gap-[9px] max-lg:p-[15px] max-sm:block max-sm:px-[9px] max-sm:py-3 [&+&]:border-l [&+&]:border-line"
+              className="relative flex gap-[13px] rounded-none bg-[#fdfefc] px-[23px] pt-[17px] pb-[18px] text-left text-[#676c64] hover:bg-[#f7f9f4] aria-selected:bg-[#f4f7f1] aria-selected:text-ink aria-selected:after:absolute aria-selected:after:inset-x-0 aria-selected:after:bottom-0 aria-selected:after:h-[2px] aria-selected:after:bg-[#72926c] aria-selected:after:content-[''] max-lg:gap-[9px] max-lg:p-[15px] max-sm:block max-sm:px-[9px] max-sm:py-3 dark:bg-surface dark:text-muted dark:hover:bg-soft dark:aria-selected:bg-green-soft dark:aria-selected:after:bg-green [&+&]:border-l [&+&]:border-line"
               role="tab"
               id={`chapter-${index}`}
               data-story-control
@@ -304,16 +304,16 @@ export function HeroSequence() {
               key={item.title}
               onClick={() => showChapter(index)}
             >
-              <span className={`pt-[2px] font-mono text-10 max-sm:mb-1 max-sm:block max-sm:pt-0 max-sm:text-8 ${chapter === index ? 'text-green' : 'text-[light-dark(#656c62,#8c9389)]'}`}>0{index + 1}</span>
+              <span className={`pt-[2px] font-mono text-10 max-sm:mb-1 max-sm:block max-sm:pt-0 max-sm:text-8 ${chapter === index ? 'text-green' : 'text-[#656c62] dark:text-muted'}`}>0{index + 1}</span>
               <span>
                 <strong className="block text-12 leading-[1.6] font-[550] max-sm:text-9 max-sm:leading-[1.4]">{item.title}</strong>
-                <small className="mt-[2px] block text-10 text-[light-dark(#656d5f,#8b9385)] max-lg:text-9 max-sm:mt-[5px] max-sm:text-8 max-sm:leading-[1.4]">{item.text}</small>
+                <small className="mt-[2px] block text-10 text-[#656d5f] max-lg:text-9 max-sm:mt-[5px] max-sm:text-8 max-sm:leading-[1.4] dark:text-muted">{item.text}</small>
               </span>
             </button>
           ))}
         </div>
       </div>
-      <p className="mt-[14px] flex items-center justify-center gap-[7px] text-10 text-[light-dark(#666c60,#8d9386)] max-sm:mt-3 max-sm:gap-[5px] max-sm:text-center max-sm:text-8">
+      <p className="mt-[14px] flex items-center justify-center gap-[7px] text-10 text-[#666c60] max-sm:mt-3 max-sm:gap-[5px] max-sm:text-center max-sm:text-8 dark:text-muted">
         <Icon name="code" className="size-3 max-sm:size-[10px]" />
         Select a chapter or change a value. This is an interactive concept, not a recording.
       </p>

@@ -47,21 +47,21 @@ export function PrecisionDemo() {
   const highlighted = (key: Key) => changed !== null && (key === changed || key === 'whole');
 
   return (
-    <div className="w-full min-w-0 rounded-panel border border-[light-dark(#e0e6da,#20241d)] bg-[light-dark(#f8faf5,#111412)] p-[22px] max-lg:p-4 max-sm:p-[18px]">
-      <div className="mb-[18px] flex items-center justify-between gap-3 font-mono text-9 text-[light-dark(#68785c,#7d8e71)]">
+    <div className="w-full min-w-0 rounded-panel border border-[#e0e6da] bg-[#f8faf5] p-[22px] max-lg:p-4 max-sm:p-[18px] dark:border-line dark:bg-soft">
+      <div className="mb-[18px] flex items-center justify-between gap-3 font-mono text-9 text-[#68785c] dark:text-muted">
         <span>TRY IT · EDIT A VALUE BELOW</span>
-        <button type="button" className="inline-flex size-6 items-center justify-center rounded-[5px] text-muted hover:bg-[light-dark(#eef1ed,#171b18)] hover:text-ink" aria-label="Reset subscription demo" onClick={reset}>
+        <button type="button" className="inline-flex size-6 items-center justify-center rounded-[5px] text-muted hover:bg-[#eef1ed] hover:text-ink dark:hover:bg-green-soft" aria-label="Reset subscription demo" onClick={reset}>
           <Icon name="replay" className="size-[13px]" />
         </button>
       </div>
-      <div className="mb-[15px] grid grid-cols-[1.6fr_1fr] gap-[15px] rounded-control border border-[light-dark(#e2e8d9,#1f231a)] bg-paper p-[17px] max-lg:grid-cols-[1.4fr_1fr] max-lg:gap-[10px] max-lg:p-3 max-sm:grid-cols-[1.5fr_1fr] max-sm:p-[14px]">
+      <div className="mb-[15px] grid grid-cols-[1.6fr_1fr] gap-[15px] rounded-control border border-[#e2e8d9] bg-paper p-[17px] max-lg:grid-cols-[1.4fr_1fr] max-lg:gap-[10px] max-lg:p-3 max-sm:grid-cols-[1.5fr_1fr] max-sm:p-[14px] dark:border-line">
         <div>
-          <label className="mb-[6px] block text-9 text-[light-dark(#636d59,#8b9580)]" htmlFor="profile-name-input">
+          <label className="mb-[6px] block text-9 text-[#636d59] dark:text-muted" htmlFor="profile-name-input">
             Profile name
           </label>
           <input
             id="profile-name-input"
-            className="h-[34px] w-full rounded-[4px] border-[light-dark(#dce4d4,#22271d)] bg-paper px-[9px] py-[6px] text-12 text-[light-dark(#45543c,#a4b59a)]"
+            className="h-[34px] w-full rounded-[4px] border-[#dce4d4] bg-paper px-[9px] py-[6px] text-12 text-[#45543c] dark:border-line dark:text-muted"
             value={profile.name}
             maxLength={24}
             autoComplete="off"
@@ -70,50 +70,50 @@ export function PrecisionDemo() {
           />
         </div>
         <div>
-          <span className="mb-[6px] block text-9 text-[light-dark(#636d59,#8b9580)]" id="theme-label">
+          <span className="mb-[6px] block text-9 text-[#636d59] dark:text-muted" id="theme-label">
             Theme
           </span>
           <div className="flex min-h-[34px] items-center justify-between text-11">
             <span>{profile.theme === 'light' ? 'Light' : 'Dark'}</span>
             <button
               type="button"
-              className={`relative h-6 w-[38px] rounded-[11px] border p-[2px] ${profile.theme === 'dark' ? 'border-[light-dark(#718663,#6e8360)] bg-[light-dark(#718663,#6e8360)]' : 'border-[light-dark(#c7d4bb,#2d3625)] bg-[light-dark(#f0f4ea,#171913)]'}`}
+              className={`relative h-6 w-[38px] rounded-[11px] border p-[2px] ${profile.theme === 'dark' ? 'border-[#718663] bg-[#718663] dark:border-green dark:bg-green' : 'border-[#c7d4bb] bg-[#f0f4ea] dark:border-line dark:bg-green-soft'}`}
               role="switch"
               aria-checked={profile.theme === 'dark'}
               aria-labelledby="theme-label"
               onClick={() => setProfile((state) => ({ ...state, theme: state.theme === 'light' ? 'dark' : 'light' }))}
             >
-              <span className={`block size-[18px] rounded-full border bg-paper transition-transform duration-200 ${profile.theme === 'dark' ? 'translate-x-[14px] border-white' : 'border-[light-dark(#b9c9ab,#344128)]'}`} />
+              <span className={`block size-[18px] rounded-full border bg-paper transition-transform duration-200 ${profile.theme === 'dark' ? 'translate-x-[14px] border-white' : 'border-[#b9c9ab] dark:border-line'}`} />
             </button>
           </div>
         </div>
       </div>
-      <div className="overflow-hidden rounded-control border border-[light-dark(#e1e7d8,#20241a)] bg-paper">
+      <div className="overflow-hidden rounded-control border border-[#e1e7d8] bg-paper dark:border-line">
         {rows.map((row) => (
-          <div className={`flex items-center justify-between gap-3 p-4 transition-[background] duration-[180ms] max-lg:gap-2 max-lg:px-[10px] max-lg:py-[13px] max-sm:px-[11px] max-sm:py-[14px] [&+&]:border-t [&+&]:border-[light-dark(#ecf0e5,#1a1c15)] ${highlighted(row.key) ? 'bg-[light-dark(#f2f7ec,#151711)]' : ''}`} key={row.key}>
+          <div className={`flex items-center justify-between gap-3 p-4 transition-[background] duration-[180ms] max-lg:gap-2 max-lg:px-[10px] max-lg:py-[13px] max-sm:px-[11px] max-sm:py-[14px] [&+&]:border-t [&+&]:border-[#ecf0e5] dark:[&+&]:border-line ${highlighted(row.key) ? 'bg-[#f2f7ec] dark:bg-green-soft' : ''}`} key={row.key}>
             <div className="flex min-w-0 items-center gap-[11px] max-sm:gap-2">
-              <span className="grid size-[29px] shrink-0 place-items-center rounded-[6px] border border-[light-dark(#e3eada,#1e2218)] bg-[light-dark(#f2f5ed,#141816)] text-[light-dark(#839570,#61724f)] max-lg:hidden max-sm:grid">
+              <span className="grid size-[29px] shrink-0 place-items-center rounded-[6px] border border-[#e3eada] bg-[#f2f5ed] text-[#839570] max-lg:hidden max-sm:grid dark:border-line dark:bg-green-soft dark:text-muted">
                 <Icon name={row.icon} className="size-[14px]" />
               </span>
               <div className="min-w-0">
-                <div className="text-11 font-medium text-[light-dark(#536346,#93a585)] max-sm:text-10">
+                <div className="text-11 font-medium text-[#536346] max-sm:text-10 dark:text-muted">
                   {row.label}
-                  {row.key !== 'whole' && <span className="ml-[7px] text-10 font-normal text-[light-dark(#656d5c,#8b9482)] max-lg:hidden">{row.key === 'name' ? profile.name || '(empty)' : profile.theme}</span>}
+                  {row.key !== 'whole' && <span className="ml-[7px] text-10 font-normal text-[#656d5c] max-lg:hidden dark:text-muted">{row.key === 'name' ? profile.name || '(empty)' : profile.theme}</span>}
                 </div>
-                <div className="mt-[3px] font-mono text-9 leading-[1.6] text-[light-dark(#666d5c,#8c9381)] max-sm:text-8">{row.code}</div>
+                <div className="mt-[3px] font-mono text-9 leading-[1.6] text-[#666d5c] max-sm:text-8 dark:text-muted">{row.code}</div>
               </div>
             </div>
-            <span className={`rounded-[4px] border px-[6px] py-1 font-mono text-9 whitespace-nowrap max-sm:px-[5px] max-sm:py-[3px] max-sm:text-8 ${highlighted(row.key) ? 'border-[light-dark(#c1d3ae,#2d3a1b)] bg-[light-dark(#eaf2e1,#181c12)] text-[light-dark(#4d6d3d,#82a471)]' : 'border-[light-dark(#e6ecdf,#1c2018)] text-[light-dark(#656d5c,#8b9482)]'}`}>
+            <span className={`rounded-[4px] border px-[6px] py-1 font-mono text-9 whitespace-nowrap max-sm:px-[5px] max-sm:py-[3px] max-sm:text-8 ${highlighted(row.key) ? 'border-[#c1d3ae] bg-[#eaf2e1] text-[#4d6d3d] dark:border-line dark:bg-amber-soft dark:text-green' : 'border-[#e6ecdf] text-[#656d5c] dark:border-line dark:text-muted'}`}>
               <b>{counts[row.key]}</b> changes
             </span>
           </div>
         ))}
       </div>
-      <div className="mt-[15px] flex items-center justify-between gap-2 text-9 text-[light-dark(#666d5b,#8c9380)] max-sm:text-8">
+      <div className="mt-[15px] flex items-center justify-between gap-2 text-9 text-[#666d5b] max-sm:text-8 dark:text-muted">
         <span>Counts selected-value changes, not React renders.</span>
         <button
           type="button"
-          className="min-h-6 text-9 text-[light-dark(#637751,#7d926b)] underline underline-offset-[3px] max-sm:text-8"
+          className="min-h-6 text-9 text-[#637751] underline underline-offset-[3px] max-sm:text-8 dark:text-green"
           onClick={() => setProfile((state) => ({ ...state, name: names[(names.indexOf(state.name as (typeof names)[number]) + 1) % names.length] }))}
         >
           Try another name ↗

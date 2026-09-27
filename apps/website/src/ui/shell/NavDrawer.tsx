@@ -52,7 +52,7 @@ export function NavDrawer({ pathname }: NavDrawerProps) {
         </ButtonLink>
         <button
           type="button"
-          className="mt-3 inline-flex min-h-[42px] w-full items-center justify-center gap-[10px] rounded-control border border-[light-dark(#dbe1dc,#232724)] bg-paper px-4 text-14 font-[550] hover:bg-soft"
+          className="mt-3 inline-flex min-h-[42px] w-full items-center justify-center gap-[10px] rounded-control border border-[#dbe1dc] bg-paper px-4 text-14 font-[550] hover:bg-soft dark:border-line"
           data-dialog="search"
         >
           <Icon name="search" />

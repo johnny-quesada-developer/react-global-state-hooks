@@ -65,7 +65,7 @@
   justify-content: center;
   gap: 8px;
   padding: 8px 12px;
-  border: 1px solid light-dark(#dbe1dc, #232724);
+  border: 1px solid #dbe1dc;
   border-radius: 7px;
   background: var(--color-paper);
   font-size: calc(12px * var(--type-scale));
@@ -77,23 +77,44 @@
     border-color 0.18s;
 }
 
+.dark .demo-card button,
+.dark .demo-button {
+  border-color: var(--color-line);
+}
+
 .demo-card button:hover,
 .demo-button:hover {
   background: var(--color-soft);
-  border-color: light-dark(#b4c1b8, #39443d);
+  border-color: #b4c1b8;
+}
+
+.dark .demo-card button:hover,
+.dark .demo-button:hover {
+  border-color: var(--color-line);
 }
 
 .demo-card .demo-button--primary,
 .demo-button--primary {
   background: var(--color-ink);
   border-color: var(--color-ink);
-  color: light-dark(#fff, var(--color-paper));
+  color: #fff;
+}
+
+.dark .demo-card .demo-button--primary,
+.dark .demo-button--primary {
+  color: var(--color-paper);
 }
 
 .demo-card .demo-button--primary:hover,
 .demo-button--primary:hover {
-  background: light-dark(#354239, #b7c7bc);
-  border-color: light-dark(#354239, #b7c7bc);
+  background: #354239;
+  border-color: #354239;
+}
+
+.dark .demo-card .demo-button--primary:hover,
+.dark .demo-button--primary:hover {
+  background: color-mix(in srgb, var(--color-ink) 85%, var(--color-paper));
+  border-color: color-mix(in srgb, var(--color-ink) 85%, var(--color-paper));
 }
 
 .demo-card .demo-text-button,
@@ -176,7 +197,11 @@
   background: var(--color-soft);
   border: 1px solid var(--color-line);
   border-radius: 5px;
-  color: light-dark(#414a43, #b0bab2);
+  color: #414a43;
+}
+
+.dark .demo-json {
+  color: var(--color-muted);
 }
 
 .demo-caption {
@@ -211,12 +236,17 @@
 }
 
 .render-count--flash {
+  --flash-ring: #acc9b4;
   animation: render-flash 0.9s ease-out;
+}
+
+.dark .render-count--flash {
+  --flash-ring: var(--color-green-soft);
 }
 
 @keyframes render-flash {
   from {
-    box-shadow: 0 0 0 3px light-dark(#acc9b4, #2c4534);
+    box-shadow: 0 0 0 3px var(--flash-ring);
   }
   to {
     box-shadow: 0 0 0 0 transparent;

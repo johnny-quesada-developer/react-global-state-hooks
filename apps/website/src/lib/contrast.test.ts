@@ -12,7 +12,7 @@ const palette = (selector: string): string => {
 };
 
 const light = palette('@theme static');
-const dark = palette("[data-theme='dark']");
+const dark = palette('.dark {');
 
 const read = (block: string, name: string): string => {
   const match = block.match(new RegExp(`--color-${name}:\\s*(#[0-9a-fA-F]{6})`));

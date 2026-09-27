@@ -5,17 +5,13 @@
 }
 
 html {
-  color-scheme: light dark;
+  color-scheme: light;
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
   scroll-padding-top: 110px;
 }
 
-:root[data-theme='light'] {
-  color-scheme: light;
-}
-
-:root[data-theme='dark'] {
+.dark {
   color-scheme: dark;
 }
 
@@ -94,9 +90,16 @@ textarea {
   min-width: 0;
   max-width: 100%;
   color: var(--color-ink);
-  background: light-dark(#fff, var(--color-surface));
-  border: 1px solid light-dark(#cad1cc, #2f3431);
+  background: #fff;
+  border: 1px solid #cad1cc;
   padding: 10px 12px;
+}
+
+.dark input,
+.dark select,
+.dark textarea {
+  background: var(--color-surface);
+  border-color: var(--color-line);
 }
 
 input:focus,
@@ -120,8 +123,12 @@ input[type='radio'] {
 }
 
 ::selection {
-  background: light-dark(#dceadf, #1b241d);
+  background: #dceadf;
   color: var(--color-ink);
+}
+
+.dark ::selection {
+  background: var(--color-line);
 }
 
 h1,

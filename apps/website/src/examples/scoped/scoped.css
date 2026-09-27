@@ -13,7 +13,7 @@
 .note-badge {
   display: inline-flex;
   align-items: center;
-  border: 1px solid light-dark(#dce8df, #1d241f);
+  border: 1px solid #dce8df;
   background: var(--color-green-soft);
   color: var(--color-green);
   padding: 3px 9px;
@@ -24,10 +24,18 @@
   font-weight: 550;
 }
 
+.dark .note-badge {
+  border-color: var(--color-line);
+}
+
 .note-card:nth-child(even) .note-badge {
-  border-color: light-dark(#e2e6ef, #1e2126);
+  border-color: #e2e6ef;
   background: var(--color-blue-soft);
   color: var(--color-blue);
+}
+
+.dark .note-card:nth-child(even) .note-badge {
+  border-color: var(--color-line);
 }
 
 .scoped-field {
@@ -44,9 +52,13 @@
   min-height: 90px;
   font-size: calc(12px * var(--type-scale));
   line-height: 1.7;
-  border-color: light-dark(#e4e9e2, #1d211e);
+  border-color: #e4e9e2;
   padding: 10px;
   resize: vertical;
+}
+
+.dark .scoped-field textarea {
+  border-color: var(--color-line);
 }
 
 .scoped-field output {

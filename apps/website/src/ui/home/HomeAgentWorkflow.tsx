@@ -76,16 +76,16 @@ export function HomeAgentWorkflow() {
 
   return (
     <div ref={stage}>
-      <div className="overflow-hidden rounded-[11px] border border-line bg-[light-dark(#f7f9f5,#111512)]">
-        <div className="flex items-center justify-between gap-[15px] border-b border-[light-dark(#e4e8df,#1f221c)] px-5 py-3 max-sm:px-3 max-sm:py-[11px]">
-          <div className="flex items-center gap-[9px] font-mono text-10 text-[light-dark(#66755e,#809078)] max-sm:gap-[6px] max-sm:text-9">
+      <div className="overflow-hidden rounded-[11px] border border-line bg-[#f7f9f5] dark:bg-soft">
+        <div className="flex items-center justify-between gap-[15px] border-b border-[#e4e8df] px-5 py-3 max-sm:px-3 max-sm:py-[11px] dark:border-line">
+          <div className="flex items-center gap-[9px] font-mono text-10 text-[#66755e] max-sm:gap-[6px] max-sm:text-9 dark:text-muted">
             <Icon name="terminal" className="size-[15px] max-sm:size-3" />
             A feedback loop, not a guess.
           </div>
           <div className="flex items-center gap-[14px] max-sm:gap-[5px]">
             <button
               type="button"
-              className="inline-flex size-[29px] items-center justify-center rounded-[5px] text-muted hover:bg-[light-dark(#eef1ed,#171b18)] hover:text-ink"
+              className="inline-flex size-[29px] items-center justify-center rounded-[5px] text-muted hover:bg-[#eef1ed] hover:text-ink dark:hover:bg-green-soft"
               aria-label="Reset the agent workflow"
               onClick={() => sequence.stop()}
             >
@@ -93,7 +93,7 @@ export function HomeAgentWorkflow() {
             </button>
             <button
               type="button"
-              className="inline-flex min-h-[38px] items-center gap-2 rounded-control border border-line bg-paper px-[14px] text-12 font-[550] whitespace-nowrap hover:border-[light-dark(#b7c2ba,#39423c)] hover:bg-soft max-sm:min-h-8 max-sm:gap-[6px] max-sm:px-[9px] max-sm:text-9"
+              className="inline-flex min-h-[38px] items-center gap-2 rounded-control border border-line bg-paper px-[14px] text-12 font-[550] whitespace-nowrap hover:border-[#b7c2ba] hover:bg-soft max-sm:min-h-8 max-sm:gap-[6px] max-sm:px-[9px] max-sm:text-9 dark:hover:border-line"
               onClick={onRun}
             >
               <Icon name={runLabel.icon} className="max-sm:size-[11px]" />
@@ -103,42 +103,42 @@ export function HomeAgentWorkflow() {
         </div>
 
         <div className="grid grid-cols-[1fr_70px_1.25fr] items-center p-[31px] max-2xl:grid-cols-[1fr_44px_1.2fr] max-2xl:p-[25px] max-lg:grid-cols-[.95fr_35px_1.1fr] max-lg:p-5 max-sm:flex max-sm:flex-col max-sm:px-4 max-sm:py-[18px]" role="tabpanel" aria-labelledby={`agent-tab-${step}`}>
-          <div className="min-w-0 overflow-hidden rounded-[9px] border border-[light-dark(#dfe5d9,#21251d)] bg-paper shadow-[0_2px_4px_#273b2903,0_8px_20px_#273b2904] max-sm:w-full">
-            <div className="flex items-center justify-between border-b border-[light-dark(#ecf0e5,#1a1c15)] bg-[light-dark(#fdfefb,#0e110f)] px-4 py-3 font-mono text-9 text-[light-dark(#656c60,#8c9387)] max-sm:px-[15px] max-sm:py-[10px]">
+          <div className="min-w-0 overflow-hidden rounded-[9px] border border-[#dfe5d9] bg-paper shadow-[0_2px_4px_#273b2903,0_8px_20px_#273b2904] max-sm:w-full dark:border-line">
+            <div className="flex items-center justify-between border-b border-[#ecf0e5] bg-[#fdfefb] px-4 py-3 font-mono text-9 text-[#656c60] max-sm:px-[15px] max-sm:py-[10px] dark:border-line dark:bg-surface dark:text-muted">
               <span>app.local / release</span>
               <Icon name="scope" className="size-[13px]" />
             </div>
             <div className="px-[25px] pt-[23px] pb-5 max-lg:px-[17px] max-lg:py-[18px] max-sm:px-5 max-sm:py-[18px]">
               <h3 className="flex items-center gap-[9px] text-17 font-[550] tracking-[-0.4px] max-lg:text-14 max-sm:text-16">
-                <Icon name="list" className="text-[light-dark(#5c6b53,#8b9b81)]" />
+                <Icon name="list" className="text-[#5c6b53] dark:text-muted" />
                 Release checklist
               </h3>
-              <p className="mt-[5px] mb-[21px] text-10 text-[light-dark(#656c5f,#8c9486)] max-sm:mb-[15px]">A small app. An observable state change.</p>
+              <p className="mt-[5px] mb-[21px] text-10 text-[#656c5f] max-sm:mb-[15px] dark:text-muted">A small app. An observable state change.</p>
               {todos.map((todo, index) => {
                 const checked = index === 0 || (index === 1 && done);
                 return (
-                  <div className="flex items-center gap-[10px] border-t border-[light-dark(#edf0e7,#1a1b16)] py-[13px] text-12 max-lg:text-10 max-sm:py-[11px] max-sm:text-11" key={todo}>
-                    <span className={`grid size-4 shrink-0 place-items-center rounded-[4px] border transition-[background,border-color] duration-[180ms] ${checked ? 'border-[light-dark(#6e8961,#68835b)] bg-[light-dark(#6e8961,#68835b)] text-on-ink' : 'border-[light-dark(#c9d3c0,#2e3528)] bg-paper text-transparent'}`}>
+                  <div className="flex items-center gap-[10px] border-t border-[#edf0e7] py-[13px] text-12 max-lg:text-10 max-sm:py-[11px] max-sm:text-11 dark:border-line" key={todo}>
+                    <span className={`grid size-4 shrink-0 place-items-center rounded-[4px] border transition-[background,border-color] duration-[180ms] ${checked ? 'border-[#6e8961] bg-[#6e8961] text-on-ink dark:border-green dark:bg-green' : 'border-[#c9d3c0] bg-paper text-transparent dark:border-line'}`}>
                       <Icon name="check" className="size-[11px] stroke-2" />
                     </span>
-                    <span className={checked ? 'text-[light-dark(#656c60,#8c9387)] line-through' : ''}>{todo}</span>
+                    <span className={checked ? 'text-[#656c60] line-through dark:text-muted' : ''}>{todo}</span>
                     {index === 1 && (
-                      <span className={`ml-auto rounded-[3px] bg-[light-dark(#eef4e8,#171a13)] px-[5px] py-[3px] font-mono text-8 text-[light-dark(#507043,#7ea071)] max-lg:hidden max-sm:inline ${done ? 'visible' : 'invisible'}`}>updated</span>
+                      <span className={`ml-auto rounded-[3px] bg-[#eef4e8] px-[5px] py-[3px] font-mono text-8 text-[#507043] max-lg:hidden max-sm:inline dark:bg-green-soft dark:text-green ${done ? 'visible' : 'invisible'}`}>updated</span>
                     )}
                   </div>
                 );
               })}
-              <div className="mt-4 flex items-center gap-[11px] font-mono text-9 text-[light-dark(#646d5d,#8b9483)]">
+              <div className="mt-4 flex items-center gap-[11px] font-mono text-9 text-[#646d5d] dark:text-muted">
                 <span>{done ? 2 : 1} of 3 complete</span>
-                <div className="h-[3px] flex-1 overflow-hidden rounded-[3px] bg-[light-dark(#edf0e7,#1a1b16)]">
-                  <span className="block h-full bg-[light-dark(#98ad89,#4a5d3c)] transition-[width] duration-[400ms]" style={{ width: done ? '66.667%' : '33.333%' }} />
+                <div className="h-[3px] flex-1 overflow-hidden rounded-[3px] bg-[#edf0e7] dark:bg-green-soft">
+                  <span className="block h-full bg-[#98ad89] transition-[width] duration-[400ms] dark:bg-muted" style={{ width: done ? '66.667%' : '33.333%' }} />
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="relative flex items-center justify-center text-[light-dark(#728468,#708266)] before:absolute before:inset-x-0 before:h-px before:bg-[light-dark(#cbd7c1,#2b3324)] before:content-[''] max-sm:h-[42px] max-sm:w-[30px] max-sm:before:inset-x-auto max-sm:before:left-1/2 max-sm:before:h-full max-sm:before:w-px" aria-hidden="true">
-            <span className="z-[1] grid size-7 place-items-center rounded-full border border-[light-dark(#cbd7c1,#2b3324)] bg-[light-dark(#f6f9f2,#121513)] max-sm:size-[25px] max-sm:rotate-90">
+          <div className="relative flex items-center justify-center text-[#728468] before:absolute before:inset-x-0 before:h-px before:bg-[#cbd7c1] before:content-[''] max-sm:h-[42px] max-sm:w-[30px] max-sm:before:inset-x-auto max-sm:before:left-1/2 max-sm:before:h-full max-sm:before:w-px dark:text-muted dark:before:bg-line" aria-hidden="true">
+            <span className="z-[1] grid size-7 place-items-center rounded-full border border-[#cbd7c1] bg-[#f6f9f2] max-sm:size-[25px] max-sm:rotate-90 dark:border-line dark:bg-green-soft">
               <Icon name="arrow" className="size-[13px]" />
             </span>
           </div>
@@ -176,38 +176,38 @@ export function HomeAgentWorkflow() {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 border-t border-[light-dark(#e1e7db,#20231c)] bg-paper" role="tablist" aria-label="Agent workflow steps" onKeyDown={onStepKey}>
+        <div className="grid grid-cols-3 border-t border-[#e1e7db] bg-paper dark:border-line" role="tablist" aria-label="Agent workflow steps" onKeyDown={onStepKey}>
           {steps.map((item, index) => (
             <button
               type="button"
               role="tab"
               id={`agent-tab-${index}`}
-              className="flex items-start gap-[13px] rounded-none px-6 py-[22px] text-left transition-[background] duration-200 hover:bg-[light-dark(#fafcf7,#0f1310)] aria-selected:bg-[light-dark(#f6f9f1,#121513)] max-lg:gap-[9px] max-lg:p-[17px] max-sm:block max-sm:px-[10px] max-sm:py-3 [&+&]:border-l [&+&]:border-line"
+              className="flex items-start gap-[13px] rounded-none px-6 py-[22px] text-left transition-[background] duration-200 hover:bg-[#fafcf7] aria-selected:bg-[#f6f9f1] max-lg:gap-[9px] max-lg:p-[17px] max-sm:block max-sm:px-[10px] max-sm:py-3 dark:hover:bg-surface dark:aria-selected:bg-green-soft [&+&]:border-l [&+&]:border-line"
               aria-selected={step === index}
               aria-controls="agent-panel"
               tabIndex={step === index ? 0 : -1}
               key={item.title}
               onClick={() => sequence.select(index)}
             >
-              <span className="pt-[2px] font-mono text-10 text-[light-dark(#656d5b,#8b9481)] max-sm:mb-[5px] max-sm:block max-sm:pt-0 max-sm:text-8">0{index + 1}</span>
+              <span className="pt-[2px] font-mono text-10 text-[#656d5b] max-sm:mb-[5px] max-sm:block max-sm:pt-0 max-sm:text-8 dark:text-muted">0{index + 1}</span>
               <span>
-                <strong className="block text-12 font-[550] text-[light-dark(#4a5942,#9eaf95)] max-sm:text-10">{item.title}</strong>
-                <small className="mt-1 block text-10 text-[light-dark(#636d5a,#8b9581)] max-lg:text-9 max-sm:text-8 max-sm:leading-[1.6]">{item.text}</small>
+                <strong className="block text-12 font-[550] text-[#4a5942] max-sm:text-10 dark:text-muted">{item.title}</strong>
+                <small className="mt-1 block text-10 text-[#636d5a] max-lg:text-9 max-sm:text-8 max-sm:leading-[1.6] dark:text-muted">{item.text}</small>
               </span>
             </button>
           ))}
         </div>
       </div>
 
-      <div className="mt-[17px] flex items-start justify-between gap-5 text-10 text-[light-dark(#646d5d,#8b9483)] max-lg:flex-col max-lg:gap-[9px] max-sm:text-9">
+      <div className="mt-[17px] flex items-start justify-between gap-5 text-10 text-[#646d5d] max-lg:flex-col max-lg:gap-[9px] max-sm:text-9 dark:text-muted">
         <details className="max-w-[530px] [&[open]_summary_.icon]:rotate-90">
-          <summary className="flex cursor-pointer items-center gap-[7px] text-11 text-[light-dark(#5e6b54,#8c9a81)]">
+          <summary className="flex cursor-pointer items-center gap-[7px] text-11 text-[#5e6b54] dark:text-muted">
             <Icon name="chevron" className="size-[13px]" />
             How the connection works
           </summary>
           <p className="m-0 pt-[13px] text-11 leading-[1.8]">
-            Coding agent → <code className="text-10 text-[light-dark(#576e4a,#859d77)]">rgsh</code> CLI → local WebSocket → open Chrome DevTools panel → your
-            application. Setup requires the Chrome extension, <code className="text-10 text-[light-dark(#576e4a,#859d77)]">ws</code> as a development dependency,
+            Coding agent → <code className="text-10 text-[#576e4a] dark:text-green">rgsh</code> CLI → local WebSocket → open Chrome DevTools panel → your
+            application. Setup requires the Chrome extension, <code className="text-10 text-[#576e4a] dark:text-green">ws</code> as a development dependency,
             and the debug import before your stores are created. Keep that import out of production. The preview above is
             illustrative; it does not connect to an app or run shell commands.
           </p>

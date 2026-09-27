@@ -43,7 +43,12 @@
 .doc-content li {
   font-size: calc(14px * var(--type-scale));
   line-height: 1.85;
-  color: light-dark(#57615a, #95a099);
+  color: #57615a;
+}
+
+.dark .doc-content p,
+.dark .doc-content li {
+  color: var(--color-muted);
 }
 
 .doc-content p {
@@ -68,12 +73,16 @@
 
 .doc-content code:not(pre code) {
   background: var(--color-soft);
-  border: 1px solid light-dark(#edf0ec, #181b19);
+  border: 1px solid #edf0ec;
   padding: 1px 4px;
   border-radius: 4px;
   font-size: 0.86em;
   color: var(--color-green);
   overflow-wrap: anywhere;
+}
+
+.dark .doc-content code:not(pre code) {
+  border-color: var(--color-soft);
 }
 
 .doc-content strong {
@@ -137,15 +146,20 @@
 
 /* Callouts: icon or textual status, short title, supporting text. */
 .callout {
-  border: 1px solid light-dark(#dae5dd, #1f2621);
+  border: 1px solid #dae5dd;
   border-left: 3px solid var(--color-green);
   padding: 18px 20px;
   border-radius: 6px;
-  background: light-dark(#f6f9f5, #111513);
+  background: #f6f9f5;
   margin: 27px 0;
   display: flex;
   align-items: flex-start;
   gap: 12px;
+}
+
+.dark .callout {
+  border-color: var(--color-line);
+  background: var(--color-soft);
 }
 
 .callout > .icon {
@@ -192,14 +206,22 @@
 
 .callout.warning {
   background: var(--color-amber-soft);
-  border-color: light-dark(#eaddc3, #2e2514);
+  border-color: #eaddc3;
   border-left-color: var(--color-amber);
+}
+
+.dark .callout.warning {
+  border-color: var(--color-line);
 }
 
 .callout.error {
   background: var(--color-red-soft);
-  border-color: light-dark(#edd4cf, #352522);
+  border-color: #edd4cf;
   border-left-color: var(--color-red);
+}
+
+.dark .callout.error {
+  border-color: var(--color-line);
 }
 
 @media (max-width: 760px) {

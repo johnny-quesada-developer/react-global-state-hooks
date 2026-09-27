@@ -6,9 +6,9 @@ const badge = tv({
   variants: {
     tone: {
       neutral: '',
-      green: 'border-[light-dark(#dce8df,#1d241f)] bg-green-soft text-green',
-      blue: 'border-[light-dark(#e2e6ef,#1e2126)] bg-blue-soft text-blue',
-      amber: 'border-[light-dark(#ebe2cc,#292314)] bg-amber-soft text-amber',
+      green: 'border-[#dce8df] bg-green-soft text-green dark:border-line',
+      blue: 'border-[#e2e6ef] bg-blue-soft text-blue dark:border-line',
+      amber: 'border-[#ebe2cc] bg-amber-soft text-amber dark:border-line',
     },
   },
   defaultVariants: { tone: 'neutral' },

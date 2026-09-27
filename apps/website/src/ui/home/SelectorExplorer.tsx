@@ -30,8 +30,8 @@ export function SelectorExplorer() {
   const [index, setIndex] = useState(3);
 
   return (
-    <div className="w-full min-w-0 overflow-hidden rounded-panel border border-[light-dark(#e1e4ea,#1f2321)] bg-[light-dark(#fafbfe,#0f1310)]">
-      <div className="flex items-center justify-between border-b border-[light-dark(#e5e8ef,#1c201e)] px-[21px] py-[15px] font-mono text-9 text-[light-dark(#636a7a,#8890a1)]">
+    <div className="w-full min-w-0 overflow-hidden rounded-panel border border-[#e1e4ea] bg-[#fafbfe] dark:border-line dark:bg-paper">
+      <div className="flex items-center justify-between border-b border-[#e5e8ef] px-[21px] py-[15px] font-mono text-9 text-[#636a7a] dark:border-line dark:text-muted">
         <span>SELECTOR COMPOSITION</span>
         <Icon name="branch" className="size-[14px]" />
       </div>
@@ -40,23 +40,23 @@ export function SelectorExplorer() {
           <div className="selector-row relative flex pl-[calc(var(--depth)*23px)] max-lg:pl-[calc(var(--depth)*13px)] max-sm:pl-[calc(var(--depth)*15px)] [&+&]:mt-[10px]" style={{ '--depth': depth } as React.CSSProperties} key={hook.name}>
             <button
               type="button"
-              className={`flex w-full items-center gap-[10px] rounded-[5px] border px-3 py-[10px] text-left font-mono text-11 transition-[border-color,background] duration-200 hover:border-[light-dark(#bac5da,#323b4c)] max-lg:gap-[7px] max-lg:p-[10px] max-lg:text-9 max-sm:p-[11px] max-sm:text-10 ${index === depth ? 'border-[light-dark(#b6c3dc,#323c51)] bg-[light-dark(#eef2fa,#161917)] text-[light-dark(#51688e,#7b94bc)]' : 'border-[light-dark(#dfe4ed,#1f2328)] bg-paper text-[light-dark(#606b7d,#8590a3)]'}`}
+              className={`flex w-full items-center gap-[10px] rounded-[5px] border px-3 py-[10px] text-left font-mono text-11 transition-[border-color,background] duration-200 hover:border-[#bac5da] max-lg:gap-[7px] max-lg:p-[10px] max-lg:text-9 max-sm:p-[11px] max-sm:text-10 dark:hover:border-line ${index === depth ? 'border-[#b6c3dc] bg-[#eef2fa] text-[#51688e] dark:border-line dark:bg-blue-soft dark:text-blue' : 'border-[#dfe4ed] bg-paper text-[#606b7d] dark:border-line dark:text-muted'}`}
               aria-pressed={index === depth}
               onClick={() => setIndex(depth)}
             >
-              <span className={`size-[7px] rotate-45 rounded-[2px] border ${index === depth ? 'border-[light-dark(#7c92b7,#54698c)] bg-[light-dark(#7c92b7,#54698c)]' : 'border-[light-dark(#aab8cd,#3b4759)]'}`} />
+              <span className={`size-[7px] rotate-45 rounded-[2px] border ${index === depth ? 'border-[#7c92b7] bg-[#7c92b7] dark:border-blue dark:bg-blue' : 'border-[#aab8cd] dark:border-line'}`} />
               {hook.name}
-              <span className={`ml-auto font-sans text-9 whitespace-nowrap max-lg:text-8 ${index === depth ? 'text-[light-dark(#5c6b86,#8090ac)]' : 'text-[light-dark(#646b76,#89909c)]'}`}>{hook.count}</span>
+              <span className={`ml-auto font-sans text-9 whitespace-nowrap max-lg:text-8 ${index === depth ? 'text-[#5c6b86] dark:text-blue' : 'text-[#646b76] dark:text-muted'}`}>{hook.count}</span>
             </button>
           </div>
         ))}
       </div>
-      <div className="border-t border-[light-dark(#e1e6ef,#1e2127)] bg-paper px-[22px] py-4 max-lg:p-[15px] max-sm:px-[17px] max-sm:py-4 [&_.emphasis]:bg-[light-dark(#f0f3fb,#151916)] [&_.ln]:w-[23px] [&_.ln]:text-9">
+      <div className="border-t border-[#e1e6ef] bg-paper px-[22px] py-4 max-lg:p-[15px] max-sm:px-[17px] max-sm:py-4 dark:border-line [&_.emphasis]:bg-[#f0f3fb] dark:[&_.emphasis]:bg-blue-soft [&_.ln]:w-[23px] [&_.ln]:text-9">
         <CodeList code={hooks[index].code} emphasis={hooks[index].emphasis} animationKey={index} label="Selected hook example" className="min-h-[100px] text-11 leading-5 max-lg:text-10 max-sm:text-9" />
       </div>
-      <div className="flex items-center justify-between gap-2 border-t border-[light-dark(#edf0f5,#171b18)] px-[23px] py-[11px] font-mono text-9 text-[light-dark(#626b7a,#8690a0)] max-lg:px-[15px] max-lg:text-8 max-sm:px-[18px] max-sm:py-3">
+      <div className="flex items-center justify-between gap-2 border-t border-[#edf0f5] px-[23px] py-[11px] font-mono text-9 text-[#626b7a] max-lg:px-[15px] max-lg:text-8 max-sm:px-[18px] max-sm:py-3 dark:border-soft dark:text-muted">
         <span>
-          SELECTED → <b className="font-medium text-[light-dark(#586e94,#768db5)]">{selected(index)}</b>
+          SELECTED → <b className="font-medium text-[#586e94] dark:text-blue">{selected(index)}</b>
         </span>
         <span>Click any hook ↑</span>
       </div>

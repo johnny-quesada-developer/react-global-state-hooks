@@ -35,8 +35,7 @@ const pathname = Astro.url.pathname;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f1512" />
+    <meta name="theme-color" content="#ffffff" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     {!noindex && <link rel="canonical" href={canonical} />}
@@ -64,14 +63,24 @@ const pathname = Astro.url.pathname;
     }
     <slot name="head" />
     <script is:inline>
-      // Applies the stored appearance and code theme before first paint, so neither flashes the default.
+      // Resolves the appearance before first paint: the stored choice, else the system preference.
+      // Everything downstream keys off the `dark` class; nothing in CSS reads the system directly.
       try {
+        const root = document.documentElement;
         const stored = localStorage.getItem('user-preferences');
-        const saved = stored ? JSON.parse(stored)?.s : null;
-        if (saved && typeof saved.codeTheme === 'string') document.documentElement.dataset.codeTheme = saved.codeTheme;
-        if (saved && (saved.theme === 'light' || saved.theme === 'dark')) document.documentElement.dataset.theme = saved.theme;
+        const envelope = stored ? JSON.parse(stored) : null;
+        const saved = envelope ? envelope.s : null;
+        const picked = saved && (saved.theme === 'light' || saved.theme === 'dark') ? saved.theme : null;
+        const dark = picked ? picked === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+        root.classList.toggle('dark', dark);
+
+        // An explicit code theme only counts from the current storage version; older shapes are migrated.
+        const current = envelope && envelope.v === 2;
+        const code = current && typeof saved.codeTheme === 'string' && saved.codeTheme !== 'auto' ? saved.codeTheme : null;
+        root.dataset.codeTheme = code || (dark ? 'rgsh-dark' : 'vscode-light');
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#131311' : '#ffffff');
       } catch {
-        /* private mode or blocked storage: the default theme stands */
+        /* private mode or blocked storage: the light default stands */
       }
     </script>
   </head>

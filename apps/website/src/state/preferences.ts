@@ -22,6 +22,9 @@ const defaults: Preferences = {
   theme: 'system',
 };
 
+/** Bumped when a stored shape must not be trusted any more; see the migrator. */
+export const PREFERENCES_VERSION = 2;
+
 /**
  * Visitor preferences shared by every island on every page (the install command tab).
  * Saved to localStorage; anything unexpected in storage falls back to the defaults.
@@ -30,6 +33,22 @@ export const usePreferences = createGlobalState(defaults, {
   name: '_sitePreferences',
   localStorage: {
     key: 'user-preferences',
+    versioning: {
+      version: PREFERENCES_VERSION,
+      // Version 1 persisted the code theme as a concrete id even when nobody had picked one, so a
+      // page that later turned dark kept painting light code. Only the package manager survives.
+      migrator: ({ legacy, initial }) => {
+        const saved = (typeof legacy === 'object' && legacy !== null ? legacy : {}) as Partial<Preferences>;
+
+        return {
+          ...initial,
+          packageManager: PACKAGE_MANAGERS.includes(saved.packageManager as PackageManager)
+            ? (saved.packageManager as PackageManager)
+            : initial.packageManager,
+          theme: THEMES.includes(saved.theme as Theme) ? (saved.theme as Theme) : initial.theme,
+        };
+      },
+    },
     validator: ({ restored, initial }) => {
       if (typeof restored !== 'object' || restored === null) return initial;
 

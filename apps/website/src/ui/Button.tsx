@@ -3,11 +3,11 @@ import { tv, type VariantProps } from '../lib/tv';
 import { Icon, type IconName } from './Icon';
 
 export const button = tv({
-  base: 'inline-flex min-h-[42px] items-center justify-center gap-[10px] rounded-control border border-[light-dark(#dbe1dc,#232724)] bg-paper px-4 py-[10px] text-13 leading-[1.3] font-[550] whitespace-nowrap text-ink transition-[background,border-color,transform] duration-[180ms] hover:border-[light-dark(#b4c1b8,#39443d)] hover:bg-soft max-md:text-12',
+  base: 'inline-flex min-h-[42px] items-center justify-center gap-[10px] rounded-control border border-[#dbe1dc] bg-paper px-4 py-[10px] text-13 leading-[1.3] font-[550] whitespace-nowrap text-ink transition-[background,border-color,transform] duration-[180ms] hover:border-[#b4c1b8] hover:bg-soft max-md:text-12 dark:border-line dark:hover:border-line',
   variants: {
     variant: {
       default: '',
-      primary: 'border-ink bg-ink text-on-ink hover:border-[light-dark(#354239,#b7c7bc)] hover:bg-[light-dark(#354239,#b7c7bc)] hover:text-on-ink',
+      primary: 'border-ink bg-ink text-on-ink hover:border-[#354239] hover:bg-[#354239] hover:text-on-ink dark:hover:border-ink/85 dark:hover:bg-ink/85',
       ghost: 'border-transparent bg-transparent hover:border-transparent hover:bg-soft',
     },
     size: {

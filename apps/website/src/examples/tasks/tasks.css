@@ -22,7 +22,7 @@
 .tasks-open {
   display: inline-flex;
   align-items: center;
-  border: 1px solid light-dark(#dce8df, #1d241f);
+  border: 1px solid #dce8df;
   background: var(--color-green-soft);
   color: var(--color-green);
   padding: 3px 9px;
@@ -32,6 +32,10 @@
   line-height: 1.7;
   font-weight: 550;
   white-space: nowrap;
+}
+
+.dark .tasks-open {
+  border-color: var(--color-line);
 }
 
 .task-form {
@@ -102,7 +106,11 @@
 
 .task-row__text--done {
   text-decoration: line-through;
-  color: light-dark(#808980, #6d766d);
+  color: #808980;
+}
+
+.dark .task-row__text--done {
+  color: var(--color-muted);
 }
 
 .task-row button {
@@ -118,8 +126,12 @@
   margin: 13px 0 0;
   padding: 60px 20px;
   text-align: center;
-  border: 1px dashed light-dark(#c9d4cb, #2c332d);
+  border: 1px dashed #c9d4cb;
   border-radius: 8px;
+}
+
+.dark .task-empty {
+  border-color: var(--color-line);
 }
 
 .task-empty h4 {

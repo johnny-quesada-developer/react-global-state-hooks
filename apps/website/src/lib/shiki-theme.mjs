@@ -1,8 +1,8 @@
 /**
- * The site palette as a Shiki theme: keywords in the composition blue, strings in the brand green,
- * calls and JSX tags in the warm red, numbers in amber, comments muted. Shared by the build-time
- * highlighter (src/lib/highlight.ts) and Astro's fenced-code highlighting (astro.config.mjs).
- * src/lib/shiki-theme.test.ts checks every colour here against the code background.
+ * The site palette as a Shiki theme, in both appearances: keywords in the composition blue, strings
+ * in the brand green, calls and JSX tags in the warm red, numbers in amber, comments muted. Shared by
+ * the build-time highlighter (src/lib/highlight.ts) and Astro's fenced-code highlighting
+ * (astro.config.mjs). src/lib/shiki-theme.test.ts checks every colour against its own background.
  */
 const ink = '#1b2320';
 const muted = '#66716a';
@@ -53,4 +53,34 @@ export const rgshLight = {
     { scope: ['variable.parameter'], settings: { foreground: ink } },
     { scope: ['keyword.operator', 'punctuation', 'meta.brace'], settings: { foreground: muted } },
   ],
+};
+
+const darkInk = '#f1f0e9';
+const darkMuted = '#aaa89e';
+const darkBlue = '#899fc8';
+const darkGreen = '#83ad8d';
+const darkRed = '#d8877d';
+const darkAmber = '#cba66a';
+const darkTeal = '#8fb3ae';
+const darkBackground = '#1a1a17';
+
+export const rgshDark = {
+  name: 'rgsh-dark',
+  type: 'dark',
+  colors: { 'editor.background': darkBackground, 'editor.foreground': darkInk },
+  tokenColors: rgshLight.tokenColors.map((rule) => ({
+    ...rule,
+    settings: {
+      ...rule.settings,
+      foreground: {
+        [ink]: darkInk,
+        [muted]: darkMuted,
+        [blue]: darkBlue,
+        [green]: darkGreen,
+        [red]: darkRed,
+        [amber]: darkAmber,
+        [teal]: darkTeal,
+      }[rule.settings.foreground],
+    },
+  })),
 };

@@ -14,8 +14,8 @@ export interface GalleryExample {
   order: number;
 }
 
-const thumbUi = 'w-full max-w-[360px] rounded-control border border-[light-dark(#dce3dd,#222623)] bg-paper p-[17px] text-11 shadow-thumb';
-const thumbRow = 'flex items-center justify-between gap-[15px] border-b border-[light-dark(#eef1ed,#171b18)] py-[9px] last:border-0';
+const thumbUi = 'w-full max-w-[360px] rounded-control border border-[#dce3dd] dark:border-line bg-paper p-[17px] text-11 shadow-thumb';
+const thumbRow = 'flex items-center justify-between gap-[15px] border-b border-[#eef1ed] dark:border-soft py-[9px] last:border-0';
 const thumbLine = 'flex min-h-[27px] w-full items-center gap-2 py-1 text-11 leading-[1.5] text-muted';
 const thumbCell = 'rounded-[5px] border border-line p-[13px]';
 
@@ -35,7 +35,7 @@ function Thumb({ kind }: { kind: GalleryExample['thumb'] }) {
     return (
       <div className="grid grid-cols-2 gap-[10px] text-14">
         {cells.map(([label, value, note, active]) => (
-          <div className={`${thumbCell} ${active ? 'border-[light-dark(#cdded1,#232e26)] bg-green-soft' : ''}`} key={String(label)}>
+          <div className={`${thumbCell} ${active ? 'border-[#cdded1] bg-green-soft dark:border-line' : ''}`} key={String(label)}>
             <span>{label}</span>
             <strong className="mt-[6px] block text-18 font-medium">{value}</strong>
             <small className="text-13 text-muted">{note}</small>
@@ -75,7 +75,7 @@ function Thumb({ kind }: { kind: GalleryExample['thumb'] }) {
         <div className={thumbLine}>
           <Icon name="alert" className="size-[13px]" /> Network error
         </div>
-        <span className="mt-2 inline-flex min-h-[34px] items-center gap-2 rounded-control border border-[light-dark(#dbe1dc,#232724)] px-3 text-12 font-[550] text-ink" aria-hidden="true">
+        <span className="mt-2 inline-flex min-h-[34px] items-center gap-2 rounded-control border border-[#dbe1dc] px-3 text-12 font-[550] text-ink dark:border-line" aria-hidden="true">
           Retry request <Icon name="arrow" className="size-[14px]" />
         </span>
       </div>
@@ -156,7 +156,7 @@ export function ExampleGallery({ examples }: { examples: GalleryExample[] }) {
         {shown.length ? (
           shown.map((example) => (
             <a
-              className="group flex min-w-0 flex-col overflow-hidden rounded-panel border border-line transition-[border-color,transform] duration-200 last:odd:col-span-full last:odd:grid last:odd:grid-cols-2 hover:-translate-y-[2px] hover:border-[light-dark(#9eb2a4,#435549)] max-md:last:odd:col-span-1 max-md:last:odd:flex"
+              className="group flex min-w-0 flex-col overflow-hidden rounded-panel border border-line transition-[border-color,transform] duration-200 last:odd:col-span-full last:odd:grid last:odd:grid-cols-2 hover:-translate-y-[2px] hover:border-[#9eb2a4] max-md:last:odd:col-span-1 max-md:last:odd:flex dark:hover:border-line"
               href={withBase(`examples/${example.id}/`)}
               key={example.id}
             >
@@ -178,7 +178,7 @@ export function ExampleGallery({ examples }: { examples: GalleryExample[] }) {
             </a>
           ))
         ) : (
-          <div className="col-span-full rounded-[8px] border border-dashed border-[light-dark(#c9d4cb,#2c332d)] px-5 py-[60px] text-center">
+          <div className="col-span-full rounded-[8px] border border-dashed border-[#c9d4cb] px-5 py-[60px] text-center dark:border-line">
             <Icon name="search" className="mx-auto size-[27px] text-muted" />
             <h3 className="mt-3 mb-2 text-22">No examples match.</h3>
             <p className="mb-5 text-13">Try “state”, “async”, or reset the filters.</p>

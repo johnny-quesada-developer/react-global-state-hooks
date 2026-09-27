@@ -17,7 +17,11 @@
 .async-track .active {
   background: var(--color-green-soft);
   color: var(--color-green);
-  border-color: light-dark(#cfddd2, #242d26);
+  border-color: #cfddd2;
+}
+
+.dark .async-track .active {
+  border-color: var(--color-line);
 }
 
 .async-stage {
@@ -43,8 +47,12 @@
 
 .async-stage--error .async-symbol {
   color: var(--color-red);
-  border-color: light-dark(#ebcec9, #3a2825);
+  border-color: #ebcec9;
   background: var(--color-red-soft);
+}
+
+.dark .async-stage--error .async-symbol {
+  border-color: var(--color-line);
 }
 
 .async-stage--success .async-symbol {

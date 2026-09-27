@@ -5,12 +5,13 @@
  */
 import lightPlus from 'shiki/themes/light-plus.mjs';
 import darkPlus from 'shiki/themes/dark-plus.mjs';
-import { rgshLight } from './shiki-theme.mjs';
+import { rgshDark, rgshLight } from './shiki-theme.mjs';
 
 export const CODE_THEMES = [
   { id: 'vscode-light', label: 'VS Code Light', theme: lightPlus },
+  { id: 'rgsh-dark', label: 'Site palette dark', theme: rgshDark },
+  { id: 'rgsh', label: 'Site palette light', theme: rgshLight },
   { id: 'vscode-dark', label: 'VS Code Dark', theme: darkPlus },
-  { id: 'rgsh', label: 'Site palette', theme: rgshLight },
 ];
 
 /** The stored value; 'auto' follows the site appearance. */
@@ -24,7 +25,7 @@ export const CODE_THEME_IDS = CODE_THEME_OPTIONS.map((entry) => entry.id);
 export function resolveCodeTheme(stored, dark) {
   if (stored && stored !== 'auto' && CODE_THEMES.some((entry) => entry.id === stored)) return stored;
 
-  return dark ? 'vscode-dark' : 'vscode-light';
+  return dark ? 'rgsh-dark' : 'vscode-light';
 }
 
 /** { id: theme } for Shiki's multi-theme output. */
