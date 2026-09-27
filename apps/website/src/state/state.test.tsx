@@ -5,13 +5,14 @@ import { usePackageManager, usePreferences } from './preferences';
 import { useDialogs } from './dialogs';
 import { useToast } from './toast';
 import { useMotion } from './motion';
+import { DEFAULT_CODE_THEME } from '../lib/code-themes.mjs';
 
 const Probe = () => <span data-testid="pm">{usePackageManager()}</span>;
 
 beforeEach(() => window.localStorage.clear());
 afterEach(() => {
   cleanup();
-  usePreferences.reset({ packageManager: 'npm' }, {});
+  usePreferences.reset({ packageManager: 'npm', codeTheme: DEFAULT_CODE_THEME }, {});
   useDialogs.reset({ open: null }, {});
 });
 
@@ -20,7 +21,7 @@ describe('preferences store', () => {
     usePreferences.setState((current) => ({ ...current, packageManager: 'pnpm' }));
 
     const saved = JSON.parse(window.localStorage.getItem('user-preferences') ?? 'null');
-    expect(saved.s).toEqual({ packageManager: 'pnpm' });
+    expect(saved.s).toEqual({ packageManager: 'pnpm', codeTheme: DEFAULT_CODE_THEME });
   });
 
   it('shares the value between separate React roots', () => {

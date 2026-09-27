@@ -230,7 +230,8 @@
 
 .symptom summary::after {
   content: '+';
-  font: 20px var(--font-mono);
+  font-family: var(--font-mono);
+  font-size: calc(20px * var(--type-scale));
   color: var(--color-muted);
   flex: none;
 }

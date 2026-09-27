@@ -1,6 +1,6 @@
 import { useReducedMotion } from '../../state/motion';
 
-const token = /(\/\/.*$|'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|\b(?:import|from|export|const|let|function|return|true|false|null|type)\b|\b\d+\b|\b[A-Za-z_$][\w$]*(?=\())/g;
+const token = /(\/\/.*$|'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|<\/?[A-Za-z][\w.$]*|\b(?:import|from|export|const|let|function|return|true|false|null|type)\b|\b\d+\b|\b[A-Za-z_$][\w$]*(?=\())/g;
 const keywords = /^(import|from|export|const|let|function|return|true|false|null|type)$/;
 
 function tokens(line: string) {
@@ -13,6 +13,7 @@ function tokens(line: string) {
     const value = match[0];
     let className = 't-function';
     if (value.startsWith('//')) className = 't-comment';
+    else if (value.startsWith('<')) className = 't-tag';
     else if (value.startsWith("'") || value.startsWith('"')) className = 't-string';
     else if (/^\d/.test(value)) className = 't-number';
     else if (keywords.test(value)) className = 't-keyword';

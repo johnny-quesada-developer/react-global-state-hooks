@@ -6,6 +6,7 @@ import { SearchDialog } from '../ui/shell/SearchDialog';
 import { NavDrawer } from '../ui/shell/NavDrawer';
 import { CopyController } from '../ui/shell/CopyController';
 import { MotionToggle } from '../ui/shell/MotionToggle';
+import { CodeThemeSelect } from '../ui/shell/CodeThemeSelect';
 import { SITE_NAME, withBase } from '../lib/site';
 
 interface Props {
@@ -60,6 +61,16 @@ const pathname = Astro.url.pathname;
       )
     }
     <slot name="head" />
+    <script is:inline>
+      // Applies the stored code theme before first paint, so a picked theme never flashes the default.
+      try {
+        const stored = localStorage.getItem('user-preferences');
+        const id = stored ? JSON.parse(stored)?.s?.codeTheme : null;
+        if (typeof id === 'string') document.documentElement.dataset.codeTheme = id;
+      } catch {
+        /* private mode or blocked storage: the default theme stands */
+      }
+    </script>
   </head>
   <body>
     <a
@@ -78,7 +89,12 @@ const pathname = Astro.url.pathname;
       }
       <slot />
     </main>
-    <Footer><MotionToggle client:idle /></Footer>
+    <Footer>
+      <span class="flex items-center gap-5 max-md:flex-col max-md:items-start max-md:gap-2">
+        <MotionToggle client:idle />
+        <CodeThemeSelect client:idle />
+      </span>
+    </Footer>
     <SearchDialog client:idle />
     <NavDrawer client:idle pathname={pathname} />
     <CopyController client:idle />

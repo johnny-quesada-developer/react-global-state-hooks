@@ -63,7 +63,10 @@
   align-items: center;
   gap: 11px;
   color: var(--color-green);
-  font: 500 10px/1.5 var(--font-mono);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: calc(10px * var(--type-scale));
+  line-height: 1.5;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }

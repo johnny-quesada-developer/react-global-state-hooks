@@ -3,10 +3,11 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { InstallCommand } from './InstallCommand';
 import { usePreferences } from '../state/preferences';
+import { DEFAULT_CODE_THEME } from '../lib/code-themes.mjs';
 
 beforeEach(() => {
   window.localStorage.clear();
-  usePreferences.setState({ packageManager: 'npm' });
+  usePreferences.setState({ packageManager: 'npm', codeTheme: DEFAULT_CODE_THEME });
 });
 afterEach(cleanup);
 

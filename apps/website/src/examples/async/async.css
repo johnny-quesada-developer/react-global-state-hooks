@@ -3,7 +3,8 @@
   gap: 8px;
   align-items: center;
   flex-wrap: wrap;
-  font: 9px var(--font-mono);
+  font-family: var(--font-mono);
+  font-size: calc(9px * var(--type-scale));
   color: var(--color-muted);
 }
 
@@ -93,7 +94,8 @@
 }
 
 .async-attempts {
-  font: 10px var(--font-mono);
+  font-family: var(--font-mono);
+  font-size: calc(10px * var(--type-scale));
   color: var(--color-muted);
 }
 
