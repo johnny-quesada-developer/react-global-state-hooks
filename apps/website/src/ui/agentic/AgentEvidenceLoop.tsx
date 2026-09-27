@@ -84,7 +84,7 @@ export function AgentEvidenceLoop() {
           </div>
         </div>
         <div className="min-w-0 bg-terminal text-terminal-text">
-          <div className="flex min-h-[45px] items-center justify-between gap-3 border-b border-[#3a463d] bg-[#28322b] px-[17px] py-3 text-11 text-terminal-muted">
+          <div className="flex min-h-[45px] items-center justify-between gap-3 border-b border-[light-dark(#3a463d,#b3c1b6)] bg-[light-dark(#28322b,#cdd9d0)] px-[17px] py-3 text-11 text-terminal-muted">
             <span className="flex items-center gap-3">
               <Icon name="terminal" />
               Agent terminal
@@ -94,7 +94,7 @@ export function AgentEvidenceLoop() {
           <pre className="m-0 min-h-[250px] p-6 font-mono text-11 leading-[2] break-words whitespace-pre-wrap max-md:min-h-[200px] max-md:p-[22px] max-md:text-11 max-xs:text-10" tabIndex={0} aria-label="Illustrative CLI output" key={step}>
             {terminals[step].split('\n').map((line, index) => (
               <span
-                className={`${line.startsWith('#') ? 'text-[#9bab9f]' : line.includes('→') || line.startsWith('$') ? 'text-[#b6d6c1]' : ''} ${reduced ? '' : 'line-enter'}`}
+                className={`${line.startsWith('#') ? 'text-[light-dark(#9bab9f,#4b594e)]' : line.includes('→') || line.startsWith('$') ? 'text-[light-dark(#b6d6c1,#203b2b)]' : ''} ${reduced ? '' : 'line-enter'}`}
                 style={{ animationDelay: `${Math.min(index * 30, 150)}ms` }}
                 key={index}
               >
@@ -103,9 +103,9 @@ export function AgentEvidenceLoop() {
               </span>
             ))}
           </pre>
-          <div className="mx-6 flex items-center justify-between gap-3 border-t border-[#3a473d] py-[14px] text-10 text-[#a7b8ad] max-md:mx-[22px]">
+          <div className="mx-6 flex items-center justify-between gap-3 border-t border-[light-dark(#3a473d,#b2c1b5)] py-[14px] text-10 text-[light-dark(#a7b8ad,#3f4e44)] max-md:mx-[22px]">
             <span role="status">{steps[step].status}</span>
-            <button type="button" className="inline-flex items-center gap-2 text-13 font-[550] text-[#c9ded1] hover:underline hover:underline-offset-[5px]" onClick={onPlay}>
+            <button type="button" className="inline-flex items-center gap-2 text-13 font-[550] text-[light-dark(#c9ded1,#212f27)] hover:underline hover:underline-offset-[5px]" onClick={onPlay}>
               <Icon name={play.icon} />
               {play.label}
             </button>

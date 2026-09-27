@@ -12,7 +12,7 @@ const Probe = () => <span data-testid="pm">{usePackageManager()}</span>;
 beforeEach(() => window.localStorage.clear());
 afterEach(() => {
   cleanup();
-  usePreferences.reset({ packageManager: 'npm', codeTheme: DEFAULT_CODE_THEME }, {});
+  usePreferences.reset({ packageManager: 'npm', codeTheme: DEFAULT_CODE_THEME, theme: 'system' }, {});
   useDialogs.reset({ open: null }, {});
 });
 
@@ -21,7 +21,7 @@ describe('preferences store', () => {
     usePreferences.setState((current) => ({ ...current, packageManager: 'pnpm' }));
 
     const saved = JSON.parse(window.localStorage.getItem('user-preferences') ?? 'null');
-    expect(saved.s).toEqual({ packageManager: 'pnpm', codeTheme: DEFAULT_CODE_THEME });
+    expect(saved.s).toEqual({ packageManager: 'pnpm', codeTheme: DEFAULT_CODE_THEME, theme: 'system' });
   });
 
   it('shares the value between separate React roots', () => {

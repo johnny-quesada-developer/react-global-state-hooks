@@ -61,8 +61,8 @@ export function Logo({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 32 32" fill="none" aria-hidden="true">
       <path d="M5 6v20m22-20v20M5 10h8l6 12h8" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" />
-      <circle cx="5" cy="10" r="3.5" fill="white" stroke="currentColor" strokeWidth="2" />
-      <circle cx="27" cy="22" r="3.5" fill="white" stroke="currentColor" strokeWidth="2" />
+      <circle cx="5" cy="10" r="3.5" fill="var(--color-paper)" stroke="currentColor" strokeWidth="2" />
+      <circle cx="27" cy="22" r="3.5" fill="var(--color-paper)" stroke="currentColor" strokeWidth="2" />
     </svg>
   );
 }

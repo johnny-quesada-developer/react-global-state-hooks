@@ -17,7 +17,7 @@
 .async-track .active {
   background: var(--color-green-soft);
   color: var(--color-green);
-  border-color: #cfddd2;
+  border-color: light-dark(#cfddd2, #242d26);
 }
 
 .async-stage {
@@ -43,7 +43,7 @@
 
 .async-stage--error .async-symbol {
   color: var(--color-red);
-  border-color: #ebcec9;
+  border-color: light-dark(#ebcec9, #3a2825);
   background: var(--color-red-soft);
 }
 

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { links, withBase } from '../../lib/site';
 import { isActive, primaryNav } from '../../lib/nav';
 import { Icon, Logo } from '../Icon';
@@ -5,15 +6,17 @@ import { ButtonLink } from '../Button';
 
 interface HeaderProps {
   pathname: string;
+  /** The appearance toggle island, rendered between search and the repository link. */
+  children?: ReactNode;
 }
 
 const iconButton =
   'inline-flex h-9 min-w-9 items-center justify-center rounded-[6px] border border-line bg-paper hover:bg-soft';
 
-/** Sticky white header, 78px on desktop and 65px on mobile. Dialog triggers are static; islands listen. */
-export function Header({ pathname }: HeaderProps) {
+/** Sticky header, 78px on desktop and 65px on mobile. Dialog triggers are static; islands listen. */
+export function Header({ pathname, children }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-30 h-header border-b border-line bg-[rgba(255,255,255,.97)] max-md:h-header-mobile">
+    <header className="sticky top-0 z-30 h-header border-b border-line bg-paper/[.97] max-md:h-header-mobile">
       <div className="wide flex h-full items-center gap-6 max-3xl:gap-[14px] max-xl:gap-3 max-md:gap-2 max-xs:gap-1">
         <a
           className="flex items-center gap-[10px] text-14 font-[650] tracking-[-0.035em] whitespace-nowrap max-3xl:text-12 max-md:gap-2 max-md:tracking-[-0.03em] max-xs:gap-[6px] max-xs:text-[calc(10.5px*var(--type-scale))]"
@@ -53,6 +56,7 @@ export function Header({ pathname }: HeaderProps) {
               ⌘ K
             </kbd>
           </button>
+          {children}
           <a
             className={`${iconButton} max-xl:hidden`}
             href={links.repo}

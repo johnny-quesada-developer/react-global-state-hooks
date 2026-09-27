@@ -1,15 +1,16 @@
 import { useEffect } from 'react';
-import { CODE_THEMES } from '../../lib/code-themes.mjs';
-import { useCodeTheme, usePreferences } from '../../state/preferences';
+import { CODE_THEME_OPTIONS } from '../../lib/code-themes.mjs';
+import { useCodeTheme, usePreferences, useResolvedCodeTheme } from '../../state/preferences';
 import { Icon } from '../Icon';
 
 /** Footer control that switches the syntax theme of every code block on the site. */
 export function CodeThemeSelect() {
   const codeTheme = useCodeTheme();
+  const resolved = useResolvedCodeTheme();
 
   useEffect(() => {
-    document.documentElement.dataset.codeTheme = codeTheme;
-  }, [codeTheme]);
+    document.documentElement.dataset.codeTheme = resolved;
+  }, [resolved]);
 
   return (
     <label className="inline-flex min-h-6 items-center gap-2 text-12 text-muted">
@@ -20,7 +21,7 @@ export function CodeThemeSelect() {
         value={codeTheme}
         onChange={(event) => usePreferences.setState((state) => ({ ...state, codeTheme: event.target.value }))}
       >
-        {CODE_THEMES.map((theme) => (
+        {CODE_THEME_OPTIONS.map((theme) => (
           <option value={theme.id} key={theme.id}>
             {theme.label}
           </option>

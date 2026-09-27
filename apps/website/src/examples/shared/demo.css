@@ -65,7 +65,7 @@
   justify-content: center;
   gap: 8px;
   padding: 8px 12px;
-  border: 1px solid #dbe1dc;
+  border: 1px solid light-dark(#dbe1dc, #232724);
   border-radius: 7px;
   background: var(--color-paper);
   font-size: calc(12px * var(--type-scale));
@@ -80,20 +80,20 @@
 .demo-card button:hover,
 .demo-button:hover {
   background: var(--color-soft);
-  border-color: #b4c1b8;
+  border-color: light-dark(#b4c1b8, #39443d);
 }
 
 .demo-card .demo-button--primary,
 .demo-button--primary {
   background: var(--color-ink);
   border-color: var(--color-ink);
-  color: #fff;
+  color: light-dark(#fff, var(--color-paper));
 }
 
 .demo-card .demo-button--primary:hover,
 .demo-button--primary:hover {
-  background: #354239;
-  border-color: #354239;
+  background: light-dark(#354239, #b7c7bc);
+  border-color: light-dark(#354239, #b7c7bc);
 }
 
 .demo-card .demo-text-button,
@@ -176,7 +176,7 @@
   background: var(--color-soft);
   border: 1px solid var(--color-line);
   border-radius: 5px;
-  color: #414a43;
+  color: light-dark(#414a43, #b0bab2);
 }
 
 .demo-caption {
@@ -216,7 +216,7 @@
 
 @keyframes render-flash {
   from {
-    box-shadow: 0 0 0 3px #acc9b4;
+    box-shadow: 0 0 0 3px light-dark(#acc9b4, #2c4534);
   }
   to {
     box-shadow: 0 0 0 0 transparent;

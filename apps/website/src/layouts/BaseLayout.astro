@@ -7,6 +7,7 @@ import { NavDrawer } from '../ui/shell/NavDrawer';
 import { CopyController } from '../ui/shell/CopyController';
 import { MotionToggle } from '../ui/shell/MotionToggle';
 import { CodeThemeSelect } from '../ui/shell/CodeThemeSelect';
+import { ThemeToggle } from '../ui/shell/ThemeToggle';
 import { SITE_NAME, withBase } from '../lib/site';
 
 interface Props {
@@ -34,7 +35,8 @@ const pathname = Astro.url.pathname;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f1512" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     {!noindex && <link rel="canonical" href={canonical} />}
@@ -62,11 +64,12 @@ const pathname = Astro.url.pathname;
     }
     <slot name="head" />
     <script is:inline>
-      // Applies the stored code theme before first paint, so a picked theme never flashes the default.
+      // Applies the stored appearance and code theme before first paint, so neither flashes the default.
       try {
         const stored = localStorage.getItem('user-preferences');
-        const id = stored ? JSON.parse(stored)?.s?.codeTheme : null;
-        if (typeof id === 'string') document.documentElement.dataset.codeTheme = id;
+        const saved = stored ? JSON.parse(stored)?.s : null;
+        if (saved && typeof saved.codeTheme === 'string') document.documentElement.dataset.codeTheme = saved.codeTheme;
+        if (saved && (saved.theme === 'light' || saved.theme === 'dark')) document.documentElement.dataset.theme = saved.theme;
       } catch {
         /* private mode or blocked storage: the default theme stands */
       }
@@ -74,10 +77,10 @@ const pathname = Astro.url.pathname;
   </head>
   <body>
     <a
-      class="fixed top-2 left-2 z-[100] -translate-y-[200%] rounded-control bg-ink px-4 py-3 text-13 text-white focus:translate-y-0"
+      class="fixed top-2 left-2 z-[100] -translate-y-[200%] rounded-control bg-ink px-4 py-3 text-13 text-on-ink focus:translate-y-0"
       href="#main">Skip to content</a
     >
-    <Header pathname={pathname} />
+    <Header pathname={pathname}><ThemeToggle client:idle /></Header>
     <main id="main" tabindex="-1" class="outline-none" data-pagefind-body={noindex ? undefined : ''}>
       {
         !noindex && (

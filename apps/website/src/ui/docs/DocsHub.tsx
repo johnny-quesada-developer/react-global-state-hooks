@@ -46,7 +46,7 @@ export function DocsHub({ sections }: { sections: HubSection[] }) {
           </div>
           <button
             type="button"
-            className="mt-3 flex w-full max-w-[460px] items-center gap-3 rounded-control border border-line bg-paper px-4 py-[13px] text-left text-12 text-muted hover:border-[#b4c1b8]"
+            className="mt-3 flex w-full max-w-[460px] items-center gap-3 rounded-control border border-line bg-paper px-4 py-[13px] text-left text-12 text-muted hover:border-[light-dark(#b4c1b8,#39443d)]"
             data-dialog="search"
           >
             <Icon name="search" />

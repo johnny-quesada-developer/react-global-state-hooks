@@ -193,3 +193,31 @@ test.describe('product pages', () => {
     await expect(page.getByRole('group', { name: 'Review pipeline' }).locator('..')).toHaveScreenshot('review-report.png');
   });
 });
+
+test.describe('dark appearance', () => {
+  const pick = async (page: Page, theme: 'light' | 'dark') => {
+    await page.getByRole('button', { name: `Switch to the ${theme} appearance` }).click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+  };
+
+  test('home page in dark', async ({ page }) => {
+    await open(page, '');
+    await pick(page, 'dark');
+
+    await expect(page).toHaveScreenshot('dark-home.png', { fullPage: true, mask: [page.locator('video')] });
+  });
+
+  test('documentation article in dark', async ({ page }) => {
+    await open(page, 'docs/getting-started/');
+    await pick(page, 'dark');
+
+    await expect(page).toHaveScreenshot('dark-docs.png', { fullPage: true });
+  });
+
+  test('example workbench in dark', async ({ page }) => {
+    await open(page, 'examples/shared-state-and-selective-subscriptions/');
+    await pick(page, 'dark');
+
+    await expect(page.locator('.workbench')).toHaveScreenshot('dark-workbench.png');
+  });
+});

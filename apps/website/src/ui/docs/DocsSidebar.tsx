@@ -33,7 +33,7 @@ export function DocsSidebar({ sections, currentId, drawer = false }: DocsSidebar
           <h3 className="mx-0 mt-0 mb-[7px] ml-[10px] text-10 font-[650] tracking-[0.08em] text-muted uppercase">{section.title}</h3>
           {section.pages.map((page) => (
             <a
-              className={`block border-l-2 border-transparent leading-[1.5] text-[#69716b] hover:bg-soft hover:text-ink aria-[current=page]:border-green aria-[current=page]:bg-green-soft aria-[current=page]:font-[550] aria-[current=page]:text-green ${drawer ? 'px-[10px] py-[9px] text-13' : 'px-[10px] py-[6px] text-11'}`}
+              className={`block border-l-2 border-transparent leading-[1.5] text-[light-dark(#69716b,#858e87)] hover:bg-soft hover:text-ink aria-[current=page]:border-green aria-[current=page]:bg-green-soft aria-[current=page]:font-[550] aria-[current=page]:text-green ${drawer ? 'px-[10px] py-[9px] text-13' : 'px-[10px] py-[6px] text-11'}`}
               href={withBase(`docs/${page.id}/`)}
               aria-current={page.id === currentId ? 'page' : undefined}
               key={page.id}

@@ -22,7 +22,7 @@
 .tasks-open {
   display: inline-flex;
   align-items: center;
-  border: 1px solid #dce8df;
+  border: 1px solid light-dark(#dce8df, #1d241f);
   background: var(--color-green-soft);
   color: var(--color-green);
   padding: 3px 9px;
@@ -102,7 +102,7 @@
 
 .task-row__text--done {
   text-decoration: line-through;
-  color: #808980;
+  color: light-dark(#808980, #6d766d);
 }
 
 .task-row button {
@@ -118,7 +118,7 @@
   margin: 13px 0 0;
   padding: 60px 20px;
   text-align: center;
-  border: 1px dashed #c9d4cb;
+  border: 1px dashed light-dark(#c9d4cb, #2c332d);
   border-radius: 8px;
 }
 

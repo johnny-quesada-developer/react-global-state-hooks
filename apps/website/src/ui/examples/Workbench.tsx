@@ -118,7 +118,7 @@ export function Workbench({ title, demo, files, outcome, points }: WorkbenchProp
           </div>
         </div>
 
-        <div className="workbench-source min-w-0 border-l border-line bg-[#fcfdfa] max-md:border-t max-md:border-l-0">
+        <div className="workbench-source min-w-0 border-l border-line bg-[light-dark(#fcfdfa,#0e1210)] max-md:border-t max-md:border-l-0">
           <div className="flex gap-3 border-b border-line px-4" role="tablist" aria-label="Example explanation" ref={tabs} onKeyDown={onTabKey}>
             <button type="button" role="tab" id="tab-code" className={tab} aria-selected={pane === 'code'} aria-controls="bench-code" tabIndex={pane === 'code' ? 0 : -1} onClick={() => setPane('code')}>
               Code

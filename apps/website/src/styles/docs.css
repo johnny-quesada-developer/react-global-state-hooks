@@ -43,7 +43,7 @@
 .doc-content li {
   font-size: calc(14px * var(--type-scale));
   line-height: 1.85;
-  color: #57615a;
+  color: light-dark(#57615a, #95a099);
 }
 
 .doc-content p {
@@ -68,7 +68,7 @@
 
 .doc-content code:not(pre code) {
   background: var(--color-soft);
-  border: 1px solid #edf0ec;
+  border: 1px solid light-dark(#edf0ec, #181b19);
   padding: 1px 4px;
   border-radius: 4px;
   font-size: 0.86em;
@@ -137,11 +137,11 @@
 
 /* Callouts: icon or textual status, short title, supporting text. */
 .callout {
-  border: 1px solid #dae5dd;
+  border: 1px solid light-dark(#dae5dd, #1f2621);
   border-left: 3px solid var(--color-green);
   padding: 18px 20px;
   border-radius: 6px;
-  background: #f6f9f5;
+  background: light-dark(#f6f9f5, #111513);
   margin: 27px 0;
   display: flex;
   align-items: flex-start;
@@ -192,13 +192,13 @@
 
 .callout.warning {
   background: var(--color-amber-soft);
-  border-color: #eaddc3;
+  border-color: light-dark(#eaddc3, #2e2514);
   border-left-color: var(--color-amber);
 }
 
 .callout.error {
   background: var(--color-red-soft);
-  border-color: #edd4cf;
+  border-color: light-dark(#edd4cf, #352522);
   border-left-color: var(--color-red);
 }
 

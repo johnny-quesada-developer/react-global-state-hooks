@@ -5,10 +5,18 @@
 }
 
 html {
-  color-scheme: light;
+  color-scheme: light dark;
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
   scroll-padding-top: 110px;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
 }
 
 body {
@@ -86,8 +94,8 @@ textarea {
   min-width: 0;
   max-width: 100%;
   color: var(--color-ink);
-  background: #fff;
-  border: 1px solid #cad1cc;
+  background: light-dark(#fff, var(--color-surface));
+  border: 1px solid light-dark(#cad1cc, #2f3431);
   padding: 10px 12px;
 }
 
@@ -112,7 +120,7 @@ input[type='radio'] {
 }
 
 ::selection {
-  background: #dceadf;
+  background: light-dark(#dceadf, #1b241d);
   color: var(--color-ink);
 }
 

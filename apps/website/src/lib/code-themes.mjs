@@ -13,9 +13,19 @@ export const CODE_THEMES = [
   { id: 'rgsh', label: 'Site palette', theme: rgshLight },
 ];
 
-export const DEFAULT_CODE_THEME = 'vscode-light';
+/** The stored value; 'auto' follows the site appearance. */
+export const DEFAULT_CODE_THEME = 'auto';
 
-export const CODE_THEME_IDS = CODE_THEMES.map((entry) => entry.id);
+export const CODE_THEME_OPTIONS = [{ id: 'auto', label: 'Match appearance' }, ...CODE_THEMES.map(({ id, label }) => ({ id, label }))];
+
+export const CODE_THEME_IDS = CODE_THEME_OPTIONS.map((entry) => entry.id);
+
+/** Turns the stored value into a real theme id. */
+export function resolveCodeTheme(stored, dark) {
+  if (stored && stored !== 'auto' && CODE_THEMES.some((entry) => entry.id === stored)) return stored;
+
+  return dark ? 'vscode-dark' : 'vscode-light';
+}
 
 /** { id: theme } for Shiki's multi-theme output. */
 export const shikiThemes = Object.fromEntries(CODE_THEMES.map((entry) => [entry.id, entry.theme]));

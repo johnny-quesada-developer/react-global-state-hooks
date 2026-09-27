@@ -283,7 +283,7 @@ html .workbench-source {
 
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 3px #acc9b4;
+    box-shadow: 0 0 0 3px light-dark(#acc9b4, #2c4534);
   }
   100% {
     box-shadow: 0 0 0 0 transparent;
@@ -305,8 +305,8 @@ html .workbench-source {
   content: '';
   width: 12px;
   height: 23px;
-  border-bottom: 1px solid #d1d7e3;
-  border-left: 1px solid #d1d7e3;
+  border-bottom: 1px solid light-dark(#d1d7e3, #282c34);
+  border-left: 1px solid light-dark(#d1d7e3, #282c34);
   border-bottom-left-radius: 4px;
   position: absolute;
   left: calc(var(--depth) * 23px - 12px);
@@ -330,19 +330,19 @@ html .workbench-source {
 /* Home hero: dotted application stage and signal traces. */
 .visual-pane {
   background:
-    radial-gradient(#dfe6dc 0.7px, transparent 0.7px) 0 0 / 16px 16px,
-    #fbfcfa;
+    radial-gradient(light-dark(#dfe6dc, #20241e) 0.7px, transparent 0.7px) 0 0 / 16px 16px,
+    light-dark(#fbfcfa, #0f1310);
 }
 
 .branch .track {
   fill: none;
-  stroke: #d4ded2;
+  stroke: light-dark(#d4ded2, #252b24);
   stroke-width: 1.1;
 }
 
 .branch .signal {
   fill: none;
-  stroke: #5a8e61;
+  stroke: light-dark(#5a8e61, #54885b);
   stroke-width: 1.6;
   opacity: 0;
 }
@@ -363,7 +363,7 @@ html .workbench-source {
   left: 50%;
   transform: translate(-50%, 20px);
   background: var(--color-ink);
-  color: #fff;
+  color: light-dark(#fff, var(--color-paper));
   font-size: calc(12px * var(--type-scale));
   border-radius: 7px;
   padding: 12px 19px;

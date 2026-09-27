@@ -69,13 +69,13 @@ export function WatchVideo({ ids, children, className, title }: WatchVideoProps)
       <dialog className="w-[min(980px,calc(100%-32px))] p-0" ref={dialog} aria-labelledby="video-title" onClose={onClose} onClick={onBackdrop}>
         <div className="flex items-center justify-between px-[19px] py-3 text-12 max-sm:text-11">
           <span id="video-title">{title ?? `react-global-state-hooks · ${current?.title}`}</span>
-          <button type="button" className="inline-flex size-[34px] items-center justify-center rounded-[5px] text-muted hover:bg-[#eef1ed] hover:text-ink" aria-label="Close video" onClick={() => dialog.current?.close()}>
+          <button type="button" className="inline-flex size-[34px] items-center justify-center rounded-[5px] text-muted hover:bg-[light-dark(#eef1ed,#171b18)] hover:text-ink" aria-label="Close video" onClick={() => dialog.current?.close()}>
             <Icon name="close" />
           </button>
         </div>
         {current && (
           <video
-            className={`block w-full bg-[#192016] ${!wide && current.mobile ? 'mx-auto aspect-[9/16] max-h-[70vh]' : 'aspect-video'}`}
+            className={`block w-full bg-[light-dark(#192016,#e5efe1)] ${!wide && current.mobile ? 'mx-auto aspect-[9/16] max-h-[70vh]' : 'aspect-video'}`}
             ref={player}
             controls
             playsInline

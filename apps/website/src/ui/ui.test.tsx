@@ -7,7 +7,7 @@ import { DEFAULT_CODE_THEME } from '../lib/code-themes.mjs';
 
 beforeEach(() => {
   window.localStorage.clear();
-  usePreferences.setState({ packageManager: 'npm', codeTheme: DEFAULT_CODE_THEME });
+  usePreferences.setState({ packageManager: 'npm', codeTheme: DEFAULT_CODE_THEME, theme: 'system' });
 });
 afterEach(cleanup);
 

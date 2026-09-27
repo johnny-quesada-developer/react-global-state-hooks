@@ -27,9 +27,9 @@ export function PanelTop({ className, ...props }: ComponentPropsWithoutRef<'div'
 
 /** Reference `.mini-node`: a small framed label, optionally accented green (state) or blue (scope). */
 const miniNode = tv({
-  base: 'flex items-center justify-between rounded-[6px] border border-[#dde5df] bg-paper px-[15px] py-3 font-mono text-11 whitespace-normal',
+  base: 'flex items-center justify-between rounded-[6px] border border-[light-dark(#dde5df,#202422)] bg-paper px-[15px] py-3 font-mono text-11 whitespace-normal',
   variants: {
-    tone: { plain: '', accent: 'border-[#cfdfd3] bg-green-soft', blue: 'border-[#d6ddeb] bg-blue-soft' },
+    tone: { plain: '', accent: 'border-[light-dark(#cfdfd3,#222d25)] bg-green-soft', blue: 'border-[light-dark(#d6ddeb,#232830)] bg-blue-soft' },
   },
   defaultVariants: { tone: 'plain' },
 });

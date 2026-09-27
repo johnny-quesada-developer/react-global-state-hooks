@@ -22,6 +22,7 @@
   --color-terminal: #202724;
   --color-terminal-muted: #a8b9ae;
   --color-terminal-text: #e3eae4;
+  --color-on-ink: #ffffff;
 
   /* type */
   --font-sans: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
@@ -81,6 +82,55 @@
 @media (max-width: 760px) {
   :root {
     --type-scale: 1.16;
+  }
+}
+
+/*
+ * Dark palette. It applies when the visitor picks dark, and when they have no stored choice but
+ * their system asks for dark (hence the :not([data-theme='light']) guard). The token names do not
+ * change, so every component that reads --color-* follows along.
+ */
+:root[data-theme='dark'] {
+  --color-paper: #0f1512;
+  --color-ink: #e7ece8;
+  --color-muted: #9daaa2;
+  --color-line: #2a332d;
+  --color-soft: #171d1a;
+  --color-surface: #141a17;
+  --color-green: #6cbf92;
+  --color-green-soft: #16261d;
+  --color-blue: #9aaeda;
+  --color-blue-soft: #1a2130;
+  --color-amber: #d2aa62;
+  --color-amber-soft: #2a2416;
+  --color-red: #e28d82;
+  --color-red-soft: #2e1c1a;
+  --color-terminal: #0b100d;
+  --color-terminal-muted: #9fb3a6;
+  --color-terminal-text: #e3eae4;
+  --color-on-ink: #0f1512;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --color-paper: #0f1512;
+    --color-ink: #e7ece8;
+    --color-muted: #9daaa2;
+    --color-line: #2a332d;
+    --color-soft: #171d1a;
+    --color-surface: #141a17;
+    --color-green: #6cbf92;
+    --color-green-soft: #16261d;
+    --color-blue: #9aaeda;
+    --color-blue-soft: #1a2130;
+    --color-amber: #d2aa62;
+    --color-amber-soft: #2a2416;
+    --color-red: #e28d82;
+    --color-red-soft: #2e1c1a;
+    --color-terminal: #0b100d;
+    --color-terminal-muted: #9fb3a6;
+    --color-terminal-text: #e3eae4;
+    --color-on-ink: #0f1512;
   }
 }
 

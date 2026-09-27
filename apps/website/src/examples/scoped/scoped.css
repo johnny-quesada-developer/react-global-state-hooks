@@ -13,7 +13,7 @@
 .note-badge {
   display: inline-flex;
   align-items: center;
-  border: 1px solid #dce8df;
+  border: 1px solid light-dark(#dce8df, #1d241f);
   background: var(--color-green-soft);
   color: var(--color-green);
   padding: 3px 9px;
@@ -25,7 +25,7 @@
 }
 
 .note-card:nth-child(even) .note-badge {
-  border-color: #e2e6ef;
+  border-color: light-dark(#e2e6ef, #1e2126);
   background: var(--color-blue-soft);
   color: var(--color-blue);
 }
@@ -44,7 +44,7 @@
   min-height: 90px;
   font-size: calc(12px * var(--type-scale));
   line-height: 1.7;
-  border-color: #e4e9e2;
+  border-color: light-dark(#e4e9e2, #1d211e);
   padding: 10px;
   resize: vertical;
 }
