@@ -28,9 +28,9 @@ const label = 'mb-[9px] text-10 tracking-[0.08em] text-muted uppercase';
     <section class="grid grid-cols-[1.4fr_.8fr] items-center gap-[90px] pt-[75px] pb-[60px] max-3xl:gap-[45px] max-xl:grid-cols-[1.2fr_.8fr] max-xl:gap-[30px] max-md:grid-cols-1 max-md:gap-[30px] max-md:pt-[43px] max-md:pb-[38px]">
       <div class="min-w-0">
         <Eyebrow className="mb-[21px]">The engineer behind the library</Eyebrow>
-        <h1 class="text-[64px] max-xl:text-[52px] max-md:text-[47px]">I build products.<br />And the foundations<br />they grow on.</h1>
+        <h1 class="text-[calc(64px*var(--type-scale))] max-xl:text-[calc(52px*var(--type-scale))] max-md:text-[calc(47px*var(--type-scale))]">I build products.<br />And the foundations<br />they grow on.</h1>
         <p class="text-16 leading-[1.8] max-md:text-15">
-          Johnny Quesada, also published as J. Esteban Quesada. Senior product engineer, open-source author, and a bridge from an idea to a working system: full-stack architecture, React and TypeScript, performance, and developer tooling. Based in Spain, with more than twelve years of engineering experience.
+          Johnny Esteban Quesada. Senior product engineer, open-source author, and a bridge from an idea to a working system: full-stack architecture, React and TypeScript, performance, and developer tooling. Based in Spain, with more than twelve years of engineering experience.
         </p>
         <div class="mt-7 flex flex-wrap items-center gap-3">
           <ButtonLink variant="primary" icon="external" href={links.githubProfile} target="_blank" rel="noopener noreferrer">GitHub profile</ButtonLink>
@@ -70,7 +70,7 @@ const label = 'mb-[9px] text-10 tracking-[0.08em] text-muted uppercase';
         ].map(([kicker, title]) => (
           <div class="border-t border-line pt-[22px]">
             <Eyebrow className="mb-4">{kicker}</Eyebrow>
-            <h3 class="m-0 text-20 max-md:text-[21px]">{title}</h3>
+            <h3 class="m-0 text-20 max-md:text-[calc(21px*var(--type-scale))]">{title}</h3>
           </div>
         ))
       }
@@ -83,11 +83,11 @@ const label = 'mb-[9px] text-10 tracking-[0.08em] text-muted uppercase';
           <article class="grid grid-cols-[210px_1fr] gap-[50px] border-t border-line py-10 max-3xl:grid-cols-[175px_1fr] max-3xl:gap-[35px] max-md:grid-cols-1 max-md:gap-[17px] max-md:py-[30px]" id={study.id}>
             <div class="flex flex-col items-start gap-[13px] max-md:flex-row max-md:items-center max-md:gap-4">
               <span class="font-mono text-11 text-green">0{index + 1}</span>
-              <strong class="text-[23px] font-[550] tracking-[-0.04em] max-md:text-[21px]">{study.company}</strong>
+              <strong class="text-[calc(23px*var(--type-scale))] font-[550] tracking-[-0.04em] max-md:text-[calc(21px*var(--type-scale))]">{study.company}</strong>
               <span class="shrink-0 font-mono text-11 text-muted">{study.years}</span>
             </div>
             <div class="min-w-0">
-              <h3 class="mb-[22px] max-w-[620px] text-30 max-md:mb-5 max-md:text-[28px]">{study.headline}</h3>
+              <h3 class="mb-[22px] max-w-[620px] text-30 max-md:mb-5 max-md:text-[calc(28px*var(--type-scale))]">{study.headline}</h3>
               <p class="mb-3 max-w-[680px] text-13 leading-[1.8]">{study.context}</p>
               <p class="mb-3 max-w-[680px] text-13 leading-[1.8]">{study.problem}</p>
               <p class="mb-[26px] max-w-[680px] text-13 leading-[1.8]"><strong class="text-ink">My responsibility.</strong> {study.responsibility}</p>

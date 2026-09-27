@@ -26,7 +26,7 @@ export function RowLink({ href, kicker, title, text, external }: RowLinkProps) {
   const body = (
     <>
       {kicker && <span className="mb-5 max-md:mb-3">{kicker}</span>}
-      <h3 className="m-0 max-w-[230px] text-[21px] leading-[1.2] tracking-[-0.035em] group-hover:text-green max-md:max-w-none max-md:pr-[18px] max-md:text-22">
+      <h3 className="m-0 max-w-[230px] text-[calc(21px*var(--type-scale))] leading-[1.2] tracking-[-0.035em] group-hover:text-green max-md:max-w-none max-md:pr-[18px] max-md:text-22">
         {title}
       </h3>
       {text && <p className="mt-3 mb-0 max-w-[270px] text-13 leading-[1.75] max-md:max-w-none">{text}</p>}

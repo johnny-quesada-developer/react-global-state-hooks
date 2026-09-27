@@ -15,7 +15,9 @@ body {
   margin: 0;
   background: var(--color-paper);
   color: var(--color-ink);
-  font: 15px/1.65 var(--font-sans);
+  font-family: var(--font-sans);
+  font-size: calc(15px * var(--type-scale));
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
   display: flex;
@@ -132,22 +134,22 @@ h4 {
 }
 
 h1 {
-  font-size: clamp(38px, 4.6vw, 65px);
+  font-size: calc(clamp(38px, 4.6vw, 65px) * var(--type-scale));
   margin-bottom: 22px;
 }
 
 h2 {
-  font-size: clamp(30px, 3vw, 42px);
+  font-size: calc(clamp(30px, 3vw, 42px) * var(--type-scale));
   margin-bottom: 20px;
 }
 
 h3 {
-  font-size: 22px;
+  font-size: calc(22px * var(--type-scale));
   letter-spacing: -0.025em;
 }
 
 h4 {
-  font-size: 17px;
+  font-size: calc(17px * var(--type-scale));
   letter-spacing: -0.02em;
 }
 
@@ -162,7 +164,7 @@ kbd {
 }
 
 kbd {
-  font-size: 10px;
+  font-size: calc(10px * var(--type-scale));
   border: 1px solid var(--color-line);
   padding: 0 4px;
   min-width: 16px;
@@ -201,24 +203,9 @@ dialog::backdrop {
   backdrop-filter: blur(3px);
 }
 
-/* Phones: one step larger across the small end of the scale, so supporting text stays readable. */
 @media (max-width: 760px) {
   html {
     scroll-padding-top: 126px;
-  }
-
-  :root {
-    --text-9: 10px;
-    --text-10: 11px;
-    --text-11: 12px;
-    --text-12: 13px;
-    --text-13: 14px;
-    --text-14: 15px;
-    --text-15: 16px;
-  }
-
-  body {
-    font-size: 16px;
   }
 }
 

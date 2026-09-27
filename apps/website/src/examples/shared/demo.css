@@ -36,7 +36,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  font-size: 11px;
+  font-size: calc(11px * var(--type-scale));
   font-weight: 550;
   color: var(--color-ink);
 }
@@ -45,14 +45,14 @@
 .demo-card select,
 .demo-card textarea {
   width: 100%;
-  font-size: 12px;
+  font-size: calc(12px * var(--type-scale));
   padding: 9px;
   border-radius: 7px;
 }
 
 .demo-card > span,
 .demo-title {
-  font-size: 11px;
+  font-size: calc(11px * var(--type-scale));
   font-weight: 550;
   color: var(--color-ink);
 }
@@ -68,7 +68,7 @@
   border: 1px solid #dbe1dc;
   border-radius: 7px;
   background: var(--color-paper);
-  font-size: 12px;
+  font-size: calc(12px * var(--type-scale));
   font-weight: 550;
   color: var(--color-ink);
   cursor: pointer;
@@ -102,7 +102,7 @@
   background: transparent;
   padding: 0;
   min-height: 0;
-  font-size: 13px;
+  font-size: calc(13px * var(--type-scale));
   font-weight: 550;
   color: var(--color-green);
 }
@@ -128,7 +128,7 @@
   padding: 0;
   margin-bottom: 8px;
   font-weight: 550;
-  font-size: 11px;
+  font-size: calc(11px * var(--type-scale));
   color: var(--color-ink);
 }
 
@@ -152,7 +152,7 @@
   display: block;
   padding: 5px 8px;
   border-radius: 4px;
-  font-size: 10px;
+  font-size: calc(10px * var(--type-scale));
   color: var(--color-muted);
 }
 
@@ -169,7 +169,7 @@
 .demo-json {
   margin: 0;
   padding: 10px 12px;
-  font-size: 10px;
+  font-size: calc(10px * var(--type-scale));
   line-height: 1.8;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
@@ -181,7 +181,7 @@
 
 .demo-caption {
   margin: 0;
-  font-size: 11px;
+  font-size: calc(11px * var(--type-scale));
   line-height: 1.6;
   color: var(--color-muted);
 }
@@ -198,7 +198,7 @@
   display: inline-flex;
   gap: 4px;
   align-items: center;
-  font-size: 9px;
+  font-size: calc(9px * var(--type-scale));
   font-family: var(--font-mono);
   color: var(--color-green);
   background: var(--color-green-soft);
@@ -228,21 +228,21 @@
   .demo-card > span,
   .demo-title,
   .segmented legend {
-    font-size: 12px;
+    font-size: calc(12px * var(--type-scale));
   }
   .demo-card input:not([type='checkbox']):not([type='radio']),
   .demo-card select,
   .demo-card textarea,
   .demo-card button,
   .demo-button {
-    font-size: 14px;
+    font-size: calc(14px * var(--type-scale));
   }
   .segmented span {
-    font-size: 12px;
+    font-size: calc(12px * var(--type-scale));
   }
   .demo-caption,
   .demo-json {
-    font-size: 12px;
+    font-size: calc(12px * var(--type-scale));
   }
 }
 

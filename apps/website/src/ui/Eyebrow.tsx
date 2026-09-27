@@ -18,7 +18,7 @@ export function SectionHead({ kicker, title, lead, className, id }: SectionHeadP
   return (
     <div className={`mb-[35px] block max-w-[760px] ${className ?? ''}`.trim()}>
       <Eyebrow className="mb-4">{kicker}</Eyebrow>
-      <h2 className="mb-[14px] text-38 leading-[1.15] max-md:text-[31px]" id={id}>
+      <h2 className="mb-[14px] text-38 leading-[1.15] max-md:text-[calc(31px*var(--type-scale))]" id={id}>
         {title}
       </h2>
       {lead && <p className="m-0 max-w-[660px] text-16 leading-[1.75] max-md:text-14">{lead}</p>}

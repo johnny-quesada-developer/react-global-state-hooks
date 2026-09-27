@@ -66,7 +66,7 @@ export function DocsArticle({ id, title, description, section, kind, status, sec
 
         <article className="min-w-0 pt-[52px] max-md:pt-[30px]">
           <Breadcrumb items={[{ label: 'Docs', href: withBase('docs/') }, { label: section }]} className="max-md:text-10" />
-          <h1 className="max-w-[690px] text-[43px] leading-[1.12] tracking-[-0.05em] [overflow-wrap:anywhere] max-md:text-[35px] max-md:leading-[1.16] max-xs:text-32">
+          <h1 className="max-w-[690px] text-[calc(43px*var(--type-scale))] leading-[1.12] tracking-[-0.05em] [overflow-wrap:anywhere] max-md:text-[calc(35px*var(--type-scale))] max-md:leading-[1.16] max-xs:text-32">
             {title}
           </h1>
           <p className="max-w-[650px] text-16 leading-[1.75] max-md:text-15">{description}</p>

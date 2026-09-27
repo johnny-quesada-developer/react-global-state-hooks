@@ -26,26 +26,26 @@
   /* type */
   --font-sans: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
   --font-mono: SFMono-Regular, Consolas, 'Liberation Mono', monospace;
-  --text-8: 8px;
-  --text-9: 9px;
-  --text-10: 10px;
-  --text-11: 11px;
-  --text-12: 12px;
-  --text-13: 13px;
-  --text-14: 14px;
-  --text-15: 15px;
-  --text-16: 16px;
-  --text-17: 17px;
-  --text-18: 18px;
-  --text-19: 19px;
-  --text-20: 20px;
-  --text-22: 22px;
-  --text-24: 24px;
-  --text-26: 26px;
-  --text-30: 30px;
-  --text-32: 32px;
-  --text-38: 38px;
-  --text-45: 45px;
+  --text-8: calc(8px * var(--type-scale));
+  --text-9: calc(9px * var(--type-scale));
+  --text-10: calc(10px * var(--type-scale));
+  --text-11: calc(11px * var(--type-scale));
+  --text-12: calc(12px * var(--type-scale));
+  --text-13: calc(13px * var(--type-scale));
+  --text-14: calc(14px * var(--type-scale));
+  --text-15: calc(15px * var(--type-scale));
+  --text-16: calc(16px * var(--type-scale));
+  --text-17: calc(17px * var(--type-scale));
+  --text-18: calc(18px * var(--type-scale));
+  --text-19: calc(19px * var(--type-scale));
+  --text-20: calc(20px * var(--type-scale));
+  --text-22: calc(22px * var(--type-scale));
+  --text-24: calc(24px * var(--type-scale));
+  --text-26: calc(26px * var(--type-scale));
+  --text-30: calc(30px * var(--type-scale));
+  --text-32: calc(32px * var(--type-scale));
+  --text-38: calc(38px * var(--type-scale));
+  --text-45: calc(45px * var(--type-scale));
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 
@@ -72,6 +72,16 @@
   --breakpoint-2xl: 1101px;
   --breakpoint-3xl: 1191px;
   --breakpoint-4xl: 1601px;
+}
+
+:root {
+  --type-scale: 1.16;
+}
+
+@media (max-width: 760px) {
+  :root {
+    --type-scale: 1.16;
+  }
 }
 
 @custom-variant hover-none (@media (hover: none));

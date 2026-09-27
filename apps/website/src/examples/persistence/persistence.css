@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  font-size: 12px;
+  font-size: calc(12px * var(--type-scale));
   padding: 14px 0;
   border-bottom: 1px solid var(--color-line);
 }
@@ -14,13 +14,13 @@
 
 .pref-row > div > strong {
   display: block;
-  font-size: 12px;
+  font-size: calc(12px * var(--type-scale));
   color: var(--color-ink);
 }
 
 .pref-row > div > p {
   margin: 2px 0 0;
-  font-size: 12px;
+  font-size: calc(12px * var(--type-scale));
 }
 
 .pref-row .segmented legend {
@@ -36,7 +36,7 @@
   align-items: center;
   justify-content: space-between;
   font-weight: 550 !important;
-  font-size: 12px !important;
+  font-size: calc(12px * var(--type-scale)) !important;
   padding: 14px 0;
   border-bottom: 1px solid var(--color-line);
 }
@@ -54,7 +54,7 @@
 
 .pref-preview strong {
   display: block;
-  font-size: 16px;
+  font-size: calc(16px * var(--type-scale));
   margin-bottom: 8px;
 }
 
@@ -97,7 +97,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  font-size: 13px;
+  font-size: calc(13px * var(--type-scale));
   color: var(--color-green);
 }
 

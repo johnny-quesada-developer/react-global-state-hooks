@@ -18,7 +18,7 @@
   color: var(--color-green);
   padding: 3px 9px;
   border-radius: 5px;
-  font-size: 10px;
+  font-size: calc(10px * var(--type-scale));
   letter-spacing: 0.045em;
   line-height: 1.7;
   font-weight: 550;
@@ -42,7 +42,7 @@
 
 .scoped-field textarea {
   min-height: 90px;
-  font-size: 12px;
+  font-size: calc(12px * var(--type-scale));
   line-height: 1.7;
   border-color: #e4e9e2;
   padding: 10px;
@@ -50,7 +50,7 @@
 }
 
 .scoped-field output {
-  font-size: 9px;
+  font-size: calc(9px * var(--type-scale));
   color: var(--color-muted);
   font-family: var(--font-mono);
 }
@@ -58,7 +58,7 @@
 .scoped-field button {
   justify-self: start;
   min-height: 30px;
-  font-size: 11px;
+  font-size: calc(11px * var(--type-scale));
 }
 
 .scoped-actions {

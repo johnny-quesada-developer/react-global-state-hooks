@@ -77,7 +77,7 @@ const installCopy =
     </a>
     <h1
       id="hero-title"
-      class="mx-auto mt-6 mb-5 max-w-[1100px] text-[clamp(56px,6.1vw,87px)] leading-[1.025] font-[550] tracking-[-0.065em] max-2xl:text-[76px] max-lg:text-[67px] max-sm:mt-[23px] max-sm:mb-[18px] max-sm:text-[clamp(39px,9.25vw,59px)] max-sm:leading-[1.075] max-sm:tracking-[-0.06em] 4xl:text-[91px]"
+      class="mx-auto mt-6 mb-5 max-w-[1100px] text-[calc(clamp(56px,6.1vw,87px)*var(--type-scale))] leading-[1.025] font-[550] tracking-[-0.065em] max-2xl:text-[calc(76px*var(--type-scale))] max-lg:text-[calc(67px*var(--type-scale))] max-sm:mt-[23px] max-sm:mb-[18px] max-sm:text-[calc(clamp(39px,9.25vw,59px)*var(--type-scale))] max-sm:leading-[1.075] max-sm:tracking-[-0.06em] 4xl:text-[calc(91px*var(--type-scale))]"
     >
       React state.<br /><span class="text-[#464e48]">Without the guesswork.</span>
     </h1>
@@ -111,7 +111,7 @@ const installCopy =
     <div class="mb-[35px] flex items-end justify-between gap-[42px] max-2xl:gap-[30px] max-lg:block max-sm:mb-[27px]">
       <div>
         <div class="eyebrow-mono"><span class="h-px w-[26px] bg-current"></span> FOR YOU. AND YOUR CODING AGENT. <span class="inline-block rounded-[3px] border border-[#d8ded5] px-1 py-px font-mono text-8 leading-[1.5] tracking-[0.02em] text-[#656d5d]">BETA</span></div>
-        <h2 id="agentic-title" class="mt-[18px] text-[clamp(34px,3.55vw,49px)] leading-[1.1] font-[520] tracking-[-0.045em] max-lg:text-[43px] max-sm:mt-[15px] max-sm:text-[36px]">Give your agent<br />runtime evidence.</h2>
+        <h2 id="agentic-title" class="mt-[18px] text-[calc(clamp(34px,3.55vw,49px)*var(--type-scale))] leading-[1.1] font-[520] tracking-[-0.045em] max-lg:text-[calc(43px*var(--type-scale))] max-sm:mt-[15px] max-sm:text-[calc(36px*var(--type-scale))]">Give your agent<br />runtime evidence.</h2>
       </div>
       <div class="max-w-[400px] pb-[3px] max-2xl:max-w-[360px] max-lg:mt-[23px] max-lg:max-w-[520px] max-sm:mt-[18px]">
         <p class="m-0 text-15 leading-[1.85] text-muted max-sm:text-13 max-sm:leading-[1.9]">Go beyond what the code should do. Inspect the state, run an action, and read back what actually changed. A shorter path from question to evidence.</p>
@@ -124,7 +124,7 @@ const installCopy =
   <section class="wrap grid grid-cols-[.92fr_1.25fr] items-center gap-[93px] border-t border-line py-[103px] max-2xl:gap-12 max-lg:grid-cols-[1fr_1.2fr] max-lg:gap-10 max-sm:flex max-sm:flex-col max-sm:items-stretch max-sm:gap-[30px] max-sm:py-[66px]" id="precision" aria-labelledby="precision-title">
     <div class="min-w-0">
       <div class="eyebrow-mono"><span class="h-px w-[26px] bg-current"></span> PRECISE SUBSCRIPTIONS</div>
-      <h2 id="precision-title" class="mt-[18px] text-[clamp(34px,3.55vw,49px)] leading-[1.1] font-[520] tracking-[-0.045em] max-lg:text-[36px] max-sm:mt-[15px] max-sm:text-[35px]">One field changes.<br />Not everything<br />needs to react.</h2>
+      <h2 id="precision-title" class="mt-[18px] text-[calc(clamp(34px,3.55vw,49px)*var(--type-scale))] leading-[1.1] font-[520] tracking-[-0.045em] max-lg:text-[calc(36px*var(--type-scale))] max-sm:mt-[15px] max-sm:text-[calc(35px*var(--type-scale))]">One field changes.<br />Not everything<br />needs to react.</h2>
       <p class="mt-[22px] mb-0 max-w-[350px] text-15 leading-[1.85] text-muted max-lg:text-13 max-sm:mt-[19px] max-sm:max-w-[450px]">A component should subscribe to what it uses. Select a name, a theme, or a derived value. Unrelated store changes stay unrelated.</p>
       <a class={`${textLink} mt-[25px] text-12 max-sm:mt-[18px]`} href={withBase('docs/selectors-and-derived-state/')}>Get precise with selectors <Icon name="arrow" className="arrow" /></a>
       <p class="mt-[22px] mb-0 max-w-[350px] text-10 leading-[1.7] text-[#676c62] max-sm:mt-[15px] max-sm:max-w-[440px] max-sm:text-9">This is about updates from a store subscription. Components can still render for other React reasons.</p>
@@ -136,7 +136,7 @@ const installCopy =
     <SelectorExplorer client:idle />
     <div class="min-w-0 pl-[6px] max-sm:order-first max-sm:pl-0">
       <div class="eyebrow-mono text-[#586b89]"><span class="h-px w-[26px] bg-current"></span> CHAINABLE SELECTORS</div>
-      <h2 id="selectors-title" class="mt-[18px] text-[clamp(34px,3.55vw,49px)] leading-[1.1] font-[520] tracking-[-0.045em] max-lg:text-[36px] max-sm:mt-[15px] max-sm:text-[35px]">Build on a selector.<br />Not on repetition.</h2>
+      <h2 id="selectors-title" class="mt-[18px] text-[calc(clamp(34px,3.55vw,49px)*var(--type-scale))] leading-[1.1] font-[520] tracking-[-0.045em] max-lg:text-[calc(36px*var(--type-scale))] max-sm:mt-[15px] max-sm:text-[calc(35px*var(--type-scale))]">Build on a selector.<br />Not on repetition.</h2>
       <p class="mt-[22px] mb-0 max-w-[350px] text-15 leading-[1.85] text-muted max-lg:text-13 max-sm:mt-[19px] max-sm:max-w-[450px]">Turn a slice into a reusable hook. Derive another hook from it. Share the same logic across components without copying the selection everywhere.</p>
       <a class={`${textLink} mt-[25px] text-12 max-sm:mt-[18px]`} href={`${withBase('docs/selectors-and-derived-state/')}#share-a-derivation-with-selector-hooks`}>Explore selector composition <Icon name="arrow" className="arrow" /></a>
       <p class="mt-[22px] mb-0 max-w-[350px] text-10 leading-[1.7] text-[#676c62] max-sm:mt-[15px] max-sm:max-w-[440px] max-sm:text-9">Selector hooks return values directly. Update the source store through its API. Use an equality option for derived arrays.</p>
@@ -145,7 +145,7 @@ const installCopy =
 
   <section class="wrap border-t border-line pt-[75px] pb-[84px] max-sm:py-[60px]" aria-labelledby="essentials-title">
     <div class="mb-[33px] flex items-end justify-between gap-[25px] max-sm:mb-[30px] max-sm:block">
-      <h2 id="essentials-title" class="max-w-[400px] text-[31px] leading-[1.1] font-[520] tracking-[-0.045em] max-sm:text-[28px]">Small API.<br />Room for the real world.</h2>
+      <h2 id="essentials-title" class="max-w-[400px] text-[calc(31px*var(--type-scale))] leading-[1.1] font-[520] tracking-[-0.045em] max-sm:text-[calc(28px*var(--type-scale))]">Small API.<br />Room for the real world.</h2>
       <p class="m-0 max-w-[300px] text-12 text-[#656c61] max-sm:mt-4 max-sm:max-w-[400px]">Start with one store. Add structure only where your application needs it.</p>
     </div>
     <div class="grid grid-cols-3 gap-10 max-lg:gap-[19px] max-sm:flex max-sm:flex-col max-sm:gap-[27px]">
@@ -166,7 +166,7 @@ const installCopy =
 
   <section class="wrap grid grid-cols-[.75fr_1.25fr] gap-[100px] border-t border-line pt-[67px] pb-20 max-2xl:gap-[65px] max-lg:grid-cols-[1fr_1.3fr] max-lg:gap-10 max-sm:grid-cols-1 max-sm:gap-[25px] max-sm:pt-[55px] max-sm:pb-[58px]" aria-labelledby="questions-title">
     <div>
-      <h2 id="questions-title" class="text-[29px] leading-[1.1] font-[520] tracking-[-0.045em] max-sm:text-[27px]">A few useful details.</h2>
+      <h2 id="questions-title" class="text-[calc(29px*var(--type-scale))] leading-[1.1] font-[520] tracking-[-0.045em] max-sm:text-[calc(27px*var(--type-scale))]">A few useful details.</h2>
       <p class="mt-[14px] mb-0 text-12 leading-[1.85] text-muted max-sm:mt-[10px]">No mystery around the small print.</p>
     </div>
     <div>
@@ -199,7 +199,7 @@ const installCopy =
 
   <section class="wrap pt-24 pb-[86px] text-center max-sm:pt-[68px] max-sm:pb-[62px]" aria-labelledby="closing-title">
     <div class="eyebrow-mono justify-center">LESS CEREMONY. MORE CLARITY.</div>
-    <h2 id="closing-title" class="mt-[15px] text-[clamp(35px,4.1vw,56px)] leading-[1.1] font-[520] tracking-[-0.045em] max-sm:text-[37px]">Your next store<br />starts here.</h2>
+    <h2 id="closing-title" class="mt-[15px] text-[calc(clamp(35px,4.1vw,56px)*var(--type-scale))] leading-[1.1] font-[520] tracking-[-0.045em] max-sm:text-[calc(37px*var(--type-scale))]">Your next store<br />starts here.</h2>
     <p class="mt-[17px] mb-0 text-14 text-[#646d5d] max-sm:mt-[15px] max-sm:text-12">A familiar hook. A precise subscription. A clearer way to build.</p>
     <div class="mt-[25px] flex flex-wrap items-center justify-center gap-3 max-sm:mt-[22px] max-sm:gap-[9px]">
       <ButtonLink variant="primary" icon="arrow" className="min-h-12 px-[22px] text-14 max-sm:min-h-[45px] max-sm:px-[14px] max-sm:text-12" href={gettingStarted}>Get started</ButtonLink>

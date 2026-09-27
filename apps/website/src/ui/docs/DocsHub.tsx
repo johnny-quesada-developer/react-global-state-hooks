@@ -28,7 +28,7 @@ export function DocsHub({ sections }: { sections: HubSection[] }) {
       <section className="grid grid-cols-[1.15fr_1fr] items-center gap-[70px] pt-[74px] pb-12 max-3xl:gap-[35px] max-xl:gap-[30px] max-md:grid-cols-[minmax(0,1fr)] max-md:gap-[25px] max-md:pt-[43px] max-md:pb-[30px]">
         <div className="min-w-0">
           <Eyebrow className="mb-[21px]">Documentation</Eyebrow>
-          <h1 className="max-xl:text-[46px] max-md:text-[43px] max-xs:text-38">
+          <h1 className="max-xl:text-[calc(46px*var(--type-scale))] max-md:text-[calc(43px*var(--type-scale))] max-xs:text-38">
             Small API.
             <br />
             Clear mental model.

@@ -259,7 +259,7 @@ export function HeroSequence() {
                   <span className="flex size-[25px] shrink-0 items-center justify-center rounded-full bg-[#eff1e8] text-9 text-[#5e704e]">{name[0]}</span>
                   <span>{name}</span>
                 </div>
-                <div className={`min-h-[19px] px-[10px] pb-2 font-mono text-8 max-lg:pl-[13px] max-sm:px-[9px] max-sm:text-[7px] ${changed ? 'text-[#426f49]' : 'text-[#656c61]'}`}>{nameBadge}</div>
+                <div className={`min-h-[19px] px-[10px] pb-2 font-mono text-8 max-lg:pl-[13px] max-sm:px-[9px] max-sm:text-[calc(7px*var(--type-scale))] ${changed ? 'text-[#426f49]' : 'text-[#656c61]'}`}>{nameBadge}</div>
               </div>
               <div className={`min-w-0 overflow-hidden rounded-control border bg-paper transition-[border-color,box-shadow] duration-[250ms] ${themeUpdated ? 'border-[#a2bfa3] shadow-[0_0_0_3px_#ecf3e9]' : 'border-[#dce3d9]'}`}>
                 <div className="flex items-center justify-between gap-[3px] border-b border-[#edf0e9] px-[10px] py-[7px] font-mono text-9 text-[#636c63] max-lg:px-[13px] max-lg:py-2 max-sm:px-[9px] max-sm:py-[7px] max-sm:text-8">
@@ -272,7 +272,7 @@ export function HeroSequence() {
                   </span>
                   <span>Light theme</span>
                 </div>
-                <div className={`min-h-[19px] px-[10px] pb-2 font-mono text-8 max-lg:pl-[13px] max-sm:px-[9px] max-sm:text-[7px] ${themeUpdated ? 'text-[#426f49]' : 'text-[#656c61]'}`}>{themeBadge}</div>
+                <div className={`min-h-[19px] px-[10px] pb-2 font-mono text-8 max-lg:pl-[13px] max-sm:px-[9px] max-sm:text-[calc(7px*var(--type-scale))] ${themeUpdated ? 'text-[#426f49]' : 'text-[#656c61]'}`}>{themeBadge}</div>
               </div>
             </div>
             <div className="mt-[14px] flex min-h-[25px] flex-wrap items-center justify-center gap-[7px] text-10 text-[#626d5d] max-sm:mt-3 max-sm:gap-[5px] max-sm:text-8">

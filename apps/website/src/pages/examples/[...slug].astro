@@ -62,7 +62,7 @@ const files = entry.data.sources.map((source) => {
     <section class="pt-12 pb-7 max-md:pt-8">
       <Breadcrumb items={[{ label: 'Examples', href: withBase('examples/') }, { label: entry.data.category }]} />
       <Eyebrow className="mb-[21px]">Interactive example · {entry.data.category}</Eyebrow>
-      <h1 class="max-w-[740px] text-45 max-md:text-[36px]">{entry.data.headline}</h1>
+      <h1 class="max-w-[740px] text-45 max-md:text-[calc(36px*var(--type-scale))]">{entry.data.headline}</h1>
       <p class="mb-4 max-w-[670px] text-15 max-md:text-14">{entry.data.description}</p>
     </section>
 
@@ -78,7 +78,7 @@ const files = entry.data.sources.map((source) => {
     <section class="grid grid-cols-[1.5fr_1fr] gap-[65px] py-10 max-md:grid-cols-1 max-md:gap-[10px] max-md:pt-8">
       <div>
         <Eyebrow className="mb-[21px]">Take it with you</Eyebrow>
-        <h2 class="text-[25px]">{entry.data.outcome}</h2>
+        <h2 class="text-[calc(25px*var(--type-scale))]">{entry.data.outcome}</h2>
       </div>
       <div>
         {

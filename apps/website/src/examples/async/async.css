@@ -57,7 +57,7 @@
 
 .async-status {
   margin: 0 0 10px;
-  font-size: 19px;
+  font-size: calc(19px * var(--type-scale));
   font-weight: 600;
   letter-spacing: -0.025em;
   color: var(--color-ink);
@@ -66,7 +66,7 @@
 
 .async-hint {
   margin: 0 0 16px;
-  font-size: 12px;
+  font-size: calc(12px * var(--type-scale));
   max-width: 260px;
 }
 
@@ -74,7 +74,7 @@
   margin: 0 0 16px;
   padding: 0;
   list-style: none;
-  font-size: 12px;
+  font-size: calc(12px * var(--type-scale));
   color: var(--color-muted);
 }
 
@@ -102,7 +102,7 @@
   align-items: center;
   gap: 9px !important;
   font-weight: 400 !important;
-  font-size: 13px !important;
+  font-size: calc(13px * var(--type-scale)) !important;
 }
 
 .async-stage-card {

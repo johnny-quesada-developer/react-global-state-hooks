@@ -154,7 +154,7 @@ export function HomeAgentWorkflow() {
                 WORKFLOW PREVIEW
               </span>
             </div>
-            <div className="px-[23px] py-6 font-mono text-12 leading-[1.85] max-2xl:px-[18px] max-2xl:py-[22px] max-2xl:text-[9.5px] max-lg:px-[14px] max-lg:py-[19px] max-lg:text-[8.5px] max-sm:px-[18px] max-sm:py-5 max-sm:text-10" aria-label="Illustrative agent terminal output" key={step}>
+            <div className="px-[23px] py-6 font-mono text-12 leading-[1.85] max-2xl:px-[18px] max-2xl:py-[22px] max-2xl:text-[calc(9.5px*var(--type-scale))] max-lg:px-[14px] max-lg:py-[19px] max-lg:text-[calc(8.5px*var(--type-scale))] max-sm:px-[18px] max-sm:py-5 max-sm:text-10" aria-label="Illustrative agent terminal output" key={step}>
               {terminals[step].map((line, index) =>
                 line.kind === 'success' ? (
                   <span className={`mt-[18px] inline-flex items-center gap-[7px] rounded-[5px] border border-[#495b3d] bg-[#2c3827] px-[9px] py-[5px] font-mono text-9 text-[#c2d4ad] max-lg:text-8 ${reduced ? '' : 'line-enter'}`} style={{ animationDelay: `${Math.min(index * 30, 150)}ms` }} key={index}>
