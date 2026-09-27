@@ -8,15 +8,15 @@
 
 <div align="center">
 
-**State that moves with your React Native app.**
+**Shared state that feels like `useState`.**
 
-Keep screens in sync with shared hooks, focused subscriptions, and asynchronous persistence. Bring the same state model to app-wide data and isolated flows, with typed actions and storage adapters that fit your mobile application.
+Share state across your React Native screens with the familiar `useState` API, subscribe to only the slice a component needs, and grow into typed actions, chainable selectors, and scoped stores. Persist what matters with asynchronous storage.
 
 [![npm version](https://img.shields.io/npm/v/react-native-global-state-hooks.svg)](https://www.npmjs.com/package/react-native-global-state-hooks)
 [![Downloads](https://img.shields.io/npm/dm/react-native-global-state-hooks.svg)](https://www.npmjs.com/package/react-native-global-state-hooks)
 [![License](https://img.shields.io/npm/l/react-native-global-state-hooks.svg)](https://github.com/johnny-quesada-developer/react-global-state-hooks/blob/master/LICENSE)
 
-[**Website**](https://johnny-quesada-developer.github.io/react-global-state-hooks/) · [**Documentation**](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/) · [**Examples**](https://johnny-quesada-developer.github.io/react-global-state-hooks/examples/) · [**DevTools**](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/devtools/)
+[**Website**](https://johnny-quesada-developer.github.io/react-global-state-hooks/) · [**Documentation**](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/) · [**Examples**](https://johnny-quesada-developer.github.io/react-global-state-hooks/examples/) · [**Platform guide**](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/platform-and-versions/)
 
 Created by [Johnny Quesada](https://johnny-quesada-developer.github.io/react-global-state-hooks/about/), author of the React Global State Hooks family.
 
@@ -32,15 +32,15 @@ import { createGlobalState } from "react-native-global-state-hooks";
 export const useCounter = createGlobalState(0);
 ```
 
-A shared store, ready to use across your screens. Global hooks work without a provider; use `createContext` for isolated flows.
+A shared store, ready to use. Global hooks work without a provider; use `createContext` when a subtree needs its own instance.
 
 ```tsx
+// Use it anywhere, instantly
 import { Button } from "react-native";
 
 function Counter() {
   const [count, setCount] = useCounter();
-
-  return <Button title={`Count: ${count}`} onPress={() => setCount((current) => current + 1)} />;
+  return <Button title={`Count: ${count}`} onPress={() => setCount(count + 1)} />;
 }
 ```
 
@@ -50,46 +50,47 @@ function Counter() {
 
 ### **Familiar React API**
 
-If you know `useState`, the basic API already feels familiar:
+If you know `useState`, you already know the API.
 
 ```tsx
 // Local state
 const [count, setCount] = useState(0);
 
-// Global state
+// Shared state
 const [count, setCount] = useCounter();
 ```
 
-### **Focused subscriptions**
+### **Precise Subscriptions**
 
-Subscribe to only the part of the state your component needs.
+Subscribe to a slice, so unrelated store changes do not re-render your component.
 
 ```tsx
+// Only re-renders when name changes
 const [name] = useStore((state) => state.user.name);
 ```
 
-The component only needs to react when its selected value changes.
-
 ### **Chainable Selectors**
 
-Build reusable state hooks from other selector hooks.
+Build reusable state hooks on top of other selector hooks.
 
 ```tsx
 const useUsers = useStore.createSelectorHook((state) => state.users);
 
-const useAdmins = useUsers.createSelectorHook((users) => users.filter((user) => user.role === "admin"));
+const useAdmins = useUsers.createSelectorHook((users) => users.filter((user) => user.isAdmin));
 ```
 
 ### **Actions (Optional)**
 
-Keep mutation logic close to the store when you want more structure.
+Keep mutation logic next to the store when a feature needs more structure.
 
 ```tsx
-const useCounter = createGlobalState(0, {
+const useAuth = createGlobalState(null, {
   actions: {
-    increment(amount = 1) {
-      return ({ setState, getState }) => {
-        setState(getState() + amount);
+    login(credentials) {
+      return async ({ setState }) => {
+        const user = await api.login(credentials);
+
+        setState(user);
       };
     },
   },
@@ -98,33 +99,26 @@ const useCounter = createGlobalState(0, {
 
 ### **Context Mode**
 
-Need isolated state instead of app-wide state? Use the same state model inside a Provider.
+Need an isolated instance instead of app-wide state? Same state model, inside a provider.
 
 ```tsx
-const Form = createContext({
-  name: "",
-  email: "",
-});
+const Form = createContext({ name: "", email: "" });
 
 <Form.Provider>
   <FormFields />
 </Form.Provider>;
 ```
 
-### **Native Async Persistence**
+### **Persistence with Async Storage**
 
-Persist state with React Native async storage semantics.
+Keep preferences and drafts across app restarts.
 
 ```tsx
 const useSettings = createGlobalState(
-  { theme: "dark" as "dark" | "light" },
+  { theme: "dark" },
   {
     asyncStorage: {
       key: "settings",
-      validator: ({ restored, initial }) => {
-        if (!validateStateIntegrity(restored)) return initial;
-        return restored;
-      },
     },
   },
 );
@@ -135,12 +129,9 @@ const useSettings = createGlobalState(
 Read, update, or subscribe to state outside React components.
 
 ```tsx
-const currentUser = useAuth.getState().user;
+const token = useAuth.getState().token;
 
-useAuth.setState((state) => ({
-  ...state,
-  user: nextUser,
-}));
+useAuth.setState({ user: nextUser });
 ```
 
 ---
@@ -151,26 +142,17 @@ useAuth.setState((state) => ({
 npm install react-native-global-state-hooks
 ```
 
-or
+**Platform-specific with built-in storage:**
 
-```bash
-yarn add react-native-global-state-hooks
-```
+- 🌐 **Web**: `react-global-state-hooks` (localStorage)
+- 📱 **React Native**: `react-native-global-state-hooks` (AsyncStorage by default, customizable, optional dependency)
 
 ### Persisted State
 
-The core state library does **not** require AsyncStorage.
-
-But if you want the built-in React Native persistence backend, also install:
+The core state library does **not** require AsyncStorage. Install it when you want the built-in React Native persistence backend:
 
 ```bash
 npm install @react-native-async-storage/async-storage
-```
-
-or
-
-```bash
-yarn add @react-native-async-storage/async-storage
 ```
 
 `@react-native-async-storage/async-storage` is an **optional peer dependency**. You can also provide your own async storage manager or a per-store persistence adapter.
@@ -182,32 +164,81 @@ yarn add @react-native-async-storage/async-storage
 ### Your first shared store
 
 ```tsx
+import { Button, Text } from "react-native";
+import { createGlobalState } from "react-native-global-state-hooks";
+
+// 1. Create it (anywhere)
+const useTheme = createGlobalState("dark" as "light" | "dark");
+
+// 2. Use it (everywhere)
+function ThemeToggle() {
+  const [theme, setTheme] = useTheme();
+  return <Button title={`${theme} mode`} onPress={() => setTheme(theme === "dark" ? "light" : "dark")} />;
+}
+
+function ThemedScreen() {
+  const [theme] = useTheme();
+  return <Text>Themed content, {theme} mode</Text>;
+}
+```
+
+### Async state with actions
+
+Keep loading and error values in state so screens update throughout the request.
+
+```tsx
 import { Button, Text, View } from "react-native";
 import { createGlobalState } from "react-native-global-state-hooks";
 
-const useTheme = createGlobalState("dark" as "light" | "dark");
+type User = { id: string; name: string };
 
-function ThemeToggle() {
-  const [theme, setTheme] = useTheme();
+const useAuth = createGlobalState(
+  () => ({ user: null as User | null, isLoading: false, error: null as string | null }),
+  {
+    actions: {
+      login(authenticate: () => Promise<User>) {
+        return async ({ setState }) => {
+          setState((state) => ({ ...state, isLoading: true, error: null }));
+          try {
+            const user = await authenticate();
+            setState({ user, isLoading: false, error: null });
+          } catch (error) {
+            setState((state) => ({
+              ...state,
+              isLoading: false,
+              error: error instanceof Error ? error.message : "Sign-in failed",
+            }));
+          }
+        };
+      },
+      logout() {
+        return ({ setState }) => {
+          setState({ user: null, isLoading: false, error: null });
+        };
+      },
+    },
+  },
+);
+
+function LoginButton({ authenticate }: { authenticate: () => Promise<User> }) {
+  const [{ isLoading, error }, actions] = useAuth();
 
   return (
     <View>
-      <Text>{theme} mode</Text>
-
       <Button
-        title="Toggle theme"
-        onPress={() => {
-          setTheme((current) => (current === "dark" ? "light" : "dark"));
-        }}
+        disabled={isLoading}
+        title={isLoading ? "Signing in…" : "Sign in"}
+        onPress={() => void actions.login(authenticate)}
       />
+      {error ? <Text>{error}</Text> : null}
     </View>
   );
 }
 ```
 
-### Actions with async persistence
+### Readiness of a persisted store
 
-A persisted React Native store initializes **asynchronously**, so the hook also exposes storage readiness through metadata.
+A persisted React Native store restores **asynchronously**, so the hook also exposes storage readiness through metadata.
 
 ```tsx
 import { ActivityIndicator, Switch, Text, View } from "react-native";
@@ -218,41 +249,27 @@ type Settings = {
   haptics: boolean;
 };
 
-const initialSettings: Settings = {
-  darkMode: true,
-  haptics: true,
-};
+const useSettings = createGlobalState(
+  { darkMode: true, haptics: true } as Settings,
+  {
+    asyncStorage: {
+      key: "app-settings",
 
-const useSettings = createGlobalState(initialSettings, {
-  asyncStorage: {
-    key: "app-settings",
+      validator: ({ restored, initial }) => {
+        if (!restored || typeof restored !== "object") return initial;
+        return restored as Settings;
+      },
+    },
 
-    validator: ({ restored, initial }) => {
-      if (!validateStateIntegrity(restored)) return initial; // you could also throw an exception and the store will use the initial state
-      return settings as Settings;
+    actions: {
+      setDarkMode(enabled: boolean) {
+        return ({ setState }) => {
+          setState((state) => ({ ...state, darkMode: enabled }));
+        };
+      },
     },
   },
-
-  actions: {
-    setDarkMode(enabled: boolean) {
-      return ({ setState }) => {
-        setState((state) => ({
-          ...state,
-          darkMode: enabled,
-        }));
-      };
-    },
-
-    setHaptics(enabled: boolean) {
-      return ({ setState }) => {
-        setState((state) => ({
-          ...state,
-          haptics: enabled,
-        }));
-      };
-    },
-  },
-});
+);
 
 function SettingsScreen() {
   const [settings, actions, { isAsyncStorageReady }] = useSettings();
@@ -265,22 +282,10 @@ function SettingsScreen() {
     <View>
       <Text>Dark mode</Text>
       <Switch value={settings.darkMode} onValueChange={actions.setDarkMode} />
-
-      <Text>Haptics</Text>
-      <Switch value={settings.haptics} onValueChange={actions.setHaptics} />
     </View>
   );
 }
 ```
-
-Now you have:
-
-- ✅ Global React Native state
-- ✅ Fine-grained selectors
-- ✅ Type-safe actions
-- ✅ Async persistence
-- ✅ Restore readiness
-- ✅ Validation and error handling
 
 ---
 
@@ -1250,7 +1255,7 @@ subscription.remove();
 
 ---
 
-## `uniqueId` — Type-Safe Unique IDs
+## `uniqueId` - Type-Safe Unique IDs
 
 `react-native-global-state-hooks` also exports `uniqueId`.
 
@@ -1320,15 +1325,14 @@ const useApp = createGlobalState({
 
 ## Documentation and examples
 
-The [React Global State Hooks website](https://johnny-quesada-developer.github.io/react-global-state-hooks/) is the home for current documentation,
-interactive examples, and the DevTools walkthrough.
+The [React Global State Hooks website](https://johnny-quesada-developer.github.io/react-global-state-hooks/) is the home for current documentation
+and interactive examples.
 
 | Explore | What you will find |
 | --- | --- |
 | [Getting started](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/getting-started/) | Create your first store and connect it to your UI. |
 | [API and guides](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/) | Selectors, actions, scoped state, persistence, and TypeScript. |
 | [Interactive examples](https://johnny-quesada-developer.github.io/react-global-state-hooks/examples/) | Explore the state model in working browser examples. |
-| [DevTools](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/devtools/) | Inspect state, follow actions, and use the terminal workflow. |
 | [Platform guide](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/platform-and-versions/) | Choose the package and persistence model for your app. |
 
 ---
@@ -1344,8 +1348,7 @@ The family shares a common state API, with persistence tailored to each platform
 | [`react-hooks-global-states`](https://www.npmjs.com/package/react-hooks-global-states) | The shared core without platform-specific persistence. |
 | [`react-hooks-global-states-debug`](https://www.npmjs.com/package/react-hooks-global-states-debug) | Development instrumentation for the DevTools extension. |
 
-See the [platform guide](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/platform-and-versions/) for package differences
-and the [DevTools guide](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/devtools/) for debug entry points.
+See the [platform guide](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/platform-and-versions/) for package differences and persistence models.
 
 ---
 
@@ -1354,7 +1357,7 @@ and the [DevTools guide](https://johnny-quesada-developer.github.io/react-global
 - **Familiar from the first hook.** Share state through a `useState`-style API.
 - **Focused subscriptions.** Select the values a component needs.
 - **Composable structure.** Bring in actions, selectors, and scoped stores as your features grow.
-- **A connected debugging workflow.** Follow state and actions with the [DevTools integration](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/devtools/).
+- **Persistence where you need it.** Keep selected state in AsyncStorage across app restarts.
 
 ---
 
@@ -1364,35 +1367,21 @@ and the [DevTools guide](https://johnny-quesada-developer.github.io/react-global
 npm install react-native-global-state-hooks
 ```
 
-or
-
-```bash
-yarn add react-native-global-state-hooks
-```
-
-Then:
+Then in your app:
 
 ```tsx
 import { Button } from "react-native";
 import { createGlobalState } from "react-native-global-state-hooks";
 
-const useCounter = createGlobalState(0);
+const useTheme = createGlobalState("light");
 
 function App() {
-  const [count, setCount] = useCounter();
-
-  return (
-    <Button
-      title={`Count: ${count}`}
-      onPress={() => {
-        setCount((current) => current + 1);
-      }}
-    />
-  );
+  const [theme, setTheme] = useTheme();
+  return <Button title="Toggle Theme" onPress={() => setTheme(theme === "dark" ? "light" : "dark")} />;
 }
 ```
 
-Explore the [documentation](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/) to add selectors, actions, and persistence to your app.
+Continue with the [guides and interactive examples](https://johnny-quesada-developer.github.io/react-global-state-hooks/) to build your next store.
 
 ---
 

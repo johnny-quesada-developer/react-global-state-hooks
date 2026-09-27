@@ -3,19 +3,26 @@ import { Badge } from '../Badge';
 import { Eyebrow } from '../Eyebrow';
 import { Icon } from '../Icon';
 import { announce } from '../../state/toast';
-import { watchDemo, type DemoKind } from '../../examples/logs';
-import { SelectiveDemo, resetSelectiveDemo } from '../../examples/selective/SelectiveDemo';
-import { TasksDemo, resetTasksDemo } from '../../examples/tasks/TasksDemo';
-import { AsyncDemo, resetAsyncDemo } from '../../examples/async/AsyncDemo';
-import { PreferencesDemo, resetPreferencesDemo } from '../../examples/persistence/PreferencesDemo';
-import { ScopedDemo } from '../../examples/scoped/ScopedDemo';
 
-const demos: Record<DemoKind, { Demo: () => JSX.Element; reset: () => void }> = {
-  selective: { Demo: SelectiveDemo, reset: resetSelectiveDemo },
-  tasks: { Demo: TasksDemo, reset: resetTasksDemo },
-  async: { Demo: AsyncDemo, reset: resetAsyncDemo },
-  persistence: { Demo: PreferencesDemo, reset: resetPreferencesDemo },
-  scoped: { Demo: ScopedDemo, reset: () => {} },
+export type DemoKind = 'selective' | 'tasks' | 'async' | 'persistence' | 'scoped';
+
+interface DemoModule {
+  Demo: () => JSX.Element;
+  reset: () => void;
+  /** Subscribes the status line to the example's own store. Returns the unsubscribe function. */
+  watch: (log: (line: string) => void) => () => void;
+}
+
+// Dynamic imports: each example is its own chunk, so a page creates only the stores it demonstrates
+// (and DevTools shows only those).
+const loaders: Record<DemoKind, () => Promise<DemoModule>> = {
+  selective: () =>
+    import('../../examples/selective/SelectiveDemo').then((m) => ({ Demo: m.SelectiveDemo, reset: m.resetSelectiveDemo, watch: m.watchSelectiveDemo })),
+  tasks: () => import('../../examples/tasks/TasksDemo').then((m) => ({ Demo: m.TasksDemo, reset: m.resetTasksDemo, watch: m.watchTasksDemo })),
+  async: () => import('../../examples/async/AsyncDemo').then((m) => ({ Demo: m.AsyncDemo, reset: m.resetAsyncDemo, watch: m.watchAsyncDemo })),
+  persistence: () =>
+    import('../../examples/persistence/PreferencesDemo').then((m) => ({ Demo: m.PreferencesDemo, reset: m.resetPreferencesDemo, watch: m.watchPreferencesDemo })),
+  scoped: () => import('../../examples/scoped/ScopedDemo').then((m) => ({ Demo: m.ScopedDemo, reset: () => {}, watch: () => () => {} })),
 };
 
 export interface SourceFile {
@@ -41,17 +48,28 @@ const tab =
  * try on the right; a status line from the demo's own store at the bottom. Reset touches this example only.
  */
 export function Workbench({ title, demo, files, outcome, points }: WorkbenchProps) {
-  const { Demo, reset } = demos[demo];
+  const [module, setModule] = useState<DemoModule | null>(null);
   const [epoch, setEpoch] = useState(0);
   const [pane, setPane] = useState<'code' | 'behavior'>('code');
   const [file, setFile] = useState(0);
   const [log, setLog] = useState('Ready. Make a change to begin.');
   const tabs = useRef<HTMLDivElement>(null);
 
-  useEffect(() => watchDemo(demo, setLog), [demo, epoch]);
+  useEffect(() => {
+    let cancelled = false;
+    loaders[demo]().then((loaded) => {
+      if (!cancelled) setModule(loaded);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [demo]);
+
+  useEffect(() => module?.watch(setLog), [module, epoch]);
 
   const onReset = () => {
-    reset();
+    if (!module) return;
+    module.reset();
     setEpoch((current) => current + 1);
     setLog('Ready. Make a change to begin.');
     announce('Example reset.');
@@ -82,7 +100,7 @@ export function Workbench({ title, demo, files, outcome, points }: WorkbenchProp
           </Badge>
         </div>
         <div className="ml-auto flex items-center gap-3 max-xs:ml-0">
-          <button type="button" className="inline-flex items-center gap-2 text-13 font-[550] text-green hover:underline hover:underline-offset-[5px]" onClick={onReset}>
+          <button type="button" className="inline-flex items-center gap-2 text-13 font-[550] text-green hover:underline hover:underline-offset-[5px]" onClick={onReset} disabled={!module}>
             <Icon name="reset" />
             Reset
           </button>
@@ -95,8 +113,8 @@ export function Workbench({ title, demo, files, outcome, points }: WorkbenchProp
             <span>Application preview</span>
             <span className="inline-block size-[6px] rounded-full bg-green" aria-hidden="true" />
           </div>
-          <div key={epoch}>
-            <Demo />
+          <div key={epoch} aria-busy={!module}>
+            {module ? <module.Demo /> : <p className="m-0 text-12 text-muted">Loading the example…</p>}
           </div>
         </div>
 

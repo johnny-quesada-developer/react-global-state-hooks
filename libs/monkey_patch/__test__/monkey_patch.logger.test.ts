@@ -3,6 +3,7 @@ import type { Any } from 'react-global-state-hooks';
 import { Logger } from '../src/monkey_patch.logger';
 import { ActionTypeJsonEnum } from '../src/schema/ActionTypeJson';
 import { SubActionJsonEnum } from '../src/schema/SubActionJson';
+import { asActionId } from './contracts';
 
 // Mock only external boundary - window.postMessage
 let mockPostMessage: ReturnType<typeof vi.fn>;
@@ -53,10 +54,10 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
   describe('addEntryForInitialAction - START_ACTION message contract', () => {
     it('should send START_ACTION message with correct structure for setState', () => {
       const firstLog = {
-        actionId: 'action-1',
+        actionId: asActionId('action-1'),
         payload: { count: 1 },
         case: 'resolved' as const,
-        subAction: SubActionJsonEnum.setState,
+        subAction: SubActionJsonEnum.setState as const,
       };
 
       logger.addEntryForInitialAction({
@@ -79,7 +80,7 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
 
       // Verify payload content
       expect(payload).toMatchObject({
-        actionId: 'action-1',
+        actionId: asActionId('action-1'),
         globalStateId: 'test-store-123',
         action: 'increment',
         async: false,
@@ -88,10 +89,10 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
         actionType: ActionTypeJsonEnum.STATE_ACTION,
         logs: [
           {
-            actionId: 'action-1',
+            actionId: asActionId('action-1'),
             payload: { count: 1 },
             case: 'resolved',
-            subAction: SubActionJsonEnum.setState,
+            subAction: SubActionJsonEnum.setState as const,
             logId: expect.any(String),
             scope: 'test-prefix',
             timestamp: expect.any(Number),
@@ -103,7 +104,7 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
 
     it('should send START_ACTION for async actions', () => {
       const firstLog = {
-        actionId: 'async-action-1',
+        actionId: asActionId('async-action-1'),
         payload: undefined,
         case: 'pending' as const,
         subAction: null,
@@ -131,10 +132,10 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
       vi.setSystemTime(fixedTime);
 
       const firstLog = {
-        actionId: 'action-1',
+        actionId: asActionId('action-1'),
         payload: { data: 'test' },
         case: 'resolved' as const,
-        subAction: SubActionJsonEnum.setState,
+        subAction: SubActionJsonEnum.setState as const,
       };
 
       logger.addEntryForInitialAction({
@@ -152,10 +153,10 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
 
     it('should return ActionJson for further logging', () => {
       const firstLog = {
-        actionId: 'action-1',
+        actionId: asActionId('action-1'),
         payload: { value: 42 },
         case: 'resolved' as const,
-        subAction: SubActionJsonEnum.setState,
+        subAction: SubActionJsonEnum.setState as const,
       };
 
       const result = logger.addEntryForInitialAction({
@@ -165,7 +166,7 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
       });
 
       expect(result).toMatchObject({
-        actionId: 'action-1',
+        actionId: asActionId('action-1'),
         globalStateId: 'test-store-123',
         action: 'setValue',
         async: false,
@@ -180,7 +181,7 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
   describe('pushActionLogUpdate - UPDATE_ACTION message contract', () => {
     it('should send UPDATE_ACTION message with timing', () => {
       const actionJson = {
-        actionId: 'action-1',
+        actionId: asActionId('action-1'),
         globalStateId: 'test-store-123',
         action: 'increment',
         async: false,
@@ -204,7 +205,7 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
 
     it('should preserve all action metadata in UPDATE_ACTION', () => {
       const actionJson = {
-        actionId: 'action-2',
+        actionId: asActionId('action-2'),
         globalStateId: 'store-456',
         action: 'complexAction',
         async: true,
@@ -214,7 +215,7 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
         logs: [
           {
             logId: 'log-1',
-            actionId: 'action-2',
+            actionId: asActionId('action-2'),
             globalStateId: 'store-456',
             payload: { step: 1 },
             case: 'pending' as const,
@@ -241,7 +242,7 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
   describe('pushActionEntry - ADD_ACTION_LOG message contract', () => {
     it('should send ADD_ACTION_LOG message with correct log structure', () => {
       const actionMeta = {
-        actionId: 'action-1',
+        actionId: asActionId('action-1'),
         globalStateId: 'test-store-123',
         action: 'increment',
         async: false,
@@ -252,10 +253,10 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
       };
 
       const log = {
-        actionId: 'action-1',
+        actionId: asActionId('action-1'),
         payload: { count: 2 },
         case: 'resolved' as const,
-        subAction: SubActionJsonEnum.setState,
+        subAction: SubActionJsonEnum.setState as const,
       };
 
       vi.setSystemTime(1150);
@@ -272,10 +273,10 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
 
       expect(message.action).toBe('monkey-patch/ADD_ACTION_LOG');
       expect(payload).toMatchObject({
-        actionId: 'action-1',
+        actionId: asActionId('action-1'),
         payload: { count: 2 },
         case: 'resolved',
-        subAction: SubActionJsonEnum.setState,
+        subAction: SubActionJsonEnum.setState as const,
         logId: expect.any(String),
         scope: 'test-prefix',
         timestamp: 1150,
@@ -285,7 +286,7 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
 
     it('should send both ADD_ACTION_LOG and UPDATE_ACTION when isFinalEntry is true', () => {
       const actionMeta = {
-        actionId: 'action-1',
+        actionId: asActionId('action-1'),
         globalStateId: 'test-store-123',
         action: 'fetchData',
         async: true,
@@ -296,7 +297,7 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
       };
 
       const log = {
-        actionId: 'action-1',
+        actionId: asActionId('action-1'),
         payload: { result: 'success' },
         case: 'resolved' as const,
         subAction: null,
@@ -319,7 +320,7 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
 
       expect(firstMessage.action).toBe('monkey-patch/ADD_ACTION_LOG');
       expect(firstPayload).toMatchObject({
-        actionId: 'action-1',
+        actionId: asActionId('action-1'),
         payload: { result: 'success' },
         case: 'resolved',
       });
@@ -331,7 +332,7 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
 
       expect(secondMessage.action).toBe('monkey-patch/UPDATE_ACTION');
       expect(secondPayload).toMatchObject({
-        actionId: 'action-1',
+        actionId: asActionId('action-1'),
         globalStateId: 'test-store-123',
         timing: 250, // 1250 - 1000
       });
@@ -339,7 +340,7 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
 
     it('should not send UPDATE_ACTION when isFinalEntry is false', () => {
       const actionMeta = {
-        actionId: 'action-1',
+        actionId: asActionId('action-1'),
         globalStateId: 'test-store-123',
         action: 'update',
         async: false,
@@ -350,7 +351,7 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
       };
 
       const log = {
-        actionId: 'action-1',
+        actionId: asActionId('action-1'),
         payload: { intermediate: true },
         case: 'pending' as const,
         subAction: null,
@@ -368,7 +369,7 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
 
     it('should include logId in ADD_ACTION_LOG payload', () => {
       const actionMeta = {
-        actionId: 'action-1',
+        actionId: asActionId('action-1'),
         globalStateId: 'test-store-123',
         action: 'test',
         async: false,
@@ -379,10 +380,10 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
       };
 
       const log = {
-        actionId: 'action-1',
+        actionId: asActionId('action-1'),
         payload: {},
         case: 'resolved' as const,
-        subAction: SubActionJsonEnum.setState,
+        subAction: SubActionJsonEnum.setState as const,
       };
 
       logger.pushActionEntry({
@@ -402,7 +403,7 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
       const state = { count: 42, name: 'test' };
 
       logger.recordStateMutation({
-        actionId: 'action-1',
+        actionId: asActionId('action-1'),
         state,
       });
 
@@ -419,7 +420,7 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
           {
             payload: state,
             case: 'resolved',
-            subAction: SubActionJsonEnum.setState,
+            subAction: SubActionJsonEnum.setState as const,
           },
         ],
       });
@@ -428,12 +429,12 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
     it('should include setStateConfig when provided', () => {
       const state = { value: 100 };
       const config = {
-        replace: true,
-        notMerge: true,
+        forceUpdate: true,
+        identifier: 'test-update',
       };
 
       logger.recordStateMutation({
-        actionId: 'action-2',
+        actionId: asActionId('action-2'),
         state,
         config,
       });
@@ -448,7 +449,7 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
 
     it('should handle null/undefined state', () => {
       logger.recordStateMutation({
-        actionId: 'action-3',
+        actionId: asActionId('action-3'),
         state: null,
       });
 
@@ -465,7 +466,7 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
       };
 
       logger.recordStateMutation({
-        actionId: 'action-4',
+        actionId: asActionId('action-4'),
         state: complexState,
       });
 
@@ -486,7 +487,7 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
       const actionMeta = logger.addEntryForInitialAction({
         action: 'fetchUser',
         firstLog: {
-          actionId: 'async-1',
+          actionId: asActionId('async-1'),
           payload: undefined,
           case: 'pending',
           subAction: null,
@@ -502,10 +503,10 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
       logger.pushActionEntry({
         actionMeta,
         log: {
-          actionId: 'async-1',
+          actionId: asActionId('async-1'),
           payload: { status: 'loading' },
           case: 'pending',
-          subAction: SubActionJsonEnum.setState,
+          subAction: SubActionJsonEnum.setState as const,
         },
         isFinalEntry: false,
       });
@@ -518,7 +519,7 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
       logger.pushActionEntry({
         actionMeta,
         log: {
-          actionId: 'async-1',
+          actionId: asActionId('async-1'),
           payload: { user: { id: 1, name: 'John' } },
           case: 'resolved',
           subAction: null,
@@ -540,9 +541,9 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
 
   describe('Message IDs uniqueness', () => {
     it('should generate unique IDs for each message', () => {
-      logger.recordStateMutation({ actionId: 'a1', state: { v: 1 } });
-      logger.recordStateMutation({ actionId: 'a2', state: { v: 2 } });
-      logger.recordStateMutation({ actionId: 'a3', state: { v: 3 } });
+      logger.recordStateMutation({ actionId: asActionId('a1'), state: { v: 1 } });
+      logger.recordStateMutation({ actionId: asActionId('a2'), state: { v: 2 } });
+      logger.recordStateMutation({ actionId: asActionId('a3'), state: { v: 3 } });
 
       const ids = postedMessages.map((msg) => msg.id);
       const uniqueIds = new Set(ids);
@@ -555,7 +556,7 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
   describe('Edge cases in message contract', () => {
     it('should handle empty payload in logs', () => {
       logger.recordStateMutation({
-        actionId: 'action-empty',
+        actionId: asActionId('action-empty'),
         state: undefined,
       });
 
@@ -571,10 +572,10 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
       logger.addEntryForInitialAction({
         action: longActionName,
         firstLog: {
-          actionId: 'action-1',
+          actionId: asActionId('action-1'),
           payload: {},
           case: 'resolved',
-          subAction: SubActionJsonEnum.setState,
+          subAction: SubActionJsonEnum.setState as const,
         },
         actionType: ActionTypeJsonEnum.STATE_ACTION,
       });
@@ -588,7 +589,7 @@ describe('monkey_patch.logger - Message Contract Tests', () => {
       const prefixedLogger = new Logger({ storeId: 'store-1', prefix: 'my-custom-prefix' });
 
       prefixedLogger.recordStateMutation({
-        actionId: 'action-1',
+        actionId: asActionId('action-1'),
         state: { test: true },
       });
 

@@ -1,4 +1,10 @@
 import type { Mock } from 'vitest';
+import type { ActionId } from '../src/schema/ActionJson';
+import type { ActionLogId } from '../src/schema/ActionLogJson';
+
+/** Fixture ids. These tests check the wire shape; the brand is a compile-time tag on the same string. */
+export const asActionId = (id: string) => id as ActionId;
+export const asActionLogId = (id: string) => id as ActionLogId;
 
 export type DevtoolsWireMessage = {
   action: string;

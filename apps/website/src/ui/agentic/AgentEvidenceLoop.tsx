@@ -12,10 +12,11 @@ const steps = [
   { title: 'Verify', text: 'Read back the result.', status: '03 / Verify the outcome' },
 ];
 
+// Output shapes follow libs/monkey_patch/src/cli/format.ts (`# …` lines are narration, not output).
 const terminals = [
-  `$ npx rgsh state todos\n\n{\n  "todos": [\n    { "text": "Create the store", "done": true },\n    { "text": "Compose a selector", "done": false }\n  ]\n}\n\n# The current state is the starting point.`,
-  `$ npx rgsh action todos add "Write the docs"\n\n# Call the application's exposed action.\n# The store now contains the new task.\n\n+ { "text": "Write the docs", "done": false }\n\n# Read the state next to verify the outcome.`,
-  `$ npx rgsh state todos\n\n{\n  "todos": [\n    { "text": "Create the store", "done": true },\n    { "text": "Compose a selector", "done": false },\n    { "text": "Write the docs", "done": false }\n  ]\n}\n\n# Expected task present. State verified.`,
+  `$ npx rgsh state todos\n[todos] state:\n{\n  "todos": [\n    { "text": "Create the store", "done": true },\n    { "text": "Compose a selector", "done": false }\n  ]\n}\n\n# The current state is the starting point.`,
+  `$ npx rgsh action todos add "Write the docs"\n10:42:07.118 [todos] add("Write the docs")\n  state:\n    todos[2]: undefined → {"text":"Write the docs","done":false}\n  duration: 5ms\n\n# The store's own action ran. The changed path is printed before → after.\n# Read the state next to verify the outcome.`,
+  `$ npx rgsh state todos\n[todos] state:\n{\n  "todos": [\n    { "text": "Create the store", "done": true },\n    { "text": "Compose a selector", "done": false },\n    { "text": "Write the docs", "done": false }\n  ]\n}\n\n# Expected task present. State verified.`,
 ];
 
 /** The evidence loop on the product page: application state and terminal share one sequence. */
@@ -93,7 +94,7 @@ export function AgentEvidenceLoop() {
           <pre className="m-0 min-h-[250px] p-6 font-mono text-11 leading-[2] break-words whitespace-pre-wrap max-md:min-h-[200px] max-md:p-[22px] max-md:text-11 max-xs:text-10" tabIndex={0} aria-label="Illustrative CLI output" key={step}>
             {terminals[step].split('\n').map((line, index) => (
               <span
-                className={`${line.startsWith('#') ? 'text-[#9bab9f]' : line.startsWith('+') ? 'text-[#b6d6c1]' : line.startsWith('$') ? 'text-[#b6d6c1]' : ''} ${reduced ? '' : 'line-enter'}`}
+                className={`${line.startsWith('#') ? 'text-[#9bab9f]' : line.includes('→') || line.startsWith('$') ? 'text-[#b6d6c1]' : ''} ${reduced ? '' : 'line-enter'}`}
                 style={{ animationDelay: `${Math.min(index * 30, 150)}ms` }}
                 key={index}
               >

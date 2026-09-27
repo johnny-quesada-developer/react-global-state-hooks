@@ -20,12 +20,13 @@ const chapters = [
 
 const previousName = (name: Name) => (name === 'Ada' ? 'Lin' : name === 'Grace' ? 'Ada' : 'Grace');
 
+// An unnamed store is addressed by where it was created (`profile.tsx:4`), exactly as `rgsh --list` prints it.
 function codeFor(chapter: number, name: Name) {
   if (chapter === 2) {
-    return `$ npx rgsh --list\nprofile\n\n$ npx rgsh patch profile '{"name":"${name}"}'\n[profile] patch\n  name: "${previousName(name)}" → "${name}"\n\n$ npx rgsh state profile name\n"${name}"\n\n// Read the result. Not an assumption.\n// Illustrative terminal session.`;
+    return `$ npx rgsh patch profile.tsx:4 '{"name":"${name}"}'\n10:42:07.118 [unnamed profile.tsx:4] setState\n  state:\n    name: "${previousName(name)}" → "${name}"\n  duration: 4ms\n\n$ npx rgsh state profile.tsx:4 name\n[unnamed profile.tsx:4] state at name:\n"${name}"\n\n// Read the result. Not an assumption.\n// Illustrative terminal session.`;
   }
   const selected = chapter === 1;
-  return `import { createGlobalState } from\n  'react-global-state-hooks';\n\nconst useProfile = createGlobalState(\n  { name: 'Ada', theme: 'light' },\n  { name: 'profile' }\n);\n\nfunction ProfileName() {\n  const [${selected ? 'name' : 'profile'}] = useProfile(${selected ? 's => s.name' : ''});\n  return <span>{${selected ? 'name' : 'profile.name'}}</span>;\n}`;
+  return `import { createGlobalState } from\n  'react-global-state-hooks';\n\nconst useProfile = createGlobalState({\n  name: 'Ada',\n  theme: 'light',\n});\n\nfunction ProfileName() {\n  const [${selected ? 'name' : 'profile'}] = useProfile(${selected ? 's => s.name' : ''});\n  return <span>{${selected ? 'name' : 'profile.name'}}</span>;\n}`;
 }
 
 interface Frame {

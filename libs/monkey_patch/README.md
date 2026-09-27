@@ -21,7 +21,7 @@ verify a fix with evidence from the running app.
 [![Downloads](https://img.shields.io/npm/dm/react-hooks-global-states-debug.svg)](https://www.npmjs.com/package/react-hooks-global-states-debug)
 [![License](https://img.shields.io/npm/l/react-hooks-global-states-debug.svg)](https://github.com/johnny-quesada-developer/react-global-state-hooks/blob/master/LICENSE)
 
-[**Website**](https://johnny-quesada-developer.github.io/react-global-state-hooks/) · [**DevTools guide**](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/devtools/) · [**Examples**](https://johnny-quesada-developer.github.io/react-global-state-hooks/examples/)
+[**Website**](https://johnny-quesada-developer.github.io/react-global-state-hooks/) · [**DevTools guide**](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/devtools/) · [**Examples**](https://johnny-quesada-developer.github.io/react-global-state-hooks/examples/) · [**Agentic DevTools**](https://johnny-quesada-developer.github.io/react-global-state-hooks/agentic-devtools/)
 
 Created by [Johnny Quesada](https://johnny-quesada-developer.github.io/react-global-state-hooks/about/),
 author of the React Global State Hooks family.
@@ -101,6 +101,7 @@ npx rgsh --store todos
 
 A coding agent can use the same commands to invoke an action and inspect the
 resulting state. That makes the runtime part of the development conversation.
+The [Agentic DevTools tour](https://johnny-quesada-developer.github.io/react-global-state-hooks/agentic-devtools/) walks through that inspect → act → verify loop.
 The terminal connection uses port `7787` by default; match it to the panel's
 **Terminal connection** setting.
 

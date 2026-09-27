@@ -91,6 +91,27 @@ export const resetAsyncDemo = () => {
   useServer.setState({ failing: false });
 };
 
+/** One-line trace for the workbench status bar. */
+export function watchAsyncDemo(log: (line: string) => void) {
+  const stopUsers = useUsers.subscribe(
+    (state) => {
+      if (state.status === 'loading') log(`status: loading · attempt ${state.attempts}`);
+      else if (state.status === 'success') log(`status: success · users: ${state.users.length}`);
+      else if (state.status === 'error') log('status: error · retry available');
+      else log('status: idle');
+    },
+    { skipFirst: true },
+  );
+  const stopServer = useServer.subscribe((server) => log(server.failing ? 'server: failing' : 'server: responding'), {
+    skipFirst: true,
+  });
+
+  return () => {
+    stopUsers();
+    stopServer();
+  };
+}
+
 export function AsyncDemo() {
   return (
     <div className="demo">

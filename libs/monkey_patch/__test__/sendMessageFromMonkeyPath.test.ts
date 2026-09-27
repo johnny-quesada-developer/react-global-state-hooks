@@ -5,6 +5,7 @@ import type { MonkeyPathMessage } from '../src/schema/MonkeyPathMessageJson';
 import { SubActionJsonEnum } from '../src/schema/SubActionJson';
 import { BuildTypeJsonEnum } from '../src/schema/BuildTypeJson';
 import { ActionTypeJsonEnum } from '../src/schema/ActionTypeJson';
+import { asActionId, asActionLogId } from './contracts';
 
 describe('sendMessageFromMonkeyPath', () => {
   let postMessageSpy: ReturnType<typeof vi.fn>;
@@ -54,7 +55,7 @@ describe('sendMessageFromMonkeyPath', () => {
         action: 'START_ACTION',
         payload: {
           globalStateId: 'state-1',
-          actionId: 'action:1',
+          actionId: asActionId('action:1'),
           action: 'increment',
           async: false,
           start: Date.now(),
@@ -78,9 +79,9 @@ describe('sendMessageFromMonkeyPath', () => {
         id: 'msg-3',
         action: 'ADD_ACTION_LOG',
         payload: {
-          logId: 'action-log:1',
+          logId: asActionLogId('action-log:1'),
           globalStateId: 'state-1',
-          actionId: 'action:1',
+          actionId: asActionId('action:1'),
           payload: { count: 1 },
           case: 'resolved',
           scope: 'action',
@@ -103,7 +104,7 @@ describe('sendMessageFromMonkeyPath', () => {
         action: 'UPDATE_ACTION',
         payload: {
           globalStateId: 'state-1',
-          actionId: 'action:1',
+          actionId: asActionId('action:1'),
           timing: 150,
         },
       };
@@ -242,9 +243,9 @@ describe('sendMessageFromMonkeyPath', () => {
         id: 'msg-1',
         action: 'ADD_ACTION_LOG',
         payload: {
-          logId: 'action-log:1',
+          logId: asActionLogId('action-log:1'),
           globalStateId: 'state-1',
-          actionId: 'action:1',
+          actionId: asActionId('action:1'),
           payload: { timestamp: date } as Any,
           case: 'resolved',
           scope: 'action',
@@ -268,9 +269,9 @@ describe('sendMessageFromMonkeyPath', () => {
         id: 'msg-1',
         action: 'ADD_ACTION_LOG',
         payload: {
-          logId: 'action-log:1',
+          logId: asActionLogId('action-log:1'),
           globalStateId: 'state-1',
-          actionId: 'action:1',
+          actionId: asActionId('action:1'),
           payload: {
             data: {
               nested: {
@@ -392,9 +393,9 @@ describe('sendMessageFromMonkeyPath', () => {
         id: 'msg-1',
         action: 'ADD_ACTION_LOG',
         payload: {
-          logId: 'action-log:1',
+          logId: asActionLogId('action-log:1'),
           globalStateId: 'state-1',
-          actionId: 'action:1',
+          actionId: asActionId('action:1'),
           payload: {
             map: new Map([['key', 'value']]),
             set: new Set([1, 2, 3]),

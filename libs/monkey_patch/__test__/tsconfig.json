@@ -10,9 +10,8 @@
   // single tsconfig here could only bind that neutral alias to ONE variant, which would wrongly
   // reject the other variants' variant-specific APIs (e.g. the native `asyncStorage` config).
   //
-  // It also does NOT type-check monkey_patch's OWN unit tests (__test__/*.test.ts): they predate
-  // this config and carry branded-id fixtures written as plain strings (correct at runtime, not
-  // brand-typed). Bringing them under tsc is tracked separately.
+  // It also type-checks monkey_patch's OWN unit tests (__test__/*.test.ts), which is what lets an
+  // editor resolve the `react-global-state-hooks` path alias inside them.
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "baseUrl": "..",
@@ -34,6 +33,7 @@
     }
   },
   "include": [
+    "./**/*.ts",
     "../src/**/*",
     "../vitest.config.ts",
     "../vitest.workspace.ts",

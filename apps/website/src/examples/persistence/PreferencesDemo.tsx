@@ -44,6 +44,13 @@ function readSaved(): Storage {
 /** Writes the defaults back, which also rewrites the saved value. */
 export const resetPreferencesDemo = () => usePreferences.setState({ ...defaults });
 
+/** One-line trace for the workbench status bar. */
+export const watchPreferencesDemo = (log: (line: string) => void) =>
+  usePreferences.subscribe(
+    (state) => log(`save → accent: ${state.accent} · size: ${state.size} · compact: ${state.compact}; draft excluded`),
+    { skipFirst: true },
+  );
+
 export function PreferencesDemo() {
   const [stored, setPreferences] = usePreferences();
   // The store restores from localStorage when this module loads in the browser, before React hydrates.

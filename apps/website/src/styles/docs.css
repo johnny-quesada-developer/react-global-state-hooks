@@ -282,7 +282,16 @@
 }
 
 @media (max-width: 760px) {
+  .doc-content p,
+  .doc-content li {
+    font-size: 15px;
+  }
   .table-wrap table {
     min-width: 640px;
+    font-size: 13px;
+  }
+  .callout p,
+  .callout li {
+    font-size: 13px;
   }
 }

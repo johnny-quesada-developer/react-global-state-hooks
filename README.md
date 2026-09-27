@@ -16,7 +16,7 @@ _The familiarity of `useState`, with the power of a shared store._
 [![Downloads](https://img.shields.io/npm/dm/react-global-state-hooks.svg)](https://www.npmjs.com/package/react-global-state-hooks)
 [![License](https://img.shields.io/npm/l/react-global-state-hooks.svg)](https://github.com/johnny-quesada-developer/react-global-state-hooks/blob/master/LICENSE)
 
-[**Live Demo**](https://johnny-quesada-developer.github.io/global-hooks-example/) • [**Video Tutorial**](https://www.youtube.com/watch?v=1UBqXk2MH8I) • [**CodePen**](https://codepen.io/johnnynabetes/pen/WNmeGwb?editors=0010)
+[**Live Examples**](https://johnny-quesada-developer.github.io/react-global-state-hooks/examples/) • [**Documentation**](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/) • [**Agentic DevTools**](https://johnny-quesada-developer.github.io/react-global-state-hooks/agentic-devtools/) • [**Video Tutorial**](https://www.youtube.com/watch?v=1UBqXk2MH8I)
 
 </div>
 
@@ -44,11 +44,13 @@ function Counter() {
 
 ## 🛠️ DevTools Extension
 
-Inspect, time-travel, and live-edit your global state right from the browser. See the full guide in **[DEVTOOLS.md](./DEVTOOLS.md)**.
+Inspect, time-travel, and live-edit your global state right from the browser. See the full guide in **[DEVTOOLS.md](./DEVTOOLS.md)**, and the [Agentic DevTools tour](https://johnny-quesada-developer.github.io/react-global-state-hooks/agentic-devtools/) for the same inspect → act → verify loop from a terminal or a coding agent.
 
 [**🔗 Install for Chrome**](https://chromewebstore.google.com/detail/bafojplmkpejhglhjpibpdhoblickpee)
 
-![DevTools — Track State Changes](https://raw.githubusercontent.com/johnny-quesada-developer/react-global-state-hooks/master/public/track-state-changes.png)
+| The app being inspected | Stores, actions, and state diffs in the panel |
+| ------------------------- | ----------------------------------------------- |
+| <img alt="Debug playground app" src="https://johnny-quesada-developer.github.io/react-global-state-hooks/devtools/showcase/app.png" width="380"> | <img alt="DevTools panel" src="https://johnny-quesada-developer.github.io/react-global-state-hooks/devtools/showcase/panel.png" width="620"> |
 
 ---
 
@@ -1655,12 +1657,14 @@ actions.addTodo('Build feature', userId);
 
 ## 🎓 Learning Resources
 
-| Resource                                                                             | Description                       |
-| ------------------------------------------------------------------------------------ | --------------------------------- |
-| 🎮 [**Live Demo**](https://johnny-quesada-developer.github.io/global-hooks-example/) | Interactive examples              |
-| 🎥 [**Video Tutorial**](https://www.youtube.com/watch?v=1UBqXk2MH8I)                | Full walkthrough                  |
-| 💻 [**CodePen**](https://codepen.io/johnnynabetes/pen/WNmeGwb?editors=0010)          | Try it online                     |
-| 📚 **400+ Tests**                                                                    | Check the test suite for patterns |
+| Resource                                                                                                              | Description                                                   |
+| --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| 🎮 [**Live Examples**](https://johnny-quesada-developer.github.io/react-global-state-hooks/examples/)                  | Runnable demos with source, render counts, and a live state log |
+| 📖 [**Documentation**](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/)                      | Full API reference and guides                                 |
+| 🤖 [**Agentic DevTools**](https://johnny-quesada-developer.github.io/react-global-state-hooks/agentic-devtools/)       | Inspect state, run an action, and verify it from a terminal    |
+| 🎥 [**Video Tutorial**](https://www.youtube.com/watch?v=1UBqXk2MH8I)                                                  | Full walkthrough                                              |
+| 💻 [**CodePen**](https://codepen.io/johnnynabetes/pen/WNmeGwb?editors=0010)                                           | Try it online                                                 |
+| 📚 **400+ Tests**                                                                                                     | Check the test suite for patterns                             |
 
 ---
 

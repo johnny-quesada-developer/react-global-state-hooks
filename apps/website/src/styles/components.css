@@ -98,7 +98,7 @@
 
 @media (max-width: 760px) {
   .code-block pre {
-    font-size: 11px;
+    font-size: 12px;
     padding: 17px 11px;
   }
   .code-block .line::before {

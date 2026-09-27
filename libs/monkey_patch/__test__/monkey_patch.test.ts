@@ -39,7 +39,7 @@ describe('monkey_patch.ts - Core Functions', () => {
     // Mock browser APIs (external boundary)
     global.window = {
       postMessage: mockPostMessage,
-    } as unknown as Window;
+    } as unknown as Window & typeof globalThis;
 
     global.performance = {
       now: () => 123.456,
@@ -286,8 +286,8 @@ describe('monkey_patch.ts - Core Functions', () => {
 
       // Actions should be present
       expect(result.actions).toBeDefined();
-      expect(result.actions!.increment).toBeDefined();
-      expect(typeof result.actions!.increment).toBe('function');
+      expect((result.actions as unknown as Record<string, unknown>).increment).toBeDefined();
+      expect(typeof (result.actions as unknown as Record<string, unknown>).increment).toBe('function');
     });
 
     it('should wrap multiple actions', () => {
@@ -321,9 +321,9 @@ describe('monkey_patch.ts - Core Functions', () => {
       const result = wrapper();
 
       // All actions should be present
-      expect(result.actions!.increment).toBeDefined();
-      expect(result.actions!.decrement).toBeDefined();
-      expect(result.actions!.reset).toBeDefined();
+      expect((result.actions as unknown as Record<string, unknown>).increment).toBeDefined();
+      expect((result.actions as unknown as Record<string, unknown>).decrement).toBeDefined();
+      expect((result.actions as unknown as Record<string, unknown>).reset).toBeDefined();
     });
 
     it('should handle actions with different prefixes', () => {
@@ -396,7 +396,7 @@ describe('monkey_patch.ts - Core Functions', () => {
 
       // Should return storeTools
       expect(tools).toBeDefined();
-      expect(tools.state).toBeDefined();
+      expect((tools as unknown as { state: unknown }).state).toBeDefined();
       expect(tools.setState).toBeDefined();
     });
 

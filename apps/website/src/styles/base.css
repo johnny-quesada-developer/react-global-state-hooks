@@ -201,9 +201,24 @@ dialog::backdrop {
   backdrop-filter: blur(3px);
 }
 
+/* Phones: one step larger across the small end of the scale, so supporting text stays readable. */
 @media (max-width: 760px) {
   html {
     scroll-padding-top: 126px;
+  }
+
+  :root {
+    --text-9: 10px;
+    --text-10: 11px;
+    --text-11: 12px;
+    --text-12: 13px;
+    --text-13: 14px;
+    --text-14: 15px;
+    --text-15: 16px;
+  }
+
+  body {
+    font-size: 16px;
   }
 }
 

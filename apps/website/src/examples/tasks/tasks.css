@@ -148,6 +148,14 @@
   color: var(--color-muted);
 }
 
+@media (max-width: 760px) {
+  .task-row,
+  .task-row label,
+  .tasks-footer {
+    font-size: 14px;
+  }
+}
+
 @media (max-width: 370px) {
   .task-form {
     flex-wrap: wrap;

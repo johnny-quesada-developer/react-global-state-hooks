@@ -13,28 +13,32 @@ const steps = [
 
 type Line = { kind: 'command' | 'output' | 'accent' | 'success' | 'blank'; text: string };
 
+// Output shapes follow libs/monkey_patch/src/cli/format.ts; the session itself is illustrative.
 const terminals: Line[][] = [
   [
     { kind: 'command', text: 'npx rgsh --list' },
     { kind: 'output', text: 'todos' },
+    { kind: 'output', text: '  state: {"todos":[{"text":"Write the docs","done":true},…' },
     { kind: 'output', text: '  actions: add, toggle, remove' },
     { kind: 'command', text: 'npx rgsh state todos todos[1].done' },
+    { kind: 'output', text: '[todos] state at todos[1].done:' },
     { kind: 'accent', text: 'false' },
     { kind: 'success', text: 'Runtime inspected. Ready to act.' },
   ],
   [
     { kind: 'command', text: 'npx rgsh action todos toggle 2' },
-    { kind: 'output', text: '[todos] toggle(2)' },
-    { kind: 'accent', text: '  todos[1].done: false → true' },
-    { kind: 'blank', text: '' },
-    { kind: 'output', text: '// The exact state path, before and after.' },
+    { kind: 'output', text: '10:42:07.118 [todos] toggle(2)' },
+    { kind: 'output', text: '  state:' },
+    { kind: 'accent', text: '    todos[1].done: false → true' },
+    { kind: 'output', text: '  duration: 6ms' },
     { kind: 'success', text: 'Action observed. State changed.' },
   ],
   [
-    { kind: 'command', text: 'npx rgsh action todos toggle 2' },
-    { kind: 'accent', text: '  todos[1].done: false → true' },
     { kind: 'command', text: 'npx rgsh state todos todos[1].done' },
+    { kind: 'output', text: '[todos] state at todos[1].done:' },
     { kind: 'accent', text: 'true' },
+    { kind: 'blank', text: '' },
+    { kind: 'output', text: '// The path the action changed, read back from the running app.' },
     { kind: 'success', text: 'Verified against the resulting state.' },
   ],
 ];

@@ -1,7 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { Workbench } from '../../ui/examples/Workbench';
+import { Workbench, type DemoKind } from '../../ui/examples/Workbench';
 import { Breadcrumb } from '../../ui/Breadcrumb';
 import { Eyebrow, SectionHead } from '../../ui/Eyebrow';
 import { RowLink, RowLinks } from '../../ui/RowLinks';
@@ -10,7 +10,7 @@ import { H2, H3 } from '../../ui/Heading';
 import { highlight, type CodeLanguage } from '../../lib/highlight';
 import { withBase } from '../../lib/site';
 
-const demoOf: Record<string, 'selective' | 'tasks' | 'async' | 'persistence' | 'scoped'> = {
+const demoOf: Record<string, DemoKind> = {
   'shared-state-and-selective-subscriptions': 'selective',
   'derived-state-and-selectors': 'tasks',
   'async-workflows': 'async',

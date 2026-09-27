@@ -6,7 +6,7 @@ import type { GlobalStoreParameter } from '../src/tools/react';
 describe('getGlobalStateMetaPayload', () => {
   describe('basic state metadata extraction', () => {
     it('should extract minimal state metadata', () => {
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state: { count: 0 },
         actionsConfig: {},
         callbacks: {},
@@ -15,7 +15,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/counter.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-1',
         args: undefined,
       });
@@ -30,7 +30,7 @@ describe('getGlobalStateMetaPayload', () => {
     });
 
     it('should use _name property if available', () => {
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         _name: 'Counter Store',
         state: { count: 0 },
         actionsConfig: {},
@@ -40,7 +40,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/counter.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-1',
         args: undefined,
       });
@@ -49,7 +49,7 @@ describe('getGlobalStateMetaPayload', () => {
     });
 
     it('should fallback to globalStateId for name', () => {
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state: { count: 0 },
         actionsConfig: {},
         callbacks: {},
@@ -58,7 +58,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/counter.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-123',
         args: undefined,
       });
@@ -69,7 +69,7 @@ describe('getGlobalStateMetaPayload', () => {
 
   describe('actions extraction', () => {
     it('should extract action configurations', () => {
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state: { count: 0 },
         actionsConfig: {
           increment: () => {},
@@ -82,7 +82,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/counter.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-1',
         args: undefined,
       });
@@ -90,12 +90,12 @@ describe('getGlobalStateMetaPayload', () => {
       expect(result.actions).toHaveProperty('increment');
       expect(result.actions).toHaveProperty('decrement');
       expect(result.actions).toHaveProperty('add');
-      expect(result.actions.increment).toHaveProperty('length');
-      expect(result.actions.add.length).toBe(1); // function takes 1 param
+      expect(result.actions!.increment).toHaveProperty('length');
+      expect(result.actions!.add.length).toBe(1); // function takes 1 param
     });
 
     it('should only include function actions', () => {
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state: { count: 0 },
         actionsConfig: {
           increment: () => {},
@@ -109,7 +109,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/counter.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-1',
         args: undefined,
       });
@@ -121,7 +121,7 @@ describe('getGlobalStateMetaPayload', () => {
     });
 
     it('should handle empty actionsConfig', () => {
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state: { count: 0 },
         actionsConfig: {},
         callbacks: {},
@@ -130,7 +130,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/counter.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-1',
         args: undefined,
       });
@@ -139,7 +139,7 @@ describe('getGlobalStateMetaPayload', () => {
     });
 
     it('should handle undefined actionsConfig', () => {
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state: { count: 0 },
         actionsConfig: undefined as Any,
         callbacks: {},
@@ -148,7 +148,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/counter.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-1',
         args: undefined,
       });
@@ -157,7 +157,7 @@ describe('getGlobalStateMetaPayload', () => {
     });
 
     it('should capture function arity (number of parameters)', () => {
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state: {},
         actionsConfig: {
           noArgs: () => {},
@@ -171,21 +171,21 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/test.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-1',
         args: undefined,
       });
 
-      expect(result.actions.noArgs.length).toBe(0);
-      expect(result.actions.oneArg.length).toBe(1);
-      expect(result.actions.twoArgs.length).toBe(2);
-      expect(result.actions.threeArgs.length).toBe(3);
+      expect(result.actions!.noArgs.length).toBe(0);
+      expect(result.actions!.oneArg.length).toBe(1);
+      expect(result.actions!.twoArgs.length).toBe(2);
+      expect(result.actions!.threeArgs.length).toBe(3);
     });
   });
 
   describe('callbacks extraction', () => {
     it('should extract callback keys', () => {
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state: { count: 0 },
         actionsConfig: {},
         callbacks: {
@@ -198,7 +198,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/counter.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-1',
         args: undefined,
       });
@@ -207,7 +207,7 @@ describe('getGlobalStateMetaPayload', () => {
     });
 
     it('should handle empty callbacks', () => {
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state: { count: 0 },
         actionsConfig: {},
         callbacks: {},
@@ -216,7 +216,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/counter.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-1',
         args: undefined,
       });
@@ -225,7 +225,7 @@ describe('getGlobalStateMetaPayload', () => {
     });
 
     it('should handle undefined callbacks', () => {
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state: { count: 0 },
         actionsConfig: {},
         callbacks: undefined as Any,
@@ -234,7 +234,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/counter.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-1',
         args: undefined,
       });
@@ -253,7 +253,7 @@ describe('getGlobalStateMetaPayload', () => {
         },
       };
 
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state: { count: 0 },
         actionsConfig: {},
         callbacks: {},
@@ -262,7 +262,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/counter.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-1',
         args: undefined,
       });
@@ -272,7 +272,7 @@ describe('getGlobalStateMetaPayload', () => {
     });
 
     it('should handle empty metadata', () => {
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state: { count: 0 },
         actionsConfig: {},
         callbacks: {},
@@ -281,7 +281,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/counter.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-1',
         args: undefined,
       });
@@ -300,7 +300,7 @@ describe('getGlobalStateMetaPayload', () => {
         },
       };
 
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state,
         actionsConfig: {},
         callbacks: {},
@@ -309,7 +309,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/counter.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-1',
         args: undefined,
       });
@@ -319,7 +319,7 @@ describe('getGlobalStateMetaPayload', () => {
     });
 
     it('should handle primitive initial state', () => {
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state: 42,
         actionsConfig: {},
         callbacks: {},
@@ -328,7 +328,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/counter.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-1',
         args: undefined,
       });
@@ -339,7 +339,7 @@ describe('getGlobalStateMetaPayload', () => {
     it('should handle array initial state', () => {
       const state = [1, 2, 3, 4, 5];
 
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state,
         actionsConfig: {},
         callbacks: {},
@@ -348,7 +348,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/list.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-1',
         args: undefined,
       });
@@ -358,7 +358,7 @@ describe('getGlobalStateMetaPayload', () => {
     });
 
     it('should handle null initial state', () => {
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state: null,
         actionsConfig: {},
         callbacks: {},
@@ -367,7 +367,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/nullable.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-1',
         args: undefined,
       });
@@ -378,7 +378,7 @@ describe('getGlobalStateMetaPayload', () => {
 
   describe('localStorage configuration', () => {
     it('should set localStorage to null when no config is provided', () => {
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state: { count: 0 },
         actionsConfig: {},
         callbacks: {},
@@ -387,7 +387,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/counter.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-1',
         args: undefined,
       });
@@ -396,7 +396,7 @@ describe('getGlobalStateMetaPayload', () => {
     });
 
     it('should extract localStorage key from args when provided', () => {
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state: { count: 0 },
         actionsConfig: {},
         callbacks: {},
@@ -405,7 +405,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/counter.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-1',
         args: {
           localStorage: {
@@ -418,7 +418,7 @@ describe('getGlobalStateMetaPayload', () => {
     });
 
     it('should fallback to globalState.localStorage when args localStorage is missing', () => {
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state: { count: 0 },
         actionsConfig: {},
         callbacks: {},
@@ -430,7 +430,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/counter.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-1',
         args: undefined,
       });
@@ -439,7 +439,7 @@ describe('getGlobalStateMetaPayload', () => {
     });
 
     it('should ignore invalid localStorage key values', () => {
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state: { count: 0 },
         actionsConfig: {},
         callbacks: {},
@@ -448,7 +448,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/counter.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-1',
         args: {
           localStorage: {
@@ -463,7 +463,7 @@ describe('getGlobalStateMetaPayload', () => {
 
   describe('complex state scenarios', () => {
     it('should handle full-featured state', () => {
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         _name: 'TodoStore',
         state: {
           todos: [
@@ -490,7 +490,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/stores/todos.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'todos-state',
         args: undefined,
       });
@@ -499,7 +499,7 @@ describe('getGlobalStateMetaPayload', () => {
       expect(result.name).toBe('TodoStore');
       expect(result.globalStatePath).toBe('/src/stores/todos.ts');
       expect(result.initialState).toEqual(globalState.state);
-      expect(Object.keys(result.actions)).toHaveLength(4);
+      expect(Object.keys(result.actions!)).toHaveLength(4);
       expect(result.callbacks).toEqual(['onInit', 'onTodoAdded']);
       expect(result.metadata).toEqual({
         version: '2.0.0',
@@ -508,7 +508,7 @@ describe('getGlobalStateMetaPayload', () => {
     });
 
     it('should handle form state', () => {
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         _name: 'FormState',
         state: {
           fields: {
@@ -535,20 +535,20 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/forms/loginForm.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'form-1',
         args: undefined,
       });
 
       expect(result.name).toBe('FormState');
-      expect(result.actions.updateField.length).toBe(2);
-      expect(result.actions.touchField.length).toBe(1);
+      expect(result.actions!.updateField.length).toBe(2);
+      expect(result.actions!.touchField.length).toBe(1);
       expect(result.callbacks).toContain('onFieldChange');
       expect(result.callbacks).toContain('onSubmit');
     });
 
     it('should handle async data state', () => {
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state: {
           data: null,
           loading: false,
@@ -573,7 +573,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/api/users.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'api-users',
         args: undefined,
       });
@@ -587,7 +587,7 @@ describe('getGlobalStateMetaPayload', () => {
   describe('edge cases', () => {
     it('should handle state with symbol keys', () => {
       const sym = Symbol('test');
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state: {
           [sym]: 'symbol value',
           regular: 'regular value',
@@ -599,7 +599,7 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/test.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-1',
         args: undefined,
       });
@@ -612,7 +612,7 @@ describe('getGlobalStateMetaPayload', () => {
       const state: Any = { a: 1 };
       state.self = state;
 
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state,
         actionsConfig: {},
         callbacks: {},
@@ -623,7 +623,7 @@ describe('getGlobalStateMetaPayload', () => {
       expect(() => {
         getGlobalStateMetaPayload({
           globalStatePath: '/src/test.ts',
-          globalState,
+          globalState: globalState as unknown as GlobalStoreParameter,
           globalStateId: 'state-1',
           args: undefined,
         });
@@ -636,7 +636,7 @@ describe('getGlobalStateMetaPayload', () => {
         actionsConfig[`action${i}`] = () => {};
       }
 
-      const globalState: GlobalStoreParameter = {
+      const globalState = {
         state: {},
         actionsConfig,
         callbacks: {},
@@ -645,12 +645,12 @@ describe('getGlobalStateMetaPayload', () => {
 
       const result = getGlobalStateMetaPayload({
         globalStatePath: '/src/test.ts',
-        globalState,
+        globalState: globalState as unknown as GlobalStoreParameter,
         globalStateId: 'state-1',
         args: undefined,
       });
 
-      expect(Object.keys(result.actions)).toHaveLength(100);
+      expect(Object.keys(result.actions!)).toHaveLength(100);
     });
   });
 });

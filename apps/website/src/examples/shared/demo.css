@@ -223,6 +223,29 @@
   }
 }
 
+@media (max-width: 760px) {
+  .demo-card label,
+  .demo-card > span,
+  .demo-title,
+  .segmented legend {
+    font-size: 12px;
+  }
+  .demo-card input:not([type='checkbox']):not([type='radio']),
+  .demo-card select,
+  .demo-card textarea,
+  .demo-card button,
+  .demo-button {
+    font-size: 14px;
+  }
+  .segmented span {
+    font-size: 12px;
+  }
+  .demo-caption,
+  .demo-json {
+    font-size: 12px;
+  }
+}
+
 @media (max-width: 370px) {
   .demo-grid {
     grid-template-columns: minmax(0, 1fr);

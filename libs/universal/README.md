@@ -8,15 +8,15 @@
 
 <div align="center">
 
-**One state model. Across your React applications.**
+**Shared state that feels like `useState`.**
 
-The shared foundation of the React Global State Hooks family. Build global and scoped stores with familiar hooks, composable selectors, typed actions, and direct access outside components. Choose this package when you want the core state API without a platform-specific persistence layer.
+Share state across your React application with the familiar `useState` API, subscribe to only the slice a component needs, and grow into typed actions, chainable selectors, and scoped stores. This is the shared core of the family, without a platform persistence layer. Inspect every store, action, and state change in the DevTools panel, or from your terminal.
 
 [![npm version](https://img.shields.io/npm/v/react-hooks-global-states.svg)](https://www.npmjs.com/package/react-hooks-global-states)
 [![Downloads](https://img.shields.io/npm/dm/react-hooks-global-states.svg)](https://www.npmjs.com/package/react-hooks-global-states)
 [![License](https://img.shields.io/npm/l/react-hooks-global-states.svg)](https://github.com/johnny-quesada-developer/react-global-state-hooks/blob/master/LICENSE)
 
-[**Website**](https://johnny-quesada-developer.github.io/react-global-state-hooks/) · [**Documentation**](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/) · [**Examples**](https://johnny-quesada-developer.github.io/react-global-state-hooks/examples/) · [**DevTools**](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/devtools/)
+[**Website**](https://johnny-quesada-developer.github.io/react-global-state-hooks/) · [**Documentation**](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/) · [**Examples**](https://johnny-quesada-developer.github.io/react-global-state-hooks/examples/) · [**DevTools**](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/devtools/) · [**Agentic DevTools**](https://johnny-quesada-developer.github.io/react-global-state-hooks/agentic-devtools/)
 
 Created by [Johnny Quesada](https://johnny-quesada-developer.github.io/react-global-state-hooks/about/), author of the React Global State Hooks family.
 
@@ -46,49 +46,40 @@ function Counter() {
 
 ## Built for React applications
 
-<table>
-<tr>
-<td width="50%">
-
 ### **Familiar React API**
 
-```tsx
-// If you know this...
-const [state, setState] = useState(0);
+If you know `useState`, you already know the API.
 
-// You know this!
-const [state, setState] = useGlobalState();
+```tsx
+// Local state
+const [count, setCount] = useState(0);
+
+// Shared state
+const [count, setCount] = useCounter();
 ```
 
-</td>
-<td width="50%">
+### **Precise Subscriptions**
 
-### **Precise subscriptions**
-
-Subscribe to a slice so unrelated store changes do not trigger component updates.
+Subscribe to a slice, so unrelated store changes do not re-render your component.
 
 ```tsx
 // Only re-renders when name changes
-const [name] = useStore((s) => s.user.name);
+const [name] = useStore((state) => state.user.name);
 ```
-
-</td>
-</tr>
-
-<tr>
-<td width="50%">
 
 ### **Chainable Selectors**
 
+Build reusable state hooks on top of other selector hooks.
+
 ```tsx
-const useUsers = useStore.createSelectorHook((s) => s.users);
-const useAdmins = useUsers.createSelectorHook((users) => users.filter((u) => u.isAdmin));
+const useUsers = useStore.createSelectorHook((state) => state.users);
+
+const useAdmins = useUsers.createSelectorHook((users) => users.filter((user) => user.isAdmin));
 ```
 
-</td>
-<td width="50%">
-
 ### **Actions (Optional)**
+
+Keep mutation logic next to the store when a feature needs more structure.
 
 ```tsx
 const useAuth = createGlobalState(null, {
@@ -96,6 +87,7 @@ const useAuth = createGlobalState(null, {
     login(credentials) {
       return async ({ setState }) => {
         const user = await api.login(credentials);
+
         setState(user);
       };
     },
@@ -103,13 +95,9 @@ const useAuth = createGlobalState(null, {
 });
 ```
 
-</td>
-</tr>
-
-<tr>
-<td width="50%">
-
 ### **Context Mode**
+
+Need an isolated instance instead of app-wide state? Same state model, inside a provider.
 
 ```tsx
 const Form = createContext({ name: '', email: '' });
@@ -119,22 +107,49 @@ const Form = createContext({ name: '', email: '' });
 </Form.Provider>;
 ```
 
-</td>
-<td width="50%">
+### **Persistence, When Your Platform Has It**
+
+This package is the state model without a storage layer. Add `react-global-state-hooks` for `localStorage`, or `react-native-global-state-hooks` for async storage. The store API is the same in all three.
+
+```tsx
+// Same store, one extra option in the platform packages
+const useSettings = createGlobalState({ theme: 'dark' });
+```
 
 ### **Non-Reactive API**
 
-Read and update your store from event handlers, services, and React components.
+Read, update, or subscribe to state outside React components.
 
 ```tsx
-// In API interceptors, WebSockets, utils...
 const token = useAuth.getState().token;
-useAuth.setState({ user: newUser });
+
+useAuth.setState({ user: nextUser });
 ```
 
-</td>
-</tr>
-</table>
+---
+
+## Agentic DevTools
+
+Give your coding agent the runtime, not a guess. With the [Chrome extension](https://chromewebstore.google.com/detail/bafojplmkpejhglhjpibpdhoblickpee) open on your app, the `rgsh` command that ships with this package reads store state, runs store actions and prints exactly which paths changed — from the terminal your agent already uses.
+
+```bash
+npm install --save-dev ws                      # rgsh talks to the extension over a local WebSocket
+npx rgsh --list                                # every store DevTools knows about, with its actions
+npx rgsh action todos add "Write the docs"     # run an action; prints each changed path, before → after
+npx rgsh state todos todos[0].done             # read the result back
+```
+
+Import the debug entry first in your **development** entry file, before any module that creates a store, and keep it out of production builds:
+
+```ts
+import 'react-hooks-global-states/debug';
+```
+
+`rgsh` works on state and actions only; it does not click or type in the page. Take the [Agentic DevTools tour](https://johnny-quesada-developer.github.io/react-global-state-hooks/agentic-devtools/) for the inspect → act → verify workflow, and read the [DevTools guide](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/devtools/) for setup, the panel and the exit codes.
+
+| The app being inspected | Stores, actions, and state diffs in the panel |
+| ------------------------- | ----------------------------------------------- |
+| <img alt="Debug playground app" src="https://johnny-quesada-developer.github.io/react-global-state-hooks/devtools/showcase/app.png" width="380"> | <img alt="DevTools panel" src="https://johnny-quesada-developer.github.io/react-global-state-hooks/devtools/showcase/panel.png" width="620"> |
 
 ---
 
@@ -1536,6 +1551,7 @@ interactive examples, and the DevTools walkthrough.
 | [API and guides](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/) | Selectors, actions, scoped state, persistence, and TypeScript. |
 | [Interactive examples](https://johnny-quesada-developer.github.io/react-global-state-hooks/examples/) | Explore the state model in working browser examples. |
 | [DevTools](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/devtools/) | Inspect state, follow actions, and use the terminal workflow. |
+| [Agentic DevTools](https://johnny-quesada-developer.github.io/react-global-state-hooks/agentic-devtools/) | Inspect state, run an action and read back the result from a terminal or a coding agent. |
 | [Platform guide](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/platform-and-versions/) | Choose the package and persistence model for your app. |
 
 ---
@@ -1561,7 +1577,9 @@ and the [DevTools guide](https://johnny-quesada-developer.github.io/react-global
 - **Familiar from the first hook.** Share state through a `useState`-style API.
 - **Focused subscriptions.** Select the values a component needs.
 - **Composable structure.** Bring in actions, selectors, and scoped stores as your features grow.
+- **Persistence when your platform has it.** Add the web or React Native package for a storage layer.
 - **A connected debugging workflow.** Follow state and actions with the [DevTools integration](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/devtools/).
+- **Runtime evidence for coding agents.** Let an agent inspect, act and verify against the running app with [Agentic DevTools](https://johnny-quesada-developer.github.io/react-global-state-hooks/agentic-devtools/).
 
 ---
 
