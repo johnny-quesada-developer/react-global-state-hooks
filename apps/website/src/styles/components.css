@@ -395,12 +395,36 @@ html .workbench-source {
   stroke: var(--color-green);
 }
 
-/* Mobile hero: the code pane shows the chapter's relevant lines only. */
-@media (max-width: 640px) {
-  .code-pane[data-chapter='0'] .code-line:nth-child(n + 8),
-  .code-pane[data-chapter='1'] .code-line:nth-child(-n + 8),
-  .code-pane[data-chapter='2'] .code-line:nth-child(n + 10) {
-    display: none;
+/* Hero graph: a node grows a little as it appears, and again whenever an update reaches it. */
+.node-enter {
+  animation: node-enter 480ms var(--ease-out);
+}
+
+@keyframes node-enter {
+  from {
+    scale: 0.94;
+  }
+  60% {
+    scale: 1.02;
+  }
+  to {
+    scale: 1;
+  }
+}
+
+.node-pulse {
+  animation: node-pulse 520ms var(--ease-out);
+}
+
+@keyframes node-pulse {
+  from {
+    scale: 1;
+  }
+  35% {
+    scale: 1.045;
+  }
+  to {
+    scale: 1;
   }
 }
 

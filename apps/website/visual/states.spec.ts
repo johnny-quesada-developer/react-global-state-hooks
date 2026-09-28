@@ -63,11 +63,11 @@ test.describe('site chrome', () => {
 });
 
 test.describe('home sequences', () => {
-  test('hero on the third chapter', async ({ page }) => {
+  test('hero on the last step', async ({ page }) => {
     await open(page, '');
-    await page.getByRole('tab', { name: /Debug with evidence/ }).click();
+    await page.getByRole('tab', { name: /Update name/ }).click();
 
-    await expect(page.locator('#demo')).toHaveScreenshot('hero-chapter-3.png');
+    await expect(page.locator('#demo')).toHaveScreenshot('hero-last-step.png');
   });
 
   test('agent workflow on the verify step', async ({ page }) => {

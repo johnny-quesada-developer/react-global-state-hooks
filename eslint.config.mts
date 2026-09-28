@@ -152,6 +152,7 @@ export default defineConfig([
             '^workbench(-source)?$',
             '^demo(-grid|-card|-reset|-stack|-json|-grid--wide|-card--whole)?$',
             '^min-w-children$',
+            '^node-(enter|pulse)$',
           ],
         },
       ],
