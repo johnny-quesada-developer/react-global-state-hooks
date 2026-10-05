@@ -1,6 +1,6 @@
 {
   "name": "react-global-state-hooks",
-  "version": "16.0.6",
+  "version": "16.0.7",
   "private": true,
   "description": "Monorepo for the react-global-state-hooks family of packages (universal, web, react-native).",
   "workspaces": [
@@ -95,7 +95,7 @@
   "bugs": {
     "url": "https://github.com/johnny-quesada-developer/react-global-state-hooks/issues"
   },
-  "homepage": "https://github.com/johnny-quesada-developer/react-global-state-hooks#readme",
+  "homepage": "https://johnny-quesada-developer.github.io/react-global-state-hooks/",
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@testing-library/dom": "^10.4.0",

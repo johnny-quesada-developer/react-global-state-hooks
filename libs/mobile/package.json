@@ -1,6 +1,6 @@
 {
   "name": "react-native-global-state-hooks",
-  "version": "16.0.6",
+  "version": "16.0.7",
   "description": "Shared React Native state with a useState-style API, selective subscriptions, actions and async persistence with optional AsyncStorage.",
   "main": "./bundle.cjs",
   "module": "./bundle.mjs",
@@ -116,7 +116,7 @@
   "bugs": {
     "url": "https://github.com/johnny-quesada-developer/react-native-global-state-hooks/issues"
   },
-  "homepage": "https://github.com/johnny-quesada-developer/react-native-global-state-hooks#readme",
+  "homepage": "https://johnny-quesada-developer.github.io/react-global-state-hooks/",
   "devDependencies": {
     "@react-native-async-storage/async-storage": ">=1.17.11",
     "@types/react-test-renderer": "^18.0.0",
@@ -145,7 +145,7 @@
     }
   },
   "dependencies": {
-    "react-hooks-global-states": "^16.0.6"
+    "react-hooks-global-states": "^16.0.7"
   },
   "bin": {
     "rgsh": "./rgsh.mjs"
