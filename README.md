@@ -22,6 +22,14 @@ _The familiarity of `useState`, with the power of a shared store._
 
 ---
 
+## Find a guide by task
+
+- [Get started with shared React state](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/getting-started/)
+- [Subscribe to state slices and derive values](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/selectors-and-derived-state/)
+- [Persist React state in localStorage](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/persistence/)
+- [Handle async state and stale responses](https://johnny-quesada-developer.github.io/react-global-state-hooks/docs/async-workflows/)
+- [Inspect state with Chrome and agentic DevTools](https://johnny-quesada-developer.github.io/react-global-state-hooks/agentic-devtools/)
+
 ## 🎯 The One-Liner
 
 ```tsx
