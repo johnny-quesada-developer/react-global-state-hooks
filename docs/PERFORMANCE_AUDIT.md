@@ -10,35 +10,47 @@ The hot paths were dominated by two things that never show up in the TypeScript 
 
 1. **`setState` built a throwaway object on every call.** It copied `storeTools`, merged in the state
    change and redefined `metadata` as a getter, even when no callback was there to receive it.
-   That one object was ~95% of the cost of a `setState` with no subscribers.
+   That one object was ~99% of the cost of a `setState` with no subscribers.
 2. **Object spread compiles to slow helpers.** The packages build with `target: es2017`, and object
    spread is ES2018, so esbuild emits `__spreadValues` / `__spreadProps` helpers. These walk property
-   descriptors. The `{ ...options, selector, dependencies }` in `use()` ran on every render and was
-   about 2/3 of the hook's own per-render cost.
+   descriptors. The `{ ...options, selector, dependencies }` in `use()` ran on every render of every
+   component that uses the hook.
 
 ## Results
 
-Each implementation was built with the same esbuild settings as `libs/universal/esbuild.config.ts`
-(bundle, `es2017`, minified, ESM). Each ran in its own Node 22 process: median of 7 rounds, ns per
-operation, lower is better. The hook rows use a stub React runtime, so they time only the library's
-own per-render work, not React's.
+`master` and this branch were each built with the same esbuild settings as
+`libs/universal/esbuild.config.ts` (bundle, `es2017`, minified, ESM). The benchmark used the real
+dependencies from the repository's `node_modules`: React 18.3.1, react-dom 18.3.1 rendering into
+jsdom 26.1.0, and `json-storage-formatter`. Each build ran in its own Node 24.21.0 process on an
+Apple M1 Pro, so JIT state was never shared. Each scenario is the median of 7 rounds, in ns per
+operation, and the table shows the mean of two full runs. Lower is better. The two runs agreed
+within 8% on every row, except the 0-subscriber "after" value, which measured 18 ns and 20 ns.
+
+**Core (no rendering)**
 
 | Scenario | Before | After | Speedup |
 | --- | ---: | ---: | ---: |
-| `setState`, 0 subscribers | 1,544 | 17 | ~94x |
-| `setState`, 10 `subscribe()` listeners | 1,943 | 298 | ~6.5x |
-| `setState`, 100 `subscribe()` listeners | 5,679 | 3,360 | ~1.7x |
-| `setState`, 100 hook subscriptions, selection unchanged | 3,733 | 816 | ~4.6x |
-| `setState` with `onStateChanged` + `computePreventStateChange` | 1,576 | 843 | ~1.9x |
-| `setState` on a root with 10 `createSelectorHook` derived hooks | 18,066 | 1,022 | ~18x |
-| action call → `setState` | 1,388 | 62 | ~22x |
-| render: `use()` | 838 | 122 | ~6.9x |
-| render: `use(selector)` | 842 | 143 | ~5.9x |
-| render: `use(selector, [inline deps])` | 770 | 132 | ~5.8x |
-| render: `use(selector, { isEqual, dependencies })` | 898 | 128 | ~7x |
+| `setState`, 0 subscribers | 1,350 | 19 | ~71x |
+| `setState`, 10 `subscribe()` listeners | 1,725 | 241 | ~7.2x |
+| `setState`, 100 `subscribe()` listeners | 5,046 | 2,514 | ~2x |
+| `setState` with `onStateChanged` + `computePreventStateChange` | 1,368 | 629 | ~2.2x |
+| `setState` on a root with 10 `createSelectorHook` derived hooks | 15,832 | 908 | ~17x |
+| action call → `setState` | 1,378 | 56 | ~25x |
 
-Derived hooks gain the most because each derived store paid the `setState` overhead again for
-every root update.
+**React 18 rendering (react-dom + jsdom)**
+
+These rows time the whole update, including React's reconciliation and jsdom's DOM work, so the
+library's share of the total is smaller than in the core rows.
+
+| Scenario | Before | After | Change |
+| --- | ---: | ---: | ---: |
+| Update that re-renders 500 components | 1,558,654 | 1,111,157 | −29% |
+| Update with 500 subscribed components, none re-render | 17,619 | 13,265 | −25% |
+| Parent re-renders 500 children that call `use(selector, [deps])` | 1,705,270 | 1,276,412 | −25% |
+| Mount + unmount 500 components | 5,055,825 | 4,579,054 | −9% |
+
+Derived hooks gain the most in the core rows because each derived store paid the `setState`
+overhead again for every root update.
 
 ## Changes
 
@@ -61,10 +73,9 @@ Left alone on purpose:
 
 ## How equivalence was verified
 
-The repository's own suite (`yarn test`) could **not** be run in the audit environment:
-dependencies are not installed on this machine and the package registry was unreachable.
-Run it before merging (see the checklist below). In its place:
-
+- **Repository suite.** With the Nx cache disabled, `yarn test` passed for all 8 projects,
+  including `monkey_patch` (the shared suite under the DevTools patch). `yarn ts-check` and
+  `yarn lint` passed for `universal`, `web` and `mobile`. No test was changed.
 - **Differential testing.** The original and optimized builds ran the same 300 seeded random
   scenarios and their traces were compared byte for byte. Each scenario mixes setState (plain,
   functional, forced, with identifier), subscribe/unsubscribe (with and without selector, custom
@@ -98,11 +109,16 @@ branch keeps it unchanged. A fix belongs in its own PR with a test.
 
 ## Checklist before merging
 
+Done (Nx cache disabled):
+
 ```bash
-yarn install
-yarn test            # universal, web, mobile (shared suite runs against each)
-yarn nx run monkey_patch:test   # shared suite under the DevTools patch
-yarn ts-check
-yarn lint
+yarn test                    # all 8 projects, including monkey_patch
+yarn ts-check universal      # also web, mobile
+yarn lint universal          # also web, mobile
+```
+
+Not run yet:
+
+```bash
 yarn test:interop    # built dist under tsx / CJS / ESM
 ```
